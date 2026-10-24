@@ -1,0 +1,94 @@
+extends SceneTree
+const Model = preload("res://scripts/WorldModel.gd")
+const Store = preload("res://scripts/SaveStore.gd")
+var checks := 0
+var failures := 0
+func check(ok: bool, text: String) -> void:
+ checks += 1
+ if not ok:
+  failures += 1
+  printerr("FAIL: "+text)
+func _init() -> void:
+ var m = Model.new()
+ check(m.state.tiles.size() == 4,"four starting cells")
+ check(m.harvest("0,0"),"first Oak harvest")
+ check(m.state.inventory.wood == 1 and m.state.coins == 37,"yield and objective reward")
+ check(not m.harvest("0,0"),"cooldown prevents duplicate harvest")
+ check(not m.begin_draft("0,0"),"no overlap")
+ check(not m.begin_draft("9,9"),"no disconnected expansion")
+ check(m.begin_draft("-1,0"),"adjacent expansion")
+ var pending = m.state.pending.duplicate(true)
+ check(m.state.coins == 37,"no debit before placement")
+ var store = Store.new()
+ store.path = "user://test-save.json"
+ check(store.save_state(m.state),"atomic pending save")
+ var n = Model.new()
+ n.state = store.load_state()
+ check(n.state.pending.at == pending.at and n.state.pending.cards == pending.cards and n.state.pending.cost == pending.cost,"draft survives load exactly")
+ check(n.place(1),"choose Water")
+ check(n.state.tiles["-1,0"].type == "water","correct card placed")
+ check(not n.place(1),"no duplicate placement")
+ for i in range(4): n.tick()
+ check(n.state.discoveries.has("rainforest"),"launch through first evolution without debug mutation")
+ var coins: int = n.state.coins
+ n.evaluate()
+ check(n.state.coins == coins,"discovery reward deduplicated")
+ var energy: int = n.state.energy
+ check(not n.pulse("rain","99,99") and n.state.energy == energy,"invalid pulse costs nothing")
+ var discoveries_before: int = n.state.discoveries.size()
+ check(n.pulse("rain","0,0"),"valid rain")
+ check(n.state.energy == mini(200,energy-100+100*(n.state.discoveries.size()-discoveries_before)),"pulse charge accounts for new discovery rewards")
+ # Test authored reactions via ordinary neighbor effects (fixture placement only).
+ for recipe in m.config.recipes.slice(0,5):
+  var r = Model.new()
+  r.state.tiles.clear()
+  r.add_tile(Vector2i.ZERO,recipe.types[0])
+  var sources = {"rainforest":["water"],"ember":["vent","crystal"],"lake":["crystal"],"steam":["water","vent"],"frozen":["glacier"]}[recipe.id]
+  for i in range(sources.size()): r.add_tile(Model.DIRS[i],sources[i])
+  # Steam needs simultaneous growth from a moist Forest; Water supplies it.
+  for i in range(25): r.tick()
+  check(r.state.discoveries.has(recipe.id),"reachable recipe "+recipe.id)
+ var f = Model.new()
+ f.state.tiles.clear()
+ for c in [Vector2i.ZERO,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.ONE]: f.add_tile(c,"forest")
+ check(f.can_fuse("0,0") and f.fuse("0,0"),"explicit fusion commit")
+ check(f.state.tiles.size() == 4 and f.origin("1,1") == "0,0","reserved footprint")
+ check(not f.fuse("0,0"),"fusion cannot repeat")
+ check(f.harvest("1,1") and f.state.inventory.wood == 4,"fusion single harvest target")
+ check(not f.harvest("0,1"),"fusion shares cooldown")
+ check(store.save_state(f.state),"fusion save")
+ check(store.load_state().tiles["1,1"].owner == "0,0" and store.load_state().tiles["0,0"].size == 4,"fusion restored")
+ var file = FileAccess.open(store.path,FileAccess.WRITE)
+ file.store_string("{broken")
+ file.close()
+ check(not store.load_state().is_empty(),"backup recovery")
+ check(not store.valid({"version":99}),"unknown version rejected")
+ var a = Model.new()
+ var b = Model.new()
+ b.state.tiles.clear()
+ var keys: Array = a.state.tiles.keys()
+ keys.reverse()
+ for k in keys: b.state.tiles[k] = a.state.tiles[k].duplicate(true)
+ for i in range(10): a.tick(); b.tick()
+ check(a.state.tiles == b.state.tiles,"insertion-order independent simulation")
+ var cooldown = Model.new()
+ cooldown.harvest("0,0")
+ cooldown.advance_time(0.1)
+ cooldown.harvest("0,0")
+ var ready: float = cooldown.state.tiles["0,0"].ready
+ cooldown.advance_time(0.1)
+ cooldown.harvest("0,0")
+ check(cooldown.state.tiles["0,0"].ready == ready,"rapid taps are rate limited")
+ cooldown.advance_time(0.15)
+ cooldown.harvest("0,0")
+ check(cooldown.state.tiles["0,0"].ready == ready-0.5,"quarter-second acceleration independent of environmental tick")
+ cooldown.advance_time(cooldown.state.tiles["0,0"].ready-cooldown.state.time-0.2)
+ ready = cooldown.state.tiles["0,0"].ready
+ cooldown.harvest("0,0")
+ check(cooldown.state.tiles["0,0"].ready == ready,"tap cannot extend a nearly ready cooldown")
+ var active: float = cooldown.state.time
+ cooldown.advance_time(INF)
+ cooldown.advance_time(-1)
+ check(cooldown.state.time == active,"invalid elapsed time ignored")
+ print("TEST RESULT: %d checks, %d failures" % [checks,failures])
+ quit(1 if failures else 0)

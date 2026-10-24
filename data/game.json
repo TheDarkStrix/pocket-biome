@@ -1,0 +1,1271 @@
+{
+  "tiles": {
+    "oak": {
+      "dna": [
+        50,
+        25,
+        75,
+        55,
+        10
+      ],
+      "color": "50976a",
+      "resource": "wood",
+      "cooldown": 8,
+      "category": "natural",
+      "rarity": "common"
+    },
+    "stone": {
+      "dna": [
+        10,
+        45,
+        10,
+        95,
+        5
+      ],
+      "color": "8d9eae",
+      "resource": "stone",
+      "cooldown": 12,
+      "category": "natural",
+      "rarity": "common"
+    },
+    "fiber": {
+      "dna": [
+        35,
+        30,
+        55,
+        60,
+        5
+      ],
+      "color": "8bbe77",
+      "resource": "fiber",
+      "cooldown": 6,
+      "category": "natural",
+      "rarity": "common"
+    },
+    "grass": {
+      "dna": [
+        35,
+        30,
+        55,
+        60,
+        5
+      ],
+      "color": "78ad71",
+      "resource": "",
+      "cooldown": 0,
+      "category": "natural",
+      "rarity": "common"
+    },
+    "forest": {
+      "dna": [
+        50,
+        25,
+        75,
+        55,
+        10
+      ],
+      "color": "388c68",
+      "resource": "wood",
+      "cooldown": 8,
+      "category": "natural",
+      "rarity": "common"
+    },
+    "water": {
+      "dna": [
+        95,
+        20,
+        40,
+        65,
+        15
+      ],
+      "color": "69b8cd",
+      "resource": "",
+      "cooldown": 0,
+      "category": "natural",
+      "rarity": "common"
+    },
+    "vent": {
+      "dna": [
+        5,
+        95,
+        5,
+        65,
+        25
+      ],
+      "color": "c38360",
+      "resource": "",
+      "cooldown": 0,
+      "category": "natural",
+      "rarity": "uncommon"
+    },
+    "crystal": {
+      "dna": [
+        20,
+        20,
+        15,
+        85,
+        85
+      ],
+      "color": "a58be8",
+      "resource": "",
+      "cooldown": 0,
+      "category": "natural",
+      "rarity": "rare"
+    },
+    "glacier": {
+      "dna": [
+        80,
+        0,
+        10,
+        85,
+        10
+      ],
+      "color": "a9dce1",
+      "resource": "",
+      "cooldown": 0,
+      "category": "natural",
+      "rarity": "uncommon"
+    },
+    "clay": {
+      "dna": [
+        45,
+        35,
+        25,
+        70,
+        5
+      ],
+      "color": "bd896f",
+      "resource": "clay",
+      "cooldown": 15,
+      "category": "natural",
+      "rarity": "uncommon"
+    },
+    "iron": {
+      "dna": [
+        10,
+        50,
+        5,
+        95,
+        15
+      ],
+      "color": "929090",
+      "resource": "iron",
+      "cooldown": 20,
+      "category": "natural",
+      "rarity": "uncommon"
+    },
+    "golem": {
+      "dna": [
+        35,
+        35,
+        40,
+        75,
+        10
+      ],
+      "color": "a9b89b",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 8,
+      "rarity": "rare"
+    },
+    "totem": {
+      "dna": [
+        35,
+        35,
+        40,
+        75,
+        10
+      ],
+      "color": "a9b89b",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 4,
+      "effect_interval": 4,
+      "rarity": "uncommon"
+    },
+    "windmill": {
+      "dna": [
+        35,
+        35,
+        40,
+        75,
+        10
+      ],
+      "color": "a9b89b",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 5,
+      "rarity": "uncommon"
+    },
+    "furnace": {
+      "dna": [
+        35,
+        35,
+        40,
+        75,
+        10
+      ],
+      "color": "a9b89b",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 5,
+      "effect_interval": 4,
+      "rarity": "uncommon"
+    },
+    "workbench": {
+      "dna": [
+        35,
+        35,
+        40,
+        75,
+        10
+      ],
+      "color": "a9b89b",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 0,
+      "rarity": "common"
+    },
+    "compost": {
+      "dna": [
+        35,
+        35,
+        40,
+        75,
+        10
+      ],
+      "color": "a9b89b",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 4,
+      "effect_interval": 4,
+      "rarity": "uncommon"
+    },
+    "dirt": {
+      "dna": [
+        20,
+        40,
+        20,
+        65,
+        0
+      ],
+      "color": "91ae85",
+      "resource": "",
+      "cooldown": 0,
+      "category": "natural",
+      "interval": 0,
+      "effect_interval": 6,
+      "upgradeable": true,
+      "rarity": "common"
+    },
+    "shrine": {
+      "dna": [
+        40,
+        25,
+        75,
+        80,
+        55
+      ],
+      "color": "91ae85",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 0,
+      "effect_interval": 6,
+      "upgradeable": true,
+      "rarity": "rare"
+    },
+    "lantern": {
+      "dna": [
+        35,
+        30,
+        35,
+        75,
+        10
+      ],
+      "color": "91ae85",
+      "resource": "",
+      "cooldown": 0,
+      "category": "structure",
+      "interval": 0,
+      "effect_interval": 6,
+      "upgradeable": false,
+      "rarity": "common"
+    }
+  },
+  "recipes": [
+    {
+      "id": "rainforest",
+      "types": [
+        "forest",
+        "oak"
+      ],
+      "min": {
+        "moisture": 70,
+        "fertility": 70
+      },
+      "max": {},
+      "name": "Rainforest Sanctuary",
+      "hint": "Let roots drink: moisture 70, fertility 70.",
+      "reward": 20,
+      "tier": 1,
+      "rarity": "common",
+      "art": "rainforest",
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "resource": "wood",
+      "cooldown": 8,
+      "yield_amount": 2,
+      "lore": "A patient pond teaches ancient roots a greener way to grow.",
+      "mystery_hint": "A patient pond teaches ancient roots a greener way to grow."
+    },
+    {
+      "id": "ember",
+      "types": [
+        "forest",
+        "oak",
+        "fiber",
+        "grass"
+      ],
+      "min": {
+        "heat": 70,
+        "magic": 35
+      },
+      "max": {},
+      "name": "Ember Bloom",
+      "hint": "Warm magical plants: heat 70, magic 35.",
+      "reward": 20,
+      "tier": 1,
+      "rarity": "uncommon",
+      "art": "ember",
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "These resilient flowers turn heat into a quiet inner light.",
+      "mystery_hint": "These resilient flowers turn heat into a quiet inner light."
+    },
+    {
+      "id": "lake",
+      "types": [
+        "water"
+      ],
+      "min": {
+        "magic": 65,
+        "stability": 60
+      },
+      "max": {},
+      "name": "Crystal Lake",
+      "hint": "Water needs magic 65 and stability 60.",
+      "reward": 20,
+      "tier": 1,
+      "rarity": "rare",
+      "art": "lake",
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "resource": "star_dew",
+      "cooldown": 30,
+      "yield_amount": 1,
+      "lore": "Stone and starlight settle into the clearest water.",
+      "mystery_hint": "Stone and starlight settle into the clearest water."
+    },
+    {
+      "id": "steam",
+      "types": [
+        "forest",
+        "oak"
+      ],
+      "min": {
+        "moisture": 65,
+        "heat": 65
+      },
+      "max": {},
+      "name": "Steam Jungle",
+      "hint": "Forest needs moisture 65 and heat 65.",
+      "reward": 20,
+      "tier": 2,
+      "rarity": "rare",
+      "art": "steam",
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Warm springs breathe beneath an impossible canopy.",
+      "resource": "wood",
+      "yield_amount": 2,
+      "cooldown": 7,
+      "mystery_hint": "Warm springs breathe beneath an impossible canopy."
+    },
+    {
+      "id": "frozen",
+      "types": [
+        "forest",
+        "oak",
+        "grass",
+        "fiber"
+      ],
+      "min": {
+        "moisture": 60
+      },
+      "max": {
+        "heat": 15
+      },
+      "name": "Frozen Garden",
+      "hint": "Plants need moisture 60 and heat at most 15.",
+      "reward": 20,
+      "tier": 1,
+      "rarity": "common",
+      "art": "frozen",
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Winter has not ended growth; it has changed its rhythm.",
+      "mystery_hint": "Winter has not ended growth; it has changed its rhythm."
+    },
+    {
+      "id": "meadow",
+      "types": [
+        "grass",
+        "fiber",
+        "dirt"
+      ],
+      "min": {
+        "moisture": 50,
+        "fertility": 80
+      },
+      "max": {},
+      "name": "Wildflower Meadow",
+      "hint": "Rich, watered soil welcomes wildflowers.",
+      "rarity": "common",
+      "tier": 1,
+      "art": "meadow",
+      "reward": 20,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "resource": "fiber",
+      "cooldown": 6,
+      "yield_amount": 2,
+      "lore": "Small flowers find room wherever fertile land is welcomed.",
+      "mystery_hint": "Small flowers find room wherever fertile land is welcomed."
+    },
+    {
+      "id": "mossrock",
+      "types": [
+        "stone"
+      ],
+      "min": {
+        "moisture": 50,
+        "fertility": 40
+      },
+      "max": {},
+      "name": "Mossbound Ruins",
+      "hint": "Let stone drink beside living roots.",
+      "rarity": "common",
+      "tier": 1,
+      "art": "mossrock",
+      "reward": 20,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Even patient stone can become a shelter for life.",
+      "mystery_hint": "Even patient stone can become a shelter for life."
+    },
+    {
+      "id": "reedwater",
+      "types": [
+        "water"
+      ],
+      "min": {
+        "fertility": 65
+      },
+      "max": {},
+      "name": "Reedwater Haven",
+      "hint": "Roots enrich a patient pond.",
+      "rarity": "common",
+      "tier": 1,
+      "art": "reedwater",
+      "reward": 20,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Tall reeds make a safe home along the waterline.",
+      "mystery_hint": "Tall reeds make a safe home along the waterline."
+    },
+    {
+      "id": "sunstone",
+      "types": [
+        "stone",
+        "iron"
+      ],
+      "min": {
+        "heat": 70,
+        "magic": 30
+      },
+      "max": {},
+      "name": "Sunstone Terrace",
+      "hint": "Warm stone remembers a little magic.",
+      "rarity": "uncommon",
+      "tier": 2,
+      "art": "sunstone",
+      "reward": 35,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Golden minerals remember every warm afternoon.",
+      "resource": "stone",
+      "yield_amount": 2,
+      "cooldown": 12,
+      "mystery_hint": "Golden minerals remember every warm afternoon."
+    },
+    {
+      "id": "mistforest",
+      "types": [
+        "forest",
+        "oak"
+      ],
+      "min": {
+        "moisture": 85
+      },
+      "max": {
+        "heat": 25
+      },
+      "name": "Mistwood Refuge",
+      "hint": "Cool roots drink until mist settles.",
+      "rarity": "uncommon",
+      "tier": 2,
+      "art": "mistforest",
+      "reward": 35,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "A cool mist gathers around silver woodland trunks.",
+      "resource": "wood",
+      "yield_amount": 2,
+      "cooldown": 7,
+      "mystery_hint": "A cool mist gathers around silver woodland trunks."
+    },
+    {
+      "id": "crystalforest",
+      "types": [
+        "forest",
+        "oak"
+      ],
+      "min": {
+        "magic": 70,
+        "stability": 65
+      },
+      "max": {},
+      "name": "Prismatic Canopy",
+      "hint": "A stable forest holds a crystalline song.",
+      "rarity": "rare",
+      "tier": 3,
+      "art": "crystalforest",
+      "reward": 60,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Crystalline roots carry a living song through the canopy.",
+      "resource": "wood",
+      "yield_amount": 2,
+      "cooldown": 6,
+      "mystery_hint": "Crystalline roots carry a living song through the canopy."
+    },
+    {
+      "id": "oasis",
+      "types": [
+        "grass",
+        "fiber"
+      ],
+      "min": {
+        "moisture": 80,
+        "heat": 65
+      },
+      "max": {},
+      "name": "Sunlit Oasis",
+      "hint": "A thirsty hot meadow finds abundant water.",
+      "rarity": "uncommon",
+      "tier": 2,
+      "art": "oasis",
+      "reward": 35,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Water and sunlight find a rare balance in the warm sand.",
+      "mystery_hint": "Water and sunlight find a rare balance in the warm sand."
+    },
+    {
+      "id": "ironwood",
+      "types": [
+        "forest",
+        "oak"
+      ],
+      "min": {
+        "heat": 50,
+        "stability": 70
+      },
+      "max": {},
+      "name": "Ironwood Bastion",
+      "hint": "Warm roots take strength from neighboring stone.",
+      "rarity": "uncommon",
+      "tier": 3,
+      "art": "ironwood",
+      "reward": 35,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "resource": "wood",
+      "cooldown": 8,
+      "yield_amount": 2,
+      "lore": "Deep roots draw strength from the bones of the island.",
+      "mystery_hint": "Deep roots draw strength from the bones of the island."
+    },
+    {
+      "id": "moonflower",
+      "types": [
+        "grass",
+        "fiber"
+      ],
+      "min": {
+        "magic": 70
+      },
+      "max": {
+        "heat": 25
+      },
+      "name": "Moonflower Garden",
+      "hint": "Cool flowers open beneath a magical sky.",
+      "rarity": "uncommon",
+      "tier": 3,
+      "art": "moonflower",
+      "reward": 35,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "resource": "fiber",
+      "cooldown": 6,
+      "yield_amount": 2,
+      "lore": "Quiet flowers open when the evening air is full of magic.",
+      "mystery_hint": "Quiet flowers open when the evening air is full of magic."
+    },
+    {
+      "id": "obsidian",
+      "types": [
+        "stone",
+        "iron",
+        "vent"
+      ],
+      "min": {
+        "heat": 85,
+        "magic": 65
+      },
+      "max": {},
+      "name": "Obsidian Crown",
+      "hint": "Extreme heat and magic awaken dark stone.",
+      "rarity": "rare",
+      "tier": 3,
+      "art": "obsidian",
+      "reward": 60,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Dark glass rises where heat and magic shape the earth.",
+      "resource": "iron",
+      "yield_amount": 1,
+      "cooldown": 14,
+      "mystery_hint": "Dark glass rises where heat and magic shape the earth."
+    },
+    {
+      "id": "celestial",
+      "types": [
+        "forest",
+        "oak",
+        "grass",
+        "fiber",
+        "water"
+      ],
+      "min": {
+        "moisture": 90,
+        "fertility": 90,
+        "stability": 80,
+        "magic": 95
+      },
+      "max": {},
+      "name": "Celestial Heart",
+      "hint": "Master water, growth, stone and magic together.",
+      "rarity": "legendary",
+      "tier": 4,
+      "art": "celestial",
+      "reward": 120,
+      "footprint": [
+        1,
+        1
+      ],
+      "structures": [],
+      "pulse": "",
+      "repeat": "once_per_profile",
+      "lore": "Every part of the island finds harmony around a tiny star.",
+      "resource": "star_dew",
+      "yield_amount": 1,
+      "cooldown": 20,
+      "mystery_hint": "Every part of the island finds harmony around a tiny star."
+    }
+  ],
+  "attributes": [
+    "moisture",
+    "heat",
+    "fertility",
+    "stability",
+    "magic"
+  ],
+  "economy": {
+    "starting_coins": 25,
+    "expansion_base": 12,
+    "expansion_growth": 1.24,
+    "harvest_coins": 2,
+    "max_cells": 36,
+    "inventory_limit": 9999
+  },
+  "effects": {
+    "water": {
+      "moisture": 8
+    },
+    "forest": {
+      "fertility": 4
+    },
+    "oak": {
+      "fertility": 4
+    },
+    "vent": {
+      "heat": 10
+    },
+    "crystal": {
+      "magic": 5
+    },
+    "glacier": {
+      "heat": -10,
+      "moisture": 6
+    },
+    "stone": {
+      "stability": 3
+    },
+    "iron": {
+      "stability": 3
+    },
+    "totem": {
+      "moisture": 6
+    },
+    "furnace": {
+      "heat": 10
+    },
+    "compost": {
+      "fertility": 6
+    },
+    "shrine": {
+      "fertility": 4,
+      "magic": 3
+    }
+  },
+  "powers": {
+    "rain": {
+      "moisture": 35
+    },
+    "heat": {
+      "heat": 40
+    },
+    "frost": {
+      "heat": -45,
+      "moisture": 15
+    }
+  },
+  "fusion": {
+    "type": "forest",
+    "name": "Ancient Grove",
+    "reward": 35
+  },
+  "fusions": [
+    {
+      "id": "grove",
+      "type": "forest",
+      "name": "Ancient Grove",
+      "reward": 35,
+      "rarity": "common",
+      "art": "grove",
+      "types": [
+        "forest"
+      ],
+      "min": {},
+      "max": {},
+      "structures": [],
+      "pulse": "",
+      "hint": "Four matching forest cells in a 2\u00d72 square.",
+      "footprint": [
+        2,
+        2
+      ],
+      "tier": 1,
+      "lore": "Four small forests become one ancient shelter.",
+      "mystery_hint": "Four small forests become one ancient shelter."
+    },
+    {
+      "id": "lagoon",
+      "type": "water",
+      "name": "Moonlit Lagoon",
+      "reward": 100,
+      "rarity": "legendary",
+      "art": "lagoon",
+      "resource": "star_dew",
+      "cooldown": 30,
+      "yield_amount": 1,
+      "types": [
+        "water"
+      ],
+      "min": {},
+      "max": {},
+      "structures": [],
+      "pulse": "",
+      "hint": "Four matching water cells in a 2\u00d72 square.",
+      "footprint": [
+        2,
+        2
+      ],
+      "tier": 1,
+      "lore": "A silver arch reflects a sky the water seems to remember.",
+      "mystery_hint": "A silver arch reflects a sky the water seems to remember."
+    },
+    {
+      "id": "quarry",
+      "type": "stone",
+      "name": "Crystal Quarry",
+      "reward": 60,
+      "rarity": "rare",
+      "art": "quarry",
+      "resource": "stone",
+      "cooldown": 12,
+      "yield_amount": 6,
+      "types": [
+        "stone"
+      ],
+      "min": {},
+      "max": {},
+      "structures": [],
+      "pulse": "",
+      "hint": "Four matching stone cells in a 2\u00d72 square.",
+      "footprint": [
+        2,
+        2
+      ],
+      "tier": 1,
+      "lore": "Layered stone opens to reveal a treasury of crystal veins.",
+      "mystery_hint": "Layered stone opens to reveal a treasury of crystal veins."
+    },
+    {
+      "id": "verdant",
+      "type": "grass",
+      "name": "Verdant Sanctuary",
+      "reward": 40,
+      "rarity": "uncommon",
+      "art": "verdant",
+      "resource": "fiber",
+      "cooldown": 8,
+      "yield_amount": 4,
+      "types": [
+        "grass"
+      ],
+      "min": {},
+      "max": {},
+      "structures": [],
+      "pulse": "",
+      "hint": "Four matching grass cells in a 2\u00d72 square.",
+      "footprint": [
+        2,
+        2
+      ],
+      "tier": 1,
+      "lore": "A ring of living leaves protects the first seed.",
+      "mystery_hint": "A ring of living leaves protects the first seed."
+    }
+  ],
+  "crafting": [
+    {
+      "id": "workbench",
+      "name": "Build an Ancient Workbench",
+      "requires": "hand",
+      "cost": {
+        "wood": 4,
+        "stone": 2
+      },
+      "tile": "workbench",
+      "seconds": 4
+    },
+    {
+      "id": "clay",
+      "name": "Prepare a Clay Deposit",
+      "requires": "hand",
+      "cost": {
+        "stone": 3,
+        "fiber": 2
+      },
+      "tile": "clay",
+      "seconds": 4
+    },
+    {
+      "id": "iron",
+      "name": "Uncover an Iron Vein",
+      "requires": "hand",
+      "cost": {
+        "stone": 5,
+        "wood": 2
+      },
+      "tile": "iron",
+      "seconds": 5
+    },
+    {
+      "id": "brick",
+      "name": "Fire a Brick",
+      "requires": "furnace",
+      "cost": {
+        "stone": 2,
+        "wood": 1
+      },
+      "output": {
+        "brick": 1
+      },
+      "seconds": 5
+    },
+    {
+      "id": "golem",
+      "name": "Awaken a Stone Golem",
+      "requires": "workbench",
+      "cost": {
+        "stone": 8,
+        "iron": 2
+      },
+      "tile": "golem",
+      "seconds": 8
+    },
+    {
+      "id": "totem",
+      "name": "Carve a Rain Totem",
+      "requires": "workbench",
+      "cost": {
+        "wood": 5,
+        "fiber": 4
+      },
+      "tile": "totem",
+      "seconds": 5
+    },
+    {
+      "id": "windmill",
+      "name": "Build a Mini Windmill",
+      "requires": "workbench",
+      "cost": {
+        "wood": 6,
+        "stone": 3
+      },
+      "tile": "windmill",
+      "seconds": 5
+    },
+    {
+      "id": "furnace",
+      "name": "Build a Stone Furnace",
+      "requires": "workbench",
+      "cost": {
+        "stone": 6,
+        "clay": 3
+      },
+      "tile": "furnace",
+      "seconds": 5
+    },
+    {
+      "id": "compost",
+      "name": "Weave a Compost Bed",
+      "requires": "workbench",
+      "cost": {
+        "wood": 2,
+        "fiber": 5
+      },
+      "tile": "compost",
+      "seconds": 4
+    },
+    {
+      "id": "forest",
+      "name": "Shape Forest",
+      "requires": "workbench",
+      "cost": {
+        "wood": 3,
+        "fiber": 2
+      },
+      "tile": "forest",
+      "seconds": 5
+    },
+    {
+      "id": "water",
+      "name": "Shape Water",
+      "requires": "workbench",
+      "cost": {
+        "clay": 3,
+        "stone": 2
+      },
+      "tile": "water",
+      "seconds": 5
+    },
+    {
+      "id": "stone",
+      "name": "Shape Stone",
+      "requires": "workbench",
+      "cost": {
+        "wood": 2,
+        "fiber": 2
+      },
+      "tile": "stone",
+      "seconds": 5
+    },
+    {
+      "id": "crystal",
+      "name": "Shape Crystal",
+      "requires": "workbench",
+      "cost": {
+        "iron": 3,
+        "stone": 5,
+        "brick": 1
+      },
+      "tile": "crystal",
+      "seconds": 5
+    },
+    {
+      "id": "vent",
+      "name": "Shape Vent",
+      "requires": "workbench",
+      "cost": {
+        "clay": 4,
+        "stone": 4,
+        "brick": 1
+      },
+      "tile": "vent",
+      "seconds": 5
+    },
+    {
+      "id": "glacier",
+      "name": "Shape Glacier",
+      "requires": "workbench",
+      "cost": {
+        "clay": 3,
+        "fiber": 3,
+        "stone": 2
+      },
+      "tile": "glacier",
+      "seconds": 5
+    },
+    {
+      "id": "dirt",
+      "name": "Prepare Ploughed Soil",
+      "requires": "hand",
+      "cost": {
+        "wood": 1,
+        "stone": 1
+      },
+      "tile": "dirt",
+      "seconds": 3
+    },
+    {
+      "id": "shrine",
+      "name": "Build a Growth Shrine",
+      "requires": "workbench",
+      "cost": {
+        "wood": 5,
+        "iron": 2,
+        "brick": 2,
+        "star_dew": 1
+      },
+      "tile": "shrine",
+      "seconds": 8
+    },
+    {
+      "id": "lantern",
+      "name": "Craft a Founder Lantern",
+      "requires": "hand",
+      "cost": {
+        "wood": 1
+      },
+      "tile": "lantern",
+      "seconds": 3,
+      "entitlement": "founders"
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "name": "The First Seed",
+      "hint": "Harvest, expand, and discover your first living biome.",
+      "checks": {
+        "harvests": 1,
+        "expansions": 1,
+        "discoveries": 1
+      },
+      "reward": 30
+    },
+    {
+      "id": 2,
+      "name": "Living Neighbors",
+      "hint": "Grow to eight tiles, find three discoveries, and use a World Pulse.",
+      "checks": {
+        "cells": 8,
+        "discoveries": 3,
+        "pulses": 1
+      },
+      "reward": 75
+    },
+    {
+      "id": 3,
+      "name": "Strange Transformations",
+      "hint": "Make a fusion, fire a brick, and discover six biomes.",
+      "checks": {
+        "fusions": 1,
+        "crafted_brick": 1,
+        "discoveries": 6
+      },
+      "reward": 120
+    },
+    {
+      "id": 4,
+      "name": "The Tiny Civilization",
+      "hint": "Build a golem and windmill; earn 30 automated coins and craft five bricks.",
+      "checks": {
+        "built_golem": 1,
+        "built_windmill": 1,
+        "automation_coins": 30,
+        "crafted_brick": 5
+      },
+      "reward": 180
+    },
+    {
+      "id": 5,
+      "name": "Celestial Biomes",
+      "hint": "Collect all twenty discoveries and create a world of at least 25 cells.",
+      "checks": {
+        "discoveries": 20,
+        "cells": 25
+      },
+      "reward": 300
+    }
+  ],
+  "draft_pools": {
+    "1": [
+      "crystal",
+      "vent",
+      "glacier",
+      "grass",
+      "stone"
+    ],
+    "2": [
+      "clay",
+      "iron",
+      "workbench",
+      "furnace",
+      "crystal",
+      "vent",
+      "glacier",
+      "grass",
+      "stone"
+    ],
+    "3": [
+      "windmill",
+      "golem",
+      "totem",
+      "compost",
+      "clay",
+      "iron",
+      "workbench",
+      "furnace",
+      "crystal",
+      "vent",
+      "glacier",
+      "grass",
+      "stone",
+      "shrine"
+    ]
+  },
+  "upgrades": {
+    "1": {
+      "coins": 25,
+      "wood": 5,
+      "stone": 3
+    },
+    "2": {
+      "coins": 75,
+      "brick": 3,
+      "iron": 2,
+      "star_dew": 1
+    }
+  },
+  "simulation": {
+    "tick_seconds": 1,
+    "max_chain_depth": 1
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "utc": "2026-10-24T19:15:56.448028+00:00",
+  "source_sha256": "a8ba1e9535dbd99ba6da8f6292539745a214f88d7b85c2e7b05c8f30caa6f39c",
+  "source_unchanged_during_run": true,
+  "passed": true,
+  "assertions": 575,
+  "results": [
+    {
+      "suite": "run",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 37
+    },
+    {
+      "suite": "campaign",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 51
+    },
+    {
+      "suite": "save_validation",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 319
+    },
+    {
+      "suite": "save_io_failures",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 11
+    },
+    {
+      "suite": "fusion_edges",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 10
+    },
+    {
+      "suite": "input_gestures",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 8
+    },
+    {
+      "suite": "layout",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 17
+    },
+    {
+      "suite": "presentation",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 12
+    },
+    {
+      "suite": "services",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 25
+    },
+    {
+      "suite": "screens",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 65
+    },
+    {
+      "suite": "scene_smoke",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 20
+    },
+    {
+      "suite": "progression_simulation",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": null
+    },
+    {
+      "suite": "startup",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": null
+    }
+  ]
+}
