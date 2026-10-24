@@ -8,7 +8,15 @@ export ANDROID_USER_HOME=/workspace/runtime/android-user
 export GRADLE_USER_HOME=/workspace/runtime/gradle
 mkdir -p builds "$GRADLE_USER_HOME"
 python tools/prepare_native.py
-./tools/godot.sh --headless --editor --import --quit
+import_log=$(mktemp)
+trap 'rm -f "$import_log"' EXIT
+./tools/godot.sh --headless --editor --import --quit 2>&1 | tee "$import_log"
+if rg -q 'SCRIPT ERROR:|^ERROR:' "$import_log"; then
+  echo "Import failed; Android export was not attempted." >&2
+  exit 1
+fi
+rm -f "$import_log"
+trap - EXIT
 ./tools/check.sh
 staging="builds/PocketBiome-debug.new.apk"
 rm -f "$staging"

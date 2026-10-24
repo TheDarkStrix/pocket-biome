@@ -64,6 +64,16 @@ func _init() -> void:
  check(store.save_state(legacy),"legacy save accepted")
  var upgraded = store.load_state()
  check(upgraded.version == 3 and upgraded.settings.reduced_motion == false,"schema migration to campaign")
+ var version_two = Model.new().state
+ version_two.version = 2
+ version_two.coins = 123
+ version_two.settings.music = false
+ for field in ["audio_levels","text_scale","hints"]: version_two.erase(field)
+ for field in ["tutorial_seen","vibration"]: version_two.settings.erase(field)
+ check(store.save_state(version_two),"schema 2 saves accepted for migration")
+ var migrated = store.load_state()
+ check(migrated.version == 3 and migrated.coins == 123 and not migrated.settings.music,"schema 2 migration preserves economy and preferences")
+ check(migrated.audio_levels.music == 0.6 and migrated.text_scale == 1.0 and migrated.hints.is_empty(),"schema 2 migration supplies new accessibility/audio/hint defaults")
  var dusk = Model.new()
  dusk.state.chapter = 3
  dusk.state.time = 301

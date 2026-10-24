@@ -2,6 +2,9 @@ extends RefCounted
 var craft_quantity := 1
 var codex_filter := "All"
 var focus_id := ""
+var workshop_jobs := {}
+var workshop_stock: Label
+var workshop_signature := ""
 const Thumbnail = preload("res://scripts/TileThumbnail.gd")
 func close_button(h, box: VBoxContainer) -> void:
  h.button("Back to island",func(): h.modal.hide(); h.refresh(); h.check_transition_ad(),box)
@@ -71,7 +74,10 @@ func detail(h, id: String) -> void:
 
 func workshop(h) -> void:
  var box: VBoxContainer = h.modal_content("Workshop")
- h.label("Wood %d · Stone %d · Fiber %d\nClay %d · Iron %d · Brick %d · Dew %d" % [h.model.state.inventory.wood,h.model.state.inventory.stone,h.model.state.inventory.fiber,h.model.state.inventory.clay,h.model.state.inventory.iron,h.model.state.inventory.brick,h.model.state.inventory.star_dew],17,box)
+ h.modal_screen = "workshop"
+ workshop_jobs.clear()
+ workshop_signature = JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.inventory,h.model.state.coins])
+ workshop_stock = h.label("Wood %d · Stone %d · Fiber %d\nClay %d · Iron %d · Brick %d · Dew %d" % [h.model.state.inventory.wood,h.model.state.inventory.stone,h.model.state.inventory.fiber,h.model.state.inventory.clay,h.model.state.inventory.iron,h.model.state.inventory.brick,h.model.state.inventory.star_dew],17,box)
  var quantity_row := HBoxContainer.new()
  box.add_child(quantity_row)
  h.button("−",func(): craft_quantity = maxi(1,craft_quantity-1); workshop(h),quantity_row)
@@ -81,14 +87,23 @@ func workshop(h) -> void:
  h.button("+",func(): craft_quantity = mini(3,craft_quantity+1); workshop(h),quantity_row)
  h.label("Three project slots. Place crafted blueprints on an empty Grass tile. Every essential tile can be shaped here, even when your world is full.",15,box)
  for job in h.model.state.jobs:
-  h.label("In progress: %s · %ds" % [job.recipe,ceili(maxf(0,job.until-h.model.state.time))],16,box)
+  workshop_jobs[job.id] = h.label("In progress: %s · %ds" % [job.recipe,ceili(maxf(0,job.until-h.model.state.time))],16,box)
  for recipe in h.model.config.crafting:
   var text: String = recipe.name+"\n"
   for resource in recipe.cost: text += "%d %s  " % [recipe.cost[resource]*craft_quantity,resource]
   text += "· %ds · %s" % [ceili(h.model.campaign.crafting_seconds(h.model,recipe)*craft_quantity),recipe.requires.capitalize()]
-  h.button(text,func():
+  var missing := PackedStringArray()
+  if not h.model.campaign.has_structure(h.model,recipe.requires): missing.append("Build "+recipe.requires.capitalize())
+  for resource in recipe.cost:
+   var owned: int = h.model.state.coins if resource == "coins" else h.model.state.inventory.get(resource,0)
+   var deficit: int = recipe.cost[resource]*craft_quantity-owned
+   if deficit > 0: missing.append("%d more %s" % [deficit,resource])
+  if h.model.state.jobs.size() >= 3: missing.append("All project slots are busy")
+  var craft_button: Button = h.button(text,func():
    h.model.craft(recipe.id,craft_quantity)
    h.persist(); h.refresh(); workshop(h),box)
+  craft_button.disabled = not missing.is_empty()
+  if not missing.is_empty(): h.label("Needs · "+", ".join(missing),14,box)
  h.label("Ready blueprints",20,box)
  for type in h.model.state.blueprints:
   if h.model.state.blueprints[type] < 1: continue
@@ -103,6 +118,21 @@ func workshop(h) -> void:
    h.persist(); h.refresh(); workshop(h),box)
   button.disabled = h.model.state.inventory[resource] < 5
  close_button(h,box)
+func update_live(h) -> void:
+ if not h.modal.visible or h.modal_screen != "workshop": return
+ var signature: String = JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.inventory,h.model.state.coins])
+ if signature != workshop_signature:
+  var scroll: ScrollContainer = h.modal.get_child(0)
+  var offset: int = scroll.scroll_vertical
+  workshop(h)
+  h.modal.get_child(0).set_deferred("scroll_vertical",offset)
+  return
+ if is_instance_valid(workshop_stock):
+  var stock: Dictionary = h.model.state.inventory
+  workshop_stock.text = "Wood %d · Stone %d · Fiber %d\nClay %d · Iron %d · Brick %d · Dew %d" % [stock.wood,stock.stone,stock.fiber,stock.clay,stock.iron,stock.brick,stock.star_dew]
+ for job in h.model.state.jobs:
+  if workshop_jobs.has(job.id): workshop_jobs[job.id].text = "In progress: %s × %d · %ds" % [job.recipe,job.get("quantity",1),ceili(maxf(0,job.until-h.model.state.time))]
+
 func world(h) -> void:
  var box: VBoxContainer = h.modal_content("Your Living World")
  h.label("Seed %d · %d cells\nNext expansion: %d coins" % [h.model.state.seed,h.model.state.tiles.size(),h.model.cost()],17,box)
@@ -128,7 +158,7 @@ func world(h) -> void:
      h.model.campaign.retire(h.model,at)
      h.modal.hide(); h.persist(); h.refresh(),confirm)
     close_button(h,confirm),box)
- h.button("World Pulse · Frost Bloom",func(): h.modal.hide(); h.target("frost"),box).disabled = h.model.state.chapter < 2 or h.model.state.energy < 100
+ h.button("World Pulse abilities",func(): h.pulse_selector(),box)
  var event: Dictionary = h.model.state.event
  if event.until > 0:
   h.label("Dusk Tide · %ds · %d/2 restored" % [ceili(event.until-h.model.state.time),event.cleared.size()],18,box)

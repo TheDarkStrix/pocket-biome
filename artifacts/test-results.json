@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-24T19:15:56.448028+00:00",
-  "source_sha256": "a8ba1e9535dbd99ba6da8f6292539745a214f88d7b85c2e7b05c8f30caa6f39c",
+  "utc": "2026-10-24T19:31:07.605054+00:00",
+  "source_sha256": "9b19082412ae23303bebb7938ab253fa5d6bcb031f552b65af873fc9278b01de",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 575,
+  "assertions": 592,
   "results": [
     {
       "suite": "run",
@@ -15,7 +15,7 @@
       "suite": "campaign",
       "passed": true,
       "exit_code": 0,
-      "assertions": 51
+      "assertions": 54
     },
     {
       "suite": "save_validation",
@@ -51,7 +51,7 @@
       "suite": "presentation",
       "passed": true,
       "exit_code": 0,
-      "assertions": 12
+      "assertions": 13
     },
     {
       "suite": "services",
@@ -63,13 +63,13 @@
       "suite": "screens",
       "passed": true,
       "exit_code": 0,
-      "assertions": 65
+      "assertions": 76
     },
     {
       "suite": "scene_smoke",
       "passed": true,
       "exit_code": 0,
-      "assertions": 20
+      "assertions": 22
     },
     {
       "suite": "progression_simulation",

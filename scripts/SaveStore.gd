@@ -27,6 +27,7 @@ func valid(s: Variant) -> bool:
  for field in ["version","seed","coins","expansions","energy","harvests","next_id"]:
   if not integer(s[field],0,1000000000): return false
  if int(s.version) not in [1,2,3] or s.energy > 200 or s.next_id < 1: return false
+ if int(s.version) == 2: s = CampaignSchema.upgrade(s.duplicate(true))
  if not number(s.time,0,1000000000): return false
  if not s.tiles is Dictionary or s.tiles.size() < 4 or s.tiles.size() > 64: return false
  if s.expansions != s.tiles.size()-4: return false

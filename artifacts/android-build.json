@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-24T19:32:35.400614+00:00",
+  "engine": "4.6.3.stable",
+  "type": "Android signed debug test build",
+  "source_sha256": "9b19082412ae23303bebb7938ab253fa5d6bcb031f552b65af873fc9278b01de",
+  "assertions": 592,
+  "apk_sha256": "022695600b13372e9790a88db8d40013bfaae86c97cdc5c8af80d6c24f12701f",
+  "bytes": 177820503,
+  "renderer": "gl_compatibility (explicit regular/mobile)",
+  "native_gameplay_verified": false
+}

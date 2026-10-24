@@ -5,17 +5,17 @@ Updated 2026-10-24. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | Suite | Assertions passed | Coverage |
 |---|---:|---|
 | run | 37 | Harvest, draft, DNA, reactions, rewards, pulses and model invariants |
-| campaign | 51 | Chapters, recipes, crafting, automation, migrations, Dusk and upgrades |
+| campaign | 54 | Chapters, recipes, crafting, automation, migrations, Dusk and upgrades |
 | save_validation | 319 | Nested invalid state rejection, occupancy/references, schema, restoration and corruption handling |
 | save_io_failures | 11 | Injected backup/rename errors preserve committed save and permit retry |
 | fusion_edges | 10 | Footprint neighbors, shared cooldown, modifiers and tier protection |
 | input_gestures | 8 | Tap/hold/drag/pinch/cancel/UI-origin classification |
 | layout | 17 | Portrait geometries, safe-area transforms, scroll bounds and fallback |
-| presentation | 12 | Cosmetic isolation, terminating animation, alpha picking and no replay |
+| presentation | 13 | Cosmetic isolation, terminating animation, alpha picking and no replay |
 | services | 25 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
-| screens | 65 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
-| scene_smoke | 20 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
-| **Total** | **575** | Assertions; separate simulation and startup checks also run |
+| screens | 76 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
+| scene_smoke | 22 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
+| **Total** | **592** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -25,6 +25,6 @@ Public-action simulation: all 20 discoveries, all five chapters, 35 cells, 119 g
 
 ## Android evidence and limitations
 
-The native plugin compiled and the signed debug package installed on an API29 AOSP x86_64 software emulator. The original export incorrectly selected Vulkan; explicit mobile Compatibility now selects OpenGL, confirmed in native launch logs. The old emulator then reported a 3D shader uniform limit during startup. A reduced unused 3D light limit is under rebuild/validation. No successful native gameplay claim is made until a game screen is captured and exercised.
+The native plugin compiled and the signed debug package installed on an API29 AOSP x86_64 software emulator. The original export incorrectly selected Vulkan; explicit mobile Compatibility now selects OpenGL, confirmed in native launch logs. The old emulator then reported a 3D shader uniform limit during startup. The unused 3D light limit was reduced, and OpenGL initialization subsequently succeeded with ANGLE/SwiftShader. The software-emulated Android System UI itself stalled/raised ANRs, preventing reliable interaction; a host Mesa backend is now under test. No successful native gameplay claim is made until a game screen is captured and exercised.
 
 Open: physical touch/cutout matrix, background/kill restoration on latest APK, native photo chooser, actual test ad reward, Play Billing sandbox purchase/restore, real GPU FPS/memory/thermal/audio, human first-session comprehension, and store release signing. Provider callback tests call the service boundary and do not pretend to execute Google transactions. Local crash handling is not evidence of a configured reporting backend. These gates remain explicit in docs/RELEASE_DEPENDENCIES.md.

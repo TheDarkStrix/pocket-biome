@@ -13,7 +13,7 @@ func _ready() -> void:
  ambience.volume_db = -20
  add_child(ambience)
  if DisplayServer.get_name() != "headless": ambience.play()
- for cue in ["harvest","place","evolve","fusion","pulse"]:
+ for cue in ["harvest","wood","stone","water","card","legendary","reaction","place","evolve","fusion","pulse"]:
   streams[cue] = load("res://assets/audio/"+cue+".wav")
  for i in range(4):
   var player := AudioStreamPlayer.new()

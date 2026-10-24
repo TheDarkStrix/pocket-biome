@@ -11,6 +11,8 @@ var launch_menu := false
 var launch_screen: VBoxContainer
 var photo_mode := false
 var photo_controls: HBoxContainer
+var photo_light_button: Button
+var photo_lighting := "day"
 var ui_root: Control
 var model = Model.new()
 var store = Store.new()
@@ -34,6 +36,8 @@ var draft_button: Button
 var inventory: RichTextLabel
 var draft_cards: Array[Button] = []
 var confirm_card: Button
+var inspection_view := {}
+var cosmetic_clock := 0.0
 var inspection_mode := false
 var inspection_drag_start := Vector2.ZERO
 var all_touches := {}
@@ -45,6 +49,8 @@ var modal: PanelContainer
 var performance_checked_at := 0.0
 var clock := 0.0
 var save_clock := 0.0
+var save_dirty := false
+var dirty_elapsed := 0.0
 var last_discoveries := 0
 var suspended := false
 var discard_resume_delta := false
@@ -197,6 +203,10 @@ func build_ui() -> void:
  photo_controls.position = Vector2(20,880)
  photo_controls.size.x = 500
  root.add_child(photo_controls)
+ photo_light_button = button("Light",func():
+  photo_lighting = "dusk" if photo_lighting != "dusk" else "day"
+  queue_redraw(),photo_controls)
+ photo_light_button.tooltip_text = "Day / Dusk photo preview · unlocks in Chapter 2"
  button("Capture",capture_photo,photo_controls)
  button("Share",share_photo,photo_controls)
  button("Exit photo",end_photo,photo_controls)
@@ -214,6 +224,18 @@ func cancel_target() -> void:
  model.message = "Pulse canceled. No energy spent."
  refresh()
 
+func pulse_selector() -> void:
+ var box := modal_content("World Pulse")
+ var energy: int = model.state.energy
+ label(("Ready" if energy >= 100 else "Charging")+" · %d / 200 energy" % energy,19,box)
+ var descriptions := {"rain":"Refresh moisture across the selected cross.","heat":"Warm the ground and clear Dusk frost.","frost":"Cool the land and invite frozen discoveries."}
+ for power in ["rain","heat","frost"]:
+  var action: Button = button(power.capitalize()+" · 100 energy",func(): modal.hide(); target(power),box)
+  button_icon(action,power)
+  action.disabled = energy < 100 or (power == "frost" and model.state.chapter < 2)
+  label("Unlocks in Chapter 2" if power == "frost" and model.state.chapter < 2 else descriptions[power],15,box)
+ button("Back to island",func(): modal.hide(),box)
+
 func target(power: String) -> void:
  if targeting == power:
   cancel_target()
@@ -225,6 +247,7 @@ func target(power: String) -> void:
 
 func modal_content(title: String) -> VBoxContainer:
  modal_screen = ""
+ inspection_view.clear()
  inspection_mode = false
  for child in modal.get_children():
   modal.remove_child(child)
@@ -275,6 +298,7 @@ func draft() -> void:
  button("Keep choice for later",func(): modal.hide(); persist(),box)
 
 func inspect_card(index: int) -> void:
+ audio_feedback.play("card")
  if model.state.pending.is_empty() or index < 0 or index > 2: return
  var type: String = model.state.pending.cards[index]
  var definition: Dictionary = model.config.tiles[type]
@@ -294,8 +318,8 @@ func inspect_card(index: int) -> void:
 func rarity_color(rarity: String) -> Color:
  return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":Color("f2c46d")}.get(rarity,Color("8ea18f"))
 
-func dna_bar(parent: Node, attribute: String, value: float) -> void:
- label("%s · %d" % [attribute.capitalize(),value],15,parent)
+func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
+ var caption: Label = label("%s · %d" % [attribute.capitalize(),value],15,parent)
  var bar := ProgressBar.new()
  bar.max_value = 100; bar.value = value; bar.show_percentage = false
  bar.custom_minimum_size.y = 7
@@ -304,6 +328,7 @@ func dna_bar(parent: Node, attribute: String, value: float) -> void:
  fill.bg_color = {"moisture":Color("8dbfe8"),"heat":Color("e9a06d"),"fertility":Color("78d4a2"),"stability":Color("b3b6b9"),"magic":Color("a58be8")}[attribute]
  bar.add_theme_stylebox_override("background",track); bar.add_theme_stylebox_override("fill",fill)
  parent.add_child(bar)
+ return {"caption":caption,"bar":bar}
 
 func fusion_dialog() -> void:
  var box := modal_content("Evolve a 2 × 2 sanctuary")
@@ -315,8 +340,14 @@ func fusion_dialog() -> void:
   refresh(),box)
  button("Back",func(): modal.hide(),box)
 
+func queue_save() -> void:
+ if not save_dirty: dirty_elapsed = 0.0
+ save_dirty = true
+
 func persist() -> void:
- if not store.save_state(model.state):
+ dirty_elapsed = 0.0
+ save_dirty = not store.save_state(model.state)
+ if save_dirty:
   model.message = "Save failed: " + store.error
   services.event("save_failed",{"reason":store.error})
 
@@ -332,12 +363,14 @@ func refresh() -> void:
  services.save_path = store.path
  for cue in presentation.cues:
   if model.state.settings.sfx: audio_feedback.play(cue)
+ photo_light_button.disabled = model.state.chapter < 2
  pulse_bar.value = model.state.energy
  rain_button.disabled = model.state.energy < 100
  heat_button.disabled = model.state.energy < 100
  draft_button.text = "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
  draft_button.disabled = targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
  draft_button.visible = not draft_button.disabled
+ inventory.add_theme_font_size_override("normal_font_size",scaled_font(17))
  inventory.clear()
  for resource in ["coins","rain","wood","stone","fiber"]:
   if resource == "wood": inventory.add_text("\n")
@@ -354,6 +387,8 @@ func refresh() -> void:
   info.text = "%s · ready in %ds\n" % [tile_title(t),ceili(maxf(0,t.ready-model.state.time))]
   for a in model.config.attributes: info.text += "%s %d  " % [{"moisture":"Water","heat":"Heat","fertility":"Growth","stability":"Rock","magic":"Magic"}[a],t.dna[a]]
 
+ update_inspection()
+ campaign_ui.update_live(self)
  last_discoveries = model.state.discoveries.size()
  call_deferred("apply_layout")
  queue_redraw()
@@ -371,6 +406,7 @@ func hit(pos: Vector2) -> String:
 
 func tap(pos: Vector2) -> void:
  if launch_menu or photo_mode or not world_rect().has_point(pos) or modal.visible: return
+ var harvest_path := false
  var k := pick(pos)
  if placement_blueprint != "":
   if model.deploy(placement_blueprint,k):
@@ -388,16 +424,19 @@ func tap(pos: Vector2) -> void:
    audio_feedback.play("pulse")
   else: model.message = "Choose land with at least 100 energy. No energy spent."
  elif model.state.tiles.has(k):
+  harvest_path = true
   selected = model.origin(k)
   var before: Dictionary = model.state.inventory.duplicate()
   if model.harvest(selected):
    haptic(18)
-   audio_feedback.play("harvest")
+   var output: String = model.production(model.state.tiles[selected]).resource
+   audio_feedback.play("wood" if output == "wood" else "stone" if output in ["stone","iron","clay"] else "water" if model.state.tiles[selected].type == "water" else "harvest")
    for resource in before:
     var delta: int = model.state.inventory[resource]-before[resource]
     if delta > 0: presentation.harvest(selected,"+%d %s" % [delta,resource.replace("_"," ").capitalize()],resource)
  elif model.begin_draft(k): draft()
- persist()
+ if harvest_path: queue_save()
+ else: persist()
  refresh()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -458,6 +497,13 @@ func _process(delta: float) -> void:
   discard_resume_delta = false
   return
  model.advance_time(delta)
+ if save_dirty:
+  dirty_elapsed += delta
+  if dirty_elapsed >= 0.35: persist()
+ cosmetic_clock += delta
+ if cosmetic_clock >= 0.12 and not model.state.settings.reduced_motion:
+  cosmetic_clock = 0.0
+  queue_redraw()
  if model.state.settings.reduced_motion:
   if presentation.advance(10.0): queue_redraw()
  elif presentation.advance(delta): queue_redraw()
@@ -504,10 +550,17 @@ func _notification(what: int) -> void:
 func polygon(points: Array, color: Color) -> void:
  draw_colored_polygon(PackedVector2Array(points),color)
 
+func tile_fraction(tile: Dictionary, attribute: String) -> float:
+ return clampf(float(tile.dna[attribute])/100.0,0.0,1.0)
+
+func visible_palette() -> String:
+ return photo_lighting if photo_mode else model.state.cosmetic
+
 func _draw() -> void:
- if model.state.cosmetic != "day":
+ var palette: String = visible_palette()
+ if palette != "day":
   var palettes := {"moon":Color("101b38"),"dusk":Color("30263e"),"celestial":Color("182d36"),"sakura":Color("322d41")}
-  draw_rect(get_viewport_rect(),palettes.get(model.state.cosmetic,Color("17243a")))
+  draw_rect(get_viewport_rect(),palettes.get(palette,Color("17243a")))
   for i in range(28):
    draw_circle(Vector2(fmod(i*137.0,540),180+fmod(i*97.0,450)),1.0+float(i%2),Color(0.95,0.82,0.56,0.4))
  # Candidate atlas renderer; final evolved artwork and edge cleanup pending approval.
@@ -536,14 +589,23 @@ func _draw() -> void:
     var spark: Vector2 = p+Vector2(cos(angle),sin(angle)*0.6)*(35+30*pose.burst)*s
     draw_circle(spark,2.5*pose.burst,Color(0.95,0.77,0.43,pose.burst))
   var tint := Color(1,1,1,pose.mix)
-  if model.state.cosmetic == "moon": tint *= Color(0.82,0.88,1.0)
-  elif model.state.cosmetic == "celestial": tint *= Color(1.0,0.97,0.81)
+  # Gentle authored-state modulation: DNA remains readable without replacing sprites.
+  var heat: float = tile_fraction(t,"heat")
+  var fertility: float = tile_fraction(t,"fertility")
+  if t.type in ["forest","oak","grass","fiber","dirt"]:
+   tint *= Color(1.0-fertility*0.035,1.0-heat*0.025,1.0-heat*0.07)
+  elif t.type == "water":
+   var moisture: float = tile_fraction(t,"moisture")
+   tint *= Color(0.9+moisture*0.1,0.95+moisture*0.05,1)
+  if palette == "moon": tint *= Color(0.82,0.88,1.0)
+  elif palette == "celestial": tint *= Color(1.0,0.97,0.81)
   draw_ellipse_shadow(p+Vector2(0,35*zoom_level),60*zoom_level*size)
   if not pose.parts.is_empty():
    var pull: float = clampf(pose.progress/0.5,0,1)
    for part in pose.parts:
     var source: Vector2 = screen(model.coord(part.key))
     var location: Vector2 = source.lerp(p,pull)
+    draw_arc(source,28*zoom_level,0,TAU,24,Color(1,0.85,0.5,1.0-pull),2*zoom_level)
     draw_line(source,p,Color(0.95,0.77,0.43,(1.0-pull)*0.5),2*s)
     preload("res://scripts/TileArtwork.gd").draw_tile(self,part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
@@ -554,6 +616,23 @@ func _draw() -> void:
    for i in range(3):
     var ray := Vector2.from_angle(PI*i/3.0)*12*s
     draw_line(frost-ray,frost+ray,Color("b8e9ff"),2*s)
+  if t.dna.magic >= 70 or t.dna.heat >= 85:
+   var magical: bool = t.dna.magic >= 70
+   var glow_tint := Color("b5a2ed") if magical else Color("eeac6b")
+   for mote in range(2):
+    var phase: float = float(t.id)*1.7+mote*3.0
+    if not model.state.settings.reduced_motion: phase += model.state.time*0.8
+    var mote_position := p+Vector2(sin(phase)*22,-28-12*cos(phase))*s
+    glow_tint.a = 0.25+0.25*absf(sin(phase))
+    draw_circle(mote_position,1.8*s,glow_tint)
+  if palette == "celestial" and model.state.entitlements.has("founders"):
+   # Cosmetic only: the Founder's Collection never changes production or DNA.
+   for star in range(3):
+    var phase: float = model.state.time*0.7+float(t.id+star)*2.1 if not model.state.settings.reduced_motion else float(t.id+star)
+    var glow := p+Vector2(sin(phase)*35,-35-cos(phase*0.8)*22)*s
+    var opacity: float = 0.35+0.35*absf(sin(phase))
+    draw_circle(glow,2*s,Color(1,0.85,0.5,opacity))
+    draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
   if selected == k or affected(k): draw_arc(p,38*s*size,0,TAU,32,Color("f2c46d"),2*s)
 
  for effect in presentation.weather:
@@ -595,10 +674,11 @@ func inspect(pos: Vector2) -> void:
  var image = preload("res://scripts/TileThumbnail.gd").new()
  image.tile_type = tile.type; image.evolution = tile.evolution; image.extent = 130
  box.add_child(image)
+ inspection_view = {"key":key,"title":box.get_child(0),"image":image,"bars":{},"conditions":[]}
  var production: Dictionary = model.production(tile)
- if production.resource != "": label("%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))],16,box)
+ if production.resource != "": inspection_view["production"] = label("%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))],16,box)
  else: label(card_hint(tile.type),16,box)
- for attribute in model.config.attributes: dna_bar(box,attribute,tile.dna[attribute])
+ for attribute in model.config.attributes: inspection_view.bars[attribute] = dna_bar(box,attribute,tile.dna[attribute])
  label("Neighbor influences",19,box)
  var count := 0
  for neighbor in model.neighbors(key):
@@ -615,14 +695,39 @@ func inspect(pos: Vector2) -> void:
  label("Discovery opportunities",19,box)
  for recipe in model.config.recipes:
   if not tile.type in recipe.types: continue
-  var reasons := PackedStringArray()
-  for attribute in recipe.min:
-   if tile.dna[attribute] < recipe.min[attribute]: reasons.append("%s %d / %d" % [attribute,tile.dna[attribute],recipe.min[attribute]])
-  for attribute in recipe.max:
-   if tile.dna[attribute] > recipe.max[attribute]: reasons.append("%s must be ≤ %d" % [attribute,recipe.max[attribute]])
-  label(recipe.name+" · "+("Conditions met" if reasons.is_empty() else "; ".join(reasons)),14,box)
+  var caption: Label = label(recipe.name+" · "+recipe_conditions(tile,recipe),14,box)
+  inspection_view.conditions.append({"recipe":recipe,"caption":caption})
  button("Back to island",dismiss_inspection,box)
  apply_layout()
+
+func recipe_conditions(tile: Dictionary, recipe: Dictionary) -> String:
+ var reasons := PackedStringArray()
+ for attribute in recipe.min:
+  if tile.dna[attribute] < recipe.min[attribute]: reasons.append("%s %d / %d" % [attribute,tile.dna[attribute],recipe.min[attribute]])
+ for attribute in recipe.max:
+  if tile.dna[attribute] > recipe.max[attribute]: reasons.append("%s must be ≤ %d" % [attribute,recipe.max[attribute]])
+ for structure in recipe.structures:
+  if not model.campaign.has_structure(model,structure): reasons.append("Needs "+structure.capitalize())
+ if recipe.pulse != "" and (tile.get("last_pulse","") != recipe.pulse or tile.get("last_pulse_until",0) < model.state.time): reasons.append("Recent "+recipe.pulse.capitalize()+" Pulse")
+ return "Conditions met" if reasons.is_empty() else "; ".join(reasons)
+
+func update_inspection() -> void:
+ if not inspection_mode or not modal.visible or inspection_view.is_empty(): return
+ var at: String = model.origin(inspection_view.key)
+ if at == "": dismiss_inspection(); return
+ var tile: Dictionary = model.state.tiles[at]
+ inspection_view.title.text = tile_title(tile)
+ inspection_view.image.evolution = tile.evolution
+ inspection_view.image.queue_redraw()
+ var production: Dictionary = model.production(tile)
+ if inspection_view.has("production"):
+  inspection_view.production.text = "%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))]
+ for attribute in inspection_view.bars:
+  var widgets: Dictionary = inspection_view.bars[attribute]
+  widgets.caption.text = "%s · %d" % [attribute.capitalize(),tile.dna[attribute]]
+  widgets.bar.value = tile.dna[attribute]
+ for condition in inspection_view.conditions:
+  condition.caption.text = condition.recipe.name+" · "+recipe_conditions(tile,condition.recipe)
 
 func dismiss_inspection() -> void:
  inspection_mode = false
@@ -687,6 +792,7 @@ func frame_world() -> void:
  queue_redraw()
 
 func begin_photo() -> void:
+ photo_lighting = model.state.cosmetic
  photo_mode = true
  hud.hide(); bottom.hide(); photo_controls.show()
  frame_world()
@@ -834,6 +940,7 @@ func show_discovery(id: String) -> void:
  if recipe.is_empty(): return
  var box := modal_content("A new world awakens")
  modal_screen = "discovery"
+ audio_feedback.play("legendary" if recipe.rarity == "legendary" else "evolve")
  var image = preload("res://scripts/TileThumbnail.gd").new()
  image.tile_type = recipe.types[0]; image.evolution = id; image.extent = 260
  box.add_child(image)

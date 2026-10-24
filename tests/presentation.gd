@@ -37,5 +37,15 @@ func _init() -> void:
  check(f.animations.size() == 1 and f.cues == ["fusion"],"fusion produces one presentation entity")
  check(f.pose("0,0").parts.size() == 4 and f.pose("0,0").mix == 0,"fusion retains four cosmetic parts before reveal")
  check(fusion.state.tiles["1,1"].owner == "0,0","logical fusion commits before reveal")
+ var art = preload("res://scripts/TileArtwork.gd")
+ var atlas_edges_safe := true
+ for type in ["oak","stone","fiber","clay","iron"]:
+  var spec: Dictionary = art.appearance(type,"",true)
+  var width: float = spec.region.size.x
+  for edge in [Vector2(width-0.00003,30),Vector2(width,30),Vector2(-0.00001,30)]:
+   var relative: Vector2 = (edge-spec.pivot)*(132.0/418.0)
+   var result: bool = art.hit(type,"",relative,132.0/418.0,true)
+   if edge.x < 0 or edge.x >= width: atlas_edges_safe = atlas_edges_safe and not result
+ check(atlas_edges_safe,"depleted atlas edge samples stay within their assigned texture regions")
  print("PRESENTATION RESULT: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

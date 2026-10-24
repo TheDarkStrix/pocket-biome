@@ -77,5 +77,8 @@ static func hit(type: String, evolution: String, relative_position: Vector2, sca
   if pixels == null: return false
   if pixels.is_compressed(): pixels.decompress()
   images[id] = pixels
- var point: Vector2 = local+spec.region.position
- return images[id].get_pixel(int(point.x),int(point.y)).a > 0.2
+ var point: Vector2i = Vector2i(floori(local.x),floori(local.y))+Vector2i(spec.region.position)
+ var pixels: Image = images[id]
+ # Floating-point edge addition may round a subpixel sample onto the atlas boundary.
+ if point.x < 0 or point.y < 0 or point.x >= pixels.get_width() or point.y >= pixels.get_height(): return false
+ return pixels.get_pixel(int(point.x),int(point.y)).a > 0.2

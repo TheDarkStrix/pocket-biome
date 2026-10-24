@@ -3,6 +3,12 @@ from pathlib import Path
 import math, struct, wave
 RATE = 22050
 CUES = {
+    'wood': [(0, 196, .12), (.045, 293.66, .14)],
+    'stone': [(0, 146.83, .1), (.025, 932.32, .08)],
+    'water': [(0, 523.25, .22), (.07, 698.46, .27), (.13, 1046.5, .2)],
+    'card': [(0, 329.63, .09), (.045, 493.88, .12)],
+    'legendary': [(0, 261.63, 1.6), (.15, 392, 1.5), (.3, 523.25, 1.4), (.45, 659.25, 1.3), (.6, 783.99, 1.2)],
+    'reaction': [(0, 392, .24), (.09, 523.25, .3)],
     'harvest': [(0, 659.25, .18), (.06, 880, .24)],
     'place': [(0, 392, .24), (.08, 587.33, .3)],
     'evolve': [(0, 523.25, .55), (.13, 659.25, .55), (.26, 783.99, .7), (.4, 1046.5, .8)],
@@ -19,7 +25,13 @@ for name, notes in CUES.items():
             age=t-start
             if 0 <= age < length:
                 envelope=min(1,age/.012)*(1-age/length)**2
-                value += .15*envelope*(math.sin(math.tau*freq*age)+.15*math.sin(math.tau*freq*2*age))
+                tone=math.sin(math.tau*freq*age)+.15*math.sin(math.tau*freq*2*age)
+                if name in ['wood','stone']:
+                    noise=2*((i*1103515245+12345)%65536)/65535-1
+                    tone=.65*tone+.35*noise*math.exp(-age*45)
+                elif name=='water':
+                    tone=math.sin(math.tau*(freq*age+freq*age*age*.25))*.8
+                value += (.08 if name=='legendary' else .15)*envelope*tone
         samples.append(int(max(-1,min(1,value))*32767))
     out=Path(__file__).resolve().parents[1]/'assets/audio'/f'{name}.wav'
     with wave.open(str(out),'wb') as file:

@@ -53,6 +53,12 @@ func run() -> void:
  check(scene.model.state.time == active,"resume ignores accumulated background frame delta")
  scene._process(0.25)
  check(is_equal_approx(scene.model.state.time,active+0.25),"active-time resumes at frame precision")
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ scene.refresh()
+ scene.tap(scene.screen(Vector2.ZERO)-Vector2(0,50))
+ check(scene.save_dirty and scene.model.state.inventory.wood == 1,"harvest queues a debounced save")
+ scene._notification(Node.NOTIFICATION_APPLICATION_PAUSED)
+ check(not scene.save_dirty and scene.store.load_state().inventory.wood == 1,"backgrounding flushes the queued harvest before suspension")
  print("SCENE RESULT: %d checks, %d failures" % [checks,failures])
  scene.queue_free()
  await process_frame

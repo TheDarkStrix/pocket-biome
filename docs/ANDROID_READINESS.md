@@ -14,8 +14,10 @@ Build: `./tools/build_android.sh`. It imports, runs the full test suite, exports
 
 API29 AOSP x86_64 AVD `pocket-qa29`, software SwiftShader/no KVM. adb connect 127.0.0.1:5557 after editor/export (Godot may stop adb). API35 under software acceleration was unstable at the operating-system level; that is not attributed to gameplay code. This emulator has no Play Store, so successful purchase flows require a separate configured Play tester device.
 
-First test APK installed and registered PocketServices. Vulkan mobile override corrected; OpenGL selection confirmed. A legacy SwiftShader shader-uniform limit is being addressed before native gameplay is signed off. See TEST_REPORT.md for current evidence; installation alone is insufficient.
+First test APK installed and registered PocketServices. Vulkan mobile override corrected; OpenGL selection confirmed. Reducing unused 3D light limits resolved shader startup under ANGLE; native interaction still needs validation because the software-emulated Android UI stalled. Host Mesa backend QA is in progress. See TEST_REPORT.md for current evidence; installation alone is insufficient.
 
 ## Release matrix
 
 Cold launch offline → harvest/draft/first evolution → menu/input/pinch → force-stop/relaunch restoration → background during reveal/fusion → photo chooser → safe areas/cutouts → real test ad/reward/failure → sandbox purchase/restore → physical-device performance/audio. Release AAB, signing and store policy review follow these checks. Production IDs and credentials are never silently substituted.
+
+Reproduce the installed dependencies with `python3 tools/bootstrap_android.py --install-sdk` (requires official Godot4.6.3 already on PATH). This checksum-verifies the JDK, Gradle, Godot templates and stable Android command-line tools, installs only specified SDK packages, preserves unrelated editor settings and uses system CA verification. The bootstrap was rerun successfully against the current machine.

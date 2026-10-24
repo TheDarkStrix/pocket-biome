@@ -21,7 +21,13 @@ func capture() -> void:
  await shot("02-draft")
  scene.draft_cards[1].pressed.emit()
  scene.confirm_card.pressed.emit()
- await create_timer(4).timeout
+ var deadline: int = Time.get_ticks_msec()+30000
+ while not scene.model.state.discoveries.has("rainforest") and Time.get_ticks_msec() < deadline:
+  await process_frame
+ if not scene.model.state.discoveries.has("rainforest"):
+  printerr("Normal-path visual capture did not reach first evolution")
+  quit(1)
+  return
  await shot("03-evolution")
  scene.inspect(scene.screen(Vector2.ZERO))
  await shot("04-inspector")
@@ -34,6 +40,13 @@ func capture() -> void:
  await shot("09-workshop")
  scene.campaign_ui.settings(scene)
  await shot("10-settings")
+ scene.modal.hide()
+ scene.start_screen()
+ await shot("11-launch-menu")
+ scene.start_play()
+ scene.modal.hide()
+ scene.pulse_selector()
+ await shot("12-pulse-selector")
  scene.modal.hide()
  scene.set_process(false)
  scene.model.state.tiles.clear()

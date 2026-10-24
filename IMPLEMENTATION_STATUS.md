@@ -13,9 +13,9 @@ Updated 2026-10-24. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 575 assertions across 11 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 transactions, using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
+`tools/check.sh`: 592 assertions across 11 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 transactions, using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
 
-The previous installed Android package selected Vulkan because of the engine mobile override. Both desktop and mobile renderer settings now explicitly select Compatibility/OpenGL; rebuilding and installation verification are in progress. Do not use the earlier black-screen capture as a current gameplay screenshot.
+The previous installed Android package selected Vulkan because of the engine mobile override. Both desktop and mobile renderer settings now explicitly select Compatibility/OpenGL; the rebuilt signed debug APK passes all automated checks; native interaction verification is in progress. Do not use the earlier black-screen capture as a current gameplay screenshot.
 
 ## Continuity
 

@@ -32,3 +32,9 @@ p.write_text(s)
 (build/'local.properties').write_text('sdk.dir=/workspace/runtime/android-sdk\n')
 # Bound Gradle parallelism and heap to reduce contention during emulator validation.
 p=build/'gradle.properties';s=p.read_text();s="\n".join(line for line in s.splitlines() if not line.startswith(("org.gradle.workers.max=","org.gradle.jvmargs=")))+'\norg.gradle.workers.max=4\norg.gradle.jvmargs=-Xmx3072m -Dfile.encoding=UTF-8\n';p.write_text(s)
+
+# Use the checksum-pinned local distribution prepared by bootstrap_android.py.
+p=build/'gradle/wrapper/gradle-wrapper.properties'
+s="\n".join(line for line in p.read_text().splitlines() if not line.startswith(("distributionUrl=","distributionSha256Sum=")))
+s+='\ndistributionSha256Sum=f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6\ndistributionUrl=file\\:/workspace/runtime/downloads/gradle-8.11.1-bin.zip\n'
+p.write_text(s)

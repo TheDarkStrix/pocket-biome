@@ -12,7 +12,7 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 | assets/nodes/harvest_states.png | 1254×1254 PNG | Five depleted node states and material icons | Integrated |
 | assets/ui/icons.png | 1254×1254 PNG | Coins, Dew, clay, iron, Rain, Heat, Frost, Codex, options | Integrated; HUD and flight feedback |
 | assets/app_icon.png | 1254×1254 PNG | Launcher/splash identity | Integrated in Android export |
-| assets/audio/*.wav | PCM 22050Hz | Five original synthesized feedback cues and 32s ambient loop | Integrated; headless encoding verified; human listening open |
+| assets/audio/*.wav | PCM 22050Hz | Eleven original synthesized feedback cues and 32s ambient loop | Integrated; headless encoding verified; human listening open |
 
 ## Specifications and delivery rules
 

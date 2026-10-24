@@ -24,7 +24,7 @@ The original repository was empty with no working functionality or commits to pr
 
 Coordinates are stable `x,y` keys independent of projection. Maximum gameplay occupancy is 36 cells; storage validates up to 64. Fused entities have one origin and three reservations; all cooldown, DNA, influence and picking queries resolve that origin. Fusion commits atomically before animation and never grants duplicate discovery rewards.
 
-Simulation uses monotonic active seconds, per-frame cooldown advancement and 1Hz environmental updates. Neighbor sums are buffered and clamped after all sources; recipe tiers increase monotonically. DNA is bounded 0–100. Offline time grants no production. Background saves and resume delta suppression prevent elapsed-time windfalls.
+Simulation uses monotonic active seconds, per-frame cooldown advancement and 1Hz environmental updates. Neighbor sums are buffered and clamped after all sources; recipe tiers increase monotonically. DNA is bounded 0–100. Offline time grants no production. Harvest writes debounce for 350ms and flush immediately on backgrounding. Background saves and resume delta suppression prevent elapsed-time windfalls.
 
 Expansion stores target, frozen three offers and quoted cost; payment occurs only on successful placement. One optional ad reroll per expansion preserves the price and target. Essential source tiles are also craftable, protecting progression at the land cap. Initial wood/stone/fiber nodes remain productive and cannot be retired.
 
