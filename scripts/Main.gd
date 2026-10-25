@@ -950,7 +950,7 @@ func tile_title(tile: Dictionary) -> String:
 func apply_settings() -> void:
  services.telemetry.model = model
  services.telemetry.reconcile_consent()
- if services.bridge != null and services.bridge.has_method("setDiagnosticsEnabled"):
+ if services.bridge != null:
   services.bridge.setDiagnosticsEnabled(model.state.settings.analytics)
  audio_feedback.process_mode = Node.PROCESS_MODE_INHERIT
  var effects: float = model.state.audio_levels.sfx if model.state.settings.sfx else 0.0

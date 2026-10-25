@@ -39,3 +39,5 @@ Expansion/fusion/rain and UI response changes pass 701 assertions plus the full 
 ## Production engineering checkpoint
 
 Ongoing ambient art motion, timer cadence and privacy/provider hardening implemented. Preview build is verified against724 Godot assertions, eight Python audit tests and actual APK checks. Final production gate intentionally blocks development credentials and missing device/store/creative evidence. Do not treat a debug APK or static audit as a certified public release.
+
+Current verified source:750 Godot assertions and eight Python audit tests; native camera-button/menu-scroll/privacy/preference checks passed. Four-view camera is implemented; true continuous3D orbit remains a separately specified rendering phase.

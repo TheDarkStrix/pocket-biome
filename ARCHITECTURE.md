@@ -59,3 +59,5 @@ Neighbor effects and automated production retain anchored cycle deadlines; frame
 Camera view_turn rotates projected grid coordinates in 90° steps. Inverse picking applies the inverse turn; depth sorting uses rotated entity centers. Fused reservations retain the same logical origin. Two-finger twist uses a60° threshold with90° residual subtraction to avoid pinch jitter. This is a 2.5D four-view camera, not a 3D model renderer.
 
 Menu buttons pass GUI events to ScrollContainer so native touch drags can scroll; panels still contain modal input. Regression tests check below-fold reachability, no unintended button activation and no leaked world pointers. Native crash capture receives the actual diagnostics consent; opting in does not import Android exit records from an opt-out period.
+
+JNI interface note:the wrapped Godot Android singleton dispatches plugin methods dynamically. Generic Object.has_method introspection skipped the new privacy helpers on the tested device. Own-package helper calls now use the known compiled interface after checking the singleton exists. Native SharedPreferences on/off verification confirms delivery.

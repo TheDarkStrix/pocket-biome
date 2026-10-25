@@ -48,3 +48,5 @@ Current evidence:724 Godot assertions, eight Python audit tests, actual OpenGL a
 ## Camera and mobile-menu follow-up
 
 Four quarter-turn views, World rotation controls and two-finger twist are implemented with rotation-aware picking/depth/framing. Continuous free-angle 3D orbit remains unimplemented and needs the separately documented renderer/asset phase. Menu touch scrolling now reaches below-fold controls without activating buttons. Native diagnostics capture obeys opt-in, and SDK measurement initialization is delayed. Latest 750 Godot assertions plus eight Python audit cases pass; release is still blocked as documented.
+
+Latest Android follow-up verified current rotation, menu drag scrolling, privacy disclosure, and real native diagnostics preference On/Off delivery. Stable progression survived replacement and UI testing. Source and evidence are pushed independently of the unfulfilled production signing/store/device/creative gates. Continuous free-angle3D orbit remains unimplemented.

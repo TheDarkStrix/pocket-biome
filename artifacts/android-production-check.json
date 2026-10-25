@@ -1,6 +1,13 @@
 {
+  "source_sha256": "686f14a521de0a216012760bc1da15f185733cea32f96005a30fff12d06642c5",
   "install_succeeded": true,
-  "stable_saved_fields": {
+  "native_launch_and_world_rendered": true,
+  "native_world_rotation_button_verified": true,
+  "native_menu_drag_scrolling_verified": true,
+  "native_privacy_disclosure_verified": true,
+  "native_diagnostics_opt_in_on": true,
+  "native_diagnostics_opt_out_off": true,
+  "stable_save_fields": {
     "seed": true,
     "coins": true,
     "discoveries": true,
@@ -12,7 +19,6 @@
     "entitlements": true,
     "tile_content_except_effect_schedule": true
   },
-  "all_stable_fields_matched": true,
-  "source_sha256": "d09a36cfc122ddb07ceb130347f12ab9705b8ed4066ccb67dafe4e85193418ea",
-  "note": "API29 software emulator replacement install; prior app remained active before installation, so effect clocks may advance. Native visual/lifecycle checks are separately recorded; not physical/store certification."
+  "native_godot_error_lines": [],
+  "note": "Bounded API29 software-emulator checks using touchscreen injection and actual native preferences. Not physical performance, two-finger gesture comfort, real Google consent or sandbox transaction certification. Effect schedules may advance while the old app remains active before replacement."
 }
