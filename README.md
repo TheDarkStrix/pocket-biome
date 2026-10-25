@@ -4,6 +4,10 @@
 
 Android 7.0+ (API 24), ARM64 phones. Signed debug preview, not a public release candidate. Install over the existing test build to retain your world; do not uninstall.
 
+## Conditions explanation update
+
+The top-right panel now reads **Tile conditions**, with explicit **Moisture** and **Heat** labels. Tap it to learn how the selected tile's 0–100 scores affect transformations. Heat is a relative warmth score, not Celsius. Enlarged-text layout and real-touch explanation navigation are tested. This wording revision has export/signature/OpenGL-capture checks; the earlier native gameplay/relocation checks below precede this wording change.
+
 ## Player-feedback update
 
 - Visible expansion controls receive touch before overlapping canopy artwork.
@@ -12,7 +16,7 @@ Android 7.0+ (API 24), ARM64 phones. Signed debug preview, not a public release 
 - Rain showers/ripples cover the full affected area for 3.2 seconds; reduced motion retains confirmation.
 - Press/release responses, panel/menu fades, resource highlights and interpolated chapter/ecology stats.
 
-Source: a80f58f1d4c80df56ef78b8e20bce43a062b8ebf. 701 automated assertions pass, plus complete progression/startup checks. The equivalent universal runtime payload installed and rendered on an Android emulator, retained progress and passed native cloud/draft-relocation checks. Phone APK signature/alignment and identical retained files verified. Physical ARM64-device/performance validation remains open. Ads use test IDs; real purchase/restore and release qualification remain unverified.
+Source: 460f9cf72cd1a3b17122a83f465217726ae7860a. 708 automated assertions pass, plus complete progression/startup checks. The preceding gameplay-fix runtime payload installed and rendered on an Android emulator, retained progress and passed native cloud/draft-relocation checks. Phone APK signature/alignment and identical retained files verified. Physical ARM64-device/performance validation remains open. Ads use test IDs; real purchase/restore and release qualification remain unverified.
 
 For fusion, use **Find a sanctuary fusion** or **World → Fuse sanctuary**. Four matching tiles must make a square in grid space (a diamond on screen), rather than a row. Oak differs from Forest; evolved Forest tiles still count. The chooser shows readiness and temporary blockers.
 
