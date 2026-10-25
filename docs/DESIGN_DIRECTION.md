@@ -1,19 +1,19 @@
-# Current design direction — Terra Nil reference
+# Current design direction
 
-Latest user instruction: the parchment/brass/rounded design was rejected as too childish. **Terra Nil is the primary reference.** This supersedes earlier navy/green and parchment directions. Preserve functioning gameplay and the isometric land strengths while moving the interface toward a mature ecological strategy game.
+The user requests Terra Nil's style and gameplay HUD hierarchy, **not its colors**. This supersedes the earlier fixed navy/green, parchment/brass, and navy/rust interpretations. Existing isometric land strengths and working gameplay remain intact.
 
-## Principles from actual reference review
+## Pocket Biome's visual system
 
-Official Steam screenshots show dark, flat panels with fine blue-grey borders; compact ecological gauges; a narrow illustrated tool strip; restrained rust/orange action accents; and a landscape-led composition. They do not use parchment framing, heavy gold trim or a rounded novelty wordmark.
+Graphite surfaces, pearl text and muted-violet actions form an original palette. Neutral licensed typography, fine borders, small corners and flat surfaces replace decorative shadows, novelty lettering and bubble backgrounds. Original line icons handle control chrome; illustrated terrain, materials and construction outputs retain their visual role.
 
-## Pocket Biome interpretation
+## Gameplay screen hierarchy
 
-- Charcoal/blue-green surfaces, off-white text, muted sage secondary data and rust primary actions.
-- Thin 1px borders, 4px corners, no decorative panel shadows.
-- Neutral Inter-derived body type and a light title face, with no outlined bubble lettering.
-- Original monochrome line icons for navigation and powers. Illustrated materials/biomes remain in the content, not as decorative button badges.
-- Compact global ledger, contextual selected-biome information, one Pulse selector and a four-action tool dock.
-- Terrain remains the primary visual focus; remove background bubbles and gameplay markers from the title preview/photo mode.
-- Portrait touch targets remain generous even though the visual framing is restrained.
+- Upper-left: real chapter-progress dial, currency/material ledger and concise current objective. Compact counts are a display convenience; exact values remain in model state and Workshop.
+- Upper-right: selected-biome local moisture/heat gauges. All five DNA attributes and detailed influences are available in the inspector.
+- Bottom: selected-biome context, readable Pulse control and a compact illustrated tool dock. Detailed crafting, discovery, world and settings controls stay contextual.
+- The landscape owns the central space. Gameplay framing occurs after HUD layout settles; title-preview framing is independent of gameplay pan. Photo mode hides gameplay markers and restores the prior camera on exit.
+- Portrait targets, text scaling and safe areas remain functional requirements, even where visual framing is minimal.
 
-Read UI_RESEARCH.md for exact sources and limitations. Do not copy Terra Nil artwork, branding or its economy/mechanics. Pocket Biome retains its DNA, discovery, expansion and fusion identity. Keep references/user_art_direction.jpg for isometric proportions/material consistency, not as a fixed UI skin or price specification.
+## Reference use
+
+Official Terra Nil screenshots were actually reviewed for grouping, data hierarchy and terrain-first composition; its palette, artwork, branding and mechanics are not copied. See UI_RESEARCH.md. The supplied references/user_art_direction.jpg remains useful for isometric proportions, natural materials and silhouettes, not as a fixed UI skin or economy specification.

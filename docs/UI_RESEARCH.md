@@ -1,3 +1,15 @@
+# Current application — hierarchy with an independent palette
+
+The user explicitly says not to use Terra Nil's colors. Pocket Biome applies the reference's three screen zones using its own graphite/pearl/muted-violet palette: actual chapter/resource data upper-left, local ecology upper-right, contextual controls/tool dock below. Earlier palette interpretations in this research history are superseded by DESIGN_DIRECTION.md. No reference-game branding or assets ship in Pocket Biome.
+
+---
+
+# Latest implementation clarification
+
+Terra Nil is a reference for information hierarchy and functional screen zones, not a color specification. The user explicitly clarified this. Pocket Biome now uses graphite/pearl/muted-violet styling, a real chapter dial and resource ledger upper-left, local DNA meters upper-right, and contextual controls/tool dock below. The original corner grouping adapts the reference to portrait mobile; no reference colors, branding or artwork are copied as a palette/theme.
+
+---
+
 # Primary reference update — Terra Nil
 
 The user rejected the parchment interface as too childish and explicitly requested Terra Nil. This section supersedes the earlier interpretation below.

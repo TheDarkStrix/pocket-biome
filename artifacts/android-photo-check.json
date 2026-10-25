@@ -1,0 +1,31 @@
+{
+  "dimensions": [
+    320,
+    640
+  ],
+  "toolbar_sample_pixels": [
+    [
+      35,
+      42,
+      52
+    ],
+    [
+      35,
+      42,
+      52
+    ],
+    [
+      35,
+      42,
+      52
+    ],
+    [
+      35,
+      42,
+      52
+    ]
+  ],
+  "toolbar_region_uniform": true,
+  "system_chooser_observed": true,
+  "destination_selected": false
+}

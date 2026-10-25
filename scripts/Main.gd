@@ -35,6 +35,7 @@ var pulse_bar: ProgressBar
 var rain_button: Button
 var heat_button: Button
 var pulse_button: Button
+var frame_on_layout := false
 var modal_title: Label
 var modal_scroll: ScrollContainer
 var modal_scrim: ColorRect
@@ -42,6 +43,8 @@ var notice_toast: PanelContainer
 var last_notice := ""
 var notice_time := 0.0
 var menu_spacer: Control
+var ecology_monitor: PanelContainer
+var chapter_dial: Control
 var draft_button: Button
 var inventory: RichTextLabel
 var draft_cards: Array[Button] = []
@@ -119,12 +122,12 @@ func button(text: String, action: Callable, parent: Node) -> Button:
  b.add_theme_font_size_override("font_size",scaled_font(17))
  b.add_theme_color_override("font_color",Color("fff4dc"))
  b.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACTION))
- b.add_theme_stylebox_override("hover",panel_style(Color("42615e")))
- b.add_theme_stylebox_override("pressed",panel_style(Color("1a3034")))
- b.add_theme_stylebox_override("disabled",panel_style(Color("263b3d")))
+ b.add_theme_stylebox_override("hover",panel_style(Color("46515c")))
+ b.add_theme_stylebox_override("pressed",panel_style(Color("202831")))
+ b.add_theme_stylebox_override("disabled",panel_style(Color("30373f")))
  b.add_theme_color_override("font_disabled_color",ThemeKit.MUTED)
  var focus := panel_style(Color(0,0,0,0))
- focus.border_color = Color("c78356")
+ focus.border_color = ThemeKit.ACCENT
  focus.set_border_width_all(2)
  b.add_theme_stylebox_override("focus",focus)
  b.pressed.connect(action)
@@ -151,6 +154,10 @@ func build_ui() -> void:
  var ledger_content := VBoxContainer.new()
  ledger_content.add_theme_constant_override("separation",4)
  ledger.add_child(ledger_content)
+ var ledger_row := HBoxContainer.new()
+ ledger_content.add_child(ledger_row)
+ chapter_dial = preload("res://scripts/ChapterDial.gd").new()
+ ledger_row.add_child(chapter_dial)
  inventory = RichTextLabel.new()
  inventory.fit_content = true
  inventory.scroll_active = false
@@ -158,15 +165,16 @@ func build_ui() -> void:
  inventory.add_theme_font_size_override("normal_font_size",17)
  inventory.add_theme_color_override("default_color",ThemeKit.INK)
  inventory.tooltip_text = "Coins · Pulse energy · Wood · Stone · Fiber · Occupied land"
- ledger_content.add_child(inventory)
+ inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ ledger_row.add_child(inventory)
  pulse_bar = ProgressBar.new()
  pulse_bar.max_value = 200
  pulse_bar.show_percentage = false
  pulse_bar.custom_minimum_size.y = 5
  pulse_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
  var track := StyleBoxFlat.new()
- track.bg_color = Color("344e50"); track.set_corner_radius_all(3)
- var fill := track.duplicate(); fill.bg_color = ThemeKit.GOLD
+ track.bg_color = Color("3b444e"); track.set_corner_radius_all(3)
+ var fill := track.duplicate(); fill.bg_color = ThemeKit.ACCENT
  pulse_bar.add_theme_stylebox_override("background",track)
  pulse_bar.add_theme_stylebox_override("fill",fill)
  ledger_content.add_child(pulse_bar)
@@ -199,8 +207,8 @@ func build_ui() -> void:
  pulse_button = button("Pulse",pulse_selector,context)
  pulse_button.custom_minimum_size.x = 128
  pulse_button.size_flags_horizontal = Control.SIZE_SHRINK_END
- pulse_button.add_theme_stylebox_override("normal",panel_style(ThemeKit.GOLD))
- pulse_button.add_theme_color_override("font_color",ThemeKit.INK)
+ pulse_button.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACCENT))
+ pulse_button.add_theme_color_override("font_color",ThemeKit.PRIMARY_INK)
  draft_button = button("Resume draft",func():
   if placement_blueprint != "":
    placement_blueprint = ""
@@ -226,6 +234,9 @@ func build_ui() -> void:
  notice.mouse_filter = Control.MOUSE_FILTER_IGNORE
  notice.max_lines_visible = 2
  notice_toast.hide()
+ ecology_monitor = preload("res://scripts/EcologyReadout.gd").new()
+ root.add_child(ecology_monitor)
+ hud.visibility_changed.connect(func(): ecology_monitor.visible = hud.visible)
  photo_controls = HBoxContainer.new()
  photo_controls.position = Vector2(20,880)
  photo_controls.size.x = 500
@@ -364,7 +375,7 @@ func inspect_card(index: int) -> void:
  button("Back to three cards",draft,box)
 
 func rarity_color(rarity: String) -> Color:
- return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":Color("c78356")}.get(rarity,Color("8ea18f"))
+ return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":ThemeKit.ACCENT}.get(rarity,Color("8ea18f"))
 
 func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
  var caption: Label = label("%s · %d" % [attribute.capitalize(),value],15,parent)
@@ -416,20 +427,29 @@ func refresh() -> void:
  pulse_bar.value = model.state.energy
  if is_instance_valid(rain_button): rain_button.disabled = model.state.energy < 100
  if is_instance_valid(heat_button): heat_button.disabled = model.state.energy < 100
- pulse_button.text = "Pulse\n%d / 200" % model.state.energy
+ pulse_button.text = "Pulse\n%d/200" % model.state.energy
+ update_pulse_width()
  draft_button.text = "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
  draft_button.disabled = targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
  draft_button.visible = not draft_button.disabled
- inventory.add_theme_font_size_override("normal_font_size",scaled_font(17))
+ chapter_dial.display(model)
+ inventory.add_theme_font_size_override("normal_font_size",scaled_font(16))
  inventory.clear()
- for resource in ["coins","rain","wood","stone","fiber"]:
-  if resource == "wood": inventory.add_text("\n")
-  elif resource != "coins": inventory.add_text("   ")
-  inventory.add_image(preload("res://scripts/UIIcons.gd").texture(resource),28,28,Color.WHITE,INLINE_ALIGNMENT_CENTER)
-  var amount: int = model.state.coins if resource == "coins" else model.state.energy if resource == "rain" else model.state.inventory[resource]
-  inventory.add_text(" %d" % amount + ("/200" if resource == "rain" else ""))
- inventory.add_text("   Land %d/36" % model.state.tiles.size())
- objective.text = model.objective_text()
+ inventory.add_image(preload("res://scripts/UIIcons.gd").texture("coins"),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
+ inventory.add_text(" "+compact_amount(model.state.coins)+"   ")
+ inventory.add_image(preload("res://scripts/UIIcons.gd").texture("world"),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
+ inventory.add_text(" %d/36\n" % model.state.tiles.size())
+ for resource in ["wood","stone","fiber"]:
+  if resource != "wood": inventory.add_text("  ")
+  inventory.add_image(preload("res://scripts/UIIcons.gd").texture(resource),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
+  inventory.add_text(" "+compact_amount(model.state.inventory[resource]))
+ inventory.tooltip_text = "Coins %d · Wood %d · Stone %d · Fiber %d · Land %d/36" % [model.state.coins,model.state.inventory.wood,model.state.inventory.stone,model.state.inventory.fiber,model.state.tiles.size()]
+ var goal: String = model.objective_text()
+ var parts: PackedStringArray = goal.split(" · ",true,1)
+ if parts[0] in ["FIRST SEED","NEW HORIZONS","LIVING ROOTS","YOUR LIVING WORLD"]:
+  goal = parts[-1].replace(" (+10 coins)","")
+ else: goal = goal.replace(" · ","\n")
+ objective.text = goal
  if model.message != last_notice:
   last_notice = model.message
   notice.text = model.message
@@ -437,6 +457,7 @@ func refresh() -> void:
  var k: String = model.origin(selected)
  if k != "":
   var t: Dictionary = model.state.tiles[k]
+  ecology_monitor.display(t)
   var production: Dictionary = model.production(t)
   var remaining: int = ceili(maxf(0,t.ready-model.state.time))
   info.text = tile_title(t)+"\n"+("Ready to collect" if remaining == 0 and production.resource != "" else "Ready in %ds" % remaining if production.resource != "" else "Hold to discover its secrets")
@@ -446,6 +467,12 @@ func refresh() -> void:
  last_discoveries = model.state.discoveries.size()
  call_deferred("apply_layout")
  queue_redraw()
+
+func compact_amount(amount: int) -> String:
+ if amount >= 1000000: return "%.1fm" % (float(amount)/1000000.0)
+ if amount >= 10000: return "%dk" % (amount/1000)
+ if amount >= 1000: return "%.1fk" % (float(amount)/1000.0)
+ return str(amount)
 
 func project(c: Vector2) -> Vector2:
  return Vector2((c.x-c.y)*66,(c.x+c.y)*33)
@@ -508,7 +535,9 @@ func apply_layout() -> void:
  if OS.get_name() == "Android" or OS.get_name() == "iOS":
   var physical := Vector2(DisplayServer.screen_get_size())
   safe = preload("res://scripts/SafeLayout.gd").logical_safe_rect(viewport_size,physical,Rect2(DisplayServer.get_display_safe_area()))
+ hud.size.x = maxf(240,safe.size.x-40-ecology_monitor.custom_minimum_size.x-12)
  layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(110,hud.get_combined_minimum_size().y),maxf(124,bottom.get_combined_minimum_size().y))
+ layout.top.size.x = hud.size.x
  hud.position = layout.top.position
  hud.size = layout.top.size
  bottom.position = layout.bottom.position
@@ -523,26 +552,25 @@ func apply_layout() -> void:
  if launch_menu:
   modal.position.y = safe.position.y+20
   modal.size.y = safe.size.y-40
- notice_toast.position = layout.world.position+Vector2(8,8)
+ ecology_monitor.size = Vector2(180,0)
+ ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,safe.position.y+20)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
+ notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
   modal.size.y = layout.modal.end.y-modal.position.y
  photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
  if launch_menu: frame_title_island(safe)
+ elif frame_on_layout:
+  frame_world()
+  frame_on_layout = false
  else: constrain_camera()
  queue_redraw()
 
 func frame_title_island(safe: Rect2) -> void:
  # Android can resize after _ready; never reuse the gameplay pan for the title hero.
- var bounds := Rect2()
- var first := true
- for key in model.state.tiles:
-  var point := project(model.coord(key))
-  if first: bounds = Rect2(point,Vector2.ZERO); first = false
-  else: bounds = bounds.expand(point)
- bounds = bounds.grow(140)
+ var bounds := world_art_bounds(false)
  var hero := Rect2(safe.position+Vector2(20,safe.size.y*0.20),Vector2(safe.size.x-40,safe.size.y*0.42))
  zoom_level = clampf(minf(hero.size.x/bounds.size.x,hero.size.y/bounds.size.y),0.04,1.8)
  pan = hero.get_center()-world_anchor()-bounds.get_center()*zoom_level
@@ -642,7 +670,7 @@ func _draw() -> void:
   var area := get_viewport_rect()
   for band in range(48):
    var fraction := float(band)/47.0
-   draw_rect(Rect2(0,area.size.y*band/48.0,area.size.x,area.size.y/48.0+1),Color("2b4547").lerp(Color("14272f"),fraction))
+   draw_rect(Rect2(0,area.size.y*band/48.0,area.size.x,area.size.y/48.0+1),Color("3b4248").lerp(Color("222933"),fraction))
  if palette != "day":
   var palettes := {"moon":Color("101b38"),"dusk":Color("30263e"),"celestial":Color("182d36"),"sakura":Color("322d41")}
   draw_rect(get_viewport_rect(),palettes.get(palette,Color("17243a")))
@@ -715,7 +743,7 @@ func _draw() -> void:
     var opacity: float = 0.35+0.35*absf(sin(phase))
     draw_circle(glow,2*s,Color(1,0.85,0.5,opacity))
     draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
-  if not photo_mode and not launch_menu and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,Color("c78356"),2*s)
+  if not photo_mode and not launch_menu and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,ThemeKit.ACCENT,2*s)
 
  for effect in presentation.weather:
   var center := entity_screen(effect.key)
@@ -837,6 +865,7 @@ func apply_settings() -> void:
   audio_feedback.ambience.stream_paused = music <= 0
  if ui_root != null: update_fonts(ui_root)
  update_stacked_buttons()
+ update_pulse_width()
  call_deferred("apply_layout")
 
 func update_fonts(node: Node) -> void:
@@ -865,14 +894,30 @@ func services_ui() -> void:
  button("Use daylight palette",func(): model.state.cosmetic = "day"; persist(); refresh(),box)
  campaign_ui.close_button(self,box)
 
-func frame_world() -> void:
+func world_art_bounds(include_frontier: bool) -> Rect2:
  var bounds := Rect2()
  var first := true
  for key in model.state.tiles:
-  var point := project(model.coord(key))
-  if first: bounds = Rect2(point,Vector2.ZERO); first = false
-  else: bounds = bounds.expand(point)
- bounds = bounds.grow(150)
+  var tile: Dictionary = model.state.tiles[key]
+  if tile.has("owner"): continue
+  var footprint: float = 2.0 if tile.size == 4 else 1.0
+  var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if footprint == 2 else Vector2.ZERO)
+  var spec: Dictionary = preload("res://scripts/TileArtwork.gd").appearance(tile.type,tile.evolution)
+  var scale: float = 132.0/418.0*spec.normalization*footprint
+  var visual := Rect2(project(at)-spec.pivot*scale,spec.region.size*scale)
+  if first: bounds = visual; first = false
+  else: bounds = bounds.merge(visual)
+ if include_frontier:
+  var cloud: Dictionary = preload("res://scripts/TileArtwork.gd").appearance("cloud","")
+  var scale: float = 132.0/418.0*cloud.normalization*0.72
+  for key in model.frontier():
+   var visual := Rect2(project(model.coord(key))-cloud.pivot*scale,cloud.region.size*scale)
+   bounds = bounds.merge(visual)
+ if first: bounds = Rect2(-66,-66,132,132)
+ return bounds.grow(24)
+
+func frame_world() -> void:
+ var bounds := world_art_bounds(not photo_mode)
  var area := world_rect()
  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y),0.04 if photo_mode else 0.5,2.0)
  pan = area.get_center()-world_anchor()-bounds.get_center()*zoom_level
@@ -893,7 +938,7 @@ func end_photo() -> void:
   pan = photo_saved_view.pan
   photo_saved_view.clear()
  hud.show(); bottom.show(); photo_controls.hide()
- constrain_camera()
+ call_deferred("apply_layout")
  queue_redraw()
 
 func capture_photo() -> bool:
@@ -936,8 +981,8 @@ func start_screen() -> void:
  launch_screen.add_child(menu_spacer)
  var play := button("Continue your world" if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
  play.custom_minimum_size.y = 60*logical_per_dp()
- play.add_theme_stylebox_override("normal",panel_style(ThemeKit.GOLD))
- play.add_theme_color_override("font_color",ThemeKit.INK)
+ play.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACCENT))
+ play.add_theme_color_override("font_color",ThemeKit.PRIMARY_INK)
  var secondary := HBoxContainer.new()
  launch_screen.add_child(secondary)
  button("Settings",func(): campaign_ui.settings(self),secondary)
@@ -974,7 +1019,7 @@ func start_play() -> void:
  launch_menu = false
  if launch_screen != null: launch_screen.hide()
  hud.show(); bottom.show(); modal.hide()
- frame_world()
+ frame_on_layout = true
  if not model.state.settings.tutorial_seen:
   services.event("tutorial_started")
   model.state.settings.tutorial_seen = true
@@ -1073,6 +1118,12 @@ func entity_screen(key: String) -> Vector2:
  if origin == "": return screen(model.coord(key))
  var offset := Vector2(0.5,0.5) if model.state.tiles[origin].size == 4 else Vector2.ZERO
  return screen(Vector2(model.coord(origin))+offset)
+
+func update_pulse_width() -> void:
+ if not is_instance_valid(pulse_button): return
+ var font: Font = pulse_button.get_theme_font("font")
+ var width: float = font.get_string_size("200/200",HORIZONTAL_ALIGNMENT_LEFT,-1,scaled_font(17)).x
+ pulse_button.custom_minimum_size.x = maxf(128,ceilf(width)+32)
 
 func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var texture: Texture2D = preload("res://scripts/UIIcons.gd").texture(id)

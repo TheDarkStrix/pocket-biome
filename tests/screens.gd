@@ -24,6 +24,7 @@ func run() -> void:
  check(h.modal_box.get_child_count() >= 10,"settings and guide available")
  h.campaign_ui.world(h)
  check(h.modal.visible,"world controls open")
+ check(h.chapter_dial.stage == h.model.state.chapter and h.chapter_dial.fraction >= 0 and h.chapter_dial.fraction <= 1,"chapter dial shows real bounded progression")
  var world_actions: GridContainer
  for child in h.modal_box.get_children():
   if child is GridContainer: world_actions = child
@@ -38,7 +39,7 @@ func run() -> void:
  var prior_zoom: float = h.zoom_level
  var prior_pan: Vector2 = h.pan
  h.begin_photo()
- check(h.photo_mode and not h.hud.visible and h.photo_controls.visible,"photo mode suppresses gameplay HUD")
+ check(h.photo_mode and not h.hud.visible and not h.ecology_monitor.visible and h.photo_controls.visible,"photo mode suppresses gameplay HUD")
  h.end_photo()
  check(not h.photo_mode and h.hud.visible,"photo mode restores controls")
  check(is_equal_approx(h.zoom_level,prior_zoom) and h.pan.is_equal_approx(prior_pan),"leaving photo mode restores gameplay camera")
@@ -67,6 +68,8 @@ func run() -> void:
   h.model.tick(1)
   h.refresh()
   check(h.inspection_view.bars.moisture.bar.value > original,"visible inspector follows environmental DNA updates")
+  check(h.ecology_monitor.bars.moisture.value == h.model.state.tiles["0,0"].dna.moisture,"compact ecological meter follows the selected tile through DNA changes")
+  check(h.ecology_monitor.values.moisture.text == str(int(h.model.state.tiles["0,0"].dna.moisture)),"DNA readout uses integer units rather than JSON float formatting")
   check(h.inspection_view.title.text == h.tile_title(h.model.state.tiles["0,0"]),"inspector title follows the current biome")
   h.dismiss_inspection()
   check(not h.inspection_mode and not h.modal.visible,"inspector dismissal returns input to island")

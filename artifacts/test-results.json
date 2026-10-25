@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-25T03:43:14.030858+00:00",
-  "source_sha256": "43274e3fd4f880a088a5835d3b1f03e7fd047f828725fd9f8f271318367334fe",
+  "utc": "2026-10-25T04:37:01.307598+00:00",
+  "source_sha256": "c1679251ba51e3b140acd693188e0f347e4a06583019da7cd9a3a4c7c3f72650",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 645,
+  "assertions": 679,
   "results": [
     {
       "suite": "run",
@@ -63,13 +63,13 @@
       "suite": "screens",
       "passed": true,
       "exit_code": 0,
-      "assertions": 80
+      "assertions": 83
     },
     {
       "suite": "scene_smoke",
       "passed": true,
       "exit_code": 0,
-      "assertions": 22
+      "assertions": 23
     },
     {
       "suite": "touch_ui",
@@ -81,7 +81,7 @@
       "suite": "mobile_layout",
       "passed": true,
       "exit_code": 0,
-      "assertions": 36
+      "assertions": 66
     },
     {
       "suite": "progression_simulation",

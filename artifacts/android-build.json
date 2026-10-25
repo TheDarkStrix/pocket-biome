@@ -1,12 +1,12 @@
 {
-  "utc": "2026-10-25T03:47:00.760446+00:00",
+  "utc": "2026-10-25T04:53:59.003230+00:00",
   "engine": "4.6.3.stable",
   "type": "Signed debug test APK",
-  "source_sha256": "43274e3fd4f880a088a5835d3b1f03e7fd047f828725fd9f8f271318367334fe",
-  "assertions": 645,
-  "apk_sha256": "74ef9fb227804eb753b6d4564f47604efd0ca79fc4ac35caf9b2f0ef25f8c5a2",
-  "bytes": 178205525,
+  "source_sha256": "c1679251ba51e3b140acd693188e0f347e4a06583019da7cd9a3a4c7c3f72650",
+  "assertions": 679,
+  "apk_sha256": "9327c50525d854db63b733b290b9de87fb83f1a17d6109b824bf97bad39782fc",
+  "bytes": 178212345,
   "renderer": "OpenGL Compatibility; desktop and mobile explicitly configured",
-  "native_gameplay_verified": false,
-  "note": "Terra Nil-inspired interface build; prior gameplay/save checks remain documented, latest native visual check pending."
+  "native_gameplay_verified": true,
+  "note": "Current native APK installed/resumed and rendered. Prior core touch route/save-field comparisons and native photo/share checks are documented separately; not store or physical-performance certification."
 }

@@ -13,11 +13,11 @@ Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | layout | 17 | Portrait geometries, safe-area transforms, scroll bounds and fallback |
 | presentation | 13 | Cosmetic isolation, terminating animation, alpha picking and no replay |
 | services | 25 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
-| screens | 80 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
-| scene_smoke | 22 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
+| screens | 83 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
+| scene_smoke | 23 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
 | touch_ui | 13 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
-| mobile_layout | 36 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
-| **Total** | **645** | Assertions; separate simulation and startup checks also run |
+| mobile_layout | 66 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
+| **Total** | **679** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -27,20 +27,16 @@ Public-action simulation: all 20 discoveries, all five chapters, 35 cells, 119 t
 
 ## Android evidence and limitations
 
-The native plugin compiled and the signed debug package installed on an API29 AOSP x86_64 software emulator. The original export incorrectly selected Vulkan; explicit mobile Compatibility now selects OpenGL, confirmed in native launch logs. The old emulator then reported a 3D shader uniform limit during startup. The unused 3D light limit was reduced, and OpenGL initialization subsequently succeeded with ANGLE/SwiftShader. The software-emulated Android System UI itself stalled/raised ANRs, preventing reliable interaction; a host Mesa backend is now under test. No successful native gameplay claim is made until a game screen is captured and exercised.
+The native plugin compiled and the signed debug package installed on an API29 AOSP x86_64 software emulator. Current APK resumes and renders through explicitly selected OpenGL Compatibility. Bounded current-process log review found no errors; see artifacts/android-runtime-check.json. The software emulator also raised Android System UI/launcher ANRs while booting; these are not attributed to the game.
 
-Open: physical touch/cutout matrix, background/kill restoration on latest APK, native photo chooser, actual test ad reward, Play Billing sandbox purchase/restore, real GPU FPS/memory/thermal/audio, human first-session comprehension, and store release signing. Provider callback tests call the service boundary and do not pretend to execute Google transactions. Local crash handling is not evidence of a configured reporting backend. These gates remain explicit in docs/RELEASE_DEPENDENCIES.md.
+The earlier native touch route exercised launch, Oak harvest, Water draft inspection/confirmation and evolution without debug state injection. Saved state contained five cells, chapter 2, three discoveries and one harvest. A replacement-install check compared ten persisted fields successfully (artifacts/android-restore-check.json). The current APK also installed and resumed that world. These observations are scoped to documented builds, not every device/lifecycle scenario.
 
-Native touch testing exposed disabled mouse emulation preventing Godot Control buttons from receiving presses. The setting is now enabled, while InputController ignores only emulated mouse events for world gestures. A new real-event regression suite passes. Its headless root explicitly uses 540×960 so OS event coordinates match the GUI; calling button signals alone would miss this bug. Rebuilt native touch-path validation is in progress.
+Native photo mode hid gameplay HUD/expansion markers, exported a 320×640 PNG and opened the real Android ChooserActivity. No destination was selected and no photo/message was sent. See artifacts/android-photo-check.json and native captures. Sharing was checked on the preceding corner-HUD build; subsequent camera/goal-caption changes have automated coverage and current native rendering evidence.
 
-## Latest builder UI verification
+Remaining: physical touch/cutout/lifecycle matrix, real GPU FPS/memory/thermal/audio, actual test-ad reward and Play Billing sandbox purchase/restore, configured consent/telemetry, human first-session comprehension and store signing. Provider callback tests exercise the service boundary, not real Google transactions. Local crash collection does not establish delivery to a configured backend or a crash-free percentage.
 
-645 assertions across13 suites pass, plus full progression simulation and headless startup. The real-event suite now exercises dock→Journal, close/scrim dismissal and Pulse selection as well as welcome/harvest/mixed gestures. Mobile metrics fixtures cover320×640,360×780 and540×960 at100%/120% text. Warm-paper style/rounded typography, compact HUD/dock, illustrated production ingredients and title hierarchy render through actual OpenGL in refreshed artifacts01–12. Final native validation of this redesign is separate and in progress.
+## Current presentation verification
 
-The earlier touch-enabled native build was exercised through launch, harvest, Water draft inspection/confirmation and evolution. A saved-state read after that route contained five cells, chapter2, discoveries rainforest/mistforest/reedwater and one harvest, with no debug state injection. The emulator also produced System UI/launcher ANRs while booting; these are not attributed to an app crash. Do not claim physical FPS, reliable Play Billing transactions or finished store readiness from this evidence.
+The user requested Terra Nil's style/structure rather than its colors. Current UI uses an original graphite/pearl/violet palette, chapter/resources upper-left, local ecology upper-right and contextual bottom tools. Actual OpenGL captures 01–12 and native captures show the revision. Earlier playful/parchment and slate/rust skins are superseded.
 
-Latest hardening: independent title-island framing after Android viewport resize, deferred modal control deletion during pointer callbacks, photo camera restoration, hidden expansion/selection markers in photos, and short safe photo-toolbar captions. Real-touch workshop quantity rebuild and six title/photo layout fixtures are included in the645 assertions.
-
-## Terra Nil direction revision
-
-After the user's rejection of the playful skin, the actual official Terra Nil Steam screenshots were reviewed and the UI was revised to restrained flat slate panels, thin borders, neutral licensed typography, rust primary actions and original line controls. All645 assertions still pass; source digest is recorded in artifacts/test-results.json. Actual OpenGL captures01–12 have been regenerated. Android debug export/signature verification succeeded; native visual verification of this specific skin is pending. These are implementation results, not user approval or release certification.
+Mobile fixtures cover three portrait dimensions at normal/enlarged text. They check settled HUD framing, Pulse-number width, separated corner panels, title hero and photo-toolbar bounds. Actual sprite extents drive camera fitting. A tall 32-cell visual fixture derives Ancient Grove bounds independently from renderer atlas metadata; it is not earned-progression evidence. Real-event tests cover navigation, modal replacement and quantity rebuilding. Objective captions retain the action instruction and progress.

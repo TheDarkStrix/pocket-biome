@@ -10,3 +10,6 @@ builds/*.aab
 artifacts/test-logs/
 
 builds/
+
+__pycache__/
+*.pyc

@@ -1,12 +1,13 @@
 extends RefCounted
 # Original ecological interface informed by Terra Nil's hierarchy, not copied assets.
-const PAPER = Color("1d3035")
-const PAPER_ALT = Color("263e42")
-const INK = Color("e6eeea")
-const MUTED = Color("94aaa4")
-const ACTION = Color("304e50")
-const GOLD = Color("b66537") # Rust is reserved for primary actions, not ornamental trim.
-const BORDER = Color("587875")
+const PAPER = Color("252a30")
+const PAPER_ALT = Color("30373e")
+const INK = Color("eef0e8")
+const MUTED = Color("a5afb4")
+const ACTION = Color("353f48")
+const ACCENT = Color("aaa7c6")
+const PRIMARY_INK = Color("242832")
+const BORDER = Color("626e77")
 const BODY = preload("res://assets/fonts/BiomeInterface.ttf")
 const DISPLAY = preload("res://assets/fonts/BiomeDisplay.ttf")
 static func theme() -> Theme:
