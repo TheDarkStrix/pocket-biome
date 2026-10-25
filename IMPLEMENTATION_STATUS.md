@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 645 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 transactions, using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
+`tools/check.sh`: 645 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 tracked progression operations (plus earning-loop harvests), using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
 
 The previous installed Android package selected Vulkan because of the engine mobile override. Both desktop and mobile renderer settings now explicitly select Compatibility/OpenGL; the rebuilt signed debug APK passes all automated checks; native interaction verification is in progress. Do not use the earlier black-screen capture as a current gameplay screenshot.
 
@@ -26,3 +26,7 @@ Work continues autonomously in tested increments. Decisions and external depende
 User correction: navy/green is not a fixed direction. docs/DESIGN_DIRECTION.md supersedes the earlier assumption. Implemented parchment/brass/ink styling, licensed display/body typography, compact global HUD, four illustrated dock actions, selected-tile context, one Pulse selector, transient notices, modal scrim/close controls, responsive live-island title screen, illustrated craft cards with owned/required material counts, and a World action hub retaining fusion/photo/center. SimCity BuildIt and Dorfromantik archived screenshots were actually reviewed; current official pages remain network-blocked. See docs/UI_RESEARCH.md. Six mobile size/text combinations pass 36 layout checks; real touch tests pass 13 checks. Latest signed debug APK rebuilt after all645 assertions; its new UI still requires native verification.
 
 Native gameplay evidence from the previous touch-enabled build: harvested Oak, purchased Water from the saved draft and reached three discoveries through Android touch input. Saved world had five cells, chapter2 and three discoveries. This is functional emulator evidence, not physical-device FPS or purchase certification.
+
+## Latest direction — Terra Nil (supersedes parchment pass)
+
+The user rejected the previous skin as childish. Official Terra Nil Steam screenshots were reviewed, and the interface now uses charcoal/pine flat modules, thin borders, off-white data, rust primary actions, neutral Inter-derived typography and original monochrome line icons. Ornamental shadows, bubble lettering and background bubbles are removed; the title/photo preview excludes gameplay markers. UI hierarchy and validated gameplay remain intact. See docs/DESIGN_DIRECTION.md and docs/UI_RESEARCH.md; earlier parchment design notes are historical, not the current target.

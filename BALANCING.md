@@ -15,7 +15,7 @@ Authority: data/game.json; transaction/objective rules in WorldModel and Campaig
 
 ## Verified progression simulation
 
-`tests/progression_simulation.gd` uses public gameplay transactions and advances active time; it does not inject inventory or discoveries. Latest run: all 20 discoveries, all five chapters, 35 occupied cells, 119 gameplay transactions, 5199 active seconds, ending with 1293 coins. It includes save/restore. This establishes reachability, not an expected human completion time or optimal strategy. The script deliberately accelerates waiting and knows recipe conditions.
+`tests/progression_simulation.gd` uses public gameplay transactions and advances active time; it does not inject inventory or discoveries. Latest run: all 20 discoveries, all five chapters, 35 occupied cells, 119 tracked progression operations, plus earning-loop harvests, 5199 active seconds, ending with 1293 coins. It includes save/restore. This establishes reachability, not an expected human completion time or optimal strategy. The script deliberately accelerates waiting and knows recipe conditions.
 
 First normal path: harvest Oak, open adjacent cloud, inspect Water and confirm placement; moisture crosses the Rainforest threshold in a few active seconds. Scene smoke exercises this launch-to-evolution route with real UI callbacks.
 

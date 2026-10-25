@@ -119,12 +119,12 @@ func button(text: String, action: Callable, parent: Node) -> Button:
  b.add_theme_font_size_override("font_size",scaled_font(17))
  b.add_theme_color_override("font_color",Color("fff4dc"))
  b.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACTION))
- b.add_theme_stylebox_override("hover",panel_style(Color("52968b")))
- b.add_theme_stylebox_override("pressed",panel_style(Color("356964")))
- b.add_theme_stylebox_override("disabled",panel_style(Color("d4d9c5")))
- b.add_theme_color_override("font_disabled_color",Color("708175"))
+ b.add_theme_stylebox_override("hover",panel_style(Color("42615e")))
+ b.add_theme_stylebox_override("pressed",panel_style(Color("1a3034")))
+ b.add_theme_stylebox_override("disabled",panel_style(Color("263b3d")))
+ b.add_theme_color_override("font_disabled_color",ThemeKit.MUTED)
  var focus := panel_style(Color(0,0,0,0))
- focus.border_color = Color("f2c46d")
+ focus.border_color = Color("c78356")
  focus.set_border_width_all(2)
  b.add_theme_stylebox_override("focus",focus)
  b.pressed.connect(action)
@@ -165,14 +165,14 @@ func build_ui() -> void:
  pulse_bar.custom_minimum_size.y = 5
  pulse_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
  var track := StyleBoxFlat.new()
- track.bg_color = Color("d8d8ba"); track.set_corner_radius_all(3)
+ track.bg_color = Color("344e50"); track.set_corner_radius_all(3)
  var fill := track.duplicate(); fill.bg_color = ThemeKit.GOLD
  pulse_bar.add_theme_stylebox_override("background",track)
  pulse_bar.add_theme_stylebox_override("fill",fill)
  ledger_content.add_child(pulse_bar)
  objective = label("",17,hud)
  objective.max_lines_visible = 2
- objective.add_theme_color_override("font_color",Color("234d52"))
+ objective.add_theme_color_override("font_color",ThemeKit.INK)
  bottom = VBoxContainer.new()
  bottom.position = Vector2(22,740)
  bottom.size.x = 496
@@ -364,7 +364,7 @@ func inspect_card(index: int) -> void:
  button("Back to three cards",draft,box)
 
 func rarity_color(rarity: String) -> Color:
- return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":Color("f2c46d")}.get(rarity,Color("8ea18f"))
+ return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":Color("c78356")}.get(rarity,Color("8ea18f"))
 
 func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
  var caption: Label = label("%s · %d" % [attribute.capitalize(),value],15,parent)
@@ -642,17 +642,13 @@ func _draw() -> void:
   var area := get_viewport_rect()
   for band in range(48):
    var fraction := float(band)/47.0
-   draw_rect(Rect2(0,area.size.y*band/48.0,area.size.x,area.size.y/48.0+1),Color("83b6b8").lerp(Color("d6e4cc"),fraction))
+   draw_rect(Rect2(0,area.size.y*band/48.0,area.size.x,area.size.y/48.0+1),Color("2b4547").lerp(Color("14272f"),fraction))
  if palette != "day":
   var palettes := {"moon":Color("101b38"),"dusk":Color("30263e"),"celestial":Color("182d36"),"sakura":Color("322d41")}
   draw_rect(get_viewport_rect(),palettes.get(palette,Color("17243a")))
   for i in range(28):
    draw_circle(Vector2(fmod(i*137.0,540),180+fmod(i*97.0,450)),1.0+float(i%2),Color(0.95,0.82,0.56,0.4))
- # Candidate atlas renderer; final evolved artwork and edge cleanup pending approval.
- for i in range(16):
-  var pos := Vector2(fmod(i*193.0,540),220+fmod(i*117.0,420))
-  draw_circle(pos,30+float(i%3)*12,Color(0.6,0.8,0.9,0.035))
- var visible_frontier: Array = [] if photo_mode else model.frontier()
+ var visible_frontier: Array = [] if photo_mode or launch_menu else model.frontier()
  for k in visible_frontier:
   var p := screen(model.coord(k))
   var r := 25*zoom_level
@@ -719,7 +715,7 @@ func _draw() -> void:
     var opacity: float = 0.35+0.35*absf(sin(phase))
     draw_circle(glow,2*s,Color(1,0.85,0.5,opacity))
     draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
-  if not photo_mode and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,Color("f2c46d"),2*s)
+  if not photo_mode and not launch_menu and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,Color("c78356"),2*s)
 
  for effect in presentation.weather:
   var center := entity_screen(effect.key)
@@ -927,15 +923,13 @@ func start_screen() -> void:
  launch_screen.size.x = get_viewport_rect().size.x-44
  launch_screen.add_theme_constant_override("separation",12)
  ui_root.add_child(launch_screen)
- var title := label("POCKET BIOME",42,launch_screen)
+ var title := label("Pocket Biome",38,launch_screen)
  title.add_theme_font_override("font",ThemeKit.DISPLAY)
- title.add_theme_color_override("font_color",Color("fff4d7"))
- title.add_theme_color_override("font_outline_color",ThemeKit.INK)
- title.add_theme_constant_override("outline_size",8)
+ title.add_theme_color_override("font_color",ThemeKit.INK)
  title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  var subtitle := label("T I N Y   E X P A N S I O N",14,launch_screen)
  subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var promise := label("A little world, shaped by you.",18,launch_screen)
+ var promise := label("An ecosystem in balance.",18,launch_screen)
  promise.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  menu_spacer = Control.new()
  menu_spacer.custom_minimum_size.y = get_viewport_rect().size.y*0.36

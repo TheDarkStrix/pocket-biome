@@ -5,8 +5,17 @@ const CELLS = {"coins":Vector2i(0,0),"star_dew":Vector2i(1,0),"clay":Vector2i(2,
 const MATERIALS = {"wood":Vector2i(2,1),"stone":Vector2i(0,2),"fiber":Vector2i(1,2),"brick":Vector2i(2,2)}
 const STRUCTURES = preload("res://assets/structures/structures.png")
 const ISLAND = preload("res://assets/app_icon.png")
+const LINE = {
+ "codex":preload("res://assets/ui/line/codex.svg"),
+ "craft":preload("res://assets/ui/line/craft.svg"),
+ "world":preload("res://assets/ui/line/world.svg"),
+ "settings":preload("res://assets/ui/line/settings.svg"),
+ "rain":preload("res://assets/ui/line/rain.svg"),
+ "heat":preload("res://assets/ui/line/heat.svg"),
+ "frost":preload("res://assets/ui/line/frost.svg")}
 static var textures := {}
 static func texture(id: String) -> Texture2D:
+ if LINE.has(id): return LINE[id]
  if textures.has(id): return textures[id]
  if id == "world": return ISLAND
  if id == "craft":

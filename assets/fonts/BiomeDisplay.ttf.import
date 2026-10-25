@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://cofd05p1wvtl"
-path="res://.godot/imported/Nunito.ttf-9a0d659c7c014361f3d844547f0a9ee8.fontdata"
+uid="uid://ctrip6i6n2scl"
+path="res://.godot/imported/BiomeDisplay.ttf-382842d2393de0dc7153f4f794c9f53f.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/Nunito.ttf"
-dest_files=["res://.godot/imported/Nunito.ttf-9a0d659c7c014361f3d844547f0a9ee8.fontdata"]
+source_file="res://assets/fonts/BiomeDisplay.ttf"
+dest_files=["res://.godot/imported/BiomeDisplay.ttf-382842d2393de0dc7153f4f794c9f53f.fontdata"]
 
 [params]
 

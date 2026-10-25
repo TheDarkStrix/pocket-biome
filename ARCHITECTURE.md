@@ -16,7 +16,7 @@ The original repository was empty with no working functionality or commits to pr
 | CampaignUI | Codex, workshop, world management, settings/tutorial; styled scrollable controls |
 | TileArtwork / TileThumbnail / UIIcons | Stable atlas regions, pivots, shared appearance selection and alpha picking; illustrated previews/icons |
 | WorldPresentation | Bounded cosmetic diffs, rise/crossfade/fusion/weather/harvest animations; never owns rewards |
-| GameTheme | Licensed fonts, parchment/brass/ink styles, shared UI palette independent of world skins |
+| GameTheme | Licensed fonts, charcoal/pine/rust styles, shared UI palette independent of world skins |
 | AudioFeedback | Pooled cue voices and ambient loop; independent volume/mute and lifecycle handling |
 | ServiceHub / Telemetry | Optional provider bridge, durable reward ledger/caps, purchase entitlement handling, opt-in diagnostics/HTTPS delivery |
 | PocketServices.kt | Native test Ads/UMP, Billing, rewarded receipts, Android crash diagnostics and user-initiated photo content-URI sharing |
@@ -39,4 +39,6 @@ Tests instantiate the model without a scene tree; scene suites exercise real UI 
 
 ## Builder interface revision
 
-The latest user instruction supersedes the original navy/green preference. Compact HUD and a four-icon dock leave more room for the island. A single Pulse control opens the real power selector; the World hub retains center/fusion/photo actions. Global DNA detail lives in the inspector, production uses illustrated ingredient counts, and a transient notice layer does not resize the world. GameTheme centralizes interface colors/fonts. Modal close controls and a scrim handle dismissal; launch-menu spacing responds to viewport height. See docs/UI_RESEARCH.md for actually reviewed sources and access limitations.
+The latest user instruction selects Terra Nil as a reference and supersedes both earlier navy/green and parchment assumptions. Compact HUD and a four-icon dock leave more room for the island. A single Pulse control opens the real power selector; the World hub retains center/fusion/photo actions. Global DNA detail lives in the inspector, production uses illustrated ingredient counts, and a transient notice layer does not resize the world. GameTheme centralizes interface colors/fonts. Modal close controls and a scrim handle dismissal; launch-menu spacing responds to viewport height. See docs/UI_RESEARCH.md for actually reviewed sources and access limitations.
+
+Current GameTheme uses renamed static Inter derivatives and original SVG line controls. Header/type does not use decorative outlines, panel borders are thin, corners are small and shadows are removed. Official Terra Nil screenshot analysis is recorded in docs/UI_RESEARCH.md; no reference-game assets are distributed.

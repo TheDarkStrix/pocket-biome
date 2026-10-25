@@ -17,3 +17,5 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 Harvest the Oak, tap an adjacent cloud and choose Water to discover the first evolution. Inspect a draft card before confirming it. Hold tiles for DNA/conditions. Drag to pan, pinch/wheel to zoom. Use the Journal for free discovery clues; Craft and World expose progression, automation, upgrades and photo mode. Purchases and ads are optional and use development configurations.
 
 See ARCHITECTURE.md, ART_ASSET_MANIFEST.md, BALANCING.md, TEST_REPORT.md and docs/RELEASE_DEPENDENCIES.md. The authoritative specification is docs/MASTER_PRD_v4.md. The shared visual reference is preserved under docs/references/.
+
+Current visual direction follows the user's Terra Nil reference: restrained ecological UI with flat slate panels, neutral typography and a landscape-led composition. See docs/DESIGN_DIRECTION.md and docs/UI_RESEARCH.md. The previous playful skin is superseded.

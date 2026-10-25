@@ -1,3 +1,7 @@
+# Latest steering — Terra Nil
+
+User rejected parchment/brass/rounded type as childish and explicitly requested Terra Nil analysis. Official Steam page and three official screenshots were successfully reviewed through the official Akamai CDN. New UI is implemented in GameTheme/Main/UIIcons: charcoal/pine flat panels, fine borders, rust action accents, Inter-derived static fonts, original line navigation/power icons, no bubble backgrounds or outlined wordmark. Keep functional HUD/dock/context structure and all gameplay. Current build/checks are running in /workspace/runtime/terra-build.log. Capture fresh renders, validate mobile/real touch results, rebuild/install as needed, update artifacts/status and push the new direction. Previous be8a4ee/c153044 commits contain now-rejected skin but useful tested camera/modal/photo fixes.
+
 # Continuation plan — 2026-10-25
 
 User authorizes autonomous initial-release PRD implementation and periodic GitHub pushes. No blocking questions; record external requirements. Latest correction: navy/green is not fixed or approved. Keep the effective isometric island, redesign HUD/menus/hubs like a polished builder. docs/DESIGN_DIRECTION.md and UI_RESEARCH.md capture the current direction and sources.

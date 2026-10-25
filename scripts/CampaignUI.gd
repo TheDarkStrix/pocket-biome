@@ -31,7 +31,7 @@ func journal(h) -> void:
   if codex_filter != "All" and codex_filter != family: continue
   var panel := PanelContainer.new()
   panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  var style: StyleBoxFlat = h.panel_style(Color("f3e7cb")); style.border_color = h.rarity_color(recipe.rarity)
+  var style: StyleBoxFlat = h.panel_style(Color("263e42")); style.border_color = h.rarity_color(recipe.rarity)
   panel.add_theme_stylebox_override("panel",style)
   grid.add_child(panel)
   var content := VBoxContainer.new(); panel.add_child(content)
@@ -90,7 +90,7 @@ func workshop(h) -> void:
   workshop_jobs[job.id] = h.label("In progress: %s · %ds" % [job.recipe,ceili(maxf(0,job.until-h.model.state.time))],16,box)
  for recipe in h.model.config.crafting:
   var panel := PanelContainer.new()
-  panel.add_theme_stylebox_override("panel",h.panel_style(Color("f1e4c6")))
+  panel.add_theme_stylebox_override("panel",h.panel_style(Color("263e42")))
   box.add_child(panel)
   var row := HBoxContainer.new()
   row.add_theme_constant_override("separation",10)
@@ -130,7 +130,7 @@ func workshop(h) -> void:
    amount.autowrap_mode = TextServer.AUTOWRAP_OFF
    amount.tooltip_text = resource.capitalize()+" · available / required"
    if owned < required:
-    amount.add_theme_color_override("font_color",Color("b04d36"))
+    amount.add_theme_color_override("font_color",Color("e5a278"))
     missing.append("%d more %s" % [required-owned,resource])
   if h.model.state.jobs.size() >= 3: missing.append("All project slots are busy")
   var seconds: int = ceili(h.model.campaign.crafting_seconds(h.model,recipe)*craft_quantity)
@@ -242,9 +242,9 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
  slider.min_value = low; slider.max_value = high; slider.step = step; slider.value = value
  slider.custom_minimum_size.y = h.touch_height()
  var track := StyleBoxFlat.new()
- track.bg_color = Color("d6d5b9"); track.set_corner_radius_all(4)
+ track.bg_color = Color("344e50"); track.set_corner_radius_all(4)
  track.content_margin_top = 4; track.content_margin_bottom = 4
- var fill := track.duplicate(); fill.bg_color = Color("4a8b80")
+ var fill := track.duplicate(); fill.bg_color = Color("8ea995")
  slider.add_theme_stylebox_override("slider",track)
  slider.add_theme_stylebox_override("grabber_area",fill)
  slider.add_theme_stylebox_override("grabber_area_highlight",fill)

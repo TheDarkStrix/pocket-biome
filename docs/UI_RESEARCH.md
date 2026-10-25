@@ -1,3 +1,17 @@
+# Primary reference update — Terra Nil
+
+The user rejected the parchment interface as too childish and explicitly requested Terra Nil. This section supersedes the earlier interpretation below.
+
+**Actually reviewed:** [Terra Nil official Steam page](https://store.steampowered.com/app/1593030/Terra_Nil/) and three official Steam screenshots downloaded via its Akamai CDN. The page identifies Terra Nil; two reviewed screenshots include the actual in-game HUD/tool strip and ecological meters, while one shows terrain/structures without HUD. Reference images are retained outside shipping assets under /workspace/runtime/research/terra_nil_official_*.jpg.
+
+Observed patterns: dark flat modules with thin cool borders; off-white compact data; an orange/rust selected-action state; illustrated construction thumbnails in a narrow strip; readable environmental meters at the screen edge; and landscape occupying most of the composition. The visual weight belongs to restoration/terrain, rather than ornamental menus.
+
+Implemented interpretation: charcoal/pine panels, fine borders, minimal corners and no shadows; neutral licensed Inter-derived typography; an unoutlined light wordmark; original line icons for control chrome; rust used only for primary/active actions; quieter backdrop with no decorative bubbles; and the existing compact functional HUD/dock/context hierarchy. Portrait targets remain at least48dp where applicable. No Terra Nil assets or branding are copied.
+
+Access update: Terra Nil's Steam page and official CDN are now readable. Earlier EA/Google Play/Pocket City attempts were blocked, so their current listing metrics remain unverified. Steam's page being accessible does not establish access to every developer site.
+
+---
+
 # Builder UI research and application
 
 Research date: 2026-10-25. The user requests inspiration from established builders, specifically SimCity, while retaining Pocket Biome's environmental discovery twist.

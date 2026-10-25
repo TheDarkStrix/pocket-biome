@@ -1,16 +1,19 @@
-# Design direction — latest user instruction
+# Current design direction — Terra Nil reference
 
-The user explicitly clarified on 2026-10-25 that navy/green is **not** an approved constraint. Keep the successful isometric island qualities, but redesign HUD, menus and hubs so the product looks, feels and works like a finished game. Earlier statements implying a fixed approved navy/green layout are superseded.
+Latest user instruction: the parchment/brass/rounded design was rejected as too childish. **Terra Nil is the primary reference.** This supersedes earlier navy/green and parchment directions. Preserve functioning gameplay and the isometric land strengths while moving the interface toward a mature ecological strategy game.
 
-## Original Pocket Diorama interface
+## Principles from actual reference review
 
-- Muted daylight sky, illustrated floating terrain, parchment cards, brass accents and dark ink. Cosmetic world palettes retain their own character.
-- Compact global inventory and one current objective at the top.
-- One four-icon bottom dock: Journal, Build, World and Menu. No eight-button wall covering the island.
-- Selected-biome context and a single World Pulse control; its sheet exposes the three powers and charging/unlock states.
-- DNA, detailed influence explanations and advanced actions belong in contextual sheets.
-- Transient feedback appears as a dismissing toast, rather than permanent tutorial paragraphs.
-- A live island hero, expressive licensed display typography, one clear Play/Continue action and grouped secondary options on the title screen.
-- Production screens use illustrations and available/required material counts; missing ingredients are explicit.
+Official Steam screenshots show dark, flat panels with fine blue-grey borders; compact ecological gauges; a narrow illustrated tool strip; restrained rust/orange action accents; and a landscape-led composition. They do not use parchment framing, heavy gold trim or a rounded novelty wordmark.
 
-See UI_RESEARCH.md for sources reviewed, observations, pending verification and candidate games. Reference images are for analysis, not copied game assets. The supplied references/user_art_direction.jpg still guides consistent isometric proportions, material quality and resource silhouettes. Its example prices do not override PRD data.
+## Pocket Biome interpretation
+
+- Charcoal/blue-green surfaces, off-white text, muted sage secondary data and rust primary actions.
+- Thin 1px borders, 4px corners, no decorative panel shadows.
+- Neutral Inter-derived body type and a light title face, with no outlined bubble lettering.
+- Original monochrome line icons for navigation and powers. Illustrated materials/biomes remain in the content, not as decorative button badges.
+- Compact global ledger, contextual selected-biome information, one Pulse selector and a four-action tool dock.
+- Terrain remains the primary visual focus; remove background bubbles and gameplay markers from the title preview/photo mode.
+- Portrait touch targets remain generous even though the visual framing is restrained.
+
+Read UI_RESEARCH.md for exact sources and limitations. Do not copy Terra Nil artwork, branding or its economy/mechanics. Pocket Biome retains its DNA, discovery, expansion and fusion identity. Keep references/user_art_direction.jpg for isometric proportions/material consistency, not as a fixed UI skin or price specification.
