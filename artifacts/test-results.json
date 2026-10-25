@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-25T12:47:10.943417+00:00",
-  "source_sha256": "50801f3298fd563f17ddb671501b7ad173dce24c8cc16b98a9dd79e7f025ffa3",
+  "utc": "2026-10-25T13:31:03.011948+00:00",
+  "source_sha256": "66ec3d0c38fac77c835ed4267bccb0cf8dda131ba48bf63dba05a66349be8e27",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 820,
+  "assertions": 845,
   "results": [
     {
       "suite": "run",
@@ -75,7 +75,7 @@
       "suite": "scene_smoke",
       "passed": true,
       "exit_code": 0,
-      "assertions": 41
+      "assertions": 42
     },
     {
       "suite": "touch_ui",
@@ -87,7 +87,7 @@
       "suite": "mobile_layout",
       "passed": true,
       "exit_code": 0,
-      "assertions": 108
+      "assertions": 132
     },
     {
       "suite": "automation_pacing",

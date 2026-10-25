@@ -146,6 +146,11 @@ func capture() -> void:
  await process_frame
  await process_frame
  scene.frame_world(); await shot("27-mobile-builder-hud")
+ scene.game_hud.show_selection(); scene.game_hud.update_selection(scene)
+ await shot("30-contextual-tile-callout")
+ scene.game_hud.update_selection(scene,6.0)
+ scene.model.state.cosmetic = "dusk"; scene.refresh(); await shot("31-dusk-atmosphere")
+ scene.model.state.cosmetic = "day"; scene.refresh()
  scene.campaign_ui.world(scene); await shot("28-world-hub")
  scene.queue_free()
  await process_frame

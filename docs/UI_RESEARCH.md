@@ -1,3 +1,11 @@
+# Current application — 0.14 feedback correction
+
+The user explicitly rejected the gray background and large persistent cards in 0.13 as dashboard-like. Enlarging or rounding those modules did not address the requested world-first experience. The current revision removes the panel hierarchy from gameplay: resources and a small goal prompt sit directly over an atmospheric sky, detailed statistics are contextual, and five small floating icons replace the enclosing dock. Visible control size is reduced while touch areas are retained. World hub actions no longer each have a heavy bordered card.
+
+The reviewed SimCity BuildIt screenshots show small independent controls over the world, and Pocket City2 groups tools away from the main landscape. Those observations now inform how much interface is visible, rather than just the arrangement of large boxes. The source evidence and its promotional-image limitations below remain unchanged; no new downloads/retention claim is made. See DESIGN_DIRECTION.md for the current implementation and review status.
+
+---
+
 # 0.13 mobile HUD redesign — current reference review
 
 2026-10-25: public Google Play listings and publisher screenshots were fetched successfully. This supersedes the earlier access failures below. Exact screenshot URLs and displayed download bands are recorded in artifacts/mobile-ui-references.json. Reference images are research only, stored outside shipping assets.

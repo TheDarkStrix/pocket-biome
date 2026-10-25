@@ -191,7 +191,7 @@ func world(h) -> void:
  h.game_hud.hub_action(h,"Inspect biome","Conditions & possibilities","codex",func(): h.modal.hide(); h.open_inspector(h.model.origin(h.selected)),actions)
  h.game_hud.hub_action(h,"Center island","Return to your landscape","world",func(): h.modal.hide(); h.frame_world(),actions)
  h.game_hud.hub_action(h,"Fuse sanctuary","Combine a matching square","craft",func(): h.fusion_dialog(),actions)
- h.game_hud.hub_action(h,"Photo mode","Frame, save & share","settings",func(): h.modal.hide(); h.begin_photo(),actions)
+ h.game_hud.hub_action(h,"Photo mode","Frame, save & share","camera",func(): h.modal.hide(); h.begin_photo(),actions)
  var turns := HBoxContainer.new(); box.add_child(turns)
  h.button("Rotate left",func(): h.modal.hide(); h.rotate_camera(-1),turns)
  h.button("Rotate right",func(): h.modal.hide(); h.rotate_camera(1),turns)
@@ -276,7 +276,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for text in ["Camera · Drag to pan, pinch to zoom, and twist two fingers for a 90° turn. World also has rotation buttons.","Ideas · Tap your objective for useful next steps. Workshop has a direct Trade screen for spare materials.","1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap Tile conditions at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
+ for text in ["Camera · Drag to pan, pinch to zoom, and twist two fingers for a 90° turn. World also has rotation buttons.","Ideas · Tap your objective for useful next steps. Workshop has a direct Trade screen for spare materials.","1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap the leaf icon at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
   h.label(text,17,box)
  close_button(h,box)
 

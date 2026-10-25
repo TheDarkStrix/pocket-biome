@@ -91,6 +91,7 @@ func run() -> void:
  await click(h.ecology_monitor.get_global_rect().get_center())
  check(h.modal.visible and h.modal_title.text == "Tile conditions","mobile tap on conditions panel opens its player explanation")
  h.modal.hide()
+ await process_frame # The contextual callout returns after the modal hides.
  await click(h.game_hud.inspect_action.get_global_rect().get_center())
  check(h.modal.visible and not h.inspection_view.is_empty(),"illustrated selected-biome inspect control opens the real inspector through touch")
  h.modal.hide()

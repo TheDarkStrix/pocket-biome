@@ -15,6 +15,7 @@ var pulse_amount: Label
 var pulse_caption: Label
 var inspect_action: Button
 var build_action: Button
+var selection_time := 0.0
 var quest_slot: MarginContainer
 
 func icon(id: String, extent: float, parent: Node) -> TextureRect:
@@ -35,155 +36,135 @@ func surface(parent: Node, color: Color = Palette.PAPER, radius: int = 18) -> Pa
 
 func build(h, root: Control) -> void:
  h.hud = VBoxContainer.new()
- h.hud.add_theme_constant_override("separation",10)
+ h.hud.add_theme_constant_override("separation",4)
  root.add_child(h.hud)
- var ledger := HBoxContainer.new()
- ledger.add_theme_constant_override("separation",8)
- h.hud.add_child(ledger)
+ var resources := HBoxContainer.new()
+ resources.add_theme_constant_override("separation",10)
+ h.hud.add_child(resources)
  h.chapter_dial = preload("res://scripts/ChapterDial.gd").new()
- ledger.add_child(h.chapter_dial)
- var coins := surface(ledger,Palette.PAPER,26)
- coins.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var coin_row := HBoxContainer.new(); coins.add_child(coin_row)
- icon("coins",30,coin_row)
+ resources.add_child(h.chapter_dial); h.chapter_dial.hide()
+ var coin_row := HBoxContainer.new(); coin_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL; resources.add_child(coin_row)
+ icon("coins",24,coin_row)
  h.inventory = RichTextLabel.new()
- h.inventory.fit_content = true
- h.inventory.scroll_active = false
+ h.inventory.fit_content = true; h.inventory.scroll_active = false
  h.inventory.autowrap_mode = TextServer.AUTOWRAP_OFF
  h.inventory.mouse_filter = Control.MOUSE_FILTER_IGNORE
  h.inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ h.inventory.add_theme_color_override("default_color",Color("173844"))
  coin_row.add_child(h.inventory)
- var land_panel := surface(ledger,Palette.PAPER,26)
- var land_row := HBoxContainer.new(); land_panel.add_child(land_row)
- icon("world",20,land_row)
- land = h.label("4/36",15,land_row)
- land.autowrap_mode = TextServer.AUTOWRAP_OFF
- land.tooltip_text = "Occupied land · maximum 36 plots"
- var materials := HBoxContainer.new()
- materials.add_theme_constant_override("separation",8)
- h.hud.add_child(materials)
  for id in ["wood","stone","fiber"]:
-  var group := HBoxContainer.new()
-  group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  materials.add_child(group)
-  icon(id,26,group)
-  var amount: Label = h.label("0",16,group)
+  var group := HBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  resources.add_child(group)
+  icon(id,22,group)
+  var amount: Label = h.label("0",14,group)
+  amount.add_theme_color_override("font_color",Color("173844"))
   amount.autowrap_mode = TextServer.AUTOWRAP_OFF
   resource_values[id] = amount
- quest_slot = MarginContainer.new()
- h.hud.add_child(quest_slot)
- var quest := surface(quest_slot)
- var quest_row := HBoxContainer.new(); quest_row.add_theme_constant_override("separation",8); quest.add_child(quest_row)
- var quest_body := VBoxContainer.new(); quest_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL; quest_row.add_child(quest_body)
- chapter_caption = h.label("YOUR NEXT DISCOVERY",11,quest_body)
- chapter_caption.add_theme_color_override("font_color",Palette.BUILD)
- h.objective = h.label("",16,quest_body)
+ land = h.label("",14,h.hud); land.hide()
+ chapter_caption = h.label("",11,h.hud); chapter_caption.hide()
+ quest_slot = MarginContainer.new(); h.hud.add_child(quest_slot)
+ var quest_row := HBoxContainer.new(); quest_row.add_theme_constant_override("separation",6); quest_slot.add_child(quest_row)
+ var quest_arrow: Button = h.button("",h.open_ideas,quest_row)
+ quest_arrow.size_flags_horizontal = Control.SIZE_SHRINK_END
+ quest_arrow.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+ quest_arrow.custom_minimum_size.x = h.touch_height()
+ h.button_icon(quest_arrow,"codex")
+ quest_arrow.add_theme_stylebox_override("normal",Palette.floating(Color("314d54"),30))
+ quest_arrow.tooltip_text = "Chapter goal and things to try"
+ var quest_body := VBoxContainer.new(); quest_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL; quest_body.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+ quest_body.custom_minimum_size.y = h.touch_height(); quest_body.alignment = BoxContainer.ALIGNMENT_CENTER
+ quest_body.mouse_filter = Control.MOUSE_FILTER_STOP
+ quest_body.gui_input.connect(func(event: InputEvent):
+  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+   quest_body.accept_event(); h.open_ideas())
+ quest_row.add_child(quest_body)
+ h.objective = h.label("",14,quest_body)
+ h.objective.add_theme_color_override("font_color",Color("173844"))
  h.objective.max_lines_visible = -1
- h.objective.custom_minimum_size.y = h.touch_height()
- h.objective.mouse_filter = Control.MOUSE_FILTER_STOP
- h.objective.focus_mode = Control.FOCUS_ALL
+ h.objective.custom_minimum_size.y = 0
+ h.objective.mouse_filter = Control.MOUSE_FILTER_STOP; h.objective.focus_mode = Control.FOCUS_ALL
  h.objective.tooltip_text = "Tap for useful next steps"
  h.objective.gui_input.connect(func(event: InputEvent):
   if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed) or event.is_action_pressed("ui_accept"):
    h.objective.accept_event(); h.open_ideas())
- quest_progress = h.label("",14,quest_body)
- quest_progress.add_theme_color_override("font_color",Palette.MUTED)
+ quest_progress = h.label("",12,quest_body)
+ quest_progress.add_theme_color_override("font_color",Color("3d5c64"))
  quest_progress.mouse_filter = Control.MOUSE_FILTER_STOP
  quest_progress.gui_input.connect(func(event: InputEvent):
   if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
    quest_progress.accept_event(); h.open_ideas())
- var quest_arrow: Button = h.button("›",h.open_ideas,quest_row)
- quest_arrow.size_flags_horizontal = Control.SIZE_SHRINK_END
- quest_arrow.custom_minimum_size.x = h.touch_height()
- quest_arrow.add_theme_stylebox_override("normal",Palette.quiet())
- quest_arrow.tooltip_text = "Explore next steps"
- h.bottom = VBoxContainer.new()
- h.bottom.add_theme_constant_override("separation",10)
- root.add_child(h.bottom)
- var context := HBoxContainer.new()
- context.add_theme_constant_override("separation",10)
- h.bottom.add_child(context)
- var selected_panel := surface(context)
- selected_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var selected_row := HBoxContainer.new(); selected_row.add_theme_constant_override("separation",10); selected_panel.add_child(selected_row)
- selected_art = preload("res://scripts/TileThumbnail.gd").new()
- selected_art.extent = 62
- selected_art.size_flags_vertical = Control.SIZE_SHRINK_CENTER
- selected_row.add_child(selected_art)
- var description := VBoxContainer.new()
- description.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- description.size_flags_vertical = Control.SIZE_SHRINK_CENTER
- selected_row.add_child(description)
- var caption: Label = h.label("SELECTED BIOME",10,description)
- caption.add_theme_color_override("font_color",Palette.MUTED)
- selected_name = h.label("Oak",19,description)
- selected_name.autowrap_mode = TextServer.AUTOWRAP_OFF
- selected_name.clip_text = true
- selected_name.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
- selected_status = h.label("Ready to collect",13,description)
- selected_status.max_lines_visible = 2
- harvest_meter = meter(Palette.READY,description)
- # Keep the scene's public info handle and accessibility text, without duplicating visible copy.
- h.info = h.label("",16,description); h.info.hide()
- inspect_action = h.button("›",func(): h.open_inspector(h.model.origin(h.selected)),selected_row)
+ # A short-lived callout beside the touched tile, not a permanent selection dashboard.
+ inspect_action = h.button("",func(): h.open_inspector(h.model.origin(h.selected)),root)
+ inspect_action.custom_minimum_size = Vector2(208,h.touch_height())
+ inspect_action.size = Vector2(208,maxf(62,h.touch_height()))
  inspect_action.tooltip_text = "Inspect the selected biome"
- inspect_action.size_flags_horizontal = Control.SIZE_SHRINK_END
- inspect_action.custom_minimum_size.x = h.touch_height()
- inspect_action.add_theme_stylebox_override("normal",Palette.quiet())
- h.pulse_button = h.button("",h.pulse_selector,context)
- h.pulse_button.tooltip_text = "World Pulse · preview Rain, Heat and Frost"
- h.pulse_button.size_flags_horizontal = Control.SIZE_SHRINK_END
- h.pulse_button.add_theme_stylebox_override("normal",Palette.floating(Color("342f43"),22))
- var ability := VBoxContainer.new()
- ability.mouse_filter = Control.MOUSE_FILTER_IGNORE
- h.pulse_button.add_child(ability)
- ability.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
- ability.offset_top = 9; ability.offset_bottom = -9; ability.offset_left = 8; ability.offset_right = -8
- ability.alignment = BoxContainer.ALIGNMENT_CENTER
- ability.add_theme_constant_override("separation",2)
- pulse_ring = preload("res://scripts/AbilityMedallion.gd").new()
- ability.add_child(pulse_ring)
- pulse_caption = h.label("World Pulse",12,ability)
- pulse_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- pulse_amount = h.label("0/200",14,ability)
- pulse_amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- for child in ability.get_children(): child.mouse_filter = Control.MOUSE_FILTER_IGNORE
- h.pulse_bar = meter(Palette.ACCENT,ability); h.pulse_bar.max_value = 200; h.pulse_bar.hide()
+ inspect_action.add_theme_stylebox_override("normal",Palette.floating(Color("314d54"),24))
+ var selection := HBoxContainer.new(); selection.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ inspect_action.add_child(selection); selection.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ selection.offset_left = 10; selection.offset_right = -10; selection.offset_top = 6; selection.offset_bottom = -6
+ selected_art = preload("res://scripts/TileThumbnail.gd").new(); selected_art.extent = 36; selected_art.size_flags_vertical = Control.SIZE_SHRINK_CENTER; selection.add_child(selected_art)
+ var description := VBoxContainer.new(); description.mouse_filter = Control.MOUSE_FILTER_IGNORE; description.size_flags_horizontal = Control.SIZE_EXPAND_FILL; selection.add_child(description)
+ selected_name = h.label("",13,description)
+ selected_name.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ selected_name.autowrap_mode = TextServer.AUTOWRAP_OFF; selected_name.clip_text = true
+ selected_name.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ selected_status = h.label("",11,description); selected_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ selected_status.autowrap_mode = TextServer.AUTOWRAP_OFF; selected_status.clip_text = true
+ harvest_meter = meter(Palette.READY,description)
+ h.info = h.label("",16,description); h.info.hide()
+ inspect_action.hide()
+ h.bottom = VBoxContainer.new(); h.bottom.add_theme_constant_override("separation",4); root.add_child(h.bottom)
  h.draft_button = h.button("Resume draft",func():
   if h.placement_blueprint != "":
    h.placement_blueprint = ""; h.model.message = "Placement canceled. Blueprint kept."; h.refresh()
   elif h.targeting != "": h.cancel_target()
   elif h.model.state.chapter == 3 and h.model.state.stats.fusions == 0: h.fusion_dialog()
   else: h.draft(),h.bottom)
- h.draft_button.custom_minimum_size.x = 220
+ h.draft_button.custom_minimum_size.x = 240
+ h.draft_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+ h.draft_button.add_theme_stylebox_override("normal",Palette.floating(Color("314d54"),28))
  h.button_icon(h.draft_button,"world")
- var dock := surface(h.bottom,Color("272c34"),24)
- var navigation := HBoxContainer.new()
- navigation.add_theme_constant_override("separation",6)
- dock.add_child(navigation)
- for action in [{"name":"Journal","icon":"codex","run":func(): h.campaign_ui.journal(h)}, {"name":"Build","icon":"craft","run":func(): h.campaign_ui.workshop(h)}, {"name":"World","icon":"world","run":func(): h.campaign_ui.world(h)}, {"name":"Menu","icon":"settings","run":func(): h.campaign_ui.settings(h)}]:
+ var navigation := HBoxContainer.new(); navigation.add_theme_constant_override("separation",4); h.bottom.add_child(navigation)
+ for action in [{"name":"Journal","icon":"codex","run":func(): h.campaign_ui.journal(h)}, {"name":"Build","icon":"craft","run":func(): h.campaign_ui.workshop(h)}, {"name":"Pulse","icon":"rain","run":h.pulse_selector}, {"name":"World","icon":"world","run":func(): h.campaign_ui.world(h)}, {"name":"Menu","icon":"settings","run":func(): h.campaign_ui.settings(h)}]:
   var item: Button = h.button(action.name,action.run,navigation)
   item.set_meta("primary_dock",action.name == "Build")
   h.button_icon(item,action.icon,true)
   item.add_theme_stylebox_override("normal",Palette.quiet())
+  item.add_theme_stylebox_override("hover",Palette.quiet())
+  item.add_theme_stylebox_override("pressed",Palette.quiet())
   if action.name == "Build": build_action = item
- # Optional actions can change height after text is shaped by their container.
- # Reserve the new bounds before camera framing or touch routing uses them.
+  if action.name == "Pulse":
+   h.pulse_button = item
+   pulse_caption = item.get_meta("icon_caption")
+   var old_icon: Control = item.get_meta("icon_image")
+   old_icon.hide()
+   pulse_ring = preload("res://scripts/AbilityMedallion.gd").new()
+   old_icon.get_parent().add_child(pulse_ring)
+   pulse_ring.custom_minimum_size = Vector2(28,28)
+   pulse_amount = h.label("",12,item); pulse_amount.hide()
+ h.pulse_bar = meter(Palette.ACCENT,h.bottom); h.pulse_bar.max_value = 200; h.pulse_bar.hide()
  h.hud.minimum_size_changed.connect(func(): h.call_deferred("apply_layout"))
  h.bottom.minimum_size_changed.connect(func(): h.call_deferred("apply_layout"))
 
-func fit_header(h, width: float, conditions: Vector2) -> void:
- # Currency/materials span the screen. Only the quest shares a row with conditions.
- # This prevents large-text amounts from competing with the right-hand module.
- h.chapter_dial.visible = width >= 420
- quest_slot.add_theme_constant_override("margin_right",ceili(conditions.x)+12)
- quest_slot.custom_minimum_size.y = conditions.y
+func fit_header(h, _width: float, _conditions: Vector2) -> void:
+ quest_slot.add_theme_constant_override("margin_right",ceili(h.touch_height())+12)
+ quest_slot.custom_minimum_size.y = 0
 
 func display_goal(h, goal: String) -> void:
  var lines := goal.split("\n",true,1)
  h.objective.text = lines[0]
  quest_progress.visible = lines.size() > 1
- quest_progress.text = lines[1] if lines.size() > 1 else ""
+ quest_progress.text = "Chapter %d · %s" % [h.model.state.chapter,lines[1]] if lines.size() > 1 else ""
+
+func show_selection() -> void:
+ selection_time = 5.0
+
+func update_selection(h, delta: float = 0.0) -> void:
+ selection_time = maxf(0,selection_time-delta)
+ inspect_action.visible = selection_time > 0 and not h.launch_menu and not h.photo_mode and not h.modal.visible
+ var area: Rect2 = h.world_rect()
+ var anchor: Vector2 = h.entity_screen(h.model.origin(h.selected))+Vector2(20,-100)
+ inspect_action.position = Vector2(clampf(anchor.x,area.position.x,area.end.x-inspect_action.size.x),clampf(anchor.y,area.position.y,area.end.y-inspect_action.size.y))
 
 func meter(color: Color, parent: Node) -> ProgressBar:
  var bar := ProgressBar.new()
@@ -199,11 +180,11 @@ func meter(color: Color, parent: Node) -> ProgressBar:
 func hub_action(h, title: String, detail: String, symbol: String, action: Callable, parent: Node) -> Button:
  var button: Button = h.button(title,action,parent)
  h.button_icon(button,symbol)
- var style := Palette.floating(Palette.PAPER_ALT)
- style.content_margin_top = 18
- style.content_margin_bottom = 48
+ var style := Palette.quiet()
+ style.content_margin_top = 10
+ style.content_margin_bottom = 38
  button.add_theme_stylebox_override("normal",style)
- button.custom_minimum_size.y = maxf(112,h.touch_height()+64)
+ button.custom_minimum_size.y = maxf(80,h.touch_height()+40)
  var description: Label = h.label(detail,12,button)
  description.mouse_filter = Control.MOUSE_FILTER_IGNORE
  description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -215,7 +196,12 @@ func hub_action(h, title: String, detail: String, symbol: String, action: Callab
  return button
 
 func display(h) -> void:
- h.inventory.add_theme_font_size_override("normal_font_size",h.scaled_font(22))
+ var ink: Color = h.hud_ink()
+ h.inventory.add_theme_color_override("default_color",ink)
+ h.objective.add_theme_color_override("font_color",ink)
+ quest_progress.add_theme_color_override("font_color",ink)
+ for value in resource_values.values(): value.add_theme_color_override("font_color",ink)
+ h.inventory.add_theme_font_size_override("normal_font_size",h.scaled_font(16))
  h.inventory.clear()
  h.inventory.add_text(h.compact_amount(h.model.state.coins))
  h.inventory.tooltip_text = "%d Coins" % h.model.state.coins
@@ -227,7 +213,7 @@ func display(h) -> void:
  pulse_amount.text = "%d/200" % h.model.state.energy
  pulse_amount.add_theme_color_override("font_color",Palette.ACCENT if h.model.state.energy >= 100 else Palette.MUTED)
  pulse_ring.display(h.model.state.energy,h.model.state.settings.reduced_motion)
- h.pulse_button.custom_minimum_size.y = maxf(106,104*h.model.state.text_scale)
+
  var key: String = h.model.origin(h.selected)
  if key == "": return
  var tile: Dictionary = h.model.state.tiles[key]

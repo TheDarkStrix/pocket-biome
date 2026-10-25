@@ -45,3 +45,5 @@ Prior 0.11 verified source:750 Godot assertions and eight Python audit tests; na
 0.12 gameplay checkpoint:783 Godot assertions plus eight Python audit cases pass; two public progression strategies now produce pacing traces. Early resource starvation is fixed; improved choice/placement/trade/automation affordances are implemented. Human five-to-fifteen-minute enjoyment tests and later economy review remain open, with no new price curve or save migration introduced.
 
 0.13: current Play Store reference review and mobile HUD/World hub redesign implemented; current-source package/device observations are separately scoped. Physical-device and human approval remain required.
+
+0.14: user rejected dashboard-like0.13. Replaced persistent gameplay panels with a world-first atmosphere and small floating actions, retaining detail access and touch targets. Current rendered and Android evidence is separately scoped; human visual approval and physical-device validation remain open.

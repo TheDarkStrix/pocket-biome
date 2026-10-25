@@ -6,6 +6,8 @@ const MATERIALS = {"wood":Vector2i(2,1),"stone":Vector2i(0,2),"fiber":Vector2i(1
 const STRUCTURES = preload("res://assets/structures/structures.png")
 const ISLAND = preload("res://assets/app_icon.png")
 const LINE = {
+ "ecology":preload("res://assets/ui/line/ecology.svg"),
+ "camera":preload("res://assets/ui/line/camera.svg"),
  "codex":preload("res://assets/ui/line/codex.svg"),
  "craft":preload("res://assets/ui/line/craft.svg"),
  "world":preload("res://assets/ui/line/world.svg"),

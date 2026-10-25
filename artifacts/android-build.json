@@ -1,14 +1,14 @@
 {
-  "utc": "2026-10-25T12:48:38.883265+00:00",
+  "utc": "2026-10-25T13:33:07.760558+00:00",
   "engine": "4.6.3.stable",
-  "version": "0.13.0-preview",
-  "version_code": 5,
+  "version": "0.14.0-preview",
+  "version_code": 6,
   "type": "Signed debug preview",
-  "source_sha256": "50801f3298fd563f17ddb671501b7ad173dce24c8cc16b98a9dd79e7f025ffa3",
-  "assertions": 820,
+  "source_sha256": "66ec3d0c38fac77c835ed4267bccb0cf8dda131ba48bf63dba05a66349be8e27",
+  "assertions": 845,
   "python_audit_tests": 8,
-  "apk_sha256": "6bcf48b5aa6b5073df698c11231a001baae0dba58af1edf81f4d50127af0fda7",
-  "bytes": 179170663,
+  "apk_sha256": "1367bf8be54abcbf54bf74213dc6220962c4170e2152ec4309c8982ae3664333",
+  "bytes": 179174618,
   "renderer": "OpenGL Compatibility",
   "dependencies": {
     "com.google.android.gms:play-services-ads": "25.5.0",
@@ -17,5 +17,5 @@
   },
   "native_ui_verified_this_revision": true,
   "store_release_ready": false,
-  "note": "Current-source replacement installation, visible quest progress, selected-biome inspector, Pulse selector and World hub verified on software emulator. Stable save/progression retained; bounded logs have no script/runtime errors. See android-hud-check.json. Production acceptance remains open."
+  "note": "Current-source replacement installation, sky shader rendering, compact tools, conditions help and callout-to-inspector touch path verified on software emulator. Stable progress retained and bounded logs have no script/runtime errors. Native hold timing, physical GPU performance and creative approval remain open. See android-atmosphere-check.json."
 }

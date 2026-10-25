@@ -68,6 +68,11 @@ func run() -> void:
  check(scene.model.state.time == active,"resume ignores accumulated background frame delta")
  scene._process(0.25)
  check(is_equal_approx(scene.model.state.time,active+0.25),"active-time resumes at frame precision")
+ var sky_before: float = scene.ambient_time
+ scene.model.state.settings.reduced_motion = true
+ scene._process(0.25)
+ check(is_equal_approx(sky_before,scene.ambient_time),"reduced motion freezes the cloud shader's animation clock")
+ scene.model.state.settings.reduced_motion = false
  scene.model = preload("res://scripts/WorldModel.gd").new()
  scene.refresh()
  scene.tap(scene.screen(Vector2.ZERO)-Vector2(0,50))

@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 820 assertions across 14 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
+`tools/check.sh`: 845 assertions across 14 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
 
 Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
 
@@ -23,7 +23,7 @@ Work continues autonomously in tested increments. Decisions and external depende
 
 ## Current presentation direction
 
-The user requested Terra Nil's style and gameplay information hierarchy, with Pocket Biome's own colors. The current interface uses graphite/pearl base with amber Build emphasis and violet Pulse treatment, neutral licensed typography, rounded floating controls and original line icons. Chapter/resources sit upper-left, selected-tile ecology upper-right, and contextual actions/tool navigation at the bottom. The earlier parchment/brass and slate/rust passes are superseded.
+0.14 supersedes the user's rejected0.13 panel-heavy design. Gameplay now uses an original cloud/sky shader, a compact resource row and goal prompt, five small floating tools and transient tile inspection. Detailed conditions, exact power amounts and land capacity are available in the real detail screens. See docs/DESIGN_DIRECTION.md. This is a new visual revision under review, not an assertion of human approval.
 
 Implemented camera fitting uses actual sprite extents, including tall fused biomes. Objectives preserve action captions alongside progress. Title/photo views hide gameplay markers. Native photo/export/system chooser checks passed without choosing a recipient. The earlier native screenshot is artifacts/android-02-restored-world.png; current 0.13 HUD/native evidence is scoped separately.
 
@@ -62,3 +62,7 @@ This addresses concrete first-session friction and one measured resource-starvat
 Reviewed current public Google Play listings and screenshots for SimCity BuildIt, Pocket City 2, Township, Pocket City and Pocket Build. Source details and screenshot scope are in docs/UI_RESEARCH.md and artifacts/mobile-ui-references.json. The HUD now separates currencies/materials from the quest/conditions row, gives Build a distinct primary treatment, illustrates selected terrain and its real cooldown, and displays Pulse energy through an original ring/emblem with an exact count. World actions have explanatory cards; modal/dock styling is consistent. No third-party reference artwork ships.
 
 The small-screen/large-text visual pass caught cramped high resource counts; the layout was corrected and regression coverage added. Optional footer actions now trigger relayout before camera/input bounds settle. Actual OpenGL fixtures27–29 document the interface; human design acceptance remains open. This is a preview revision, not production certification.
+
+## 0.14 atmospheric world and compact HUD
+
+Implemented day/dusk/night atmosphere with controlled cloud drift, context-only conditions and selection details, a five-second inspect callout, smaller visible controls with retained touch targets, a direct Pulse icon and lighter World action styling. Exact economy/save behavior is unchanged. The current mobile fixtures verify world-height allocation, high resource counts, goal progress, selection reveal/expiry and inspector access. New shader/vector art is original; actual rendered evidence and scoped Android results are recorded separately.

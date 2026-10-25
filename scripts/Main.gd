@@ -2,6 +2,7 @@ extends Node2D
 const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const Store = preload("res://scripts/SaveStore.gd")
+var sky_backdrop: CanvasLayer
 var game_hud = preload("res://scripts/GameHUD.gd").new()
 var ui_motion = preload("res://scripts/UIMotion.gd").new()
 var fusion_preview: Array[String] = []
@@ -146,6 +147,8 @@ func button(text: String, action: Callable, parent: Node) -> Button:
  return b
 
 func build_ui() -> void:
+ sky_backdrop = preload("res://scripts/SkyBackdrop.gd").new()
+ add_child(sky_backdrop)
  var layer := CanvasLayer.new()
  add_child(layer)
  var root := Control.new()
@@ -557,6 +560,7 @@ func tap(pos: Vector2) -> void:
  elif model.state.tiles.has(k):
   harvest_path = true
   selected = model.origin(k)
+  game_hud.show_selection()
   var before: Dictionary = model.state.inventory.duplicate()
   if model.harvest(selected):
    haptic(18)
@@ -585,10 +589,10 @@ func apply_layout() -> void:
  if OS.get_name() == "Android" or OS.get_name() == "iOS":
   var physical := Vector2(DisplayServer.screen_get_size())
   safe = preload("res://scripts/SafeLayout.gd").logical_safe_rect(viewport_size,physical,Rect2(DisplayServer.get_display_safe_area()))
- var ecology_width: float = maxf(180,ecology_monitor.get_combined_minimum_size().x)
+ var ecology_width: float = touch_height()
  hud.size.x = safe.size.x-40
  game_hud.fit_header(self,hud.size.x,Vector2(ecology_width,ecology_monitor.get_combined_minimum_size().y))
- layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(110,maxf(hud.get_combined_minimum_size().y,ecology_monitor.get_combined_minimum_size().y)),maxf(124,bottom.get_combined_minimum_size().y))
+ layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(72,hud.get_combined_minimum_size().y),maxf(72,bottom.get_combined_minimum_size().y))
  layout.top.size.x = hud.size.x
  hud.position = layout.top.position
  hud.size = layout.top.size
@@ -604,7 +608,8 @@ func apply_layout() -> void:
  if launch_menu:
   modal.position.y = safe.position.y+20
   modal.size.y = safe.size.y-40
- ecology_monitor.size = Vector2(ecology_width,0)
+ ecology_monitor.custom_minimum_size = Vector2.ONE*touch_height()
+ ecology_monitor.size = Vector2.ONE*touch_height()
  ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,hud.position.y+game_hud.quest_slot.position.y)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
@@ -649,6 +654,7 @@ func constrain_camera() -> void:
  pan.y = clampf(pan.y,area.position.y-anchor.y-bounds.end.y,area.end.y-anchor.y-bounds.position.y)
 
 func _process(delta: float) -> void:
+ game_hud.update_selection(self,delta)
  if not suspended and not photo_mode and not model.state.settings.reduced_motion:
   ambient_time += minf(delta,0.1)
   cosmetic_clock += delta
@@ -721,16 +727,10 @@ func visible_palette() -> String:
 
 func _draw() -> void:
  var palette: String = visible_palette()
- if palette == "day":
-  var area := get_viewport_rect()
-  for band in range(48):
-   var fraction := float(band)/47.0
-   draw_rect(Rect2(0,area.size.y*band/48.0,area.size.x,area.size.y/48.0+1),Color("3b4248").lerp(Color("222933"),fraction))
- if palette != "day":
-  var palettes := {"moon":Color("101b38"),"dusk":Color("30263e"),"celestial":Color("182d36"),"sakura":Color("322d41")}
-  draw_rect(get_viewport_rect(),palettes.get(palette,Color("17243a")))
+ sky_backdrop.display(palette,ambient_time)
+ if palette not in ["day","sakura"]:
   for i in range(28):
-   draw_circle(Vector2(fmod(i*137.0,540),180+fmod(i*97.0,450)),1.0+float(i%2),Color(0.95,0.82,0.56,0.4))
+   draw_circle(Vector2(fmod(i*137.0,get_viewport_rect().size.x),30+fmod(i*97.0,get_viewport_rect().size.y*0.65)),1.0+float(i%2),Color(0.95,0.9,0.76,0.5))
  var visible_frontier: Array = [] if photo_mode or launch_menu or targeting != "" or placement_blueprint != "" else model.frontier()
  for k in visible_frontier:
   var p := screen(model.coord(k))
@@ -819,6 +819,7 @@ func _draw() -> void:
   var destination: Control = game_hud.resource_values.get(effect.resource,game_hud.selected_art)
   var icon_at: Vector2 = entity_screen(effect.key).lerp(destination.get_global_rect().get_center(),1-pow(1-flight,2))
   if flight < 1: preload("res://scripts/UIIcons.gd").draw(self,effect.resource,icon_at,32,Color(1,1,1,1-flight*0.6))
+  draw_string_outline(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,3,Color(0.09,0.2,0.23,1-effect.elapsed/0.8))
   draw_string(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color(0.95,0.83,0.56,1-effect.elapsed/0.8))
  if photo_mode:
   draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,ThemeKit.INK if visible_palette() == "day" else Color("fff4dc"))
@@ -1037,12 +1038,14 @@ func start_screen() -> void:
  ui_root.add_child(launch_screen)
  var title := label("Pocket Biome",38,launch_screen)
  title.add_theme_font_override("font",ThemeKit.DISPLAY)
- title.add_theme_color_override("font_color",ThemeKit.INK)
+ title.add_theme_color_override("font_color",hud_ink())
  title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  var subtitle := label("T I N Y   E X P A N S I O N",14,launch_screen)
  subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ subtitle.add_theme_color_override("font_color",hud_ink())
  var promise := label("An ecosystem in balance.",18,launch_screen)
  promise.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ promise.add_theme_color_override("font_color",hud_ink())
  menu_spacer = Control.new()
  menu_spacer.custom_minimum_size.y = get_viewport_rect().size.y*0.36
  launch_screen.add_child(menu_spacer)
@@ -1205,9 +1208,7 @@ func entity_screen(key: String) -> Vector2:
 
 func update_pulse_width() -> void:
  if not is_instance_valid(pulse_button): return
- var font: Font = pulse_button.get_theme_font("font")
- var width: float = font.get_string_size("200/200",HORIZONTAL_ALIGNMENT_LEFT,-1,scaled_font(17)).x
- pulse_button.custom_minimum_size.x = maxf(116,ceilf(width)+24)
+ pulse_button.custom_minimum_size.x = 0
 
 func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var texture: Texture2D = preload("res://scripts/UIIcons.gd").texture(id)
@@ -1234,8 +1235,8 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var primary: bool = target.get_meta("primary_dock",false)
  var disc := ThemeKit.floating(ThemeKit.BUILD if primary else Color("3b434e"),32)
  disc.shadow_size = 3
- disc.content_margin_top = 12; disc.content_margin_bottom = 12
- disc.content_margin_left = 14; disc.content_margin_right = 14
+ disc.content_margin_top = 7; disc.content_margin_bottom = 7
+ disc.content_margin_left = 8; disc.content_margin_right = 8
  disc.border_color = Color("f0d39e") if primary else Color("626b77")
  medallion.add_theme_stylebox_override("panel",disc)
  content.add_child(medallion)
@@ -1243,11 +1244,11 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  icon.texture = texture
  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- icon.custom_minimum_size = Vector2.ONE*28*minf(1.25,logical_per_dp())
+ icon.custom_minimum_size = Vector2.ONE*24*minf(1.25,logical_per_dp())
  icon.modulate = ThemeKit.PRIMARY_INK if primary else ThemeKit.INK
  icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
  medallion.add_child(icon)
- var caption: Label = label(text,14,content)
+ var caption: Label = label(text,12,content)
  caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
  caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  caption.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -1256,11 +1257,14 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  stacked_buttons.append(target)
  update_stacked_buttons()
 
+func hud_ink() -> Color:
+ return Color("173844") if visible_palette() in ["day","sakura"] else ThemeKit.INK
+
 func update_stacked_buttons() -> void:
  for action in stacked_buttons:
   if not is_instance_valid(action): continue
-  action.custom_minimum_size.y = maxf(100,80*logical_per_dp()*model.state.text_scale)
-  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else ThemeKit.BUILD if action.get_meta("primary_dock",false) else ThemeKit.INK
+  action.custom_minimum_size.y = maxf(touch_height(),64*logical_per_dp()*model.state.text_scale)
+  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else hud_ink()
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
 
 func draw_weather() -> void:

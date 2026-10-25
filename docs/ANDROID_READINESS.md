@@ -8,7 +8,7 @@ Maintained native pins: native/android/dependencies.json (Ads25.5.0, UMP4.0.0, B
 
 `./tools/build_android.sh` prepares/imports, embeds source provenance, runs eight Python audit tests plus all Godot suites, exports a staged APK, checks export errors/signing and audits actual package/SDK/ABI/portrait/16KB ZIP+ELF alignment/source binding. Only passing output replaces builds/PocketBiome-debug.apk. `python3 tools/package_phone_apk.py` produces the ARM64 download while verifying every retained file and preserving service-loader metadata; it refuses stale test evidence. Debug signing is development-only.
 
-Both regular and mobile rendering explicitly select OpenGL Compatibility. Minimum API24, target36, ARM64+x86_64 universal preview; ARM64 phone download. Version 0.13.0-preview/code 5. Production credentials/IDs are not substituted automatically.
+Both regular and mobile rendering explicitly select OpenGL Compatibility. Minimum API24, target36, ARM64+x86_64 universal preview; ARM64 phone download. Version 0.14.0-preview/code 6. Production credentials/IDs are not substituted automatically.
 
 ## Native evidence and limits
 

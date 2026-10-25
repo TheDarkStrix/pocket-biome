@@ -69,8 +69,8 @@ func run() -> void:
   h.refresh()
   check(h.inspection_view.bars.moisture.bar.value > original,"visible inspector follows environmental DNA updates")
   await create_timer(0.4).timeout
-  check(h.ecology_monitor.bars.moisture.value == h.model.state.tiles["0,0"].dna.moisture,"compact ecological meter follows the selected tile through DNA changes")
-  check(h.ecology_monitor.values.moisture.text == str(int(h.model.state.tiles["0,0"].dna.moisture)),"DNA readout uses integer units rather than JSON float formatting")
+  check(h.ecology_monitor.selected_conditions.moisture == h.model.state.tiles["0,0"].dna.moisture,"conditions help retains the selected tile context through DNA changes")
+  check(h.inspection_view.bars.moisture.caption.text.contains(str(int(h.model.state.tiles["0,0"].dna.moisture))),"inspector keeps actual readable moisture values off the gameplay HUD")
   check(h.inspection_view.title.text == h.tile_title(h.model.state.tiles["0,0"]),"inspector title follows the current biome")
   h.dismiss_inspection()
   check(not h.inspection_mode and not h.modal.visible,"inspector dismissal returns input to island")
