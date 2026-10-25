@@ -15,6 +15,7 @@ The original repository was empty with no working functionality or commits to pr
 | SafeLayout | Physical safe area and DPI conversion into 540×960 logical portrait layout; responsive modal bounds |
 | CampaignUI | Codex, workshop, world management, settings/tutorial; styled scrollable controls |
 | TileArtwork / TileThumbnail / UIIcons | Stable atlas regions, pivots, shared appearance selection and alpha picking; illustrated previews/icons |
+| WorldAmbience | Grounded canopy deformation and bounded water/machine activity, with separate cosmetic clock and reduced-motion support |
 | WorldPresentation | Bounded cosmetic diffs, rise/crossfade/fusion/weather/harvest animations; never owns rewards |
 | FusionGuide | Read-only candidate discovery/ranking and blocker explanations; WorldModel owns fusion commits |
 | UIMotion | Interruptible, node-bound press/fade/highlight tweens; respects reduced motion |
@@ -50,3 +51,11 @@ ChapterDial reads real campaign metrics into a bounded chapter fraction. Ecology
 Expansion marker picking precedes terrain alpha picking only during ordinary collection/expansion mode; pulse/deployment mode hides these controls. Nearest visible marker wins overlapping mobile target areas. Moving a pending draft changes only its destination, keeping serialized offers and price. Rain presentation stores the actual authoritative affected keys and a bounded cosmetic lifetime.
 
 EcologyReadout exposes a tap/keyboard explanation signal and explicitly labelled conditions. Main opens plain-language help; its responsive header reserves the measured conditions-panel dimensions, including enlarged text. WorldModel retains DNA as an internal data term; no save migration is required for this wording change.
+
+Production tooling: tools/write_build_stamp.py embeds a generated source fingerprint, deliberately excluded from its own digest. tools/audit_android.py checks the actual APK and refuses stale/unbound test evidence; --production also requires real release configuration and current external QA declarations. tools/check.sh runs eight native-audit unit cases plus Godot suites. Native dependency/compiler versions are pinned in native/android JSON manifests.
+
+Neighbor effects and automated production retain anchored cycle deadlines; frame jitter cannot shift each future interval. Stalled intervals are skipped rather than replayed in a reward burst.
+
+Camera view_turn rotates projected grid coordinates in 90° steps. Inverse picking applies the inverse turn; depth sorting uses rotated entity centers. Fused reservations retain the same logical origin. Two-finger twist uses a60° threshold with90° residual subtraction to avoid pinch jitter. This is a 2.5D four-view camera, not a 3D model renderer.
+
+Menu buttons pass GUI events to ScrollContainer so native touch drags can scroll; panels still contain modal input. Regression tests check below-fold reachability, no unintended button activation and no leaked world pointers. Native crash capture receives the actual diagnostics consent; opting in does not import Android exit records from an opt-out period.

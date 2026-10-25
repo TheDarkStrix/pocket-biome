@@ -1,23 +1,21 @@
 # Android build and validation
 
-## Installed and verified
+## Reproducible toolchain
 
-- Godot 4.6.3 official; matching export templates verified with official SHA512 checksums.
-- Temurin JDK17.0.16+8 under /workspace/runtime/jdk/jdk-17.0.16+8, official SHA256 verified.
-- Android SDK under /workspace/runtime/android-sdk: command-line tools19, platform36, build-tools36.1.0, NDK29.0.14206865, platform-tools. Versions follow the actual Godot4.6.3 template.
-- Gradle8.11.1 distribution verified against official SHA256, cached under runtime/downloads; proxy host/port only, system CA trust preserved.
-- Android native plugin with Ads23.6.0, UMP3.1.0 and Billing8.0.0 builds through maintained sources in native/android.
+Godot 4.6.3 official and matching SHA512-verified export templates; checksum-verified Temurin JDK17.0.16+8; SDK platform36/build-tools36.1.0/NDK29.0.14206865 under /workspace/runtime/android-sdk; checksum-pinned Gradle8.11.1. Reproduce base dependencies with `python3 tools/bootstrap_android.py --install-sdk`.
 
-Build: `./tools/build_android.sh`. It imports, runs the full test suite, exports a staged debug APK, verifies apksigner and promotes only on success. Output builds/PocketBiome-debug.apk is ignored by Git; hash is stored beside it. Both regular and mobile rendering explicitly select OpenGL Compatibility. Minimum API24, target36, ARM64+x86_64. Debug signing is development-only; never use that key for publication.
+Maintained native pins: native/android/dependencies.json (Ads25.5.0, UMP4.0.0, Billing8.3.0) and native/android/toolchain.json (Kotlin2.3.21, AGP8.10.1). tools/prepare_native.py applies these to the matching Godot template. Kotlin was upgraded to read current Ads metadata; no compatibility checks were suppressed. Official artifact availability is recorded in artifacts/sdk-update-check.json.
 
-## Current QA environment
+`./tools/build_android.sh` prepares/imports, embeds source provenance, runs eight Python audit tests plus all Godot suites, exports a staged APK, checks export errors/signing and audits actual package/SDK/ABI/portrait/16KB ZIP+ELF alignment/source binding. Only passing output replaces builds/PocketBiome-debug.apk. `python3 tools/package_phone_apk.py` produces the ARM64 download while verifying every retained file and preserving service-loader metadata; it refuses stale test evidence. Debug signing is development-only.
 
-API29 AOSP x86_64 AVD `pocket-qa29`, software SwiftShader/no KVM. adb connect 127.0.0.1:5557 after editor/export (Godot may stop adb). API35 under software acceleration was unstable at the operating-system level; that is not attributed to gameplay code. This emulator has no Play Store, so successful purchase flows require a separate configured Play tester device.
+Both regular and mobile rendering explicitly select OpenGL Compatibility. Minimum API24, target36, ARM64+x86_64 universal preview; ARM64 phone download. Version0.11.0-preview/code3. Production credentials/IDs are not substituted automatically.
 
-First test APK installed and registered PocketServices. Vulkan mobile override corrected; OpenGL selection confirmed. Reducing unused 3D light limits resolved shader startup under ANGLE; native interaction still needs validation because the software-emulated Android UI stalled. Host Mesa backend QA is in progress. See TEST_REPORT.md for current evidence; installation alone is insufficient.
+## Native evidence and limits
 
-## Release matrix
+Current cloud AVD: API29 AOSP x86_64, no Play Store/GMS and no KVM. Host Mesa software backend via Xorg:95; adb endpoint127.0.0.1:5555 (editor/export may stop adb). Earlier SwiftShader/API35 attempts had Android operating-system stalls. These are not attributed to the game.
 
-Cold launch offline → harvest/draft/first evolution → menu/input/pinch → force-stop/relaunch restoration → background during reveal/fusion → photo chooser → safe areas/cutouts → real test ad/reward/failure → sandbox purchase/restore → physical-device performance/audio. Release AAB, signing and store policy review follow these checks. Production IDs and credentials are never silently substituted.
+Previous native checkpoints exercised launch/harvest/draft/evolution, replacement-install save retention, photo/system chooser without a recipient, and cloud relocation without changes to cards/quote/balance/land. Each artifact is scoped to its source/build. Current animation/SDK revision must have its own installation/rendering evidence before claiming native validation; see TEST_REPORT.md and Android JSON reports. Emulator behavior does not establish physical-device FPS, audio comfort or store success.
 
-Reproduce the installed dependencies with `python3 tools/bootstrap_android.py --install-sdk` (requires official Godot4.6.3 already on PATH). This checksum-verifies the JDK, Gradle, Godot templates and stable Android command-line tools, installs only specified SDK packages, preserves unrelated editor settings and uses system CA verification. The bootstrap was rerun successfully against the current machine.
+## Production gate
+
+`python3 tools/audit_android.py --apk builds/PocketBiome-debug.apk --production --output artifacts/production-readiness.json` must fail for the preview configuration. Use docs/PRODUCTION_READINESS.md for missing signing, hosted policy/support details, physical-device evidence and live sandbox reward/purchase/restore/consent qualification. No release AAB/internal-test upload or public store submission is claimed.

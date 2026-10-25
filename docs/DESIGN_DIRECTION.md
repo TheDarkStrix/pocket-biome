@@ -17,3 +17,5 @@ Graphite surfaces, pearl text and muted-violet actions form an original palette.
 ## Reference use
 
 Official Terra Nil screenshots were actually reviewed for grouping, data hierarchy and terrain-first composition; its palette, artwork, branding and mechanics are not copied. See UI_RESEARCH.md. The supplied references/user_art_direction.jpg remains useful for isometric proportions, natural materials and silhouettes, not as a fixed UI skin or economy specification.
+
+Camera interaction:drag, pinch and two-finger quarter turns; World supplies explicit rotation buttons. The four-view renderer keeps painted artwork upright. Continuous free-angle orbit requires the separate3D asset/presentation phase documented in CAMERA_ORBIT_PLAN.md.

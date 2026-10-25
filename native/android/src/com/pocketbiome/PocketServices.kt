@@ -51,7 +51,8 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         val previous = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
-                File(host.filesDir, "pocket_java_crash.json").writeText(JSONObject()
+                if (host.getSharedPreferences("pocket_diagnostics",0).getBoolean("enabled",false))
+                    File(host.filesDir, "pocket_java_crash.json").writeText(JSONObject()
                     .put("type", "java_uncaught_exception")
                     .put("timestamp",System.currentTimeMillis())
                     .put("exception", throwable.javaClass.name)
@@ -63,6 +64,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
     }
     @UsedByGodot fun pendingCrash(): String {
         val host = activity ?: return ""
+        if (!host.getSharedPreferences("pocket_diagnostics",0).getBoolean("enabled",false)) return ""
         val file = File(host.filesDir, "pocket_java_crash.json")
         try {
             if (file.exists()) {
@@ -94,9 +96,8 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
     @UsedByGodot fun initializeServices() {
         val host = activity ?: return
         host.runOnUiThread {
-            if (initialized) { loadRewarded(); restorePurchases(); return@runOnUiThread }
-            initialized = true
-            initializeBilling(host)
+            if (!initialized) { initialized = true; initializeBilling(host) }
+            else restorePurchases()
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                 MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
                 return@runOnUiThread
@@ -111,6 +112,43 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
                 emitSignal("service_error", "Consent unavailable: ${error.message}. Offline gameplay remains available.")
                 if (consent.canRequestAds()) MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
             })
+        }
+    }
+    @UsedByGodot fun privacyOptionsRequired(): Boolean {
+        val host = activity ?: return false
+        return UserMessagingPlatform.getConsentInformation(host).privacyOptionsRequirementStatus ==
+            ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED
+    }
+    @UsedByGodot fun showPrivacyOptions() {
+        val host = activity ?: return
+        host.runOnUiThread {
+            if (!privacyOptionsRequired()) {
+                emitSignal("service_error", "Ad privacy choices are not currently required or available")
+                return@runOnUiThread
+            }
+            rewarded = null; interstitial = null
+            emitSignal("ad_ready", false); emitSignal("interstitial_ready", false)
+            UserMessagingPlatform.showPrivacyOptionsForm(host) { error ->
+                if (error != null) emitSignal("service_error", "Privacy choices unavailable: ${error.message}")
+                if (UserMessagingPlatform.getConsentInformation(host).canRequestAds()) {
+                    MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
+                }
+            }
+        }
+    }
+    @UsedByGodot fun setDiagnosticsEnabled(enabled: Boolean) {
+        val host = activity ?: return
+        val prefs = host.getSharedPreferences("pocket_diagnostics",0)
+        val update = prefs.edit().putBoolean("enabled",enabled)
+        // Do not import Android process-exit records from a period without consent.
+        if (enabled && !prefs.getBoolean("enabled",false)) update.putLong("last_exit",System.currentTimeMillis())
+        update.apply()
+    }
+    @UsedByGodot fun deleteDiagnostics() {
+        activity?.let { host ->
+            File(host.filesDir, "pocket_java_crash.json").delete()
+            host.getSharedPreferences("pocket_diagnostics",0).edit()
+                .putLong("last_exit",System.currentTimeMillis()).apply()
         }
     }
     private fun loadRewarded() {
@@ -130,6 +168,11 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             rewarded = null
             emitSignal("ad_ready", false)
             if (ad == null) { emitSignal("ad_failed", requestId, "No test ad is loaded"); return@runOnUiThread }
+            if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 &&
+                !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) {
+                emitSignal("ad_failed", requestId, "Ad privacy permission is unavailable")
+                return@runOnUiThread
+            }
             var earned = false
             ad.fullScreenContentCallback = object: FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
@@ -153,6 +196,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
     private fun loadInterstitial() {
         val host = activity ?: return
         host.runOnUiThread {
+            if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) return@runOnUiThread
             InterstitialAd.load(host,"ca-app-pub-3940256099942544/1033173712",AdRequest.Builder().build(),object: InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) { interstitial = ad; emitSignal("interstitial_ready",true) }
                 override fun onAdFailedToLoad(error: LoadAdError) { interstitial = null; emitSignal("interstitial_ready",false) }
@@ -173,6 +217,9 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
     @UsedByGodot fun showInterstitial() {
         val host = activity ?: return
         host.runOnUiThread {
+            if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) {
+                interstitial = null; emitSignal("interstitial_ready",false); return@runOnUiThread
+            }
             val ad = interstitial ?: return@runOnUiThread
             interstitial = null
             emitSignal("interstitial_ready",false)

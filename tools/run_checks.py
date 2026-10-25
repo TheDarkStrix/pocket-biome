@@ -17,6 +17,8 @@ def source_digest():
     for directory in ['scripts', 'scenes', 'data', 'native', 'tests', 'assets', 'tools']:
         paths.extend(p for p in (ROOT / directory).rglob('*') if p.is_file())
     for path in sorted(paths):
+        if path == ROOT / 'data/build_info.json':
+            continue
         if path.suffix in ['.pyc'] or '.gradle' in path.parts or 'build' in path.parts:
             continue
         digest.update(str(path.relative_to(ROOT)).encode() + b'\0' + path.read_bytes())

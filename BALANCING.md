@@ -22,3 +22,5 @@ First normal path: harvest Oak, open adjacent cloud, inspect Water and confirm p
 ## Remaining tuning
 
 Measure comprehension, early decision quality, harvest fatigue, energy cadence, saturation, scarcity and time between discoveries with people. Validate PRD retention targets through actual playtests and analytics before calling the economy commercially proven. Store prices come from localized Billing queries, not hardcoded mock checkout prices.
+
+Timer hardening: environmental and automation cycles now retain anchored deadlines. Slightly late frames no longer stretch a cycle by a whole scheduler tick. Stalled slots are skipped rather than granting a backlog burst. This fixes timing accuracy without changing authored yields, prices or intervals; production-paced frame-jitter regression tests cover it.

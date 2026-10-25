@@ -169,7 +169,7 @@ func tick(seconds: float = 1.0) -> void:
   var interval: int = config.tiles[source.type].get("effect_interval",1)
   if state.time >= source.get("next_effect",0.0):
    emissions[k] = config.effects.get(source.type,{})
-   source.next_effect = state.time+interval
+   source.next_effect = next_cycle(source.get("next_effect",state.time),interval,state.time)
  for k in keys:
   var t: Dictionary = state.tiles[k]
   if t.has("owner"): continue
@@ -356,3 +356,8 @@ func production(tile: Dictionary) -> Dictionary:
   for recipe in config.recipes:
    if recipe.id == tile.evolution: definition.amount = maxi(definition.amount,recipe.tier)
  return definition
+
+static func next_cycle(scheduled: float, interval: float, now: float) -> float:
+ # Keep the original cadence; minor frame lateness must not add a whole tick.
+ # A long stalled frame skips elapsed slots instead of granting a burst of work.
+ return scheduled+interval*maxf(1,floorf((now-scheduled)/interval)+1)

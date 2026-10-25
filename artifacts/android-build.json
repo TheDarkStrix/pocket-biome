@@ -1,12 +1,21 @@
 {
-  "utc": "2026-10-25T05:48:37.529342+00:00",
+  "utc": "2026-10-25T06:53:16.009668+00:00",
   "engine": "4.6.3.stable",
-  "type": "Signed debug test APK",
-  "source_sha256": "2a3c9934aa896233ac7202593ece91054fddc4a37014da596e95ea49b54c018d",
-  "assertions": 708,
-  "apk_sha256": "0eebb0711bcbfcf6b65f489b7673b4d4f26b1e14615084cdbb2fa7724aa31184",
-  "bytes": 178223029,
+  "version": "0.11.0-preview",
+  "version_code": 3,
+  "type": "Signed debug preview",
+  "source_sha256": "856885e00b4638aa0393b195c5cf86ea0db8994fad8ead109a23b50b943af303",
+  "assertions": 750,
+  "python_audit_tests": 8,
+  "apk_sha256": "4b1e2f72febc03973676d352e5d96250f78b91943ad3a63755ddfeca79540f71",
+  "bytes": 179149181,
   "renderer": "OpenGL Compatibility",
+  "dependencies": {
+    "com.google.android.gms:play-services-ads": "25.5.0",
+    "com.google.android.ump:user-messaging-platform": "4.0.0",
+    "com.android.billingclient:billing": "8.3.0"
+  },
   "native_ui_verified_this_revision": false,
-  "note": "Tile-conditions wording/layout/help revision. Signature/export verified; real-touch and six mobile size/text fixtures pass in Godot. Previous native progression/save/draft checks remain scoped to android-feedback-check.json, before this wording revision. Physical-device/store qualification remains open."
+  "store_release_ready": false,
+  "note": "Current signed export/750 Godot checks/8 Python tests/package+16KB/source-binding checks pass. Previous native observations are scoped to their source. Latest stepped-camera/native scroll verification is pending; this is not store certification."
 }

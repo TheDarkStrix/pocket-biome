@@ -179,6 +179,10 @@ func world(h) -> void:
  h.button("Photo mode",func(): h.modal.hide(); h.begin_photo(),actions)
  for index in range(actions.get_child_count()):
   h.button_icon(actions.get_child(index),["codex","world","craft","settings"][index])
+ var turns := HBoxContainer.new(); box.add_child(turns)
+ h.button("Rotate left",func(): h.modal.hide(); h.rotate_camera(-1),turns)
+ h.button("Rotate right",func(): h.modal.hide(); h.rotate_camera(1),turns)
+ h.label("Four isometric views · twist two fingers to turn; pinch to zoom.",14,box)
  var at: String = h.model.origin(h.selected)
  if at != "":
   var tile: Dictionary = h.model.state.tiles[at]
@@ -233,8 +237,11 @@ func settings(h) -> void:
   h.model.state.text_scale = value
   caption.text = "Text size · %d%%" % roundi(value*100)
   h.apply_settings(); h.persist())
- h.label("Core play is offline. Diagnostics are off by default. Store services require connectivity. No mandatory ads or purchases.",15,box)
+ h.label("Core play is offline. Diagnostics are off by default. Store services require connectivity. You can play without connecting store services.",15,box)
  h.button("Store & optional rewards",func(): h.services_ui(),box)
+ h.button("Privacy & data",func(): privacy(h),box)
+ if h.services.privacy_options_available():
+  h.button("Ad privacy choices",func(): h.services.show_privacy_options(),box)
  h.button("How to play",func(): tutorial(h),box)
  close_button(h,box)
 
@@ -256,7 +263,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for text in ["1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap Tile conditions at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
+ for text in ["Camera · Drag to pan, pinch to zoom, and twist two fingers for a 90° turn. World also has rotation buttons.","1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap Tile conditions at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
   h.label(text,17,box)
  close_button(h,box)
 
@@ -271,3 +278,15 @@ func cost_text(cost: Dictionary) -> String:
  var parts := PackedStringArray()
  for resource in cost: parts.append("%d %s" % [cost[resource],resource.capitalize()])
  return " · ".join(parts)
+
+func privacy(h) -> void:
+ var box: VBoxContainer = h.modal_content("Privacy & your data")
+ h.label("Your island saves on this device. Core play needs no account or internet connection. Uninstalling may remove your world.",17,box)
+ h.label("Diagnostics are off by default. If enabled, the game keeps a limited log of app events and errors. The game does not add payment details, purchase tokens or advertising identifiers to these logs.",17,box)
+ h.label("Diagnostics stay on this device in this build." if h.services.telemetry.endpoint == "" else "When diagnostics are enabled, the game can send them securely to the developer's configured service.",17,box)
+ h.label("Optional ads and purchases connect to Google when you choose to connect store services. Google handles payments. Connecting also enables occasional ads at chapter breaks. Ad privacy choices appear in Settings when Google's consent system requires them.",17,box)
+ h.label("Sharing a photo opens Android's chooser. You decide whether and where to send it.",17,box)
+ h.button("Delete local diagnostics",func():
+  h.services.delete_diagnostics()
+  h.label(h.services.status,15,box),box)
+ close_button(h,box)

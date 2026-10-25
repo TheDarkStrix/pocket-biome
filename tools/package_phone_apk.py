@@ -6,6 +6,7 @@ import os
 import subprocess
 import tempfile
 import zipfile
+from run_checks import source_digest
 
 ROOT = Path(__file__).resolve().parents[1]
 SDK_TOOLS = Path('/workspace/runtime/android-sdk/build-tools/36.1.0')
@@ -26,7 +27,7 @@ def retained(name):
 
 def main():
     report = json.loads((ROOT / 'artifacts/test-results.json').read_text())
-    if not report['passed']:
+    if not report['passed'] or report['source_sha256'] != source_digest():
         raise RuntimeError('Refusing to package with a failing test report')
     with tempfile.TemporaryDirectory(dir=ROOT / 'builds') as scratch:
         scratch = Path(scratch)

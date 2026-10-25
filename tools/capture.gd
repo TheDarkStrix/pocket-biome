@@ -99,6 +99,25 @@ func capture() -> void:
  await shot("15-rain-pulse")
  scene.presentation.advance(0.4); scene.queue_redraw()
  await shot("16-rain-pulse-motion")
+ scene.presentation.weather.clear()
+ scene.model.state.tiles.clear()
+ for index in range(6):
+  scene.model.add_tile(Vector2i(index%3,index/3),["oak","water","windmill","furnace","golem","totem"][index])
+ scene.presentation = preload("res://scripts/WorldPresentation.gd").new()
+ scene.selected = "0,0"; scene.refresh(); scene.frame_world()
+ var geometry := {"oak":[scene.screen(Vector2.ZERO).x,scene.screen(Vector2.ZERO).y],"water":[scene.screen(Vector2.RIGHT).x,scene.screen(Vector2.RIGHT).y],"zoom":scene.zoom_level,"note":"Constructed visual fixture; same simulation state in both frames."}
+ var geometry_file := FileAccess.open("res://artifacts/ambient-sample-geometry.json",FileAccess.WRITE)
+ geometry_file.store_string(JSON.stringify(geometry,"  ")); geometry_file.close()
+ scene.ambient_time = 0.25; scene.queue_redraw()
+ await shot("17-world-life-a")
+ scene.ambient_time = 1.25; scene.queue_redraw()
+ await shot("18-world-life-b")
+ scene.campaign_ui.privacy(scene)
+ await shot("19-privacy-controls")
+ scene.modal.hide()
+ for view in range(4):
+  scene.view_turn = view; scene.frame_world(); scene.queue_redraw()
+  await shot("%d-camera-view-%d" % [20+view,view*90])
  scene.queue_free()
  await process_frame
  # Audio playback references are released asynchronously by the mixer.

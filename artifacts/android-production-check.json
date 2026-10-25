@@ -1,0 +1,18 @@
+{
+  "install_succeeded": true,
+  "stable_saved_fields": {
+    "seed": true,
+    "coins": true,
+    "discoveries": true,
+    "chapter": true,
+    "harvests": true,
+    "expansions": true,
+    "inventory": true,
+    "pending": true,
+    "entitlements": true,
+    "tile_content_except_effect_schedule": true
+  },
+  "all_stable_fields_matched": true,
+  "source_sha256": "d09a36cfc122ddb07ceb130347f12ab9705b8ed4066ccb67dafe4e85193418ea",
+  "note": "API29 software emulator replacement install; prior app remained active before installation, so effect clocks may advance. Native visual/lifecycle checks are separately recorded; not physical/store certification."
+}

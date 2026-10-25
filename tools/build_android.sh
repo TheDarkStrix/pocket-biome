@@ -17,11 +17,21 @@ if rg -q 'SCRIPT ERROR:|^ERROR:' "$import_log"; then
 fi
 rm -f "$import_log"
 trap - EXIT
+python3 tools/write_build_stamp.py
 ./tools/check.sh
 staging="builds/PocketBiome-debug.new.apk"
 rm -f "$staging"
-./tools/godot.sh --headless --export-debug Android "$staging"
+export_log=$(mktemp)
+trap 'rm -f "$export_log"' EXIT
+./tools/godot.sh --headless --export-debug Android "$staging" 2>&1 | tee "$export_log"
+if rg -q 'SCRIPT ERROR:|^ERROR:' "$export_log"; then
+  echo "Export reported an error; previous APK retained." >&2
+  exit 1
+fi
+rm -f "$export_log"
+trap - EXIT
 test -s "$staging"
 "$ANDROID_HOME/build-tools/36.1.0/apksigner" verify "$staging"
+python3 tools/audit_android.py --apk "$staging"
 mv "$staging" builds/PocketBiome-debug.apk
 sha256sum builds/PocketBiome-debug.apk > builds/PocketBiome-debug.apk.sha256

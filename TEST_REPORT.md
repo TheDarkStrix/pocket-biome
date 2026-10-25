@@ -4,20 +4,20 @@ Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 
 | Suite | Assertions passed | Coverage |
 |---|---:|---|
-| run | 41 | Harvest, draft, DNA, reactions, rewards, pulses and model invariants |
+| run | 44 | Harvest, draft, DNA, reactions, rewards, pulses and model invariants |
 | campaign | 54 | Chapters, recipes, crafting, automation, migrations, Dusk and upgrades |
 | save_validation | 319 | Nested invalid state rejection, occupancy/references, schema, restoration and corruption handling |
 | save_io_failures | 11 | Injected backup/rename errors preserve committed save and permit retry |
 | fusion_edges | 10 | Footprint neighbors, shared cooldown, modifiers and tier protection |
-| input_gestures | 8 | Tap/hold/drag/pinch/cancel/UI-origin classification |
+| input_gestures | 11 | Tap/hold/drag/pinch/cancel/UI-origin classification |
 | layout | 17 | Portrait geometries, safe-area transforms, scroll bounds and fallback |
-| presentation | 21 | Cosmetic isolation, terminating animation, alpha picking and no replay |
-| services | 25 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
+| presentation | 29 | Cosmetic isolation, terminating animation, alpha picking and no replay |
+| services | 29 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
 | screens | 83 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
-| scene_smoke | 23 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
-| touch_ui | 24 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
+| scene_smoke | 41 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
+| touch_ui | 30 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
 | mobile_layout | 72 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
-| **Total** | **708** | Assertions; separate simulation and startup checks also run |
+| **Total** | **750** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -54,3 +54,19 @@ Current native feedback checks: replacement installation succeeded, title and re
 708 assertions pass. The HUD now names Moisture and Heat under Tile conditions. A real touchscreen tap opens the player explanation, which identifies the selected tile, defines the 0–100 scores, distinguishes warmth from Celsius, and explains neighbor/Pulse influences and transformation requirements. Tutorial copy uses conditions; inspector scores include /100. Internal DNA data and schema are unchanged.
 
 The six mobile size/text fixtures now verify named-reading separation and the full panel above the world. Enlarged text exposed both a height issue and a width overlap; layout now measures the conditions panel when reserving header space. Real-touch help navigation passes. Current native device recheck is separate; previous native captures show the prior HUD wording.
+
+## Animation and production hardening
+
+724 Godot assertions across 13 suites pass, plus complete progression/startup. Eight separate Python audit-policy/ELF-parser tests pass. Added cases cover grounded canopy deformation, UV bounds, bounded displacement, reduced-motion invariance, no activity from paused machines, cosmetic isolation, frame-jitter-safe environment/automation cadence, no stalled reward bursts, diagnostic deletion/cancellation and offline privacy navigation.
+
+Current preview export compiled with Ads25.5.0/UMP4.0.0/Billing8.3.0, Kotlin2.3.21 and AGP8.10.1. Signature, package/minAPI24/target36, portrait, no capture/location permissions, QA-source exclusion, ARM64, 16KB ZIP alignment and every native ELF load segment pass. The embedded source hash matches the passing source report. Source provenance deliberately excludes its generated stamp from its own digest. The production audit exits2 as expected and enumerates ten unmet configuration/acceptance gates; preview package success is not production approval.
+
+Actual OpenGL frame comparison uses a constructed six-cell visual fixture at two fixed cosmetic times:3,904 canopy pixels and605 water-region pixels changed; the sampled Oak ground patch stayed identical. This demonstrates visible ambient motion and grounded art, not player progression, physical GPU FPS or complete sprite rigs. See artifacts/ambient-frame-check.json, frames17–18 and docs/ANIMATION_STATUS.md. Native lifecycle evidence for this revision is separately scoped in its JSON report.
+
+## Native scrolling, consent and cardinal-camera follow-up
+
+Latest 750 Godot assertions and eight Python audit tests pass. A touch-drag regression first failed with menu buttons consuming input, then passed after buttons allowed propagation to ScrollContainer. It also verifies no button toggles and no leaked world pointers. The headless fixture enables touch capability for this native ScrollContainer path; the test sends real ScreenTouch/ScreenDrag events rather than setting a scrollbar value.
+
+Camera tests cover all four expected projected directions, inverse cell picking, every frontier center, full-circle state invariance, fused origin/reservation/cooldown preservation, pinch jitter rejection and a World rotation button through touch. Views are 0/90/180/270° billboard-style isometric projections; continuous 3D yaw/back faces are not implemented. Four OpenGL fixture views are captured separately.
+
+Native crash capture now follows the actual diagnostics preference and ignores historical process exits from opt-out periods. The manifest delays Ads app-measurement initialization. These controls compile with the current native dependencies; actual regional UMP and Google transactions remain uncertified. Current native observations are scoped in artifacts/android-production-check.json; earlier captures/reports are historical.

@@ -13,3 +13,6 @@ builds/
 
 __pycache__/
 *.pyc
+
+# Generated source provenance embedded in APK exports.
+data/build_info.json

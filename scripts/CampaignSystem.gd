@@ -102,7 +102,7 @@ func tick(m) -> void:
   var interval: int = m.config.tiles[tile.type].get("interval",0)
   if interval <= 0 or tile.get("next_production",m.state.time+interval) > m.state.time: continue
   if tile.type == "furnace": interval = maxi(1,ceili(float(interval)/int(tile.get("level",1))))
-  tile.next_production = m.state.time+interval
+  tile.next_production = m.next_cycle(tile.next_production,interval,m.state.time)
   match tile.type:
    "windmill":
     var output: int = tile.get("level",1)

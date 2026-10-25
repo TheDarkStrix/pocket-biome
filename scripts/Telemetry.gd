@@ -50,3 +50,16 @@ func _completed(result: int, code: int, _headers: PackedStringArray, _body: Pack
    if event is Dictionary and not in_flight.has(event.get("id","")): keep.append(line)
   replace(keep)
  in_flight.clear()
+
+func reconcile_consent() -> void:
+ if model == null or not model.state.settings.analytics:
+  if request != null: request.cancel_request()
+  in_flight.clear()
+
+func erase() -> bool:
+ if request != null: request.cancel_request()
+ in_flight.clear()
+ var ok := true
+ for file in [path,path+".tmp"]:
+  if FileAccess.file_exists(file) and DirAccess.remove_absolute(file) != OK: ok = false
+ return ok

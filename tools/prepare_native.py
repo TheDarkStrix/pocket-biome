@@ -1,11 +1,18 @@
 from pathlib import Path
-import shutil, zipfile
+import shutil, zipfile, json, re
 root=Path(__file__).resolve().parents[1]
 build=root/'android/build'
 if not build.exists():
  build.mkdir(parents=True)
  with zipfile.ZipFile('/workspace/runtime/data/godot/export_templates/4.6.3.stable/android_source.zip') as archive: archive.extractall(build)
 (build/'gradlew').chmod(0o755)
+toolchain=json.loads((root/'native/android/toolchain.json').read_text())
+compiler=toolchain['kotlin_version']
+p=build/'config.gradle'
+config=re.sub(r"kotlinVersion\s*:\s*'[^']+'", "kotlinVersion      : '"+compiler+"'", p.read_text())
+config=re.sub(r"androidGradlePlugin\s*:\s*'[^']+'", "androidGradlePlugin: '"+toolchain['android_gradle_plugin']+"'", config)
+p.write_text(config)
+
 (build/'.gdignore').touch()
 (root/'android/.build_version').write_text('4.6.3.stable\n')
 for source in (root/'native/android/src').rglob('*.kt'):
@@ -13,8 +20,11 @@ for source in (root/'native/android/src').rglob('*.kt'):
 for source in (root/'native/android/res').rglob('*.xml'):
  target=build/'res'/source.relative_to(root/'native/android/res');target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
 p=build/'build.gradle';s=p.read_text()
-if 'play-services-ads:23.6.0' not in s:
- s=s.replace('dependencies {','dependencies {\n    implementation "com.google.android.gms:play-services-ads:23.6.0"\n    implementation "com.google.android.ump:user-messaging-platform:3.1.0"\n    implementation "com.android.billingclient:billing:8.0.0"',1)
+dependencies=json.loads((root/'native/android/dependencies.json').read_text())
+for artifact in dependencies:
+ s=re.sub(r'^\s*implementation ["\']'+re.escape(artifact)+r':[\w.\-]+["\']\s*$', '', s, flags=re.MULTILINE)
+pins=''.join('    implementation "'+artifact+':'+version+'"\n' for artifact,version in dependencies.items())
+s=s.replace('dependencies {','dependencies {\n'+pins,1)
 # Same Google artifacts and TLS verification; use the official host available in the sandbox.
 s=s.replace('google()', 'maven { url "https://dl.google.com/dl/android/maven2/" }')
 p.write_text(s)
@@ -28,6 +38,8 @@ metadata='''
         </provider>
 '''
 if 'plugin.v2.PocketServices' not in s:s=s.replace('</application>',metadata+'\n</application>')
+if 'com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT' not in s:
+ s=s.replace('</application>','<meta-data android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT" android:value="true" />\n</application>')
 p.write_text(s)
 (build/'local.properties').write_text('sdk.dir=/workspace/runtime/android-sdk\n')
 # Bound Gradle parallelism and heap to reduce contention during emulator validation.

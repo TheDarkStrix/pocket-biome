@@ -79,6 +79,32 @@ func run() -> void:
  await click(h.ecology_monitor.get_global_rect().get_center())
  check(h.modal.visible and h.modal_title.text == "Tile conditions","mobile tap on conditions panel opens its player explanation")
  h.modal.hide()
+ h.campaign_ui.settings(h)
+ await process_frame
+ await process_frame
+ Input.emulate_touch_from_mouse = true
+ var before_options: Dictionary = h.model.state.settings.duplicate(true)
+ var drag_start: Vector2 = h.modal_scroll.global_position+Vector2(100,210)
+ touch(drag_start,true)
+ await process_frame
+ var previous := drag_start
+ for step in range(1,9):
+  var position := drag_start-Vector2(0,step*20)
+  var motion := InputEventScreenDrag.new()
+  motion.index = 0; motion.position = position; motion.relative = position-previous
+  Input.parse_input_event(motion); Input.flush_buffered_events()
+  previous = position
+  await process_frame
+ touch(previous,false)
+ await process_frame
+ check(h.modal_scroll.scroll_vertical > 0,"real touch drag over menu controls scrolls to below-fold actions")
+ check(h.model.state.settings == before_options,"scrolling across settings cannot activate its buttons")
+ check(h.input_controller.pointers.is_empty() and h.all_touches.is_empty(),"menu scrolling leaves no world-input pointers")
+ Input.emulate_touch_from_mouse = false
+ h.campaign_ui.privacy(h)
+ await process_frame
+ check(h.modal.visible and h.modal_title.text == "Privacy & your data","privacy disclosure is available without initializing online services")
+ h.modal.hide()
  h.campaign_ui.workshop(h)
  await process_frame
  var increase: Button
@@ -89,6 +115,19 @@ func run() -> void:
  await click(increase.get_global_rect().get_center())
  check(h.campaign_ui.craft_quantity == 2 and h.modal.visible,"touch-triggered workshop replacement preserves GUI event lifetime")
  h.modal.hide()
+ h.campaign_ui.world(h)
+ await process_frame
+ await process_frame
+ var rotate_right: Button
+ for row in h.modal_box.get_children():
+  if row is HBoxContainer:
+   for child in row.get_children():
+    if child is Button and child.text == "Rotate right": rotate_right = child
+ check(rotate_right != null,"World exposes an explicit rotate action")
+ if rotate_right != null:
+  await click(rotate_right.get_global_rect().get_center())
+  check(h.view_turn == 1 and not h.modal.visible,"native-style touch rotates and returns to the island")
+ h.rotate_camera(-1)
  h.model.state.tiles.clear()
  for x in range(4):
   for y in range(4): h.model.add_tile(Vector2i(x,y),"forest" if x%2 == 0 else "water")

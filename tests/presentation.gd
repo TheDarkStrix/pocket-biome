@@ -63,5 +63,22 @@ func _init() -> void:
  square.state.tiles.clear()
  for x in range(4): square.add_tile(Vector2i(x,0),"forest")
  check(not guide.options(square,"2,0")[0].ready and guide.options(square,"2,0")[0].matches == 2,"four forests in a row are explained as an incomplete square")
+ var living = preload("res://scripts/WorldAmbience.gd")
+ var spec: Dictionary = art.appearance("oak","")
+ var a: Dictionary = living.foliage_mesh(spec,0.32,0.1,3)
+ var b: Dictionary = living.foliage_mesh(spec,0.32,1.1,3)
+ check(not a.points[0].is_equal_approx(b.points[0]),"foliage artwork moves between idle frames")
+ check(a.points[2] == b.points[2] and a.points[3] == b.points[3] and a.base == b.base,"foliage movement leaves ground and trunk seam fixed")
+ check(absf(a.shift) <= 9*0.32 and absf(b.shift) <= 9*0.32,"canopy displacement remains inside camera padding and touch tolerance")
+ check(living.foliage_mesh(spec,0.32,0.1,3,true) == living.foliage_mesh(spec,0.32,8.1,3,true),"reduced motion makes the foliage mesh time-independent")
+ var safe_uvs := true
+ for uv in a.uvs: safe_uvs = safe_uvs and uv.x >= 0 and uv.x <= 1 and uv.y >= 0 and uv.y <= 1
+ check(safe_uvs,"moving canopy samples stay within the source texture")
+ check(living.activity({"type":"water","evolution":"","id":1}) == "water","water receives ongoing surface animation")
+ check(living.activity({"type":"furnace","evolution":"","id":2,"enabled":false}) == "","paused automation cannot show working effects")
+ var untouched: String = JSON.stringify(model.state)
+ for key in model.state.tiles:
+  if not model.state.tiles[key].has("owner"): living.activity(model.state.tiles[key])
+ check(JSON.stringify(model.state) == untouched,"ambient classification cannot change production or saves")
  print("PRESENTATION RESULT: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

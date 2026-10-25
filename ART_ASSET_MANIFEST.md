@@ -33,3 +33,5 @@ assets/ui/line/*.svg are original32px monochrome navigation/power icons, authore
 Current direction is recorded in docs/DESIGN_DIRECTION.md; the parchment/brass pass is superseded. Existing generated terrain/biome/resource illustrations remain integrated and require the same perspective/alpha/device review described above.
 
 Player-feedback revision reuses existing sanctuary art for the fusion chooser. Expansion target rings, area highlights, rain streaks/ripples, heat motes and frost flakes are original runtime vector effects rather than missing raster artwork. UI response uses original motion code; no new external art dependency was added.
+
+Current ambient motion uses original procedural canopy deformation and water/structure effects over existing art. It does not supply separated Windmill rotor or Golem body/limb art; exact remaining layered-art specifications are in docs/ANIMATION_STATUS.md. Final human art/audio review remains open.

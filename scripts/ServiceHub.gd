@@ -178,3 +178,16 @@ func _service_error(message: String) -> void:
  status = message
  event("service_error",{"message":message.left(160)})
  changed.emit()
+
+func privacy_options_available() -> bool:
+ return bridge != null and bridge.has_method("privacyOptionsRequired") and bridge.privacyOptionsRequired()
+
+func show_privacy_options() -> void:
+ if privacy_options_available(): bridge.showPrivacyOptions()
+
+func delete_diagnostics() -> bool:
+ var removed: bool = telemetry.erase()
+ if bridge != null and bridge.has_method("deleteDiagnostics"): bridge.deleteDiagnostics()
+ status = "Local diagnostics deleted." if removed else "Could not delete every diagnostic file. Try again."
+ changed.emit()
+ return removed

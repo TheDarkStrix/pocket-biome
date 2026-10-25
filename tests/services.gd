@@ -89,6 +89,14 @@ func run() -> void:
  hub.save_path = "user://service-tests.json"
  hub._purchase_completed("pocket_biome_moon_theme_test","retry-receipt")
  check(model.state.entitlements.has("moon"),"purchase restore retries after local save recovery")
+ hub.telemetry.in_flight = PackedStringArray(["pending-before-opt-out"])
+ hub.telemetry.reconcile_consent()
+ check(hub.telemetry.in_flight.is_empty(),"diagnostics opt-out cancels pending delivery state")
+ check(not hub.privacy_options_available(),"offline provider cannot pretend to offer a consent form")
+ hub.telemetry.path = hub.log_path
+ hub.telemetry.in_flight = PackedStringArray(["pending-upload"])
+ check(hub.delete_diagnostics() and not FileAccess.file_exists(hub.log_path),"user deletion removes diagnostic records")
+ check(hub.telemetry.in_flight.is_empty(),"diagnostic deletion cancels the pending delivery ledger")
  hub.queue_free()
  await process_frame
  print("SERVICES RESULT: %d checks, %d failures" % [checks,failures])

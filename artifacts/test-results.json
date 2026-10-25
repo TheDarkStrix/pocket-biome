@@ -1,15 +1,15 @@
 {
-  "utc": "2026-10-25T05:47:38.529851+00:00",
-  "source_sha256": "2a3c9934aa896233ac7202593ece91054fddc4a37014da596e95ea49b54c018d",
+  "utc": "2026-10-25T06:48:31.107216+00:00",
+  "source_sha256": "856885e00b4638aa0393b195c5cf86ea0db8994fad8ead109a23b50b943af303",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 708,
+  "assertions": 750,
   "results": [
     {
       "suite": "run",
       "passed": true,
       "exit_code": 0,
-      "assertions": 41
+      "assertions": 44
     },
     {
       "suite": "campaign",
@@ -39,7 +39,7 @@
       "suite": "input_gestures",
       "passed": true,
       "exit_code": 0,
-      "assertions": 8
+      "assertions": 11
     },
     {
       "suite": "layout",
@@ -51,13 +51,13 @@
       "suite": "presentation",
       "passed": true,
       "exit_code": 0,
-      "assertions": 21
+      "assertions": 29
     },
     {
       "suite": "services",
       "passed": true,
       "exit_code": 0,
-      "assertions": 25
+      "assertions": 29
     },
     {
       "suite": "screens",
@@ -69,13 +69,13 @@
       "suite": "scene_smoke",
       "passed": true,
       "exit_code": 0,
-      "assertions": 23
+      "assertions": 41
     },
     {
       "suite": "touch_ui",
       "passed": true,
       "exit_code": 0,
-      "assertions": 24
+      "assertions": 30
     },
     {
       "suite": "mobile_layout",

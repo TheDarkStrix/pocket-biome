@@ -12,3 +12,7 @@ The user requested no blocking questions. Record unresolved external requirement
 - **Store submission:** privacy policy/data safety, content rating, listing art and screenshots, localized descriptions, SDK disclosures and final QA must precede publication. No automatic store publication is authorized or performed.
 
 Runtime: OpenGL Compatibility is selected for both regular and mobile rendering, Android minimum API24/target36. Vulkan can be explored separately after device profiling; exported apps follow the configured renderer.
+
+Current engineering/checklist: docs/PRODUCTION_READINESS.md. Current animation coverage and remaining authored rotor/body rigs: docs/ANIMATION_STATUS.md. SDK artifact pins are current as verified from official repositories; current store/regional policy and provider flows still need final review. The production audit intentionally fails for development signing/test IDs and missing external acceptance evidence.
+
+Camera extension:four 90° views are implemented; continuous free-angle orbit requires a 3D renderer and directional assets. It is not marked complete. See docs/CAMERA_ORBIT_PLAN.md.

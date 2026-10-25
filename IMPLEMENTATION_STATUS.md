@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 708 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 tracked progression operations (plus earning-loop harvests), using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
+`tools/check.sh`: 750 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 tracked progression operations (plus earning-loop harvests), using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
 
 Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
 
@@ -38,3 +38,13 @@ Rain now renders a 3.2-second shower and ripples over every affected biome; redu
 ## Player-facing terminology
 
 Replaced Local DNA with Tile conditions and explicit Moisture/Heat labels. The panel opens an explanation of the selected tile, scores, influences and transformation purpose. Enlarged-text layout measures the actual panel width/height. Tutorial and inspector wording are aligned; saved/internal DNA fields remain unchanged. Latest checks:708 assertions.
+
+## Production engineering pass
+
+Implemented ongoing grounded foliage motion, water ripples and structure activity effects; preserved responsive gameplay/UI animations. Fixed real-frame effect/automation cadence drift. Added in-app privacy/data disclosure, diagnostics deletion/opt-out cancellation, native consent retry/privacy choices and release ad-consent guards. Upgraded/pinned native SDK/compiler/build dependencies and passed the current preview export.
+
+Current evidence:724 Godot assertions, eight Python audit tests, actual OpenGL animation-frame differences, signed preview APK and16KB/package/source-binding checks. Store readiness remains false:development signing, preview/service/test identifiers, missing policy/support configuration and current physical/store/creative acceptance evidence. Full authored rigs are not claimed; remaining art and human polish are documented. See docs/PRODUCTION_READINESS.md.
+
+## Camera and mobile-menu follow-up
+
+Four quarter-turn views, World rotation controls and two-finger twist are implemented with rotation-aware picking/depth/framing. Continuous free-angle 3D orbit remains unimplemented and needs the separately documented renderer/asset phase. Menu touch scrolling now reaches below-fold controls without activating buttons. Native diagnostics capture obeys opt-in, and SDK measurement initialization is delayed. Latest 750 Godot assertions plus eight Python audit cases pass; release is still blocked as documented.

@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-25T06:24:10.234589+00:00",
+  "verified_artifact_sources": [
+    {
+      "url": "https://dl.google.com/dl/android/maven2/com/google/android/gms/play-services-ads/maven-metadata.xml",
+      "latest_observed": "25.5.0",
+      "pinned": "25.5.0"
+    },
+    {
+      "url": "https://dl.google.com/dl/android/maven2/com/google/android/ump/user-messaging-platform/maven-metadata.xml",
+      "latest_observed": "4.0.0",
+      "pinned": "4.0.0"
+    },
+    {
+      "url": "https://dl.google.com/dl/android/maven2/com/android/billingclient/billing/maven-metadata.xml",
+      "latest_observed": "9.1.0",
+      "pinned": "8.3.0",
+      "note": "Latest observed 8.x patch selected to retain verified Billing 8 API integration; this is not a claim of testing Billing 9."
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml",
+      "pinned": "2.3.21"
+    },
+    {
+      "url": "https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.10.1/gradle-8.10.1.pom",
+      "available": true
+    }
+  ],
+  "policy_documentation": "AdMob deprecation page proxy-blocked; artifact availability is not policy certification."
+}

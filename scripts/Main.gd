@@ -22,6 +22,7 @@ var photo_saved_view := {}
 var ui_root: Control
 var model = Model.new()
 var store = Store.new()
+var view_turn := 0
 var zoom_level := 1.0
 var pan := Vector2.ZERO
 var selected := "0,0"
@@ -56,6 +57,7 @@ var stacked_buttons: Array[Button] = []
 var confirm_card: Button
 var inspection_view := {}
 var cosmetic_clock := 0.0
+var ambient_time := 0.0
 var inspection_mode := false
 var inspection_drag_start := Vector2.ZERO
 var all_touches := {}
@@ -98,6 +100,7 @@ func _ready() -> void:
  input_controller.tapped.connect(tap)
  input_controller.inspected.connect(inspect)
  input_controller.panned.connect(func(delta): pan += delta; constrain_camera(); queue_redraw())
+ input_controller.rotated.connect(rotate_camera)
  input_controller.zoomed.connect(func(factor): zoom_level = clampf(zoom_level*factor,0.04 if photo_mode else 0.5,2.0); constrain_camera(); queue_redraw())
  refresh()
  if show_menu_on_launch: start_screen()
@@ -118,6 +121,8 @@ func label(text: String, size: int, parent: Node) -> Label:
 
 func button(text: String, action: Callable, parent: Node) -> Button:
  var b := Button.new()
+ # Let ScrollContainer see touch drags begun over a button. Modal panels still contain input.
+ b.mouse_filter = Control.MOUSE_FILTER_PASS
  b.text = tr(text)
  b.set_meta("base_font",17)
  b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -539,8 +544,21 @@ func compact_amount(amount: int) -> String:
  if amount >= 1000: return "%.1fk" % (float(amount)/1000.0)
  return str(amount)
 
+func camera_coord(c: Vector2) -> Vector2:
+ for step in range(view_turn): c = Vector2(-c.y,c.x)
+ return c
+
 func project(c: Vector2) -> Vector2:
- return Vector2((c.x-c.y)*66,(c.x+c.y)*33)
+ var rotated := camera_coord(c)
+ return Vector2((rotated.x-rotated.y)*66,(rotated.x+rotated.y)*33)
+
+func rotate_camera(steps: int) -> void:
+ if launch_menu or photo_mode: return
+ view_turn = posmod(view_turn+steps,4)
+ frame_world()
+ model.message = "View %d° · Two-finger twist turns the island; pinch to zoom." % (view_turn*90)
+ haptic(12)
+ refresh()
 
 func screen(c: Vector2) -> Vector2:
  return world_anchor()+pan+project(c)*zoom_level
@@ -548,6 +566,7 @@ func screen(c: Vector2) -> Vector2:
 func hit(pos: Vector2) -> String:
  var p := (pos-world_anchor()-pan)/zoom_level
  var c := Vector2(p.x/132+p.y/66,p.y/66-p.x/132)
+ for step in range(view_turn): c = Vector2(c.y,-c.x)
  return model.key(Vector2i(roundi(c.x),roundi(c.y)))
 
 func tap(pos: Vector2) -> void:
@@ -665,6 +684,12 @@ func constrain_camera() -> void:
  pan.y = clampf(pan.y,area.position.y-anchor.y-bounds.end.y,area.end.y-anchor.y-bounds.position.y)
 
 func _process(delta: float) -> void:
+ if not suspended and not photo_mode and not model.state.settings.reduced_motion:
+  ambient_time += minf(delta,0.1)
+  cosmetic_clock += delta
+  if cosmetic_clock >= 1.0/30.0:
+   cosmetic_clock = 0.0
+   queue_redraw()
  notice_time = maxf(0,notice_time-delta)
  notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible
  if not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
@@ -676,10 +701,6 @@ func _process(delta: float) -> void:
  if save_dirty:
   dirty_elapsed += delta
   if dirty_elapsed >= 0.35: persist()
- cosmetic_clock += delta
- if cosmetic_clock >= 0.12 and not model.state.settings.reduced_motion:
-  cosmetic_clock = 0.0
-  queue_redraw()
  if model.state.settings.reduced_motion:
   presentation.animations.clear()
   if presentation.advance(delta): queue_redraw()
@@ -786,7 +807,9 @@ func _draw() -> void:
     preload("res://scripts/TileArtwork.gd").draw_tile(self,part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
    preload("res://scripts/TileArtwork.gd").draw_tile(self,pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
-  preload("res://scripts/TileArtwork.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time)
+  var still: bool = model.state.settings.reduced_motion or photo_mode
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still)
+  preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
   if model.state.event.targets.has(k) and not model.state.event.cleared.has(k):
    var frost := p-Vector2(0,30*s)
    for i in range(3):
@@ -925,6 +948,10 @@ func tile_title(tile: Dictionary) -> String:
  return tile.type.capitalize()
 
 func apply_settings() -> void:
+ services.telemetry.model = model
+ services.telemetry.reconcile_consent()
+ if services.bridge != null and services.bridge.has_method("setDiagnosticsEnabled"):
+  services.bridge.setDiagnosticsEnabled(model.state.settings.analytics)
  audio_feedback.process_mode = Node.PROCESS_MODE_INHERIT
  var effects: float = model.state.audio_levels.sfx if model.state.settings.sfx else 0.0
  for player in audio_feedback.players: player.volume_db = -80 if effects <= 0 else -10+linear_to_db(effects)
@@ -949,7 +976,7 @@ func services_ui() -> void:
  var box := modal_content("Optional Store · Sandbox")
  modal_screen = "services"
  label(services.status,16,box)
- label("Test advertisements only. Purchases require a Play sandbox tester installation. No paid item is needed to finish the game.",15,box)
+ label("Test advertisements only. Purchases require a Play sandbox tester installation. Connecting also enables occasional test ads at chapter breaks. No paid item is needed to finish the game.",15,box)
  button("Connect optional services",func(): services.initialize_online(),box).disabled = services.bridge == null
  button("Optional test ad · +25 coins",func(): services.request_reward("coins"); modal.hide(),box).disabled = not services.ad_ready or not services.reward_available()
  button("Optional test ad · +100 pulse",func(): services.request_reward("pulse"); modal.hide(),box).disabled = not services.ad_ready or not services.reward_available()
@@ -1057,7 +1084,7 @@ func start_screen() -> void:
  button("Settings",func(): campaign_ui.settings(self),secondary)
  button("About",func():
   var box := modal_content("Pocket Biome · Tiny Expansion")
-  label("An offline miniature-world discovery game. Version 0.9 test build. Original synthesized sound and generated diorama artwork. No mandatory ads or purchases.",17,box)
+  label("An offline miniature-world discovery game. Version %s. Original synthesized sound and generated diorama artwork. No purchase is needed to finish." % ProjectSettings.get_setting("application/config/version","development"),17,box)
   campaign_ui.close_button(self,box),secondary)
  button("New world",new_world_dialog,secondary)
  ui_motion.reveal(launch_screen,model.state.settings.reduced_motion)
@@ -1081,8 +1108,8 @@ func new_world_dialog() -> void:
   if entitlements.has("founders"): model.state.blueprints["lantern"] = 1
   services.model = model
   presentation = preload("res://scripts/WorldPresentation.gd").new()
-  selected = "0,0"; pan = Vector2.ZERO; zoom_level = 1.0
-  persist(); refresh(); start_play(),box)
+  selected = "0,0"; pan = Vector2.ZERO; zoom_level = 1.0; view_turn = 0
+  apply_settings(); persist(); refresh(); start_play(),box)
  campaign_ui.close_button(self,box)
 
 func start_play() -> void:
@@ -1121,11 +1148,11 @@ func render_keys() -> Array:
  for key in model.state.tiles:
   if not model.state.tiles[key].has("owner"): keys.append(key)
  keys.sort_custom(func(a,b):
-  var ca: Vector2i = model.coord(a)
-  var cb: Vector2i = model.coord(b)
-  var da: int = ca.x+ca.y+(1 if model.state.tiles[a].size == 4 else 0)
-  var db: int = cb.x+cb.y+(1 if model.state.tiles[b].size == 4 else 0)
-  return ca.x < cb.x if da == db else da < db)
+  var ca: Vector2 = camera_coord(Vector2(model.coord(a))+(Vector2(0.5,0.5) if model.state.tiles[a].size == 4 else Vector2.ZERO))
+  var cb: Vector2 = camera_coord(Vector2(model.coord(b))+(Vector2(0.5,0.5) if model.state.tiles[b].size == 4 else Vector2.ZERO))
+  var da: float = ca.x+ca.y
+  var db: float = cb.x+cb.y
+  return ca.x < cb.x if is_equal_approx(da,db) else da < db)
  return keys
 
 func pick_frontier(position: Vector2) -> String:

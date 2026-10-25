@@ -35,3 +35,7 @@ Latest local revision after be8a4ee:645 checks pass. Title camera now frames the
 ## Player feedback checkpoint
 
 Expansion/fusion/rain and UI response changes pass 701 assertions plus the full progression simulation. Rebuild and distribute the replacement signed test APK; preserve existing schema-3 saves. Real player aesthetic/pacing feedback and physical-device qualification continue to be required.
+
+## Production engineering checkpoint
+
+Ongoing ambient art motion, timer cadence and privacy/provider hardening implemented. Preview build is verified against724 Godot assertions, eight Python audit tests and actual APK checks. Final production gate intentionally blocks development credentials and missing device/store/creative evidence. Do not treat a debug APK or static audit as a certified public release.

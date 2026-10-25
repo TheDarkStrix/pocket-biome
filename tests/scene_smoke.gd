@@ -19,6 +19,18 @@ func run() -> void:
  for k in scene.model.state.tiles:
   check(scene.hit(scene.screen(scene.model.coord(k))) == k,"projection roundtrip")
  check(scene.pick(scene.screen(Vector2.ZERO)-Vector2(0,50)) == "0,0","Oak canopy touch resolves to Oak instead of a cloud")
+ var state_before_turn: String = JSON.stringify(scene.model.state)
+ var expected := [Vector2(66,33),Vector2(-66,33),Vector2(-66,-33),Vector2(66,-33)]
+ for view in range(4):
+  check(scene.project(Vector2.RIGHT).is_equal_approx(expected[view]),"camera projects the expected cardinal view %d" % view)
+  var cells_match := true
+  for key in scene.model.state.tiles: cells_match = cells_match and scene.hit(scene.screen(scene.model.coord(key))) == key
+  check(cells_match,"tile inverse picking survives view %d" % view)
+  var clouds_match := true
+  for key in scene.model.frontier(): clouds_match = clouds_match and scene.pick(scene.screen(scene.model.coord(key))) == key
+  check(clouds_match,"all expansion controls remain hittable in view %d" % view)
+  scene.rotate_camera(1)
+ check(scene.view_turn == 0 and JSON.stringify(scene.model.state) == state_before_turn,"full-circle stepped rotation preserves the exact game state")
  scene.tap(scene.screen(Vector2.ZERO))
  check(scene.model.state.inventory.wood == 1,"scene harvest routing")
  scene.tap(scene.screen(Vector2(-1,0)))
@@ -62,6 +74,16 @@ func run() -> void:
  check(scene.save_dirty and scene.model.state.inventory.wood == 1,"harvest queues a debounced save")
  scene._notification(Node.NOTIFICATION_APPLICATION_PAUSED)
  check(not scene.save_dirty and scene.store.load_state().inventory.wood == 1,"backgrounding flushes the queued harvest before suspension")
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ scene.model.state.tiles.clear()
+ for at in [Vector2i.ZERO,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.ONE]: scene.model.add_tile(at,"forest")
+ scene.model.fuse("0,0"); scene.selected = "0,0"; scene.refresh()
+ var fused_before: String = JSON.stringify(scene.model.state)
+ for view in range(4):
+  scene.frame_world()
+  check(scene.model.origin(scene.pick(scene.entity_screen("0,0"))) == "0,0","rotated sanctuary resolves to its shared origin in view %d" % view)
+  scene.rotate_camera(1)
+ check(JSON.stringify(scene.model.state) == fused_before,"camera rotation preserves fused reservations and cooldowns")
  print("SCENE RESULT: %d checks, %d failures" % [checks,failures])
  scene.queue_free()
  await process_frame
