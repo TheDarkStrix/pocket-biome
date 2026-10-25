@@ -12,12 +12,13 @@ Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | input_gestures | 11 | Tap/hold/drag/pinch/cancel/UI-origin classification |
 | layout | 17 | Portrait geometries, safe-area transforms, scroll bounds and fallback |
 | presentation | 29 | Cosmetic isolation, terminating animation, alpha picking and no replay |
+| gameplay_pacing | 28 | Seeded offer diversity/eligibility, tutorial stability, local placement descriptions, actionable advice, reserves, upgrade quote protection and save continuity |
 | services | 29 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
 | screens | 83 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
 | scene_smoke | 41 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
-| touch_ui | 30 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
+| touch_ui | 35 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
 | mobile_layout | 72 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
-| **Total** | **750** | Assertions; separate simulation and startup checks also run |
+| **Total** | **783** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -72,3 +73,11 @@ Camera tests cover all four expected projected directions, inverse cell picking,
 Native crash capture now follows the actual diagnostics preference and ignores historical process exits from opt-out periods. The manifest delays Ads app-measurement initialization. These controls compile with the current native dependencies; actual regional UMP and Google transactions remain uncertified. Current native observations are scoped in artifacts/android-production-check.json; earlier captures/reports are historical.
 
 Latest native750-source follow-up:current APK installed and rendered, World rotation reached90°, dragging menu controls scrolled to below-fold privacy actions, and privacy disclosure opened. Reading actual native preferences confirmed diagnostics enabled=true after the On control and=false after Off. Stable save/progression fields remained unchanged; bounded current-process logs had no script/runtime error lines. The JNI privacy dispatch bug was reproduced as missing preference writes before the fix and corrected via the known compiled interface. These are software-emulator checks, not physical-device gesture/performance or provider certification.
+
+## 0.12 gameplay pass
+
+783 assertions across 14 Godot suites pass, plus eight Python audit cases, startup and two public progression policies. Real-touch tests open objective suggestions, return to the island without auto-harvesting, and execute/persist an illustrated 20-material trade. Dealer tests sample multiple seeds/chapters, verify unique eligible stable hands and unchanged saved drafts. Model cases cover the reported surplus-Wood/cash-short fixture, local effect/reach descriptions, nonmutating advice, useful automation guidance, reserved plot coins and automatic/manual Furnace input behavior.
+
+Both fixed-seed public routes finish the full 20-discovery/five-chapter campaign and restore the resulting save. The new event/collection traces expose substantial late progression gaps; tests do not prove enjoyment. docs/GAMEPLAY_PACING_REVIEW.md gives the measured results and unexecuted human-session acceptance. Actual OpenGL fixtures24–26 show suggestions, material trade and local card consequences; they use constructed states, not earned-progression evidence. Native 0.12 observations are recorded separately in artifacts/android-gameplay-check.json; earlier provider/rotation/privacy reports retain their original scope.
+
+Native 0.12: the exact final universal APK installed over the existing save; every ZIP member matched the exported package. The title/restored world, objective suggestions and direct Workshop trade screen rendered and accepted touch navigation. Legacy pending cards/quote and stable progress fields were retained; active clocks advanced. Insufficient stock correctly disabled the trade controls; no native sale was executed. The real 20-material transaction/save is covered separately by the automated touch fixture. Bounded current-process logs contained no script/runtime error lines; a cached shader was recompiled. See android-gameplay-check.json and captures17–18.

@@ -5,6 +5,7 @@ var focus_id := ""
 var workshop_jobs := {}
 var workshop_stock: Label
 var workshop_signature := ""
+var trade_signature := ""
 const Thumbnail = preload("res://scripts/TileThumbnail.gd")
 func close_button(h, box: VBoxContainer) -> void:
  h.button("Back" if h.launch_menu else "Back to island",func(): h.modal.hide(); h.refresh(); h.check_transition_ad(),box)
@@ -77,6 +78,7 @@ func workshop(h) -> void:
  h.modal_screen = "workshop"
  workshop_jobs.clear()
  workshop_signature = JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.inventory,h.model.state.coins])
+ h.button("Trade spare materials for coins",func(): trade(h),box)
  workshop_stock = h.label("Wood %d · Stone %d · Fiber %d\nClay %d · Iron %d · Brick %d · Dew %d" % [h.model.state.inventory.wood,h.model.state.inventory.stone,h.model.state.inventory.fiber,h.model.state.inventory.clay,h.model.state.inventory.iron,h.model.state.inventory.brick,h.model.state.inventory.star_dew],17,box)
  var quantity_row := HBoxContainer.new()
  box.add_child(quantity_row)
@@ -85,6 +87,11 @@ func workshop(h) -> void:
  quantity_label.custom_minimum_size.x = 150
  quantity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  h.button("+",func(): craft_quantity = mini(3,craft_quantity+1); workshop(h),quantity_row)
+ if h.model.campaign.has_structure(h.model,"furnace"):
+  var reserves: Dictionary = h.model.config.tiles.furnace.get("automation_reserve",{})
+  var held := PackedStringArray()
+  for resource in reserves: held.append("%d %s" % [reserves[resource],resource.capitalize()])
+  if not held.is_empty(): h.label("Automatic Furnace production keeps "+", ".join(held)+" for construction. Manual crafting can use that stock.",15,box)
  h.label("Three project slots. Place crafted blueprints on an empty Grass tile. Every essential tile can be shaped here, even when your world is full.",15,box)
  for job in h.model.state.jobs:
   workshop_jobs[job.id] = h.label("In progress: %s · %ds" % [job.recipe,ceili(maxf(0,job.until-h.model.state.time))],16,box)
@@ -154,7 +161,14 @@ func workshop(h) -> void:
   button.disabled = h.model.state.inventory[resource] < 5
  close_button(h,box)
 func update_live(h) -> void:
- if not h.modal.visible or h.modal_screen != "workshop": return
+ if not h.modal.visible: return
+ if h.modal_screen == "trade":
+  var current := JSON.stringify([h.model.state.inventory,h.model.state.coins])
+  if current != trade_signature:
+   var offset: int = h.modal_scroll.scroll_vertical
+   trade(h); h.modal_scroll.set_deferred("scroll_vertical",offset)
+  return
+ if h.modal_screen != "workshop": return
  var signature: String = JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.inventory,h.model.state.coins])
  if signature != workshop_signature:
   var scroll: ScrollContainer = h.modal_scroll
@@ -171,6 +185,7 @@ func update_live(h) -> void:
 func world(h) -> void:
  var box: VBoxContainer = h.modal_content("Your Living World")
  h.label("%d land tiles · Next plot %d coins" % [h.model.state.tiles.size(),h.model.cost()],17,box)
+ h.button("Find something to try",func(): h.open_ideas(),box)
  var actions := GridContainer.new(); actions.columns = 2
  box.add_child(actions)
  h.button("Inspect biome",func(): h.modal.hide(); h.open_inspector(h.model.origin(h.selected)),actions)
@@ -263,7 +278,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for text in ["Camera · Drag to pan, pinch to zoom, and twist two fingers for a 90° turn. World also has rotation buttons.","1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap Tile conditions at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
+ for text in ["Camera · Drag to pan, pinch to zoom, and twist two fingers for a 90° turn. World also has rotation buttons.","Ideas · Tap your objective for useful next steps. Workshop has a direct Trade screen for spare materials.","1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap Tile conditions at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
   h.label(text,17,box)
  close_button(h,box)
 
@@ -289,4 +304,33 @@ func privacy(h) -> void:
  h.button("Delete local diagnostics",func():
   h.services.delete_diagnostics()
   h.label(h.services.status,15,box),box)
+ close_button(h,box)
+
+func trade(h) -> void:
+ var box: VBoxContainer = h.modal_content("Trade materials")
+ h.modal_screen = "trade"
+ trade_signature = JSON.stringify([h.model.state.inventory,h.model.state.coins])
+ h.label("%d coins · Next plot %d coins" % [h.model.state.coins,h.model.cost()],18,box)
+ h.label("One material earns one coin. Keep enough for the projects you want to build; trading is optional.",16,box)
+ for resource in ["wood","stone","fiber","clay","iron","brick"]:
+  var panel := PanelContainer.new()
+  panel.add_theme_stylebox_override("panel",h.panel_style(Color("30373e")))
+  box.add_child(panel)
+  var content := VBoxContainer.new(); panel.add_child(content)
+  var row := HBoxContainer.new(); content.add_child(row)
+  var icon := TextureRect.new()
+  icon.texture = preload("res://scripts/UIIcons.gd").texture(resource)
+  icon.custom_minimum_size = Vector2(36,36)
+  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+  row.add_child(icon)
+  var title: Label = h.label("%s · %d available" % [resource.capitalize(),h.model.state.inventory[resource]],18,row)
+  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  var amounts := HBoxContainer.new(); content.add_child(amounts)
+  for quantity in [5,20]:
+   var action: Button = h.button("%d → %d coins" % [quantity,quantity],func():
+    h.model.campaign.trade(h.model,resource,quantity)
+    h.persist(); h.refresh(); trade(h),amounts)
+   action.disabled = h.model.state.inventory[resource] < quantity
+ h.button("Back to Workshop",func(): workshop(h),box)
  close_button(h,box)

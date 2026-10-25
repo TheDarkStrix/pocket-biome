@@ -24,3 +24,11 @@ First normal path: harvest Oak, open adjacent cloud, inspect Water and confirm p
 Measure comprehension, early decision quality, harvest fatigue, energy cadence, saturation, scarcity and time between discoveries with people. Validate PRD retention targets through actual playtests and analytics before calling the economy commercially proven. Store prices come from localized Billing queries, not hardcoded mock checkout prices.
 
 Timer hardening: environmental and automation cycles now retain anchored deadlines. Slightly late frames no longer stretch a cycle by a whole scheduler tick. Stalled slots are skipped rather than granting a backlog burst. This fixes timing accuracy without changing authored yields, prices or intervals; production-paced frame-jitter regression tests cover it.
+
+## 0.12 gameplay pacing pass
+
+Post-tutorial drafts now provide a rotating resource-producing option and two varied seeded choices; the initial Forest/Water/Crystal tutorial is unchanged. Saved offers and quotes are preserved. Placement descriptions are local to the chosen plot. Advice and trade shortcuts expose already implemented alternatives rather than granting resources.
+
+Automatic Furnaces reserve 4 Wood/5 Stone; explicit manual crafting can spend that stock. This prevents the demonstrated early Iron-building starvation loop. Upgrade transactions cannot spend coins reserved for an unfinished plot.
+
+With fixed seed 90210, the public collect-ready route now reaches all 20 discoveries/five chapters/35 cells in 5,223 simulated active seconds with 117 tracked progression operations and 10,939 successful manual collections. A second route purchasing affordable level-two Windmill upgrades takes 4,810 seconds and 10,057 collections. These are not human-session/optimal-strategy benchmarks. Earlier 5199-second figures used the old dealer; comparisons across differing policies/seeds are not retention evidence. docs/GAMEPLAY_PACING_REVIEW.md records the controlled Furnace observation, remaining late-game pressure and human playtest plan. No economy formula or saved quote was changed.

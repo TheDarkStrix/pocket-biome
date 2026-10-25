@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 750 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 tracked progression operations (plus earning-loop harvests), using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
+`tools/check.sh`: 783 assertions across 14 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
 
 Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
 
@@ -50,3 +50,9 @@ Current evidence:724 Godot assertions, eight Python audit tests, actual OpenGL a
 Four quarter-turn views, World rotation controls and two-finger twist are implemented with rotation-aware picking/depth/framing. Continuous free-angle 3D orbit remains unimplemented and needs the separately documented renderer/asset phase. Menu touch scrolling now reaches below-fold controls without activating buttons. Native diagnostics capture obeys opt-in, and SDK measurement initialization is delayed. Latest 750 Godot assertions plus eight Python audit cases pass; release is still blocked as documented.
 
 Latest Android follow-up verified current rotation, menu drag scrolling, privacy disclosure, and real native diagnostics preference On/Off delivery. Stable progression survived replacement and UI testing. Source and evidence are pushed independently of the unfulfilled production signing/store/device/creative gates. Continuous free-angle3D orbit remains unimplemented.
+
+## Gameplay pacing — 0.12 preview
+
+Implemented post-tutorial draft variety with a resource option, local placement/reach descriptions, objective/World next-step suggestions, accessible material trading, affordable automation upgrade guidance, Furnace construction reserves and reserved-quote protection. Existing saves/cards/prices remain compatible. 783 assertions, eight Python audit cases and two fixed-seed public progression routes pass.
+
+This addresses concrete first-session friction and one measured resource-starvation loop. Human enjoyment/retention remains unverified; later costs/collection pressure need further playtesting and balancing. The detailed audit is docs/GAMEPLAY_PACING_REVIEW.md. Production and continuous 3D-camera gates remain open.

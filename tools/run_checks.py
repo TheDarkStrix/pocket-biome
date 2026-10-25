@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITES = ['run', 'campaign', 'save_validation', 'save_io_failures', 'fusion_edges',
-          'input_gestures', 'layout', 'presentation', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout']
+          'input_gestures', 'layout', 'presentation', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout']
 
 def source_digest():
     digest = hashlib.sha256()
@@ -30,7 +30,8 @@ def main():
     evidence.mkdir(parents=True, exist_ok=True)
     initial_digest = source_digest()
     targets = [(s, ['--script', f'tests/{s}.gd'], 30) for s in SUITES]
-    targets += [('progression_simulation', ['--script', 'tests/progression_simulation.gd'], 120),
+    targets += [('automation_pacing', ['--script', 'tests/progression_simulation.gd', '--', '--automation-first'], 120),
+                ('progression_simulation', ['--script', 'tests/progression_simulation.gd'], 120),
                 ('startup', ['--quit-after', '120'], 30)]
     for name, args, deadline in targets:
         try:

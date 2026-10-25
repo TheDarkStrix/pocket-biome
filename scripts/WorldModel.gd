@@ -87,10 +87,8 @@ func begin_draft(k: String) -> bool:
   message = "Expansion costs %d coins · you have %d. Harvest resources to earn more." % [cost(),state.coins] if state.coins < cost() else "Choose a cloud directly beside your island."
   return false
  if state.expansions == 0: record_event("first_draft")
- # Stable, persisted offers. Forest and Water guarantee the tutorial path.
- var pool: Array = config.draft_pools[str(mini(int(state.chapter),3))]
- state.pending = {"at":k,"cost":cost(),"cards":["forest","water",pool[state.expansions%pool.size()]]}
- if state.pending.cards[2] in ["forest","water"]: state.pending.cards[2] = "crystal"
+ var cards: Array = preload("res://scripts/DraftDealer.gd").deal(config,int(state.seed),int(state.expansions),int(state.chapter))
+ state.pending = {"at":k,"cost":cost(),"cards":cards}
  return true
 
 func place(index: int) -> bool:
@@ -103,7 +101,7 @@ func place(index: int) -> bool:
  state.expansions += 1
  record_event("tile_placed",{"type":p.cards[index]})
  state.pending = {}
- message = "Neighbors share DNA each second. Inspect a tile for recipes."
+ message = "Nearby tiles influence each other. Hold a tile to see what it can become."
  objectives()
  return true
 
@@ -324,14 +322,9 @@ func record_event(name: String, data: Dictionary = {}) -> void:
 func reroll_draft() -> bool:
  if state.pending.is_empty() or state.pending.get("ad_rerolled",false): return false
  var pool: Array = config.draft_pools[str(mini(int(state.chapter),3))].duplicate()
- pool.append_array(["forest","water"])
- var rng := RandomNumberGenerator.new()
- rng.seed = int(state.seed)+int(state.expansions)*971+417
- var cards := []
- if state.expansions == 0: cards = ["forest","water"]
- while cards.size() < 3:
-  var type: String = pool[rng.randi_range(0,pool.size()-1)]
-  if not cards.has(type): cards.append(type)
+ pool.append_array(config.draft_rules.foundation_cards)
+ pool.append_array(config.draft_rules.tutorial_cards)
+ var cards: Array = preload("res://scripts/DraftDealer.gd").deal(config,int(state.seed),int(state.expansions),int(state.chapter),true)
  if cards == state.pending.cards:
   for type in pool:
    if not cards.has(type): cards[2] = type; break

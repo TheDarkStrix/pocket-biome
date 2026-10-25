@@ -118,7 +118,7 @@ func tick(m) -> void:
    "totem":
     for neighbor in m.neighbors(key): m.state.tiles[neighbor].ready = maxf(m.state.time,m.state.tiles[neighbor].ready-2*int(tile.get("level",1)))
    "furnace":
-    if m.state.jobs.size() < 3 and m.state.inventory.stone >= 2 and m.state.inventory.wood >= 1:
+    if m.state.jobs.size() < 3 and auto_inputs_available(m,"brick",m.config.tiles.furnace.get("automation_reserve",{})):
      craft(m,"brick")
  event_tick(m)
  evaluate(m)
@@ -209,7 +209,12 @@ func upgrade_structure(m, at: String) -> bool:
  if tile.has("owner") or m.config.tiles[tile.type].category != "structure": return false
  var level: int = tile.get("level",1)
  if not m.config.tiles[tile.type].get("upgradeable",true): return false
- if level >= 3 or not m.spend(m.config.upgrades[str(level)]): return false
+ if level >= 3: return false
+ var costs: Dictionary = m.config.upgrades[str(level)]
+ if not m.state.pending.is_empty() and m.state.coins-int(costs.get("coins",0)) < m.state.pending.cost:
+  m.message = "Finish your saved plot choice before spending its reserved coins."
+  return false
+ if not m.spend(costs): return false
  tile.level = level+1
  m.message = "%s upgraded to level %d" % [tile.type.capitalize(),tile.level]
  m.record_event("structure_upgraded",{"type":tile.type,"level":tile.level})
@@ -221,3 +226,12 @@ func crafting_seconds(m, recipe: Dictionary) -> float:
   for tile in m.state.tiles.values():
    if tile.get("type","") == recipe.requires: level = maxi(level,int(tile.get("level",1)))
  return float(recipe.seconds)/level
+
+func auto_inputs_available(m, recipe_id: String, reserve: Dictionary) -> bool:
+ for recipe in m.config.crafting:
+  if recipe.id != recipe_id: continue
+  for resource in recipe.cost:
+   var owned: int = m.state.coins if resource == "coins" else m.state.inventory.get(resource,0)
+   if owned < recipe.cost[resource]+int(reserve.get(resource,0)): return false
+  return true
+ return false

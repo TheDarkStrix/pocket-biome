@@ -44,6 +44,18 @@ func run() -> void:
   await process_frame
   await click(grow.get_global_rect().get_center())
  check(not h.modal.visible,"real touch dismisses welcome through its button")
+ await process_frame
+ await click(h.objective.get_global_rect().get_center())
+ check(h.modal.visible and h.modal_screen == "ideas","touching the objective opens useful player choices")
+ var show_oak: Button
+ for panel in h.modal_box.get_children():
+  if panel is PanelContainer:
+   for child in panel.get_child(0).get_children():
+    if child is Button and child.text == "Show the Oak": show_oak = child
+ if show_oak != null:
+  await process_frame
+  await click(show_oak.get_global_rect().get_center())
+ check(not h.modal.visible and h.model.state.harvests == 0,"a suggested action guides the player without auto-harvesting or paying rewards")
  h.frame_world()
  await process_frame
  var harvests: int = h.model.state.harvests
@@ -192,6 +204,23 @@ func run() -> void:
  touch(pulse_position,false)
  await create_timer(0.2).timeout
  check(h.pulse_button.scale.is_equal_approx(Vector2.ONE),"button response settles after release without changing its layout")
+ h.model = preload("res://scripts/WorldModel.gd").new()
+ h.model.state.inventory.wood = 25
+ h.refresh(); h.campaign_ui.trade(h)
+ await process_frame
+ await process_frame
+ var trade_twenty: Button
+ for panel in h.modal_box.get_children():
+  if panel is PanelContainer:
+   for row in panel.get_child(0).get_children():
+    if row is HBoxContainer:
+     for action in row.get_children():
+      if action is Button and action.text == "20 → 20 coins" and not action.disabled: trade_twenty = action
+ check(trade_twenty != null,"illustrated trade screen offers the real affordable batch")
+ if trade_twenty != null:
+  await click(trade_twenty.get_global_rect().get_center())
+  check(h.model.state.inventory.wood == 5 and h.model.state.coins == 45,"trade touch spends exactly the selected stock and grants the displayed coins")
+  check(h.store.load_state().inventory.wood == 5,"voluntary trade persists through the actual UI path")
  h.queue_free()
  await process_frame
  print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])

@@ -1,0 +1,67 @@
+{
+  "chapter": 2,
+  "note": "Deterministic offer samples, not human enjoyment/retention evidence.",
+  "offers": [
+    [
+      "forest",
+      "water",
+      "crystal"
+    ],
+    [
+      "forest",
+      "workbench",
+      "stone"
+    ],
+    [
+      "stone",
+      "crystal",
+      "forest"
+    ],
+    [
+      "fiber",
+      "water",
+      "furnace"
+    ],
+    [
+      "forest",
+      "clay",
+      "vent"
+    ],
+    [
+      "stone",
+      "fiber",
+      "glacier"
+    ],
+    [
+      "fiber",
+      "grass",
+      "iron"
+    ],
+    [
+      "forest",
+      "workbench",
+      "stone"
+    ],
+    [
+      "stone",
+      "crystal",
+      "forest"
+    ],
+    [
+      "fiber",
+      "water",
+      "furnace"
+    ],
+    [
+      "forest",
+      "clay",
+      "vent"
+    ],
+    [
+      "stone",
+      "fiber",
+      "glacier"
+    ]
+  ],
+  "seed": 90210
+}

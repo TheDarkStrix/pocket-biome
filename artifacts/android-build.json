@@ -1,14 +1,14 @@
 {
-  "utc": "2026-10-25T07:21:29.210450+00:00",
+  "utc": "2026-10-25T08:47:55.191968+00:00",
   "engine": "4.6.3.stable",
-  "version": "0.11.0-preview",
-  "version_code": 3,
+  "version": "0.12.0-preview",
+  "version_code": 4,
   "type": "Signed debug preview",
-  "source_sha256": "686f14a521de0a216012760bc1da15f185733cea32f96005a30fff12d06642c5",
-  "assertions": 750,
+  "source_sha256": "e6febeeef41ee6c4253cf78b8b4a7bdda9fd311a96e85c9c37c6b33ad2ae90b0",
+  "assertions": 783,
   "python_audit_tests": 8,
-  "apk_sha256": "b94af9051f61acf93abfbafb5f1a006358506a723cbdbcd95c98a435abf90261",
-  "bytes": 179149109,
+  "apk_sha256": "ccfb47ee2e00561ab025a1d1607e52125bb2917766d6471bba8eb71e8176fe7a",
+  "bytes": 179160539,
   "renderer": "OpenGL Compatibility",
   "dependencies": {
     "com.google.android.gms:play-services-ads": "25.5.0",
@@ -17,5 +17,5 @@
   },
   "native_ui_verified_this_revision": true,
   "store_release_ready": false,
-  "note": "Current native launch/rotation/menu scrolling/privacy/diagnostics preference checks passed; see android-production-check.json. Production gate remains blocked by ten configuration/acceptance requirements."
+  "note": "Current-source replacement installation, objective ideas and direct Workshop trade screen verified on software emulator; stable save fields retained. See android-gameplay-check.json. Production acceptance remains open."
 }

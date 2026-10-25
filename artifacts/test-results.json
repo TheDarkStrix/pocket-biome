@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-25T07:11:10.154787+00:00",
-  "source_sha256": "686f14a521de0a216012760bc1da15f185733cea32f96005a30fff12d06642c5",
+  "utc": "2026-10-25T08:32:07.870715+00:00",
+  "source_sha256": "e6febeeef41ee6c4253cf78b8b4a7bdda9fd311a96e85c9c37c6b33ad2ae90b0",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 750,
+  "assertions": 783,
   "results": [
     {
       "suite": "run",
@@ -54,6 +54,12 @@
       "assertions": 29
     },
     {
+      "suite": "gameplay_pacing",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 28
+    },
+    {
       "suite": "services",
       "passed": true,
       "exit_code": 0,
@@ -75,13 +81,19 @@
       "suite": "touch_ui",
       "passed": true,
       "exit_code": 0,
-      "assertions": 30
+      "assertions": 35
     },
     {
       "suite": "mobile_layout",
       "passed": true,
       "exit_code": 0,
       "assertions": 72
+    },
+    {
+      "suite": "automation_pacing",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": null
     },
     {
       "suite": "progression_simulation",

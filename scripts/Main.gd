@@ -190,6 +190,13 @@ func build_ui() -> void:
  ledger_content.add_child(pulse_bar)
  objective = label("",17,hud)
  objective.max_lines_visible = 2
+ objective.custom_minimum_size.y = touch_height()
+ objective.mouse_filter = Control.MOUSE_FILTER_STOP
+ objective.focus_mode = Control.FOCUS_ALL
+ objective.tooltip_text = "Tap for useful next steps"
+ objective.gui_input.connect(func(event: InputEvent):
+  if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed) or event.is_action_pressed("ui_accept"):
+   objective.accept_event(); open_ideas())
  objective.add_theme_color_override("font_color",ThemeKit.INK)
  bottom = VBoxContainer.new()
  bottom.position = Vector2(22,740)
@@ -377,6 +384,7 @@ func draft() -> void:
   row.add_child(content)
   label(type.capitalize()+" · "+definition.rarity.capitalize(),18,content)
   label(definition.category.capitalize()+" · "+card_hint(type),14,content)
+  label(preload("res://scripts/GameplayAdvisor.gd").placement(model,type,model.state.pending.at),14,content)
   draft_cards.append(button("Inspect "+type.capitalize(),func(): inspect_card(i),content))
  if not model.state.pending.get("ad_rerolled",false):
   var reroll := button("Optional test ad · one new draft",func(): services.request_reward("reroll"),box)
@@ -393,6 +401,7 @@ func inspect_card(index: int) -> void:
  image.tile_type = type; image.extent = 180
  box.add_child(image)
  label(card_hint(type),18,box)
+ label(preload("res://scripts/GameplayAdvisor.gd").placement(model,type,model.state.pending.at),16,box)
  if definition.resource != "": label("Produces 1 %s every %ds" % [definition.resource.capitalize(),definition.cooldown],16,box)
  for i in range(5): dna_bar(box,model.config.attributes[i],definition.dna[i])
  confirm_card = button("Place here · %d Coins" % model.state.pending.cost,func():
@@ -415,6 +424,59 @@ func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
  bar.add_theme_stylebox_override("background",track); bar.add_theme_stylebox_override("fill",fill)
  parent.add_child(bar)
  return {"caption":caption,"bar":bar}
+
+func open_ideas() -> void:
+ if launch_menu or photo_mode: return
+ var suggestions: Array = preload("res://scripts/GameplayAdvisor.gd").ideas(model,selected)
+ var box := modal_content("What would you like to try?")
+ modal_screen = "ideas"
+ label("Choose a direction. Your chapter goal can wait while you experiment.",16,box)
+ for suggestion in suggestions:
+  var panel := PanelContainer.new()
+  panel.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER_ALT))
+  box.add_child(panel)
+  var content := VBoxContainer.new(); panel.add_child(content)
+  var heading := HBoxContainer.new(); content.add_child(heading)
+  var icon := TextureRect.new()
+  icon.texture = preload("res://scripts/UIIcons.gd").texture(suggestion.icon)
+  icon.custom_minimum_size = Vector2(40,40)
+  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+  icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+  heading.add_child(icon)
+  var title := label(suggestion.title,19,heading)
+  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  label(suggestion.body,16,content)
+  button(suggestion.button,func(): choose_idea(suggestion),content)
+ button("Back to my island",func(): modal.hide(),box)
+
+func choose_idea(idea: Dictionary) -> void:
+ targeting = ""; preview = ""; placement_blueprint = ""
+ match idea.action:
+  "collect":
+   var at: String = model.origin(idea.target)
+   if at != "": selected = at
+   modal.hide(); frame_world()
+   model.message = "Tap the highlighted Oak to gather Wood."
+   refresh()
+  "expand":
+   modal.hide(); frame_world()
+   model.message = "Choose a cloud. Water beside Oak can grow a rainforest."
+   refresh()
+  "draft": draft()
+  "fusion": fusion_dialog()
+  "trade": campaign_ui.trade(self)
+  "workshop": campaign_ui.workshop(self)
+  "world":
+   if idea.has("target") and model.origin(idea.target) != "": selected = model.origin(idea.target)
+   refresh(); campaign_ui.world(self)
+  "pulse": pulse_selector()
+  "journal": campaign_ui.journal(self)
+  "blueprint":
+   placement_blueprint = idea.target
+   modal.hide()
+   model.message = "Choose an empty Grass tile for your "+str(idea.target).capitalize()+"."
+   refresh()
 
 func fusion_dialog() -> void:
  var guide = preload("res://scripts/FusionGuide.gd")
@@ -512,7 +574,7 @@ func refresh() -> void:
  if parts[0] in ["FIRST SEED","NEW HORIZONS","LIVING ROOTS","YOUR LIVING WORLD"]:
   goal = parts[-1].replace(" (+10 coins)","")
  else: goal = goal.replace(" · ","\n")
- objective.text = goal
+ objective.text = goal+" ›"
  if model.message != last_notice:
   last_notice = model.message
   notice.text = model.message
@@ -884,6 +946,11 @@ func open_inspector(key: String) -> void:
  var production: Dictionary = model.production(tile)
  if production.resource != "": inspection_view["production"] = label("%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))],16,box)
  else: label(card_hint(tile.type),16,box)
+ var reserve: Dictionary = model.config.tiles[tile.type].get("automation_reserve",{})
+ if not reserve.is_empty():
+  var held := PackedStringArray()
+  for resource in reserve: held.append("%d %s" % [reserve[resource],resource.capitalize()])
+  label("Automatic production keeps "+", ".join(held)+" for construction. Manual crafting can use this reserve.",15,box)
  for attribute in model.config.attributes: inspection_view.bars[attribute] = dna_bar(box,attribute,tile.dna[attribute])
  label("Neighbor influences",19,box)
  var count := 0
@@ -1052,7 +1119,7 @@ func share_photo() -> void:
  else: model.message = "Photo saved. Native sharing is available in the Android build."
 
 func card_hint(type: String) -> String:
- var hints := {"forest":"Shares fertility · evolves with water","water":"Shares moisture · place beside Oak","crystal":"Shares magic · enchanted reactions","vent":"Shares heat · thermal reactions","glacier":"Cools neighbors · frozen discoveries","grass":"An open meadow for crafting and sanctuary fusion","stone":"Gather Stone · strengthens neighboring ground","clay":"Gather Clay · furnace construction","iron":"Gather Iron · awaken a Golem","workbench":"Craft blueprints from your materials","furnace":"Processes Stone + Wood into Brick; emits heat","windmill":"Generates a Coin every five seconds","golem":"Harvests nearby ready Stone and Iron nodes","totem":"Moisture and faster harvest cooldowns","compost":"Enriches neighboring plants","shrine":"Cultivates fertility and magic","dirt":"Ploughed soil waiting for a new ecology","lantern":"A warm decorative light for your world"}
+ var hints := {"forest":"Shares fertility · evolves with water","fiber":"Gather Fiber for blueprints and new terrain","water":"Shares moisture · place beside Oak","crystal":"Shares magic · enchanted reactions","vent":"Shares heat · thermal reactions","glacier":"Cools neighbors · frozen discoveries","grass":"An open meadow for crafting and sanctuary fusion","stone":"Gather Stone · strengthens neighboring ground","clay":"Gather Clay · furnace construction","iron":"Gather Iron · awaken a Golem","workbench":"Craft blueprints from your materials","furnace":"Processes Stone + Wood into Brick; emits heat","windmill":"Generates a Coin every five seconds","golem":"Harvests nearby ready Stone and Iron nodes","totem":"Moisture and faster harvest cooldowns","compost":"Enriches neighboring plants","shrine":"Cultivates fertility and magic","dirt":"Ploughed soil waiting for a new ecology","lantern":"A warm decorative light for your world"}
  return hints.get(type,"Discover a new corner of your world.")
 
 func start_screen() -> void:

@@ -4,6 +4,9 @@ var m = Model.new()
 var failures := 0
 var elapsed := 0
 var operations := 0
+var manual_collections := 0
+var milestones := []
+var automation_first := false
 func fail(message: String) -> void:
  printerr("PROGRESSION FAIL: "+message)
  quit(1)
@@ -13,8 +16,15 @@ func second() -> void:
  for key in m.state.tiles:
   var tile: Dictionary = m.state.tiles[key]
   if tile.has("owner"): continue
-  if tile.ready <= m.state.time: m.harvest(key)
+  if tile.ready <= m.state.time and m.harvest(key): manual_collections += 1
   if tile.type == "furnace" and m.state.inventory.brick >= 20 and tile.get("enabled",true): m.campaign.toggle_automation(m,key)
+ if automation_first:
+  for key in m.state.tiles:
+   var tile: Dictionary = m.state.tiles[key]
+   if tile.get("type","") == "windmill" and tile.get("level",1) == 1:
+    var costs: Dictionary = m.config.upgrades["1"]
+    if m.state.coins >= costs.coins and m.state.inventory.wood >= costs.wood and m.state.inventory.stone >= costs.stone:
+     m.campaign.upgrade_structure(m,key)
  for resource in ["wood","stone","fiber","clay","iron","brick"]:
   if m.state.inventory[resource] > 200: m.campaign.trade(m,resource,100)
  if elapsed > 50000: fail("economy exceeded 50,000 active seconds")
@@ -31,6 +41,7 @@ func blueprint(type: String) -> void:
  if not m.campaign.has_structure(m,recipe.requires): fail("missing craft prerequisite "+recipe.requires); return
  while not can_pay(recipe.cost) or m.state.jobs.size() >= 3: second()
  if not m.craft(recipe.id): fail("craft rejected "+type); return
+ mark("craft_started",{"type":type})
  while m.state.blueprints.get(type,0) < 1: second()
  operations += 1
 func set_plot(at: String, type: String, reset: bool = false) -> void:
@@ -43,16 +54,27 @@ func set_plot(at: String, type: String, reset: bool = false) -> void:
   if not m.campaign.retire(m,at): fail("cannot restore "+at); return
  if type == "grass": return
  if not m.deploy(type,at): fail("blueprint deployment rejected "+at+" / "+type)
+ mark("blueprint_placed",{"type":type})
  operations += 1
 func buy(at: String) -> void:
  if m.state.tiles.has(at): return
  if not m.frontier().has(at): fail("planned plot disconnected "+at); return
  while m.state.coins < m.cost(): second()
- if not m.begin_draft(at) or not m.place(0): fail("expansion transaction rejected "+at)
+ if not m.begin_draft(at): fail("expansion transaction rejected "+at); return
+ var choice := 0
+ for index in range(m.state.pending.cards.size()):
+  if m.config.tiles[m.state.pending.cards[index]].resource == "wood": choice = index; break
+ if not m.place(choice): fail("expansion transaction rejected "+at)
  operations += 1
+func mark(name: String, details: Dictionary = {}) -> void:
+ milestones.append({"active_seconds":m.state.time,"event":name,"details":details})
 func _init() -> void:
- # All state changes below use actual gameplay transactions; only time is accelerated.
- m.harvest("0,0")
+ # Fix only the starting seed. Earned progression uses public transactions; waiting is accelerated.
+ automation_first = OS.get_cmdline_user_args().has("--automation-first")
+ m.state.seed = 90210
+ m.occurred.connect(func(name: String, data: Dictionary):
+  if name in ["tile_placed","biome_discovered","fusion_completed","chapter_completed","world_pulse_used","structure_upgraded"]: mark(name,data))
+ m.harvest("0,0"); manual_collections += 1
  m.begin_draft("-1,0")
  m.place(1)
  for i in range(5): second()
@@ -96,5 +118,14 @@ func _init() -> void:
  if not store.save_state(m.state): fail("final world failed save validation: "+store.error); return
  var restored: Dictionary = store.load_state()
  if restored.discoveries.size() != 20 or restored.chapter_rewards.size() != 5: fail("final progression not restored"); return
+ var max_gap := 0.0
+ var prior := 0.0
+ var first_fifteen := []
+ for milestone in milestones:
+  max_gap = maxf(max_gap,milestone.active_seconds-prior); prior = milestone.active_seconds
+  if milestone.active_seconds <= 900: first_fifteen.append(milestone)
+ var evidence := {"seed":90210,"policy":"Collect ready resources, prefer Wood when offered, craft/restore through public transactions; trade surplus above 200.","automation_first":automation_first,"active_seconds":elapsed,"manual_collections":manual_collections,"total_harvests_including_automation":m.state.harvests,"tracked_progression_operations":operations,"max_gap_between_progress_events_seconds":max_gap,"first_fifteen_minutes":first_fifteen,"note":"Omniscient accelerated simulation; not a human session or enjoyment/retention result."}
+ var evidence_file := FileAccess.open("res://artifacts/pacing-automation.json" if automation_first else "res://artifacts/pacing-simulation.json",FileAccess.WRITE)
+ evidence_file.store_string(JSON.stringify(evidence,"  ")); evidence_file.close()
  print("PROGRESSION RESULT: all 20 discoveries, all 5 chapters, %d cells, %d gameplay transactions, %d active seconds, coins %d" % [m.state.tiles.size(),operations,elapsed,m.state.coins])
  quit(0)

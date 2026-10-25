@@ -214,7 +214,11 @@
       "category": "structure",
       "interval": 5,
       "effect_interval": 4,
-      "rarity": "uncommon"
+      "rarity": "uncommon",
+      "automation_reserve": {
+        "wood": 4,
+        "stone": 5
+      }
     },
     "workbench": {
       "dna": [
@@ -1267,5 +1271,16 @@
   "simulation": {
     "tick_seconds": 1,
     "max_chain_depth": 1
+  },
+  "draft_rules": {
+    "tutorial_cards": [
+      "forest",
+      "water"
+    ],
+    "foundation_cards": [
+      "forest",
+      "stone",
+      "fiber"
+    ]
   }
 }

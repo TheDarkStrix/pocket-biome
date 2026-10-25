@@ -118,6 +118,20 @@ func capture() -> void:
  for view in range(4):
   scene.view_turn = view; scene.frame_world(); scene.queue_redraw()
   await shot("%d-camera-view-%d" % [20+view,view*90])
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ for x in range(2,13): scene.model.add_tile(Vector2i(x,0),"grass")
+ scene.model.state.expansions = scene.model.state.tiles.size()-4
+ scene.model.state.chapter = 3; scene.model.state.harvests = 10
+ scene.model.state.objectives = [0,1,2]
+ scene.model.state.coins = 103; scene.model.state.inventory.wood = 165
+ scene.model.state.inventory.stone = 12; scene.model.state.inventory.fiber = 31
+ scene.view_turn = 0; scene.selected = "0,0"; scene.refresh()
+ scene.open_ideas(); await shot("24-next-possibilities")
+ scene.campaign_ui.trade(scene); await shot("25-material-trade")
+ scene.modal.hide()
+ scene.model.state.coins = 500
+ scene.model.begin_draft("13,0")
+ scene.refresh(); scene.draft(); await shot("26-local-draft-effects")
  scene.queue_free()
  await process_frame
  # Audio playback references are released asynchronously by the mixer.

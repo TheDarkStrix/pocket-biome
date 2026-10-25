@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-25T08:52:37.291130+00:00",
+  "source_sha256": "e6febeeef41ee6c4253cf78b8b4a7bdda9fd311a96e85c9c37c6b33ad2ae90b0",
+  "version": "0.12.0-preview",
+  "environment": "API29 AOSP x86_64 software emulator / Mesa OpenGL Compatibility",
+  "replacement_install": true,
+  "installed_export_verification": {
+    "installed_apk_members_match_final": true,
+    "note": "Every ZIP member compared, including embedded build provenance. Exact final universal APK installed."
+  },
+  "native_observations": [
+    "Title and restored world rendered",
+    "Legacy pending Forest/Water/Iron cards and quote retained",
+    "Tapping objective opened contextual ideas",
+    "Workshop direct entry opened illustrated Trade materials screen",
+    "Five/twenty trade controls disabled for insufficient stock; no native sale executed"
+  ],
+  "stable_save_fields": [
+    "audio_levels",
+    "blueprints",
+    "chapter",
+    "chapter_rewards",
+    "coins",
+    "cosmetic",
+    "discoveries",
+    "energy",
+    "entitlements",
+    "event",
+    "expansions",
+    "harvests",
+    "hints",
+    "inventory",
+    "jobs",
+    "next_id",
+    "next_job",
+    "objectives",
+    "pending",
+    "reward_limits",
+    "reward_requests",
+    "seed",
+    "settings",
+    "stats",
+    "text_scale",
+    "transactions",
+    "version"
+  ],
+  "tile_fields_unchanged_except_active_next_effect_clock": true,
+  "bounded_current_process_log_errors": [],
+  "warning": "Cached shader was recompiled on startup.",
+  "screenshots": [
+    "android-17-gameplay-ideas.png",
+    "android-18-material-trade.png"
+  ],
+  "limits": "No human enjoyment/retention result, physical-device performance or real Google provider certification. Actual20-material transaction/persistence is separately covered by touch_ui automated fixture."
+}
