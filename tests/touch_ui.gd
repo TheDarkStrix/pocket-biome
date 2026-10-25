@@ -1,0 +1,81 @@
+extends SceneTree
+var checks := 0
+var failures := 0
+func check(ok: bool, message: String) -> void:
+ checks += 1
+ if not ok: failures += 1; printerr("FAIL: "+message)
+func _init() -> void:
+ call_deferred("run")
+func touch(position: Vector2, down: bool) -> void:
+ var event := InputEventScreenTouch.new()
+ event.index = 0; event.position = position; event.pressed = down
+ Input.parse_input_event(event)
+ Input.flush_buffered_events()
+func click(position: Vector2) -> void:
+ touch(position,true)
+ await process_frame
+ touch(position,false)
+ await process_frame
+func run() -> void:
+ root.size = Vector2i(540,960)
+ var h = load("res://scenes/Main.tscn").instantiate()
+ h.store.path = "user://touch-ui-tests.json"
+ root.add_child(h)
+ h.model = preload("res://scripts/WorldModel.gd").new()
+ h.start_screen()
+ await process_frame
+ await process_frame
+ check(Input.is_emulating_mouse_from_touch(),"native touch emulates mouse for Godot Controls")
+ var start: Button
+ for child in h.launch_screen.get_children():
+  if child is Button and child.text == "Start exploring": start = child
+ check(start != null,"launch action is present")
+ await click(start.get_global_rect().get_center())
+ check(not h.launch_menu and h.modal.visible,"real screen-touch events activate the launch button and welcome panel")
+ if h.launch_menu:
+  h.queue_free()
+  print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])
+  quit(1)
+  return
+ var grow: Button
+ for child in h.modal_box.get_children():
+  if child is Button and child.text == "Let’s grow": grow = child
+ if grow != null:
+  await process_frame
+  await click(grow.get_global_rect().get_center())
+ check(not h.modal.visible,"real touch dismisses welcome through its button")
+ h.frame_world()
+ await process_frame
+ var harvests: int = h.model.state.harvests
+ await click(h.screen(Vector2.ZERO)-Vector2(0,50))
+ check(h.model.state.harvests == harvests+1,"one native touch harvests exactly once despite emulated mouse pair")
+ check(h.input_controller.pointers.is_empty(),"touch and emulated release leave no phantom world pointer")
+ var before: int = h.model.state.harvests
+ var energy: int = h.model.state.energy
+ touch(h.screen(Vector2.ZERO),true)
+ var second := InputEventScreenTouch.new()
+ second.index = 1; second.position = h.pulse_button.get_global_rect().get_center(); second.pressed = true
+ Input.parse_input_event(second); Input.flush_buffered_events()
+ await process_frame
+ touch(h.screen(Vector2.ZERO),false)
+ second.pressed = false
+ Input.parse_input_event(second); Input.flush_buffered_events()
+ await process_frame
+ check(h.model.state.harvests == before and h.model.state.energy == energy,"mixed UI/world two-finger sequence cannot harvest or spend energy")
+ check(h.input_controller.pointers.is_empty() and h.all_touches.is_empty(),"mixed sequence clears every pointer after release")
+ var journal: Button
+ for action in h.stacked_buttons:
+  if action.get_meta("icon_caption").text == "Journal": journal = action
+ await click(journal.get_global_rect().get_center())
+ check(h.modal.visible and h.modal_title.text.begins_with("Field Journal"),"real touch opens Journal from the illustrated dock")
+ var close: Button = h.modal_title.get_parent().get_child(1)
+ await process_frame
+ await click(close.get_global_rect().get_center())
+ check(not h.modal.visible and not h.modal_scrim.visible,"modal close touch removes both sheet and scrim")
+ await click(h.pulse_button.get_global_rect().get_center())
+ check(h.modal.visible and h.modal_title.text == "World Pulse","single HUD Pulse control opens all powers through touch")
+ check(is_instance_valid(h.rain_button) and is_instance_valid(h.heat_button),"power selector exposes actual playable Rain and Heat controls")
+ h.queue_free()
+ await process_frame
+ print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])
+ quit(1 if failures else 0)

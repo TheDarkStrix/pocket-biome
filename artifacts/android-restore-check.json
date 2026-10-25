@@ -1,0 +1,16 @@
+{
+  "all_matched": true,
+  "checks": {
+    "seed": true,
+    "coins": true,
+    "discoveries": true,
+    "chapter": true,
+    "harvests": true,
+    "expansions": true,
+    "inventory": true,
+    "tiles": true,
+    "pending": true,
+    "entitlements": true
+  },
+  "note": "Save file preserved across force-stop and replacement APK install; actual resumed screen validation follows."
+}

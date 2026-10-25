@@ -16,6 +16,7 @@ The original repository was empty with no working functionality or commits to pr
 | CampaignUI | Codex, workshop, world management, settings/tutorial; styled scrollable controls |
 | TileArtwork / TileThumbnail / UIIcons | Stable atlas regions, pivots, shared appearance selection and alpha picking; illustrated previews/icons |
 | WorldPresentation | Bounded cosmetic diffs, rise/crossfade/fusion/weather/harvest animations; never owns rewards |
+| GameTheme | Licensed fonts, parchment/brass/ink styles, shared UI palette independent of world skins |
 | AudioFeedback | Pooled cue voices and ambient loop; independent volume/mute and lifecycle handling |
 | ServiceHub / Telemetry | Optional provider bridge, durable reward ledger/caps, purchase entitlement handling, opt-in diagnostics/HTTPS delivery |
 | PocketServices.kt | Native test Ads/UMP, Billing, rewarded receipts, Android crash diagnostics and user-initiated photo content-URI sharing |
@@ -35,3 +36,7 @@ Schema 3 includes world, IDs, inventory, timers, pulse modifiers, discoveries, p
 `tools/prepare_native.py` generates ignored android/build from the pinned Godot template and copies maintained Kotlin/resources. It adds Google Ads 23.6.0, UMP 3.1.0 and Play Billing 8.0.0. `tools/build_android.sh` imports, runs checks, exports a staging APK, verifies its signature and promotes it only on success. APKs/toolchains/caches are not source-controlled.
 
 Tests instantiate the model without a scene tree; scene suites exercise real UI callbacks with isolated save paths. Graphical captures use Xorg/Mesa through tools/visual_review.sh. Native emulator evidence and remaining release gates are tracked separately from model coverage.
+
+## Builder interface revision
+
+The latest user instruction supersedes the original navy/green preference. Compact HUD and a four-icon dock leave more room for the island. A single Pulse control opens the real power selector; the World hub retains center/fusion/photo actions. Global DNA detail lives in the inspector, production uses illustrated ingredient counts, and a transient notice layer does not resize the world. GameTheme centralizes interface colors/fonts. Modal close controls and a scrim handle dismissal; launch-menu spacing responds to viewport height. See docs/UI_RESEARCH.md for actually reviewed sources and access limitations.

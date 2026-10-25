@@ -45,6 +45,9 @@ func move(id: int, position: Vector2) -> void:
   pointers[id] = position
 
 func feed(event: InputEvent, allowed: Rect2, now: float) -> void:
+ # Controls need Godot's touch-to-mouse emulation. World gestures consume native
+ # touches only, so the paired emulated mouse event must never create a second tap.
+ if event is InputEventMouse and event.device == InputEvent.DEVICE_ID_EMULATION: return
  if event is InputEventScreenTouch:
   if event.pressed and allowed.has_point(event.position): begin(event.index,event.position,now)
   elif not event.pressed: finish(event.index,event.position,now,event.canceled)

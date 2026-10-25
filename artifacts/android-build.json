@@ -1,11 +1,12 @@
 {
-  "utc": "2026-10-24T19:32:35.400614+00:00",
+  "utc": "2026-10-25T03:16:16.097177+00:00",
   "engine": "4.6.3.stable",
-  "type": "Android signed debug test build",
-  "source_sha256": "9b19082412ae23303bebb7938ab253fa5d6bcb031f552b65af873fc9278b01de",
-  "assertions": 592,
-  "apk_sha256": "022695600b13372e9790a88db8d40013bfaae86c97cdc5c8af80d6c24f12701f",
-  "bytes": 177820503,
-  "renderer": "gl_compatibility (explicit regular/mobile)",
-  "native_gameplay_verified": false
+  "type": "Signed debug test APK",
+  "source_sha256": "60141dddf03b33d658ac4e294f72a485a8d8990d7cd18bcacaec5b767c79f86f",
+  "assertions": 631,
+  "apk_sha256": "d42d5c72510928fce423f9f81f7842442e0253ecd65b8e0ec4157663b678994b",
+  "bytes": 177930883,
+  "renderer": "OpenGL Compatibility; desktop and mobile explicitly configured",
+  "native_gameplay_verified": false,
+  "note": "Earlier native touch build completed launch/harvest/draft/evolution; redesigned build validation pending."
 }

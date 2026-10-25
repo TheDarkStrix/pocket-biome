@@ -25,7 +25,7 @@ Authoritative version: MASTER_PRD_v4.md. “Implemented” means source exists; 
 | 50–51 Analytics/metrics | Opt-in bounded diagnostics, optional verified-HTTPS upload, native Java/native-exit crash collection | Queue/privacy tests; endpoint empty by design; no live cohorts or crash-free-rate claim |
 | 52–55 Roadmap | Initial launch content implemented, validation in progress | Premium adventures/content packs are post-launch as explicitly specified |
 | 56–58 Acceptance/go-no-go | Automated core criteria covered; remaining device/provider/human gates recorded | No public-launch readiness claim until these pass |
-| 59–60 Pipeline/identity | Source atlases, fixed pivots/regions, manifests, original synth generator, preserved reference and navy/green explorer UI | More graphical/device/creative review needed |
+| 59–60 Pipeline/identity | Source atlases, fixed pivots/regions, manifests, original synth generator, preserved isometric reference and parchment/brass explorer UI | More graphical/device/creative review needed |
 
 ## Current launch blockers
 

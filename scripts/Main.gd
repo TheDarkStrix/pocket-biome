@@ -1,5 +1,6 @@
 extends Node2D
 const Model = preload("res://scripts/WorldModel.gd")
+const ThemeKit = preload("res://scripts/GameTheme.gd")
 const Store = preload("res://scripts/SaveStore.gd")
 var presentation = preload("res://scripts/WorldPresentation.gd").new()
 var audio_feedback = preload("res://scripts/AudioFeedback.gd").new()
@@ -32,9 +33,17 @@ var objective: Label
 var pulse_bar: ProgressBar
 var rain_button: Button
 var heat_button: Button
+var pulse_button: Button
+var modal_title: Label
+var modal_scrim: ColorRect
+var notice_toast: PanelContainer
+var last_notice := ""
+var notice_time := 0.0
+var menu_spacer: Control
 var draft_button: Button
 var inventory: RichTextLabel
 var draft_cards: Array[Button] = []
+var stacked_buttons: Array[Button] = []
 var confirm_card: Button
 var inspection_view := {}
 var cosmetic_clock := 0.0
@@ -86,25 +95,14 @@ func _ready() -> void:
  elif not model.state.pending.is_empty(): draft()
 
 func panel_style(color: Color) -> StyleBoxFlat:
- var s := StyleBoxFlat.new()
- s.bg_color = color
- s.set_corner_radius_all(18)
- s.set_border_width_all(1)
- s.border_color = Color(0.95,0.77,0.43,0.22)
- s.shadow_color = Color(0,0,0,0.15)
- s.shadow_size = 3
- s.content_margin_left = 16
- s.content_margin_right = 16
- s.content_margin_top = 12
- s.content_margin_bottom = 12
- return s
+ return ThemeKit.panel(color)
 
 func label(text: String, size: int, parent: Node) -> Label:
  var l := Label.new()
  l.text = tr(text)
  l.set_meta("base_font",size)
  l.add_theme_font_size_override("font_size",scaled_font(size))
- l.add_theme_color_override("font_color",Color("fff4dc"))
+ l.add_theme_color_override("font_color",ThemeKit.INK)
  l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  parent.add_child(l)
  return l
@@ -118,11 +116,11 @@ func button(text: String, action: Callable, parent: Node) -> Button:
  b.custom_minimum_size.y = touch_height()
  b.add_theme_font_size_override("font_size",scaled_font(17))
  b.add_theme_color_override("font_color",Color("fff4dc"))
- b.add_theme_stylebox_override("normal",panel_style(Color("2e785d")))
- b.add_theme_stylebox_override("hover",panel_style(Color("408f75")))
- b.add_theme_stylebox_override("pressed",panel_style(Color("31516b")))
- b.add_theme_stylebox_override("disabled",panel_style(Color("263b3b")))
- b.add_theme_color_override("font_disabled_color",Color("b2c1b7"))
+ b.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACTION))
+ b.add_theme_stylebox_override("hover",panel_style(Color("52968b")))
+ b.add_theme_stylebox_override("pressed",panel_style(Color("356964")))
+ b.add_theme_stylebox_override("disabled",panel_style(Color("d4d9c5")))
+ b.add_theme_color_override("font_disabled_color",Color("708175"))
  var focus := panel_style(Color(0,0,0,0))
  focus.border_color = Color("f2c46d")
  focus.set_border_width_all(2)
@@ -138,51 +136,69 @@ func build_ui() -> void:
  ui_root = root
  root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ root.theme = ThemeKit.theme()
  layer.add_child(root)
  hud = VBoxContainer.new()
  hud.position = Vector2(22,28)
  hud.size.x = 496
  root.add_child(hud)
- label("POCKET BIOME",30,hud)
- label("T I N Y   E X P A N S I O N",13,hud)
+ # Compact resource ledger and chapter task: global state stays above the island.
+ var ledger := PanelContainer.new()
+ ledger.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
+ hud.add_child(ledger)
+ var ledger_content := VBoxContainer.new()
+ ledger_content.add_theme_constant_override("separation",4)
+ ledger.add_child(ledger_content)
  inventory = RichTextLabel.new()
  inventory.fit_content = true
  inventory.scroll_active = false
  inventory.mouse_filter = Control.MOUSE_FILTER_IGNORE
  inventory.add_theme_font_size_override("normal_font_size",17)
- inventory.add_theme_color_override("default_color",Color("e4e9df"))
+ inventory.add_theme_color_override("default_color",ThemeKit.INK)
  inventory.tooltip_text = "Coins · Pulse energy · Wood · Stone · Fiber · Occupied land"
- hud.add_child(inventory)
+ ledger_content.add_child(inventory)
  pulse_bar = ProgressBar.new()
  pulse_bar.max_value = 200
  pulse_bar.show_percentage = false
  pulse_bar.custom_minimum_size.y = 5
  pulse_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
  var track := StyleBoxFlat.new()
- track.bg_color = Color("263c48")
- track.set_corner_radius_all(3)
- var fill := track.duplicate()
- fill.bg_color = Color("f2c46d")
+ track.bg_color = Color("d8d8ba"); track.set_corner_radius_all(3)
+ var fill := track.duplicate(); fill.bg_color = ThemeKit.GOLD
  pulse_bar.add_theme_stylebox_override("background",track)
  pulse_bar.add_theme_stylebox_override("fill",fill)
- hud.add_child(pulse_bar)
- objective = label("",18,hud)
- label("OFFLINE · AUTOSAVE",11,hud)
+ ledger_content.add_child(pulse_bar)
+ objective = label("",17,hud)
+ objective.max_lines_visible = 2
+ objective.add_theme_color_override("font_color",Color("234d52"))
  bottom = VBoxContainer.new()
- bottom.position = Vector2(22,690)
+ bottom.position = Vector2(22,740)
  bottom.size.x = 496
  root.add_child(bottom)
- info = label("",15,bottom)
- notice = label("",17,bottom)
- notice.max_lines_visible = 2
- info.max_lines_visible = 3
- var row := HBoxContainer.new()
- bottom.add_child(row)
- rain_button = button("Rain · 100",func(): target("rain"),row)
- heat_button = button("Heat · 100",func(): target("heat"),row)
- button_icon(rain_button,"rain"); button_icon(heat_button,"heat")
- button("Recenter",frame_world,row)
- button("Fusion",fusion_dialog,row)
+ var context := HBoxContainer.new()
+ context.add_theme_constant_override("separation",10)
+ bottom.add_child(context)
+ var selected_panel := PanelContainer.new()
+ selected_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ selected_panel.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
+ context.add_child(selected_panel)
+ var selected_content := HBoxContainer.new()
+ selected_panel.add_child(selected_content)
+ info = label("",16,selected_content)
+ info.max_lines_visible = 2
+ info.autowrap_mode = TextServer.AUTOWRAP_OFF
+ info.clip_text = true
+ info.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ var inspect_button := button("i",func(): open_inspector(model.origin(selected)),selected_content)
+ inspect_button.tooltip_text = "Inspect the selected biome"
+ inspect_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+ inspect_button.custom_minimum_size.x = touch_height()
+ pulse_button = button("Pulse",pulse_selector,context)
+ pulse_button.custom_minimum_size.x = 128
+ pulse_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+ pulse_button.add_theme_stylebox_override("normal",panel_style(ThemeKit.GOLD))
+ pulse_button.add_theme_color_override("font_color",ThemeKit.INK)
  draft_button = button("Resume draft",func():
   if placement_blueprint != "":
    placement_blueprint = ""
@@ -190,15 +206,24 @@ func build_ui() -> void:
    refresh()
   elif targeting != "": cancel_target()
   else: draft(),bottom)
+ var dock := PanelContainer.new()
+ dock.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
+ bottom.add_child(dock)
  var navigation := HBoxContainer.new()
- bottom.add_child(navigation)
- var journal_button := button("Journal",func(): campaign_ui.journal(self),navigation)
- button_icon(journal_button,"codex")
- button("Craft",func(): campaign_ui.workshop(self),navigation)
- button("World",func(): campaign_ui.world(self),navigation)
- var settings_button := button("Options",func(): campaign_ui.settings(self),navigation)
- button_icon(settings_button,"settings")
- label("Drag to pan · Pinch / wheel to zoom · Hold to inspect",12,bottom)
+ navigation.add_theme_constant_override("separation",6)
+ dock.add_child(navigation)
+ for action in [{"name":"Journal","icon":"codex","run":func(): campaign_ui.journal(self)}, {"name":"Build","icon":"craft","run":func(): campaign_ui.workshop(self)}, {"name":"World","icon":"world","run":func(): campaign_ui.world(self)}, {"name":"Menu","icon":"settings","run":func(): campaign_ui.settings(self)}]:
+  var item: Button = button(action.name,action.run,navigation)
+  button_icon(item,action.icon,true)
+  item.add_theme_stylebox_override("normal",panel_style(ThemeKit.PAPER_ALT))
+ notice_toast = PanelContainer.new()
+ notice_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ notice_toast.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
+ root.add_child(notice_toast)
+ notice = label("",16,notice_toast)
+ notice.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ notice.max_lines_visible = 2
+ notice_toast.hide()
  photo_controls = HBoxContainer.new()
  photo_controls.position = Vector2(20,880)
  photo_controls.size.x = 500
@@ -211,11 +236,20 @@ func build_ui() -> void:
  button("Share",share_photo,photo_controls)
  button("Exit photo",end_photo,photo_controls)
  photo_controls.hide()
+ modal_scrim = ColorRect.new()
+ modal_scrim.color = Color(0.10,0.19,0.20,0.36)
+ modal_scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ root.add_child(modal_scrim)
+ modal_scrim.hide()
+ modal_scrim.gui_input.connect(func(event):
+  if event is InputEventMouseButton and event.pressed and not modal.get_global_rect().has_point(event.position):
+   modal.hide())
  modal = PanelContainer.new()
  modal.position = Vector2(20,240)
  modal.size = Vector2(500,400)
- modal.add_theme_stylebox_override("panel",panel_style(Color("17243a")))
+ modal.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
  root.add_child(modal)
+ modal.visibility_changed.connect(func(): modal_scrim.visible = modal.visible)
  modal.hide()
 
 func cancel_target() -> void:
@@ -232,6 +266,8 @@ func pulse_selector() -> void:
  for power in ["rain","heat","frost"]:
   var action: Button = button(power.capitalize()+" · 100 energy",func(): modal.hide(); target(power),box)
   button_icon(action,power)
+  if power == "rain": rain_button = action
+  elif power == "heat": heat_button = action
   action.disabled = energy < 100 or (power == "frost" and model.state.chapter < 2)
   label("Unlocks in Chapter 2" if power == "frost" and model.state.chapter < 2 else descriptions[power],15,box)
  button("Back to island",func(): modal.hide(),box)
@@ -259,9 +295,18 @@ func modal_content(title: String) -> VBoxContainer:
  modal_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  modal_box.add_theme_constant_override("separation",14)
  scroll.add_child(modal_box)
- label(title,24,modal_box)
+ var heading := HBoxContainer.new()
+ modal_box.add_child(heading)
+ modal_title = label(title,24,heading)
+ modal_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ var close := button("×",func(): modal.hide(),heading)
+ close.size_flags_horizontal = Control.SIZE_SHRINK_END
+ close.custom_minimum_size.x = touch_height()
+ close.tooltip_text = "Close"
+ notice_toast.hide()
  input_controller.reset()
  modal.show()
+ call_deferred("apply_layout")
  return modal_box
 
 func draft() -> void:
@@ -363,10 +408,12 @@ func refresh() -> void:
  services.save_path = store.path
  for cue in presentation.cues:
   if model.state.settings.sfx: audio_feedback.play(cue)
+ update_stacked_buttons()
  photo_light_button.disabled = model.state.chapter < 2
  pulse_bar.value = model.state.energy
- rain_button.disabled = model.state.energy < 100
- heat_button.disabled = model.state.energy < 100
+ if is_instance_valid(rain_button): rain_button.disabled = model.state.energy < 100
+ if is_instance_valid(heat_button): heat_button.disabled = model.state.energy < 100
+ pulse_button.text = "Pulse\n%d / 200" % model.state.energy
  draft_button.text = "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
  draft_button.disabled = targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
  draft_button.visible = not draft_button.disabled
@@ -380,12 +427,16 @@ func refresh() -> void:
   inventory.add_text(" %d" % amount + ("/200" if resource == "rain" else ""))
  inventory.add_text("   Land %d/36" % model.state.tiles.size())
  objective.text = model.objective_text()
- notice.text = model.message
+ if model.message != last_notice:
+  last_notice = model.message
+  notice.text = model.message
+  notice_time = 3.5
  var k: String = model.origin(selected)
  if k != "":
   var t: Dictionary = model.state.tiles[k]
-  info.text = "%s · ready in %ds\n" % [tile_title(t),ceili(maxf(0,t.ready-model.state.time))]
-  for a in model.config.attributes: info.text += "%s %d  " % [{"moisture":"Water","heat":"Heat","fertility":"Growth","stability":"Rock","magic":"Magic"}[a],t.dna[a]]
+  var production: Dictionary = model.production(t)
+  var remaining: int = ceili(maxf(0,t.ready-model.state.time))
+  info.text = tile_title(t)+"\n"+("Ready to collect" if remaining == 0 and production.resource != "" else "Ready in %ds" % remaining if production.resource != "" else "Hold to discover its secrets")
 
  update_inspection()
  campaign_ui.update_live(self)
@@ -454,13 +505,23 @@ func apply_layout() -> void:
  if OS.get_name() == "Android" or OS.get_name() == "iOS":
   var physical := Vector2(DisplayServer.screen_get_size())
   safe = preload("res://scripts/SafeLayout.gd").logical_safe_rect(viewport_size,physical,Rect2(DisplayServer.get_display_safe_area()))
- layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(185,hud.get_combined_minimum_size().y),maxf(305,bottom.get_combined_minimum_size().y))
+ layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(110,hud.get_combined_minimum_size().y),maxf(124,bottom.get_combined_minimum_size().y))
  hud.position = layout.top.position
- hud.size.x = layout.top.size.x
+ hud.size = layout.top.size
  bottom.position = layout.bottom.position
- bottom.size.x = layout.bottom.size.x
+ bottom.size = layout.bottom.size
  modal.position = layout.modal.position
  modal.size = layout.modal.size
+ if launch_menu and is_instance_valid(launch_screen) and is_instance_valid(menu_spacer):
+  launch_screen.position = Vector2(safe.position.x+22,safe.position.y+40)
+  launch_screen.size.x = safe.size.x-44
+  var fixed_height: float = launch_screen.get_combined_minimum_size().y-menu_spacer.custom_minimum_size.y
+  menu_spacer.custom_minimum_size.y = maxf(100,safe.size.y-80-fixed_height)
+ if launch_menu:
+  modal.position.y = safe.position.y+20
+  modal.size.y = safe.size.y-40
+ notice_toast.position = layout.world.position+Vector2(8,8)
+ notice_toast.size = Vector2(layout.world.size.x-16,0)
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
   modal.size.y = layout.modal.end.y-modal.position.y
@@ -491,6 +552,8 @@ func constrain_camera() -> void:
  pan.y = clampf(pan.y,area.position.y-anchor.y-bounds.end.y,area.end.y-anchor.y-bounds.position.y)
 
 func _process(delta: float) -> void:
+ notice_time = maxf(0,notice_time-delta)
+ notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible
  if not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
  if suspended or launch_menu: return
  if discard_resume_delta:
@@ -558,6 +621,11 @@ func visible_palette() -> String:
 
 func _draw() -> void:
  var palette: String = visible_palette()
+ if palette == "day":
+  var area := get_viewport_rect()
+  for band in range(48):
+   var fraction := float(band)/47.0
+   draw_rect(Rect2(0,area.size.y*band/48.0,area.size.x,area.size.y/48.0+1),Color("83b6b8").lerp(Color("d6e4cc"),fraction))
  if palette != "day":
   var palettes := {"moon":Color("101b38"),"dusk":Color("30263e"),"celestial":Color("182d36"),"sakura":Color("322d41")}
   draw_rect(get_viewport_rect(),palettes.get(palette,Color("17243a")))
@@ -653,7 +721,7 @@ func _draw() -> void:
   if flight < 1: preload("res://scripts/UIIcons.gd").draw(self,effect.resource,icon_at,32,Color(1,1,1,1-flight*0.6))
   draw_string(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color(0.95,0.83,0.56,1-effect.elapsed/0.8))
  if photo_mode:
-  draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("fff4dc"))
+  draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,ThemeKit.INK if visible_palette() == "day" else Color("fff4dc"))
 
 func draw_ellipse_shadow(p: Vector2,w: float) -> void:
  var points := PackedVector2Array()
@@ -667,6 +735,10 @@ func inspect(pos: Vector2) -> void:
  if photo_mode or not world_rect().has_point(pos): return
  var key := model.origin(pick(pos))
  if key == "": return
+ open_inspector(key)
+
+func open_inspector(key: String) -> void:
+ if key == "" or not model.state.tiles.has(key): return
  selected = key
  var tile: Dictionary = model.state.tiles[key]
  var box := modal_content(tile_title(tile))
@@ -674,7 +746,7 @@ func inspect(pos: Vector2) -> void:
  var image = preload("res://scripts/TileThumbnail.gd").new()
  image.tile_type = tile.type; image.evolution = tile.evolution; image.extent = 130
  box.add_child(image)
- inspection_view = {"key":key,"title":box.get_child(0),"image":image,"bars":{},"conditions":[]}
+ inspection_view = {"key":key,"title":modal_title,"image":image,"bars":{},"conditions":[]}
  var production: Dictionary = model.production(tile)
  if production.resource != "": inspection_view["production"] = label("%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))],16,box)
  else: label(card_hint(tile.type),16,box)
@@ -750,6 +822,7 @@ func apply_settings() -> void:
   audio_feedback.ambience.volume_db = -80 if music <= 0 else -20+linear_to_db(music)
   audio_feedback.ambience.stream_paused = music <= 0
  if ui_root != null: update_fonts(ui_root)
+ update_stacked_buttons()
  call_deferred("apply_layout")
 
 func update_fonts(node: Node) -> void:
@@ -823,48 +896,67 @@ func card_hint(type: String) -> String:
 
 func start_screen() -> void:
  launch_menu = true
- hud.hide(); bottom.hide(); modal.hide()
+ hud.hide(); bottom.hide(); modal.hide(); notice_toast.hide()
  if launch_screen != null: launch_screen.queue_free()
  launch_screen = VBoxContainer.new()
- launch_screen.position = layout.top.position+Vector2(0,40)
+ launch_screen.position = Vector2(22,52)
  launch_screen.size.x = get_viewport_rect().size.x-44
+ launch_screen.add_theme_constant_override("separation",12)
  ui_root.add_child(launch_screen)
- label("POCKET BIOME",34,launch_screen)
- label("T I N Y   E X P A N S I O N",15,launch_screen)
- label("A little world. Endless possibilities.",18,launch_screen)
- var spacer := Control.new()
- spacer.custom_minimum_size.y = maxf(140,world_rect().size.y-140)
- launch_screen.add_child(spacer)
- button("Continue your world" if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
- button("Settings",func(): campaign_ui.settings(self),launch_screen)
- button("About the game",func():
+ var title := label("POCKET BIOME",42,launch_screen)
+ title.add_theme_font_override("font",ThemeKit.DISPLAY)
+ title.add_theme_color_override("font_color",Color("fff4d7"))
+ title.add_theme_color_override("font_outline_color",ThemeKit.INK)
+ title.add_theme_constant_override("outline_size",8)
+ title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ var subtitle := label("T I N Y   E X P A N S I O N",14,launch_screen)
+ subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ var promise := label("A little world, shaped by you.",18,launch_screen)
+ promise.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ menu_spacer = Control.new()
+ menu_spacer.custom_minimum_size.y = get_viewport_rect().size.y*0.36
+ launch_screen.add_child(menu_spacer)
+ var play := button("Continue your world" if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
+ play.custom_minimum_size.y = 60*logical_per_dp()
+ play.add_theme_stylebox_override("normal",panel_style(ThemeKit.GOLD))
+ play.add_theme_color_override("font_color",ThemeKit.INK)
+ var secondary := HBoxContainer.new()
+ launch_screen.add_child(secondary)
+ button("Settings",func(): campaign_ui.settings(self),secondary)
+ button("About",func():
   var box := modal_content("Pocket Biome · Tiny Expansion")
-  label("An offline miniature-world discovery game. Version 0.9 test build. Original synthesized sound; generated art assembled and reviewed for this game. No mandatory ads or purchases.",17,box)
-  campaign_ui.close_button(self,box),launch_screen)
- button("Start a new world…",func():
-  var box := modal_content("Create another tiny world?")
-  label("Your current world will be archived in app storage. This starts a fresh island; permanent purchase entitlements remain.",17,box)
-  button("Archive and start fresh",func():
-   persist()
-   var from := ProjectSettings.globalize_path(store.path)
-   var to := ProjectSettings.globalize_path("user://world_archive_%d.json" % int(Time.get_unix_time_from_system()))
-   if FileAccess.file_exists(from) and DirAccess.copy_absolute(from,to) != OK:
-    model.message = "Could not archive the current world. It has been kept."
-    return
-   var entitlements: Array = model.state.entitlements.duplicate()
-   model = Model.new()
-   model.occurred.connect(services.event)
-   model.state.entitlements = entitlements
-   services.model = model
-   presentation = preload("res://scripts/WorldPresentation.gd").new()
-   selected = "0,0"; pan = Vector2.ZERO; zoom_level = 1.0
-   persist(); refresh(); start_play(),box)
-  campaign_ui.close_button(self,box),launch_screen)
+  label("An offline miniature-world discovery game. Version 0.9 test build. Original synthesized sound and generated diorama artwork. No mandatory ads or purchases.",17,box)
+  campaign_ui.close_button(self,box),secondary)
+ button("New world",new_world_dialog,secondary)
+ call_deferred("apply_layout")
+ queue_redraw()
+
+func new_world_dialog() -> void:
+ var box := modal_content("Create another tiny world?")
+ label("Your current world will be archived in app storage. This starts a fresh island; permanent purchase entitlements remain.",17,box)
+ button("Archive and start fresh",func():
+  persist()
+  var from := ProjectSettings.globalize_path(store.path)
+  var to := ProjectSettings.globalize_path("user://world_archive_%d.json" % int(Time.get_unix_time_from_system()))
+  if FileAccess.file_exists(from) and DirAccess.copy_absolute(from,to) != OK:
+   model.message = "Could not archive the current world. It has been kept."
+   return
+  var entitlements: Array = model.state.entitlements.duplicate()
+  model = Model.new()
+  model.occurred.connect(services.event)
+  model.state.entitlements = entitlements
+  if entitlements.has("founders"): model.state.blueprints["lantern"] = 1
+  services.model = model
+  presentation = preload("res://scripts/WorldPresentation.gd").new()
+  selected = "0,0"; pan = Vector2.ZERO; zoom_level = 1.0
+  persist(); refresh(); start_play(),box)
+ campaign_ui.close_button(self,box)
 
 func start_play() -> void:
  launch_menu = false
  if launch_screen != null: launch_screen.hide()
  hud.show(); bottom.show(); modal.hide()
+ frame_world()
  if not model.state.settings.tutorial_seen:
   services.event("tutorial_started")
   model.state.settings.tutorial_seen = true
@@ -964,7 +1056,44 @@ func entity_screen(key: String) -> Vector2:
  var offset := Vector2(0.5,0.5) if model.state.tiles[origin].size == 4 else Vector2.ZERO
  return screen(Vector2(model.coord(origin))+offset)
 
-func button_icon(target: Button, id: String) -> void:
- target.icon = preload("res://scripts/UIIcons.gd").texture(id)
- target.expand_icon = true
- target.add_theme_constant_override("icon_max_width",roundi(24*logical_per_dp()))
+func button_icon(target: Button, id: String, stacked: bool = false) -> void:
+ var texture: Texture2D = preload("res://scripts/UIIcons.gd").texture(id)
+ if not stacked:
+  target.icon = texture
+  target.expand_icon = true
+  target.add_theme_constant_override("icon_max_width",roundi(24*logical_per_dp()))
+  return
+ var text: String = target.text
+ target.text = ""
+ target.tooltip_text = text
+ var content := VBoxContainer.new()
+ content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ target.add_child(content)
+ content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ var inset := 4*logical_per_dp()
+ content.offset_left = inset; content.offset_right = -inset
+ content.offset_top = inset; content.offset_bottom = -inset
+ content.alignment = BoxContainer.ALIGNMENT_CENTER
+ content.add_theme_constant_override("separation",2)
+ var icon := TextureRect.new()
+ icon.texture = texture
+ icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+ icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ icon.custom_minimum_size = Vector2.ONE*24*logical_per_dp()
+ icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ content.add_child(icon)
+ var caption: Label = label(text,17,content)
+ caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ caption.autowrap_mode = TextServer.AUTOWRAP_WORD
+ target.set_meta("icon_caption",caption)
+ target.set_meta("icon_image",icon)
+ stacked_buttons.append(target)
+ update_stacked_buttons()
+
+func update_stacked_buttons() -> void:
+ for action in stacked_buttons:
+  if not is_instance_valid(action): continue
+  action.custom_minimum_size.y = maxf(touch_height(),64*logical_per_dp()*model.state.text_scale)
+  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else ThemeKit.INK
+  action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0

@@ -7,13 +7,13 @@ var workshop_stock: Label
 var workshop_signature := ""
 const Thumbnail = preload("res://scripts/TileThumbnail.gd")
 func close_button(h, box: VBoxContainer) -> void:
- h.button("Back to island",func(): h.modal.hide(); h.refresh(); h.check_transition_ad(),box)
+ h.button("Back" if h.launch_menu else "Back to island",func(): h.modal.hide(); h.refresh(); h.check_transition_ad(),box)
 func journal(h) -> void:
  var box: VBoxContainer = h.modal_content("Field Journal · %d / 20" % h.model.state.discoveries.size())
  var chapter: Dictionary = h.model.campaign.chapter_definition(h.model)
- h.label("CHAPTER %d · %s" % [h.model.state.chapter,chapter.name],20,box)
- h.label(h.model.campaign.chapter_progress(h.model),16,box)
- h.label("Clues sharpen with experience. Ten harvests reveal detailed conditions for every discovery, without ads.",14,box)
+ h.label("CHAPTER %d · %s" % [h.model.state.chapter,chapter.name],17,box)
+ h.label(h.model.campaign.chapter_progress(h.model).split("\n")[-1],15,box)
+ h.label("Shape the land. Discover its secrets.",14,box)
  var tabs := ScrollContainer.new()
  tabs.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
  tabs.custom_minimum_size.y = h.touch_height()+6
@@ -31,7 +31,7 @@ func journal(h) -> void:
   if codex_filter != "All" and codex_filter != family: continue
   var panel := PanelContainer.new()
   panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  var style: StyleBoxFlat = h.panel_style(Color("203447")); style.border_color = h.rarity_color(recipe.rarity)
+  var style: StyleBoxFlat = h.panel_style(Color("f3e7cb")); style.border_color = h.rarity_color(recipe.rarity)
   panel.add_theme_stylebox_override("panel",style)
   grid.add_child(panel)
   var content := VBoxContainer.new(); panel.add_child(content)
@@ -89,21 +89,56 @@ func workshop(h) -> void:
  for job in h.model.state.jobs:
   workshop_jobs[job.id] = h.label("In progress: %s · %ds" % [job.recipe,ceili(maxf(0,job.until-h.model.state.time))],16,box)
  for recipe in h.model.config.crafting:
-  var text: String = recipe.name+"\n"
-  for resource in recipe.cost: text += "%d %s  " % [recipe.cost[resource]*craft_quantity,resource]
-  text += "· %ds · %s" % [ceili(h.model.campaign.crafting_seconds(h.model,recipe)*craft_quantity),recipe.requires.capitalize()]
+  var panel := PanelContainer.new()
+  panel.add_theme_stylebox_override("panel",h.panel_style(Color("f1e4c6")))
+  box.add_child(panel)
+  var row := HBoxContainer.new()
+  row.add_theme_constant_override("separation",10)
+  panel.add_child(row)
+  if recipe.has("tile"):
+   var art = Thumbnail.new(); art.tile_type = recipe.tile; art.extent = 92
+   art.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+   row.add_child(art)
+  else:
+   var icon := TextureRect.new()
+   icon.texture = preload("res://scripts/UIIcons.gd").texture(recipe.get("resource","brick"))
+   icon.custom_minimum_size = Vector2(64,64)
+   icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+   icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+   row.add_child(icon)
+  var content := VBoxContainer.new()
+  content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  row.add_child(content)
+  h.label(recipe.name,18,content)
+  var ingredients := HFlowContainer.new()
+  ingredients.add_theme_constant_override("h_separation",10)
+  content.add_child(ingredients)
   var missing := PackedStringArray()
   if not h.model.campaign.has_structure(h.model,recipe.requires): missing.append("Build "+recipe.requires.capitalize())
   for resource in recipe.cost:
    var owned: int = h.model.state.coins if resource == "coins" else h.model.state.inventory.get(resource,0)
-   var deficit: int = recipe.cost[resource]*craft_quantity-owned
-   if deficit > 0: missing.append("%d more %s" % [deficit,resource])
+   var required: int = recipe.cost[resource]*craft_quantity
+   var chip := HBoxContainer.new()
+   ingredients.add_child(chip)
+   var material := TextureRect.new()
+   material.texture = preload("res://scripts/UIIcons.gd").texture(resource)
+   material.custom_minimum_size = Vector2(28,28)
+   material.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+   material.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+   chip.add_child(material)
+   var amount: Label = h.label("%d / %d" % [owned,required],16,chip)
+   amount.autowrap_mode = TextServer.AUTOWRAP_OFF
+   amount.tooltip_text = resource.capitalize()+" · available / required"
+   if owned < required:
+    amount.add_theme_color_override("font_color",Color("b04d36"))
+    missing.append("%d more %s" % [required-owned,resource])
   if h.model.state.jobs.size() >= 3: missing.append("All project slots are busy")
-  var craft_button: Button = h.button(text,func():
+  var seconds: int = ceili(h.model.campaign.crafting_seconds(h.model,recipe)*craft_quantity)
+  var craft_button: Button = h.button("Craft × %d · %ds" % [craft_quantity,seconds],func():
    h.model.craft(recipe.id,craft_quantity)
-   h.persist(); h.refresh(); workshop(h),box)
+   h.persist(); h.refresh(); workshop(h),content)
   craft_button.disabled = not missing.is_empty()
-  if not missing.is_empty(): h.label("Needs · "+", ".join(missing),14,box)
+  if not missing.is_empty(): h.label("Needs · "+", ".join(missing),14,content)
  h.label("Ready blueprints",20,box)
  for type in h.model.state.blueprints:
   if h.model.state.blueprints[type] < 1: continue
@@ -136,7 +171,12 @@ func update_live(h) -> void:
 func world(h) -> void:
  var box: VBoxContainer = h.modal_content("Your Living World")
  h.label("Seed %d · %d cells\nNext expansion: %d coins" % [h.model.state.seed,h.model.state.tiles.size(),h.model.cost()],17,box)
- h.button("Inspect selected tile",func(): h.modal.hide(); h.inspect(h.screen(h.model.coord(h.selected))),box)
+ var actions := GridContainer.new(); actions.columns = 2
+ box.add_child(actions)
+ h.button("Inspect biome",func(): h.modal.hide(); h.open_inspector(h.model.origin(h.selected)),actions)
+ h.button("Center island",func(): h.modal.hide(); h.frame_world(),actions)
+ h.button("Fuse sanctuary",func(): h.fusion_dialog(),actions)
+ h.button("Photo mode",func(): h.modal.hide(); h.begin_photo(),actions)
  var at: String = h.model.origin(h.selected)
  if at != "":
   var tile: Dictionary = h.model.state.tiles[at]
@@ -202,9 +242,9 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
  slider.min_value = low; slider.max_value = high; slider.step = step; slider.value = value
  slider.custom_minimum_size.y = h.touch_height()
  var track := StyleBoxFlat.new()
- track.bg_color = Color("263c48"); track.set_corner_radius_all(4)
+ track.bg_color = Color("d6d5b9"); track.set_corner_radius_all(4)
  track.content_margin_top = 4; track.content_margin_bottom = 4
- var fill := track.duplicate(); fill.bg_color = Color("78d4a2")
+ var fill := track.duplicate(); fill.bg_color = Color("4a8b80")
  slider.add_theme_stylebox_override("slider",track)
  slider.add_theme_stylebox_override("grabber_area",fill)
  slider.add_theme_stylebox_override("grabber_area_highlight",fill)

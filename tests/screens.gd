@@ -24,6 +24,14 @@ func run() -> void:
  check(h.modal_box.get_child_count() >= 10,"settings and guide available")
  h.campaign_ui.world(h)
  check(h.modal.visible,"world controls open")
+ var world_actions: GridContainer
+ for child in h.modal_box.get_children():
+  if child is GridContainer: world_actions = child
+ check(world_actions != null and world_actions.get_child_count() == 4,"world hub provides inspect, center, fusion and photo actions")
+ if world_actions != null:
+  for action in world_actions.get_children():
+   if action.text == "Fuse sanctuary": action.pressed.emit(); break
+ check(h.modal_title.text.contains("sanctuary"),"fusion remains reachable from the redesigned world hub")
  h.services_ui()
  check(h.modal.visible,"offline services fallback usable")
  h.modal.hide()
@@ -59,6 +67,9 @@ func run() -> void:
   check(h.inspection_view.title.text == h.tile_title(h.model.state.tiles["0,0"]),"inspector title follows the current biome")
   h.dismiss_inspection()
   check(not h.inspection_mode and not h.modal.visible,"inspector dismissal returns input to island")
+ h.campaign_ui.journal(h)
+ await process_frame
+ check(h.modal.position == h.layout.modal.position and not h.inspection_mode,"opening Codex after inspector immediately restores full modal layout")
  h.model = preload("res://scripts/WorldModel.gd").new()
  h.model.state.inventory.wood = 30; h.model.state.inventory.stone = 30
  h.refresh()

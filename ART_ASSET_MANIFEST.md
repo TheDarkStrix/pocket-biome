@@ -1,6 +1,6 @@
 # Art and audio asset manifest
 
-Generated raster candidates are integrated and rendered in the actual engine. Source sheets are retained unchanged; scripts address atlas regions/pivots, rather than editing pixels. The user-approved navy/green portrait layout remains the UI basis; docs/references/user_art_direction.jpg guides materials and proportions.
+Generated raster candidates are integrated and rendered in the actual engine. Source sheets are retained unchanged; scripts address atlas regions/pivots, rather than editing pixels. The earlier navy/green layout is superseded by the user's request for a complete game interface; docs/references/user_art_direction.jpg guides materials and proportions.
 
 | Asset | Size/format | Use | Status |
 |---|---|---|---|
@@ -16,10 +16,14 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 
 ## Specifications and delivery rules
 
-Use 2:1 isometric ground planes, consistent light from upper left, warm earthy sides, soft painted contours, readable silhouettes and generous transparent margins. Atlas cells are nominally 418px wide, with measured row bounds and pivots in TileArtwork.gd. Base rendered ground width is 132 logical pixels; fused footprints span four grid cells. UI uses custom navy panels, green actions, gold focus/rarity borders and illustrated textures. No engine-default button styling is intended as final UI.
+Use 2:1 isometric ground planes, consistent light from upper left, warm earthy sides, soft painted contours, readable silhouettes and generous transparent margins. Atlas cells are nominally 418px wide, with measured row bounds and pivots in TileArtwork.gd. Base rendered ground width is 132 logical pixels; fused footprints span four grid cells. UI uses custom parchment panels, brass actions, ink text, rarity borders and illustrated textures. No engine-default button styling is intended as final UI.
 
 Future standalone delivery: transparent RGBA PNG, terrain 512×384 with ground anchor (256,256); tall nodes/structures 512×640 with ground anchor (256,480); fused sanctuaries 1024×768 with ground anchor (512,512); UI/resource icons 256×256 with 24px inset. Maintain atlas manifests and source files. Do not crop by visual guess: verify shared ground anchors in engine and matching alpha hit testing.
 
 ## Remaining review
 
 Inspect high-zoom alpha fringes, transitions and consistent ground dimensions on Android. Perform human visual/audio review and device sampling. These integrated generated assets are not a claim of final creative sign-off. Rare reveals, silhouettes, depletion, fusion choreography and photo mode use real asset references; additional hand-painted animation frames may improve quality but are not falsely marked delivered.
+
+## Typography revision
+
+assets/fonts/Nunito.ttf and Fredoka.ttf derive from Google Fonts OFL sources, baked to static weight650/600 instances with fontTools to avoid variable-font importer instability. Copyright/license notices are retained beside them as LICENSE_Nunito.txt and LICENSE_Fredoka.txt and included in the Android export. Original download sources: https://github.com/google/fonts/tree/main/ofl/nunito and https://github.com/google/fonts/tree/main/ofl/fredoka . They support the original interface wordmark/body typography; third-party game screenshots are analysis references only and are not shipping assets.

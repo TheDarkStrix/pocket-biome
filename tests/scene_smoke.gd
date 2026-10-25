@@ -43,7 +43,9 @@ func run() -> void:
  check(scene.draft_button.disabled,"no pending draft cannot resume")
  scene.model.state.energy = 0
  scene.refresh()
- check(scene.rain_button.disabled and scene.heat_button.disabled,"unaffordable pulses disabled")
+ scene.pulse_selector()
+ check(scene.rain_button.disabled and scene.heat_button.disabled,"unaffordable pulses disabled in the power selector")
+ scene.modal.hide()
  var active: float = scene.model.state.time
  scene._notification(Node.NOTIFICATION_APPLICATION_PAUSED)
  scene._process(30.0)
