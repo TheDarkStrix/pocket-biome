@@ -1,23 +1,26 @@
-# Pocket Biome Android test build
+# Pocket Biome 0.11.0 Android preview
 
-[Download updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
+[Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
-Android 7.0+ (API 24), ARM64 phones. Signed debug preview, not a public release candidate. Install over the existing test build to retain your world; do not uninstall.
+ARM64 Android phones, Android 7.0+ (API 24). Signed development preview, not a certified production release. Install over the existing game to retain your island; do not uninstall.
 
-## Conditions explanation update
+## Camera and world motion
 
-The top-right panel now reads **Tile conditions**, with explicit **Moisture** and **Heat** labels. Tap it to learn how the selected tile's 0–100 scores affect transformations. Heat is a relative warmth score, not Celsius. Enlarged-text layout and real-touch explanation navigation are tested. This wording revision has export/signature/OpenGL-capture checks; the earlier native gameplay/relocation checks below precede this wording change.
+- World → Rotate left/right or a two-finger twist gives four 90° isometric views. Drag and pinch still pan/zoom. Continuous free-angle 3D orbit and newly rendered back faces are not implemented.
+- Canopies sway with fixed ground; water ripples; enabled structures show smoke, embers, work dust or activity lights. Some painted parts, including Windmill blades, remain static. Reduced-motion mode freezes idle effects.
+- Placement, evolution, fusion, Rain/Heat/Frost, harvest flights and responsive UI animations are included.
 
-## Player-feedback update
+## Gameplay and mobile fixes
 
-- Visible expansion controls receive touch before overlapping canopy artwork.
-- A closed draft can move to another cloud with the same cards/price, without spending coins.
-- Chapter 3 has a direct fusion shortcut. The illustrated chooser finds 2×2 groups, previews them and explains missing tiles/pulse blockers.
-- Rain showers/ripples cover the full affected area for 3.2 seconds; reduced motion retains confirmation.
-- Press/release responses, panel/menu fades, resource highlights and interpolated chapter/ecology stats.
+- Expansion markers receive input above tree art. Closed drafts relocate without rerolling or charging.
+- Fusion detects matching 2×2 groups and explains blockers; Chapter 3 exposes a direct shortcut.
+- Tile conditions names Moisture/Heat and opens a player explanation of 0–100 scores and transformations.
+- Dragging across menu buttons scrolls to actions below the fold without triggering buttons.
+- Frame jitter no longer stretches environment/automation intervals.
+- Privacy disclosure, local diagnostic deletion, native opt-in/out and required ad-privacy-choice entry points are implemented. Own telemetry endpoint remains empty; test IDs remain in use.
 
-Source: 460f9cf72cd1a3b17122a83f465217726ae7860a. 708 automated assertions pass, plus complete progression/startup checks. The preceding gameplay-fix runtime payload installed and rendered on an Android emulator, retained progress and passed native cloud/draft-relocation checks. Phone APK signature/alignment and identical retained files verified. Physical ARM64-device/performance validation remains open. Ads use test IDs; real purchase/restore and release qualification remain unverified.
+Source: 319ae30ac8faf561edf95656eaec1f05b9d5c45d . 750 Godot assertions plus eight Python audit tests pass; complete progression simulation passes. APK signature, ARM64 files, 16 KB ZIP/ELF alignment and embedded source provenance are checked. Native software-emulator checks cover installation, restored progress, rotation buttons, menu scrolling, privacy UI and actual Android diagnostics preference On/Off. This does not certify physical performance, real Google consent/ads/purchases or public release readiness.
 
-For fusion, use **Find a sanctuary fusion** or **World → Fuse sanctuary**. Four matching tiles must make a square in grid space (a diamond on screen), rather than a row. Oak differs from Forest; evolved Forest tiles still count. The chooser shows readiness and temporary blockers.
+Production is still blocked by development signing/test configuration, hosted publisher policy/support details and device/store/creative acceptance evidence. See docs/PRODUCTION_READINESS.md and docs/CAMERA_ORBIT_PLAN.md on main. No store upload/publication was performed.
 
-Checksum is alongside the APK. This branch contains download artifacts; development continues on main.
+Checksum is provided alongside the APK. Development continues on main; this branch contains download artifacts.
