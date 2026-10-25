@@ -1,28 +1,24 @@
-# Pocket Biome 0.13.0 Android preview
+# Pocket Biome 0.14.0 Android preview
 
 [Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
-ARM64 Android phones, Android 7.0+ (API24). Signed development preview, not a certified production release. Install over the existing game to retain your island; do not uninstall.
+ARM64 Android 7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
 
-## Mobile HUD and World hub redesign
+## World-first presentation
 
-Current public Play Store screenshots for SimCity BuildIt and Pocket City 2 informed resource grouping, primary Build emphasis and icon controls. Township/Pocket City/Pocket Build promotional material and the previous Terra Nil reference informed the review with their limitations recorded. No third-party game art or branding ships.
+This revision supersedes the rejected gray background and large 0.13 HUD cards.
 
-- Separate currency/land capsules and readable material counters across the header.
-- A chapter quest card with a separate progress count that remains visible when instructions wrap; tap for useful next steps.
-- An illustrated selected biome, real collection readiness/cooldown and a direct inspect control.
-- An original World Pulse wave emblem/energy ring and exact stored-energy count; this is not a regeneration timer.
-- Circular tool controls, amber Build emphasis, explanatory World action cards and consistent rounded modal surfaces.
-- Adaptive layout checked at three portrait sizes and 100/120% text, including high resource counts. Harvest feedback flies to matching displayed material counters.
+- Original sky/cloud shader with controlled drift and day/dusk/night variants. Reduced motion freezes its clock.
+- Small resource row and a readable chapter prompt directly over the scene.
+- Five compact floating tools instead of an enclosing bottom tray and permanent stats panels.
+- Touch land for a brief nearby inspect callout; hold it for the complete inspector.
+- Conditions are behind the leaf/inspector controls; exact energy remains in the real Pulse picker; land capacity is in World.
+- Small contextual saved-card, cancellation and fusion actions; lighter World tools and original leaf/camera icons.
 
-Actual rendered fixtures27–29 and current-source native observations are on main under artifacts. These are implemented screens, not image mockups; the constructed visual fixtures are not earned-progression evidence or human approval.
+The existing economy, saved offers/quotes, progression and provider test configuration are unchanged. The sky does not alter tile art or isometric geometry. World pans/pinches/quarter-turns remain available; continuous 3D orbit is not implemented. Some painted parts, including Windmill blades, remain static. See docs/ANIMATION_STATUS.md.
 
-Source commit: 45606fb75a9bb30813c397ead06ac4037e97bf5d. 820 Godot assertions, eight Python audit tests and two public-action full-campaign simulations pass. Signature, ARM64 files, 16 KB ZIP/ELF alignment and embedded source provenance are verified. Native observations are scoped in artifacts/android-hud-check.json. These do not certify physical-device performance or real Google provider behavior.
+Source: bf34cebdd0b506a871c37661ab96f7b3fb6766b3. 845 Godot assertions, eight Python audit tests, startup and two full public-action campaign routes pass. Mobile fixtures require at least 55% of screen height for the world, readable large counts/progress, retained touch targets and working callout reveal/expiry. The APK signature, ARM64 files, 16 KB ZIP/ELF alignment and embedded source provenance are verified.
 
-Previous gameplay fixes remain: varied deterministic drafts with saved offers/quotes, local placement consequences, contextual ideas, five/twenty-material trades, Furnace construction reserves/manual override and reserved plot coins. Early starvation is fixed; late-game pacing/human enjoyment remain open balancing work.
+Actual rendered fixtures32/29/30/31 show the new HUD, large text, callout and dusk variant; these are constructed presentation states, not human approval or earned-progression claims. Current-source emulator observations are scoped in artifacts/android-atmosphere-check.json. Physical GPU performance, human creative approval and real Google provider transactions remain unqualified.
 
-Camera: drag/pinch plus four 90° isometric views using a two-finger twist or World rotation controls. Continuous 3D orbit is not implemented. Placement/evolution/fusion/weather, foliage/water/structure activity and UI responses are animated; some painted parts, including Windmill blades, remain static. See docs/ANIMATION_STATUS.md.
-
-Development signing/test IDs, hosted policy/support configuration, physical-device acceptance, Play sandbox transactions and human creative review still block production. No store publication was performed. See docs/PRODUCTION_READINESS.md.
-
-Checksum is provided alongside the APK. Development continues on main; this branch contains download artifacts.
+Production signing/test IDs, hosted publisher details and device/store/creative acceptance remain open release gates. No store publication was performed. See docs/PRODUCTION_READINESS.md. Checksum is provided alongside the APK; source development continues on main.
