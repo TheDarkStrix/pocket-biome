@@ -15,9 +15,9 @@ Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | services | 25 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
 | screens | 83 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
 | scene_smoke | 23 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
-| touch_ui | 23 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
-| mobile_layout | 66 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
-| **Total** | **701** | Assertions; separate simulation and startup checks also run |
+| touch_ui | 24 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
+| mobile_layout | 72 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
+| **Total** | **708** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -48,3 +48,9 @@ Mobile fixtures cover three portrait dimensions at normal/enlarged text. They ch
 Actual OpenGL fixtures 13–16 show raised expansion controls, an illustrated fusion chooser, and two distinct frames of the rain shower. These use a constructed layout and are presentation evidence, not earned progression or native-device proof. Current package/native evidence is separately recorded in android JSON artifacts; prior native screenshots remain historical until refreshed.
 
 Current native feedback checks: replacement installation succeeded, title and resumed-world screens rendered, and a top-left canopy-adjacent cloud opened a real draft. Closing it and touching a different cloud changed the saved destination from -2,0 to 2,0 with identical cards, quote, balance and tile set. Stable progress fields survived installation; the old app stayed active for 39 seconds between the first snapshot and installation, so its effect clocks advanced. A shader-cache recompile warning appeared; bounded app logs contained no script/runtime errors. See android-feedback-check.json and captures 05–07. Native phone GPU/performance and rain appearance still require physical-device feedback; native emulator checks do not replace that.
+
+## Tile-conditions clarity update
+
+708 assertions pass. The HUD now names Moisture and Heat under Tile conditions. A real touchscreen tap opens the player explanation, which identifies the selected tile, defines the 0–100 scores, distinguishes warmth from Celsius, and explains neighbor/Pulse influences and transformation requirements. Tutorial copy uses conditions; inspector scores include /100. Internal DNA data and schema are unchanged.
+
+The six mobile size/text fixtures now verify named-reading separation and the full panel above the world. Enlarged text exposed both a height issue and a width overlap; layout now measures the conditions panel when reserving header space. Real-touch help navigation passes. Current native device recheck is separate; previous native captures show the prior HUD wording.

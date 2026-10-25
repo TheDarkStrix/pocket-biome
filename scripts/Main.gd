@@ -242,6 +242,7 @@ func build_ui() -> void:
  notice_toast.hide()
  ecology_monitor = preload("res://scripts/EcologyReadout.gd").new()
  root.add_child(ecology_monitor)
+ ecology_monitor.explanation_requested.connect(conditions_help)
  hud.visibility_changed.connect(func(): ecology_monitor.visible = hud.visible)
  photo_controls = HBoxContainer.new()
  photo_controls.position = Vector2(20,880)
@@ -276,6 +277,20 @@ func cancel_target() -> void:
  preview = ""
  model.message = "Pulse canceled. No energy spent."
  refresh()
+
+func conditions_help() -> void:
+ var box := modal_content("Tile conditions")
+ var origin: String = model.origin(selected)
+ if origin != "":
+  label("Selected tile: "+tile_title(model.state.tiles[origin]),19,box)
+ label("These readings describe the tile you selected, not the whole island. Nearby tiles and World Pulses change its conditions and help it transform.",17,box)
+ label("Moisture · how wet the ground is. Water nearby and Rain Pulse make it wetter.",17,box)
+ label("Heat · how warm the tile is. Heat Pulse warms it; Frost Pulse cools it.",17,box)
+ label("Each score runs from 0 to 100. Heat is a relative score, not degrees Celsius. Different transformations need different conditions; higher is not always better.",17,box)
+ label("Try placing Water beside Oak or Forest. As moisture rises, you can discover a rainforest. Hold a tile to see all five conditions and its transformation requirements.",17,box)
+ button("Inspect selected tile",func():
+  if origin != "": open_inspector(origin),box)
+ button("Back to island",func(): modal.hide(),box)
 
 func pulse_selector() -> void:
  var box := modal_content("World Pulse")
@@ -385,7 +400,7 @@ func rarity_color(rarity: String) -> Color:
  return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":ThemeKit.ACCENT}.get(rarity,Color("8ea18f"))
 
 func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
- var caption: Label = label("%s · %d" % [attribute.capitalize(),value],15,parent)
+ var caption: Label = label("%s · %d / 100" % [attribute.capitalize(),value],15,parent)
  var bar := ProgressBar.new()
  bar.max_value = 100; bar.value = value; bar.show_percentage = false
  bar.custom_minimum_size.y = 7
@@ -587,8 +602,9 @@ func apply_layout() -> void:
  if OS.get_name() == "Android" or OS.get_name() == "iOS":
   var physical := Vector2(DisplayServer.screen_get_size())
   safe = preload("res://scripts/SafeLayout.gd").logical_safe_rect(viewport_size,physical,Rect2(DisplayServer.get_display_safe_area()))
- hud.size.x = maxf(240,safe.size.x-40-ecology_monitor.custom_minimum_size.x-12)
- layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(110,hud.get_combined_minimum_size().y),maxf(124,bottom.get_combined_minimum_size().y))
+ var ecology_width: float = maxf(180,ecology_monitor.get_combined_minimum_size().x)
+ hud.size.x = maxf(240,safe.size.x-40-ecology_width-12)
+ layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(110,maxf(hud.get_combined_minimum_size().y,ecology_monitor.get_combined_minimum_size().y)),maxf(124,bottom.get_combined_minimum_size().y))
  layout.top.size.x = hud.size.x
  hud.position = layout.top.position
  hud.size = layout.top.size
@@ -604,7 +620,7 @@ func apply_layout() -> void:
  if launch_menu:
   modal.position.y = safe.position.y+20
   modal.size.y = safe.size.y-40
- ecology_monitor.size = Vector2(180,0)
+ ecology_monitor.size = Vector2(ecology_width,0)
  ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,safe.position.y+20)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
@@ -891,7 +907,7 @@ func update_inspection() -> void:
   inspection_view.production.text = "%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))]
  for attribute in inspection_view.bars:
   var widgets: Dictionary = inspection_view.bars[attribute]
-  widgets.caption.text = "%s · %d" % [attribute.capitalize(),tile.dna[attribute]]
+  widgets.caption.text = "%s · %d / 100" % [attribute.capitalize(),tile.dna[attribute]]
   widgets.bar.value = tile.dna[attribute]
  for condition in inspection_view.conditions:
   condition.caption.text = condition.recipe.name+" · "+recipe_conditions(tile,condition.recipe)

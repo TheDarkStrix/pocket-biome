@@ -36,7 +36,12 @@ func run() -> void:
     captions_fit = captions_fit and caption.get_line_count() <= 2 and caption.get_global_rect().end.y <= action.get_global_rect().end.y+1
     captions_fit = captions_fit and caption.get_minimum_size().x <= action.size.x
    check(captions_fit,"footer icons/captions fit without splitting words or clipping at "+context)
-   check(h.ecology_monitor.get_global_rect().end.x <= h.get_viewport_rect().end.x and h.ecology_monitor.position.y < h.layout.world.position.y and h.ecology_monitor.position.x >= h.hud.get_global_rect().end.x,"separate top-right ecological meters fit beside top-left resources at "+context)
+   check(h.ecology_monitor.get_global_rect().end.x <= h.get_viewport_rect().end.x and h.ecology_monitor.get_global_rect().end.y <= h.layout.world.position.y+1 and h.ecology_monitor.position.x >= h.hud.get_global_rect().end.x,"separate top-right ecological meters fit beside top-left resources at "+context)
+   var conditions_fit := true
+   for attribute in h.ecology_monitor.captions:
+    var caption: Label = h.ecology_monitor.captions[attribute]
+    conditions_fit = conditions_fit and caption.get_global_rect().end.x <= h.ecology_monitor.values[attribute].get_global_rect().position.x
+   check(conditions_fit,"named moisture/heat readings fit without overlap at "+context)
    check(h.bottom.get_global_rect().end.y <= h.get_viewport_rect().end.y,"footer remains inside portrait screen at "+context)
    h.start_screen()
    await process_frame

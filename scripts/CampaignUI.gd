@@ -256,7 +256,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for text in ["1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its DNA, neighbors and recipes. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
+ for text in ["1 · Tap Oak, Stone and Fiber to collect materials and coins. Ready nodes can be collected again after their cooldown.","2 · Tap a cloud and choose one of three cards. Water beside Oak creates your first living transformation.","3 · Hold a tile to see its conditions, neighbors and transformation requirements. Tap Tile conditions at the top right for an explanation. Every discovery has a free hint in the Journal.","4 · Select a World Pulse, preview the highlighted area and tap its center to confirm. Canceling spends nothing.","5 · Four compatible cells in a square can fuse. Craft structures and place blueprints on empty meadows. Your first three resource nodes are always protected.","6 · Follow the chapter goals in the Journal. Play offline; progress saves automatically."]:
   h.label(text,17,box)
  close_button(h,box)
 

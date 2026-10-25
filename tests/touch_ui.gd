@@ -76,6 +76,9 @@ func run() -> void:
  check(h.modal.visible and h.modal_title.text == "World Pulse","single HUD Pulse control opens all powers through touch")
  check(is_instance_valid(h.rain_button) and is_instance_valid(h.heat_button),"power selector exposes actual playable Rain and Heat controls")
  h.modal.hide()
+ await click(h.ecology_monitor.get_global_rect().get_center())
+ check(h.modal.visible and h.modal_title.text == "Tile conditions","mobile tap on conditions panel opens its player explanation")
+ h.modal.hide()
  h.campaign_ui.workshop(h)
  await process_frame
  var increase: Button

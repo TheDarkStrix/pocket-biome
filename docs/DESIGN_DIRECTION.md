@@ -9,7 +9,7 @@ Graphite surfaces, pearl text and muted-violet actions form an original palette.
 ## Gameplay screen hierarchy
 
 - Upper-left: real chapter-progress dial, currency/material ledger and concise current objective. Compact counts are a display convenience; exact values remain in model state and Workshop.
-- Upper-right: selected-biome local moisture/heat gauges. All five DNA attributes and detailed influences are available in the inspector.
+- Upper-right: selected-tile Moisture/Heat readings under “Tile conditions”, with a tap-to-learn explanation. All five DNA attributes and detailed influences are available in the inspector.
 - Bottom: selected-biome context, readable Pulse control and a compact illustrated tool dock. Detailed crafting, discovery, world and settings controls stay contextual.
 - The landscape owns the central space. Gameplay framing occurs after HUD layout settles; title-preview framing is independent of gameplay pan. Photo mode hides gameplay markers and restores the prior camera on exit.
 - Portrait targets, text scaling and safe areas remain functional requirements, even where visual framing is minimal.

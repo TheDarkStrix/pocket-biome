@@ -1,12 +1,12 @@
 {
-  "utc": "2026-10-25T05:43:06.922331+00:00",
+  "utc": "2026-10-25T05:48:37.529342+00:00",
   "engine": "4.6.3.stable",
   "type": "Signed debug test APK",
-  "source_sha256": "55b4ae9ea5edc1df4aa78067e7140b84c45ff95c938341f340321b674eef3f37",
-  "assertions": 701,
-  "apk_sha256": "604d2ee565793f060a63ab83bcb1a33d49f2b6b6359e50b9039de96317c7244f",
-  "bytes": 178221465,
+  "source_sha256": "2a3c9934aa896233ac7202593ece91054fddc4a37014da596e95ea49b54c018d",
+  "assertions": 708,
+  "apk_sha256": "0eebb0711bcbfcf6b65f489b7673b4d4f26b1e14615084cdbb2fa7724aa31184",
+  "bytes": 178223029,
   "renderer": "OpenGL Compatibility",
-  "native_game_payload_verified": true,
-  "note": "Feedback revision installed, cold-launched, resumed and cloud relocation exercised. Native-tested runtime payload compared to current build; see android-feedback-check.json. Phone/GPU/performance/store qualification remains open."
+  "native_ui_verified_this_revision": false,
+  "note": "Tile-conditions wording/layout/help revision. Signature/export verified; real-touch and six mobile size/text fixtures pass in Godot. Previous native progression/save/draft checks remain scoped to android-feedback-check.json, before this wording revision. Physical-device/store qualification remains open."
 }

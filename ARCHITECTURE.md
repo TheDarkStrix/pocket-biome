@@ -48,3 +48,5 @@ Current GameTheme uses renamed static Inter derivatives and original SVG line co
 ChapterDial reads real campaign metrics into a bounded chapter fraction. EcologyReadout renders selected-tile moisture/heat without owning simulation. Main positions their corner groups independently while reserving a full-width world. Initial gameplay camera framing waits for settled HUD geometry; pulse-number width follows font metrics.
 
 Expansion marker picking precedes terrain alpha picking only during ordinary collection/expansion mode; pulse/deployment mode hides these controls. Nearest visible marker wins overlapping mobile target areas. Moving a pending draft changes only its destination, keeping serialized offers and price. Rain presentation stores the actual authoritative affected keys and a bounded cosmetic lifetime.
+
+EcologyReadout exposes a tap/keyboard explanation signal and explicitly labelled conditions. Main opens plain-language help; its responsive header reserves the measured conditions-panel dimensions, including enlarged text. WorldModel retains DNA as an internal data term; no save migration is required for this wording change.
