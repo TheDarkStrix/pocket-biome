@@ -1,24 +1,22 @@
-# Pocket Biome 0.14.0 Android preview
+# Pocket Biome 0.15.0 Android preview
 
 [Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
 ARM64 Android 7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
 
-## World-first presentation
+## Illustrated gameplay sheets
 
-This revision supersedes the rejected gray background and large 0.13 HUD cards.
+- Three illustrated draft cards with real touch swiping, arrow alternatives and stored-price confirmation.
+- Two-column building catalogue, All/Land/Structures/Materials categories, owned/required ingredient art and the actual three-job shelf/countdowns.
+- Real island miniatures and selected-biome/sanctuary art in World.
+- Rain/Heat/Frost cards with five-cell footprint illustrations and small illustrative effects; selecting still opens the actual world-targeting flow.
+- Fusion input/result diagrams, Codex/inspector diorama stages, illustrated trade/help/reward layouts and bound setting switches.
+- Mineral-ivory/teal modal styling, shorter content-sized sheets and safe scrolling. The compact sky-backed gameplay HUD remains intact.
 
-- Original sky/cloud shader with controlled drift and day/dusk/night variants. Reduced motion freezes its clock.
-- Small resource row and a readable chapter prompt directly over the scene.
-- Five compact floating tools instead of an enclosing bottom tray and permanent stats panels.
-- Touch land for a brief nearby inspect callout; hold it for the complete inspector.
-- Conditions are behind the leaf/inspector controls; exact energy remains in the real Pulse picker; land capacity is in World.
-- Small contextual saved-card, cancellation and fusion actions; lighter World tools and original leaf/camera icons.
+Every crafting recipe is retained. Artwork is the existing integrated atlas, original runtime diagrams and original vector controls; no reference-game asset is shipped and no new hand-painted frame is claimed. This is an original revision under review, not a claim of reproducing another game's interface.
 
-The existing economy, saved offers/quotes, progression and provider test configuration are unchanged. The sky does not alter tile art or isometric geometry. World pans/pinches/quarter-turns remain available; continuous 3D orbit is not implemented. Some painted parts, including Windmill blades, remain static. See docs/ANIMATION_STATUS.md.
+Source: b247e7d3b90998a1909fab4444730f9d19ebac9e. 880 Godot assertions across 15 suites, eight Python audit tests, startup and two complete public-action progression routes pass. Real-touch cases verify swipe-without-payment, third-card inspection and the 20-material trade. Category tests retain every recipe; 30 sheet-layout cases cover three portrait sizes/two text scales. Actual rendered fixtures33–39 use constructed presentation states, not earned progression or human approval. Current-source native observations are scoped in artifacts/android-sheets-check.json.
 
-Source: bf34cebdd0b506a871c37661ab96f7b3fb6766b3. 845 Godot assertions, eight Python audit tests, startup and two full public-action campaign routes pass. Mobile fixtures require at least 55% of screen height for the world, readable large counts/progress, retained touch targets and working callout reveal/expiry. The APK signature, ARM64 files, 16 KB ZIP/ELF alignment and embedded source provenance are verified.
+Signature, ARM64 files, 16 KB ZIP/ELF alignment and embedded source provenance are verified. Physical-device performance, real Google provider transactions and human creative acceptance remain unqualified. Economy, saves, quotes and provider test IDs are unchanged. Camera quarter turns remain; continuous 3D orbit is not implemented. Some painted parts still lack authored motion, as documented in docs/ANIMATION_STATUS.md.
 
-Actual rendered fixtures32/29/30/31 show the new HUD, large text, callout and dusk variant; these are constructed presentation states, not human approval or earned-progression claims. Current-source emulator observations are scoped in artifacts/android-atmosphere-check.json. Physical GPU performance, human creative approval and real Google provider transactions remain unqualified.
-
-Production signing/test IDs, hosted publisher details and device/store/creative acceptance remain open release gates. No store publication was performed. See docs/PRODUCTION_READINESS.md. Checksum is provided alongside the APK; source development continues on main.
+Production signing/configuration, hosted publisher details and device/store/creative evidence remain release gates. No store publication was performed. See docs/PRODUCTION_READINESS.md. Checksum is alongside the APK; source development continues on main.
