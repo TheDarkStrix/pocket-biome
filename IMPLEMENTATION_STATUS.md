@@ -70,3 +70,7 @@ Implemented day/dusk/night atmosphere with controlled cloud drift, context-only 
 ## 0.15 gameplay-sheet revision
 
 Implemented illustrated draft cards, categorized build catalogue and actual job shelf, current-island miniatures in World, Pulse footprint previews, input/output fusion art, item/Codex diorama stages, bound Settings switches, and illustrated trade/help/store layouts. Shared sheet styling is independent of the compact gameplay HUD. No gameplay recipe or backend service was replaced by a mock; all18 configured crafting recipes remain reachable through All/categories. Exact resource transactions and saved quotes are retained. Visual acceptance remains open; current-source automated and native evidence is recorded separately.
+
+## Cohesive UI proposal — in progress
+
+The user still finds0.15 sheet-like and requests the original logo/asset-sheet identity across the entire game. docs/design/COHESIVE_UI_PROPOSAL.md and its generated four-screen board define a new whole-game direction informed by an actual fresh Play Store screenshot review. This is design work, not an implemented APK or delivered runtime asset pack. The0.15 client and its verification remain unchanged.
