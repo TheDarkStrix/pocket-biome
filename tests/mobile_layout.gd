@@ -16,6 +16,10 @@ func run() -> void:
    root.add_child(h)
    h.model = preload("res://scripts/WorldModel.gd").new()
    h.model.state.text_scale = scale
+   h.model.state.coins = 999999
+   h.model.state.energy = 200
+   h.model.state.chapter = 2; h.model.state.objectives = [0,1,2]
+   for resource in ["wood","stone","fiber"]: h.model.state.inventory[resource] = 999999
    h.apply_settings(); h.refresh(); h.start_play(); h.modal.hide()
    await process_frame
    await process_frame
@@ -36,13 +40,24 @@ func run() -> void:
     captions_fit = captions_fit and caption.get_line_count() <= 2 and caption.get_global_rect().end.y <= action.get_global_rect().end.y+1
     captions_fit = captions_fit and caption.get_minimum_size().x <= action.size.x
    check(captions_fit,"footer icons/captions fit without splitting words or clipping at "+context)
-   check(h.ecology_monitor.get_global_rect().end.x <= h.get_viewport_rect().end.x and h.ecology_monitor.get_global_rect().end.y <= h.layout.world.position.y+1 and h.ecology_monitor.position.x >= h.hud.get_global_rect().end.x,"separate top-right ecological meters fit beside top-left resources at "+context)
+   check(h.ecology_monitor.get_global_rect().end.x <= h.get_viewport_rect().end.x and h.ecology_monitor.get_global_rect().end.y <= h.layout.world.position.y+1 and not h.ecology_monitor.get_global_rect().intersects(h.objective.get_global_rect()),"separate top-right conditions fit beside the quest without covering resources at "+context)
    var conditions_fit := true
    for attribute in h.ecology_monitor.captions:
     var caption: Label = h.ecology_monitor.captions[attribute]
     conditions_fit = conditions_fit and caption.get_global_rect().end.x <= h.ecology_monitor.values[attribute].get_global_rect().position.x
    check(conditions_fit,"named moisture/heat readings fit without overlap at "+context)
    check(h.bottom.get_global_rect().end.y <= h.get_viewport_rect().end.y,"footer remains inside portrait screen at "+context)
+   check(h.game_hud.inspect_action.size.y >= h.touch_height() and h.game_hud.build_action.size.y >= h.touch_height(),"inspect and primary Build retain mobile touch targets at "+context)
+   check(h.game_hud.selected_name.get_global_rect().end.x <= h.game_hud.inspect_action.get_global_rect().position.x,"selected name cannot overlap inspect control at "+context)
+   check(h.game_hud.pulse_amount.get_global_rect().end.y <= h.pulse_button.get_global_rect().end.y and h.game_hud.pulse_ring.get_global_rect().position.y >= h.pulse_button.get_global_rect().position.y,"energy ring and exact amount stay inside the ability control at "+context)
+   var coin_width: float = h.inventory.get_theme_font("normal_font").get_string_size(h.inventory.get_parsed_text(),HORIZONTAL_ALIGNMENT_LEFT,-1,h.scaled_font(22)).x
+   check(coin_width <= h.inventory.size.x and h.inventory.get_line_count() == 1,"high coin counts stay on a single readable line at "+context)
+   var materials_fit := true
+   for resource in h.game_hud.resource_values:
+    var amount: Label = h.game_hud.resource_values[resource]
+    materials_fit = materials_fit and amount.get_global_rect().end.x <= h.hud.get_global_rect().end.x and not amount.get_global_rect().intersects(h.ecology_monitor.get_global_rect())
+   check(materials_fit,"high material counts remain clear of conditions at "+context)
+   check(h.game_hud.quest_progress.visible and h.game_hud.quest_progress.text == "4 / 8" and h.game_hud.quest_slot.get_global_rect().encloses(h.game_hud.quest_progress.get_global_rect()),"wrapped chapter instructions retain a separate visible progress count at "+context)
    h.start_screen()
    await process_frame
    await process_frame

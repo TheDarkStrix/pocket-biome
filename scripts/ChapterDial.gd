@@ -26,8 +26,9 @@ func display(model) -> void:
 func _draw() -> void:
  var center := size/2
  var radius := minf(size.x,size.y)/2-4
+ draw_circle(center,radius,Palette.PAPER)
  draw_arc(center,radius,0,TAU,48,Palette.BORDER,2,true)
- if shown_fraction > 0: draw_arc(center,radius,-PI/2,-PI/2+TAU*shown_fraction,48,Palette.ACCENT,3,true)
+ if shown_fraction > 0: draw_arc(center,radius,-PI/2,-PI/2+TAU*shown_fraction,48,Palette.BUILD,3,true)
  var font := get_theme_default_font()
  var font_size := get_theme_font_size("font_size")
  var text := str(stage)

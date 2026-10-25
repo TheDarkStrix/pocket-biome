@@ -40,6 +40,8 @@ Expansion/fusion/rain and UI response changes pass 701 assertions plus the full 
 
 Ongoing ambient art motion, timer cadence and privacy/provider hardening implemented. Preview build is verified against724 Godot assertions, eight Python audit tests and actual APK checks. Final production gate intentionally blocks development credentials and missing device/store/creative evidence. Do not treat a debug APK or static audit as a certified public release.
 
-Current verified source:750 Godot assertions and eight Python audit tests; native camera-button/menu-scroll/privacy/preference checks passed. Four-view camera is implemented; true continuous 3D orbit remains a separately specified rendering phase.
+Prior 0.11 verified source:750 Godot assertions and eight Python audit tests; native camera-button/menu-scroll/privacy/preference checks passed. Four-view camera is implemented; true continuous 3D orbit remains a separately specified rendering phase.
 
 0.12 gameplay checkpoint:783 Godot assertions plus eight Python audit cases pass; two public progression strategies now produce pacing traces. Early resource starvation is fixed; improved choice/placement/trade/automation affordances are implemented. Human five-to-fifteen-minute enjoyment tests and later economy review remain open, with no new price curve or save migration introduced.
+
+0.13: current Play Store reference review and mobile HUD/World hub redesign implemented; current-source package/device observations are separately scoped. Physical-device and human approval remain required.

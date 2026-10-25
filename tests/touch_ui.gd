@@ -91,6 +91,9 @@ func run() -> void:
  await click(h.ecology_monitor.get_global_rect().get_center())
  check(h.modal.visible and h.modal_title.text == "Tile conditions","mobile tap on conditions panel opens its player explanation")
  h.modal.hide()
+ await click(h.game_hud.inspect_action.get_global_rect().get_center())
+ check(h.modal.visible and not h.inspection_view.is_empty(),"illustrated selected-biome inspect control opens the real inspector through touch")
+ h.modal.hide()
  h.campaign_ui.settings(h)
  await process_frame
  await process_frame

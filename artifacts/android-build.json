@@ -1,14 +1,14 @@
 {
-  "utc": "2026-10-25T08:47:55.191968+00:00",
+  "utc": "2026-10-25T12:48:38.883265+00:00",
   "engine": "4.6.3.stable",
-  "version": "0.12.0-preview",
-  "version_code": 4,
+  "version": "0.13.0-preview",
+  "version_code": 5,
   "type": "Signed debug preview",
-  "source_sha256": "e6febeeef41ee6c4253cf78b8b4a7bdda9fd311a96e85c9c37c6b33ad2ae90b0",
-  "assertions": 783,
+  "source_sha256": "50801f3298fd563f17ddb671501b7ad173dce24c8cc16b98a9dd79e7f025ffa3",
+  "assertions": 820,
   "python_audit_tests": 8,
-  "apk_sha256": "ccfb47ee2e00561ab025a1d1607e52125bb2917766d6471bba8eb71e8176fe7a",
-  "bytes": 179160539,
+  "apk_sha256": "6bcf48b5aa6b5073df698c11231a001baae0dba58af1edf81f4d50127af0fda7",
+  "bytes": 179170663,
   "renderer": "OpenGL Compatibility",
   "dependencies": {
     "com.google.android.gms:play-services-ads": "25.5.0",
@@ -17,5 +17,5 @@
   },
   "native_ui_verified_this_revision": true,
   "store_release_ready": false,
-  "note": "Current-source replacement installation, objective ideas and direct Workshop trade screen verified on software emulator; stable save fields retained. See android-gameplay-check.json. Production acceptance remains open."
+  "note": "Current-source replacement installation, visible quest progress, selected-biome inspector, Pulse selector and World hub verified on software emulator. Stable save/progression retained; bounded logs have no script/runtime errors. See android-hud-check.json. Production acceptance remains open."
 }

@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 783 assertions across 14 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
+`tools/check.sh`: 820 assertions across 14 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
 
 Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
 
@@ -23,9 +23,9 @@ Work continues autonomously in tested increments. Decisions and external depende
 
 ## Current presentation direction
 
-The user requested Terra Nil's style and gameplay information hierarchy, with Pocket Biome's own colors. The current interface uses graphite/pearl/muted violet, neutral licensed typography, flat thin-bordered panels and original line icons. Chapter/resources sit upper-left, selected-tile ecology upper-right, and contextual actions/tool navigation at the bottom. The earlier parchment/brass and slate/rust passes are superseded.
+The user requested Terra Nil's style and gameplay information hierarchy, with Pocket Biome's own colors. The current interface uses graphite/pearl base with amber Build emphasis and violet Pulse treatment, neutral licensed typography, rounded floating controls and original line icons. Chapter/resources sit upper-left, selected-tile ecology upper-right, and contextual actions/tool navigation at the bottom. The earlier parchment/brass and slate/rust passes are superseded.
 
-Implemented camera fitting uses actual sprite extents, including tall fused biomes. Objectives preserve action captions alongside progress. Title/photo views hide gameplay markers. Native photo/export/system chooser checks passed without choosing a recipient. The actual current native screenshot is artifacts/android-02-restored-world.png.
+Implemented camera fitting uses actual sprite extents, including tall fused biomes. Objectives preserve action captions alongside progress. Title/photo views hide gameplay markers. Native photo/export/system chooser checks passed without choosing a recipient. The earlier native screenshot is artifacts/android-02-restored-world.png; current 0.13 HUD/native evidence is scoped separately.
 
 Store sandbox transactions, publisher/signing/telemetry configuration, physical-device performance/cutouts/audio and human playtesting remain release gates. This is not a certified public release.
 
@@ -47,7 +47,7 @@ Current evidence:724 Godot assertions, eight Python audit tests, actual OpenGL a
 
 ## Camera and mobile-menu follow-up
 
-Four quarter-turn views, World rotation controls and two-finger twist are implemented with rotation-aware picking/depth/framing. Continuous free-angle 3D orbit remains unimplemented and needs the separately documented renderer/asset phase. Menu touch scrolling now reaches below-fold controls without activating buttons. Native diagnostics capture obeys opt-in, and SDK measurement initialization is delayed. Latest 750 Godot assertions plus eight Python audit cases pass; release is still blocked as documented.
+Four quarter-turn views, World rotation controls and two-finger twist are implemented with rotation-aware picking/depth/framing. Continuous free-angle 3D orbit remains unimplemented and needs the separately documented renderer/asset phase. Menu touch scrolling now reaches below-fold controls without activating buttons. Native diagnostics capture obeys opt-in, and SDK measurement initialization is delayed. At the 0.11 checkpoint, 750 Godot assertions plus eight Python audit cases pass; release is still blocked as documented.
 
 Latest Android follow-up verified current rotation, menu drag scrolling, privacy disclosure, and real native diagnostics preference On/Off delivery. Stable progression survived replacement and UI testing. Source and evidence are pushed independently of the unfulfilled production signing/store/device/creative gates. Continuous free-angle3D orbit remains unimplemented.
 
@@ -56,3 +56,9 @@ Latest Android follow-up verified current rotation, menu drag scrolling, privacy
 Implemented post-tutorial draft variety with a resource option, local placement/reach descriptions, objective/World next-step suggestions, accessible material trading, affordable automation upgrade guidance, Furnace construction reserves and reserved-quote protection. Existing saves/cards/prices remain compatible. 783 assertions, eight Python audit cases and two fixed-seed public progression routes pass.
 
 This addresses concrete first-session friction and one measured resource-starvation loop. Human enjoyment/retention remains unverified; later costs/collection pressure need further playtesting and balancing. The detailed audit is docs/GAMEPLAY_PACING_REVIEW.md. Production and continuous 3D-camera gates remain open.
+
+## 0.13 mobile HUD redesign
+
+Reviewed current public Google Play listings and screenshots for SimCity BuildIt, Pocket City 2, Township, Pocket City and Pocket Build. Source details and screenshot scope are in docs/UI_RESEARCH.md and artifacts/mobile-ui-references.json. The HUD now separates currencies/materials from the quest/conditions row, gives Build a distinct primary treatment, illustrates selected terrain and its real cooldown, and displays Pulse energy through an original ring/emblem with an exact count. World actions have explanatory cards; modal/dock styling is consistent. No third-party reference artwork ships.
+
+The small-screen/large-text visual pass caught cramped high resource counts; the layout was corrected and regression coverage added. Optional footer actions now trigger relayout before camera/input bounds settle. Actual OpenGL fixtures27–29 document the interface; human design acceptance remains open. This is a preview revision, not production certification.

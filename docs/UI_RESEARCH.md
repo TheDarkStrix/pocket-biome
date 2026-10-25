@@ -1,3 +1,26 @@
+# 0.13 mobile HUD redesign — current reference review
+
+2026-10-25: public Google Play listings and publisher screenshots were fetched successfully. This supersedes the earlier access failures below. Exact screenshot URLs and displayed download bands are recorded in artifacts/mobile-ui-references.json. Reference images are research only, stored outside shipping assets.
+
+| Source actually reviewed | Evidence and observations | Applied to Pocket Biome |
+|---|---|---|
+| [SimCity BuildIt](https://play.google.com/store/apps/details?id=com.ea.game.simcitymobile_row) | Listing displays 100M+ downloads; screenshots0/2 show actual HUD, level badge, compact currency pills, independent tool icons and a prominent construction control | Separate currency/material displays, chapter identity, icon-led dock and clear primary construction action |
+| [Pocket City 2](https://play.google.com/store/apps/details?id=com.codebrewgames.pocketcity2) | Listing displays 500K+; screenshot0 shows level badge, top resource groups, lower tool group and large Build action | Give Build its own warm accent; group secondary navigation; avoid four equally weighted boxed text buttons |
+| [Township](https://play.google.com/store/apps/details?id=com.playrix.township) | Listing displays 500M+; reviewed images1/3 are promotional compositions with icon currency and contextual action examples | Recognizable illustrated material and selection content; no claim these promotions are unmodified current HUD captures |
+| [Pocket City](https://play.google.com/store/apps/details?id=com.codebrewgames.pocketcitygame) / [Pocket Build](https://play.google.com/store/apps/details?id=moonbear.PocketBuild) | Listings display 1M+/5M+ respectively. Reviewed Pocket City image3 and Pocket Build image1 are promotional; Pocket Build shows a compact resource strip and construction icon | Support the world-first approach; do not infer their complete menus from promotional images |
+
+These are displayed install bands, not independently measured active users, revenue, retention or proof of what will work for this game. No third-party art, branding, code or palette is copied. Terra Nil remains the restraint/landscape reference, with independent colors and portrait composition.
+
+## Implemented presentation
+
+Rounded floating currency capsules; a readable separate material row; a chapter quest card with a real next-step action; selected-biome illustration/name/production state and cooldown progress; original World Pulse emblem with an energy ring and exact amount; circular tool medallions with an amber Build emphasis; an illustrated World action grid; softer modal chrome and stronger scrim. Gold is a functional emphasis, not a return to the rejected ornate/parchment style. The numerical game state and save schema are unchanged.
+
+Visual review caught large-text currency wrapping in the first candidate. Currency/materials now span the header, with only the quest sharing space with conditions beneath them. Optional footer actions reserve their width before shaping; changing minimum sizes triggers relayout so camera/input bounds follow the actual HUD. Native review also exposed clipped quest progress; the count now has its own visible line beneath the complete instruction.
+
+Actual OpenGL captures27–29 document the result, including a small-screen/120% text/high-count fixture. These are constructed presentation states, not earned progression or human approval. Physical Android validation remains separately scoped.
+
+---
+
 # Current application — hierarchy with an independent palette
 
 The user explicitly says not to use Terra Nil's colors. Pocket Biome applies the reference's three screen zones using its own graphite/pearl/muted-violet palette: actual chapter/resource data upper-left, local ecology upper-right, contextual controls/tool dock below. Earlier palette interpretations in this research history are superseded by DESIGN_DIRECTION.md. No reference-game branding or assets ship in Pocket Biome.

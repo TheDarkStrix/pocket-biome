@@ -132,7 +132,37 @@ func capture() -> void:
  scene.model.state.coins = 500
  scene.model.begin_draft("13,0")
  scene.refresh(); scene.draft(); await shot("26-local-draft-effects")
+ scene.modal.hide()
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ scene.model.state.tiles.clear()
+ for x in range(4):
+  for y in range(4):
+   scene.model.add_tile(Vector2i(x,y),"forest" if x < 2 else "water" if y == 1 else "stone" if y == 2 else "grass")
+ scene.model.state.expansions = 12; scene.model.state.coins = 103; scene.model.state.chapter = 3
+ scene.model.state.objectives = [0,1,2]; scene.model.state.energy = 150
+ scene.model.state.inventory.wood = 165; scene.model.state.inventory.stone = 12; scene.model.state.inventory.fiber = 31
+ scene.selected = "0,0"; scene.presentation = preload("res://scripts/WorldPresentation.gd").new()
+ scene.refresh()
+ await process_frame
+ await process_frame
+ scene.frame_world(); await shot("27-mobile-builder-hud")
+ scene.campaign_ui.world(scene); await shot("28-world-hub")
  scene.queue_free()
+ await process_frame
+ root.size = Vector2i(320,640)
+ var mobile = preload("res://tests/fixtures/MobileMain.gd").new()
+ mobile.display_dp = 1.6875; mobile.store.path = "user://visual-mobile-hud.json"; mobile.show_menu_on_launch = false
+ root.add_child(mobile)
+ mobile.model = preload("res://scripts/WorldModel.gd").new()
+ mobile.model.state.text_scale = 1.2; mobile.model.state.coins = 999999
+ mobile.model.state.inventory.wood = 999999; mobile.model.state.inventory.stone = 999999; mobile.model.state.inventory.fiber = 999999
+ mobile.model.state.energy = 200
+ mobile.model.state.chapter = 2; mobile.model.state.objectives = [0,1,2]
+ mobile.apply_settings(); mobile.refresh(); mobile.modal.hide()
+ mobile.notice_time = 0
+ for frame in range(5): await process_frame
+ mobile.frame_world(); await shot("29-small-screen-large-text")
+ mobile.queue_free()
  await process_frame
  # Audio playback references are released asynchronously by the mixer.
  await create_timer(0.15).timeout

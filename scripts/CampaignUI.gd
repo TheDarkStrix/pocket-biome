@@ -188,12 +188,10 @@ func world(h) -> void:
  h.button("Find something to try",func(): h.open_ideas(),box)
  var actions := GridContainer.new(); actions.columns = 2
  box.add_child(actions)
- h.button("Inspect biome",func(): h.modal.hide(); h.open_inspector(h.model.origin(h.selected)),actions)
- h.button("Center island",func(): h.modal.hide(); h.frame_world(),actions)
- h.button("Fuse sanctuary",func(): h.fusion_dialog(),actions)
- h.button("Photo mode",func(): h.modal.hide(); h.begin_photo(),actions)
- for index in range(actions.get_child_count()):
-  h.button_icon(actions.get_child(index),["codex","world","craft","settings"][index])
+ h.game_hud.hub_action(h,"Inspect biome","Conditions & possibilities","codex",func(): h.modal.hide(); h.open_inspector(h.model.origin(h.selected)),actions)
+ h.game_hud.hub_action(h,"Center island","Return to your landscape","world",func(): h.modal.hide(); h.frame_world(),actions)
+ h.game_hud.hub_action(h,"Fuse sanctuary","Combine a matching square","craft",func(): h.fusion_dialog(),actions)
+ h.game_hud.hub_action(h,"Photo mode","Frame, save & share","settings",func(): h.modal.hide(); h.begin_photo(),actions)
  var turns := HBoxContainer.new(); box.add_child(turns)
  h.button("Rotate left",func(): h.modal.hide(); h.rotate_camera(-1),turns)
  h.button("Rotate right",func(): h.modal.hide(); h.rotate_camera(1),turns)

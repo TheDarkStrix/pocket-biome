@@ -2,6 +2,7 @@ extends Node2D
 const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const Store = preload("res://scripts/SaveStore.gd")
+var game_hud = preload("res://scripts/GameHUD.gd").new()
 var ui_motion = preload("res://scripts/UIMotion.gd").new()
 var fusion_preview: Array[String] = []
 var fusion_controls := []
@@ -153,97 +154,7 @@ func build_ui() -> void:
  root.mouse_filter = Control.MOUSE_FILTER_IGNORE
  root.theme = ThemeKit.theme()
  layer.add_child(root)
- hud = VBoxContainer.new()
- hud.position = Vector2(22,28)
- hud.size.x = 496
- root.add_child(hud)
- # Compact resource ledger and chapter task: global state stays above the island.
- var ledger := PanelContainer.new()
- ledger.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
- hud.add_child(ledger)
- var ledger_content := VBoxContainer.new()
- ledger_content.add_theme_constant_override("separation",4)
- ledger.add_child(ledger_content)
- var ledger_row := HBoxContainer.new()
- ledger_content.add_child(ledger_row)
- chapter_dial = preload("res://scripts/ChapterDial.gd").new()
- ledger_row.add_child(chapter_dial)
- inventory = RichTextLabel.new()
- inventory.fit_content = true
- inventory.scroll_active = false
- inventory.mouse_filter = Control.MOUSE_FILTER_IGNORE
- inventory.add_theme_font_size_override("normal_font_size",17)
- inventory.add_theme_color_override("default_color",ThemeKit.INK)
- inventory.tooltip_text = "Coins · Pulse energy · Wood · Stone · Fiber · Occupied land"
- inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- ledger_row.add_child(inventory)
- pulse_bar = ProgressBar.new()
- pulse_bar.max_value = 200
- pulse_bar.show_percentage = false
- pulse_bar.custom_minimum_size.y = 5
- pulse_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
- var track := StyleBoxFlat.new()
- track.bg_color = Color("3b444e"); track.set_corner_radius_all(3)
- var fill := track.duplicate(); fill.bg_color = ThemeKit.ACCENT
- pulse_bar.add_theme_stylebox_override("background",track)
- pulse_bar.add_theme_stylebox_override("fill",fill)
- ledger_content.add_child(pulse_bar)
- objective = label("",17,hud)
- objective.max_lines_visible = 2
- objective.custom_minimum_size.y = touch_height()
- objective.mouse_filter = Control.MOUSE_FILTER_STOP
- objective.focus_mode = Control.FOCUS_ALL
- objective.tooltip_text = "Tap for useful next steps"
- objective.gui_input.connect(func(event: InputEvent):
-  if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed) or event.is_action_pressed("ui_accept"):
-   objective.accept_event(); open_ideas())
- objective.add_theme_color_override("font_color",ThemeKit.INK)
- bottom = VBoxContainer.new()
- bottom.position = Vector2(22,740)
- bottom.size.x = 496
- root.add_child(bottom)
- var context := HBoxContainer.new()
- context.add_theme_constant_override("separation",10)
- bottom.add_child(context)
- var selected_panel := PanelContainer.new()
- selected_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- selected_panel.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
- context.add_child(selected_panel)
- var selected_content := HBoxContainer.new()
- selected_panel.add_child(selected_content)
- info = label("",16,selected_content)
- info.max_lines_visible = 2
- info.autowrap_mode = TextServer.AUTOWRAP_OFF
- info.clip_text = true
- info.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
- info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var inspect_button := button("i",func(): open_inspector(model.origin(selected)),selected_content)
- inspect_button.tooltip_text = "Inspect the selected biome"
- inspect_button.size_flags_horizontal = Control.SIZE_SHRINK_END
- inspect_button.custom_minimum_size.x = touch_height()
- pulse_button = button("Pulse",pulse_selector,context)
- pulse_button.custom_minimum_size.x = 128
- pulse_button.size_flags_horizontal = Control.SIZE_SHRINK_END
- pulse_button.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACCENT))
- pulse_button.add_theme_color_override("font_color",ThemeKit.PRIMARY_INK)
- draft_button = button("Resume draft",func():
-  if placement_blueprint != "":
-   placement_blueprint = ""
-   model.message = "Placement canceled. Blueprint kept."
-   refresh()
-  elif targeting != "": cancel_target()
-  elif model.state.chapter == 3 and model.state.stats.fusions == 0: fusion_dialog()
-  else: draft(),bottom)
- var dock := PanelContainer.new()
- dock.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
- bottom.add_child(dock)
- var navigation := HBoxContainer.new()
- navigation.add_theme_constant_override("separation",6)
- dock.add_child(navigation)
- for action in [{"name":"Journal","icon":"codex","run":func(): campaign_ui.journal(self)}, {"name":"Build","icon":"craft","run":func(): campaign_ui.workshop(self)}, {"name":"World","icon":"world","run":func(): campaign_ui.world(self)}, {"name":"Menu","icon":"settings","run":func(): campaign_ui.settings(self)}]:
-  var item: Button = button(action.name,action.run,navigation)
-  button_icon(item,action.icon,true)
-  item.add_theme_stylebox_override("normal",panel_style(ThemeKit.PAPER_ALT))
+ game_hud.build(self,root)
  notice_toast = PanelContainer.new()
  notice_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
  notice_toast.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
@@ -269,7 +180,7 @@ func build_ui() -> void:
  button("Done",end_photo,photo_controls)
  photo_controls.hide()
  modal_scrim = ColorRect.new()
- modal_scrim.color = Color(0.10,0.19,0.20,0.36)
+ modal_scrim.color = Color(0.06,0.07,0.10,0.58)
  modal_scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  root.add_child(modal_scrim)
  modal_scrim.hide()
@@ -344,12 +255,13 @@ func modal_content(title: String) -> VBoxContainer:
  scroll.add_child(modal_box)
  var heading := HBoxContainer.new()
  modal_box.add_child(heading)
- modal_title = label(title,24,heading)
+ modal_title = label(title,25,heading)
  modal_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  var close := button("×",func(): modal.hide(),heading)
  close.size_flags_horizontal = Control.SIZE_SHRINK_END
  close.custom_minimum_size.x = touch_height()
  close.tooltip_text = "Close"
+ close.add_theme_stylebox_override("normal",ThemeKit.quiet())
  notice_toast.hide()
  input_controller.reset()
  modal.show()
@@ -545,7 +457,7 @@ func refresh() -> void:
  pulse_bar.value = model.state.energy
  if is_instance_valid(rain_button): rain_button.disabled = model.state.energy < 100
  if is_instance_valid(heat_button): heat_button.disabled = model.state.energy < 100
- pulse_button.text = "Pulse\n%d/200" % model.state.energy
+ pulse_button.text = ""
  update_pulse_width()
  draft_button.text = "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
  draft_button.disabled = targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
@@ -554,27 +466,17 @@ func refresh() -> void:
   draft_button.disabled = false
  draft_button.visible = not draft_button.disabled
  chapter_dial.display(model)
- inventory.add_theme_font_size_override("normal_font_size",scaled_font(16))
  var signature := str([model.state.coins,model.state.inventory,model.state.tiles.size()])
  if ledger_signature != "" and ledger_signature != signature:
   ui_motion.emphasize(inventory,model.state.settings.reduced_motion)
  ledger_signature = signature
- inventory.clear()
- inventory.add_image(preload("res://scripts/UIIcons.gd").texture("coins"),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
- inventory.add_text(" "+compact_amount(model.state.coins)+"   ")
- inventory.add_image(preload("res://scripts/UIIcons.gd").texture("world"),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
- inventory.add_text(" %d/36\n" % model.state.tiles.size())
- for resource in ["wood","stone","fiber"]:
-  if resource != "wood": inventory.add_text("  ")
-  inventory.add_image(preload("res://scripts/UIIcons.gd").texture(resource),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
-  inventory.add_text(" "+compact_amount(model.state.inventory[resource]))
- inventory.tooltip_text = "Coins %d · Wood %d · Stone %d · Fiber %d · Land %d/36" % [model.state.coins,model.state.inventory.wood,model.state.inventory.stone,model.state.inventory.fiber,model.state.tiles.size()]
+ game_hud.display(self)
  var goal: String = model.objective_text()
  var parts: PackedStringArray = goal.split(" · ",true,1)
  if parts[0] in ["FIRST SEED","NEW HORIZONS","LIVING ROOTS","YOUR LIVING WORLD"]:
   goal = parts[-1].replace(" (+10 coins)","")
  else: goal = goal.replace(" · ","\n")
- objective.text = goal+" ›"
+ game_hud.display_goal(self,goal)
  if model.message != last_notice:
   last_notice = model.message
   notice.text = model.message
@@ -684,7 +586,8 @@ func apply_layout() -> void:
   var physical := Vector2(DisplayServer.screen_get_size())
   safe = preload("res://scripts/SafeLayout.gd").logical_safe_rect(viewport_size,physical,Rect2(DisplayServer.get_display_safe_area()))
  var ecology_width: float = maxf(180,ecology_monitor.get_combined_minimum_size().x)
- hud.size.x = maxf(240,safe.size.x-40-ecology_width-12)
+ hud.size.x = safe.size.x-40
+ game_hud.fit_header(self,hud.size.x,Vector2(ecology_width,ecology_monitor.get_combined_minimum_size().y))
  layout = preload("res://scripts/SafeLayout.gd").regions(safe,maxf(110,maxf(hud.get_combined_minimum_size().y,ecology_monitor.get_combined_minimum_size().y)),maxf(124,bottom.get_combined_minimum_size().y))
  layout.top.size.x = hud.size.x
  hud.position = layout.top.position
@@ -702,7 +605,7 @@ func apply_layout() -> void:
   modal.position.y = safe.position.y+20
   modal.size.y = safe.size.y-40
  ecology_monitor.size = Vector2(ecology_width,0)
- ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,safe.position.y+20)
+ ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,hud.position.y+game_hud.quest_slot.position.y)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
  if inspection_mode:
@@ -913,7 +816,8 @@ func _draw() -> void:
  for effect in presentation.harvests:
   var at := entity_screen(effect.key)+Vector2(-24,-55-effect.elapsed*30)*zoom_level
   var flight: float = clampf(effect.elapsed/0.4,0,1)
-  var icon_at: Vector2 = entity_screen(effect.key).lerp(inventory.global_position+Vector2(18,12),1-pow(1-flight,2))
+  var destination: Control = game_hud.resource_values.get(effect.resource,game_hud.selected_art)
+  var icon_at: Vector2 = entity_screen(effect.key).lerp(destination.get_global_rect().get_center(),1-pow(1-flight,2))
   if flight < 1: preload("res://scripts/UIIcons.gd").draw(self,effect.resource,icon_at,32,Color(1,1,1,1-flight*0.6))
   draw_string(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color(0.95,0.83,0.56,1-effect.elapsed/0.8))
  if photo_mode:
@@ -1303,7 +1207,7 @@ func update_pulse_width() -> void:
  if not is_instance_valid(pulse_button): return
  var font: Font = pulse_button.get_theme_font("font")
  var width: float = font.get_string_size("200/200",HORIZONTAL_ALIGNMENT_LEFT,-1,scaled_font(17)).x
- pulse_button.custom_minimum_size.x = maxf(128,ceilf(width)+32)
+ pulse_button.custom_minimum_size.x = maxf(116,ceilf(width)+24)
 
 func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var texture: Texture2D = preload("res://scripts/UIIcons.gd").texture(id)
@@ -1319,19 +1223,31 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  content.mouse_filter = Control.MOUSE_FILTER_IGNORE
  target.add_child(content)
  content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
- var inset := 4*logical_per_dp()
+ var inset := 2*logical_per_dp()
  content.offset_left = inset; content.offset_right = -inset
  content.offset_top = inset; content.offset_bottom = -inset
  content.alignment = BoxContainer.ALIGNMENT_CENTER
- content.add_theme_constant_override("separation",2)
+ content.add_theme_constant_override("separation",5)
+ var medallion := PanelContainer.new()
+ medallion.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ medallion.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+ var primary: bool = target.get_meta("primary_dock",false)
+ var disc := ThemeKit.floating(ThemeKit.BUILD if primary else Color("3b434e"),32)
+ disc.shadow_size = 3
+ disc.content_margin_top = 12; disc.content_margin_bottom = 12
+ disc.content_margin_left = 14; disc.content_margin_right = 14
+ disc.border_color = Color("f0d39e") if primary else Color("626b77")
+ medallion.add_theme_stylebox_override("panel",disc)
+ content.add_child(medallion)
  var icon := TextureRect.new()
  icon.texture = texture
  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- icon.custom_minimum_size = Vector2.ONE*24*logical_per_dp()
+ icon.custom_minimum_size = Vector2.ONE*28*minf(1.25,logical_per_dp())
+ icon.modulate = ThemeKit.PRIMARY_INK if primary else ThemeKit.INK
  icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
- content.add_child(icon)
- var caption: Label = label(text,17,content)
+ medallion.add_child(icon)
+ var caption: Label = label(text,14,content)
  caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
  caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  caption.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -1343,8 +1259,8 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
 func update_stacked_buttons() -> void:
  for action in stacked_buttons:
   if not is_instance_valid(action): continue
-  action.custom_minimum_size.y = maxf(touch_height(),64*logical_per_dp()*model.state.text_scale)
-  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else ThemeKit.INK
+  action.custom_minimum_size.y = maxf(100,80*logical_per_dp()*model.state.text_scale)
+  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else ThemeKit.BUILD if action.get_meta("primary_dock",false) else ThemeKit.INK
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
 
 func draw_weather() -> void:

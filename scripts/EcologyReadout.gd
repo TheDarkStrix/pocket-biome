@@ -10,7 +10,7 @@ func _ready() -> void:
  mouse_filter = Control.MOUSE_FILTER_STOP
  focus_mode = Control.FOCUS_ALL
  tooltip_text = "Tile conditions · tap for help"
- add_theme_stylebox_override("panel",Palette.panel(Palette.PAPER))
+ add_theme_stylebox_override("panel",Palette.floating(Palette.PAPER))
  var column := VBoxContainer.new()
  column.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(column)
@@ -63,8 +63,8 @@ func _ready() -> void:
   row.add_child(value)
   bars[spec.id] = bar; values[spec.id] = value
  var help := Label.new()
- help.text = "Tap for help"
- help.set_meta("base_font",10)
+ help.text = "Selected tile · tap to learn"
+ help.set_meta("base_font",11)
  help.mouse_filter = Control.MOUSE_FILTER_IGNORE
  help.add_theme_color_override("font_color",Palette.MUTED)
  column.add_child(help)

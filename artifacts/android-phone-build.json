@@ -1,10 +1,10 @@
 {
-  "source_sha256": "e6febeeef41ee6c4253cf78b8b4a7bdda9fd311a96e85c9c37c6b33ad2ae90b0",
-  "assertions": 783,
-  "apk_sha256": "6eab715b4549e18aa7dc8570e0de2e0068c6d356bffb442bd6401041648f5fa3",
-  "bytes": 97007145,
+  "source_sha256": "50801f3298fd563f17ddb671501b7ad173dce24c8cc16b98a9dd79e7f025ffa3",
+  "assertions": 820,
+  "apk_sha256": "bdd990d2aa0ebcacacce2343324ba8a91a3a7492dcdd876c2c23c6307d314dc6",
+  "bytes": 97015653,
   "abi": "arm64-v8a",
-  "retained_files_verified": 374,
+  "retained_files_verified": 378,
   "signature_and_alignment_verified": true,
   "physical_device_tested": false,
   "note": "Debug test build; identical retained game/native files to universal APK. Not store certification."
