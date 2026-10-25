@@ -1,12 +1,12 @@
 {
-  "utc": "2026-10-25T04:53:59.003230+00:00",
+  "utc": "2026-10-25T05:43:06.922331+00:00",
   "engine": "4.6.3.stable",
   "type": "Signed debug test APK",
-  "source_sha256": "c1679251ba51e3b140acd693188e0f347e4a06583019da7cd9a3a4c7c3f72650",
-  "assertions": 679,
-  "apk_sha256": "9327c50525d854db63b733b290b9de87fb83f1a17d6109b824bf97bad39782fc",
-  "bytes": 178212345,
-  "renderer": "OpenGL Compatibility; desktop and mobile explicitly configured",
-  "native_gameplay_verified": true,
-  "note": "Current native APK installed/resumed and rendered. Prior core touch route/save-field comparisons and native photo/share checks are documented separately; not store or physical-performance certification."
+  "source_sha256": "55b4ae9ea5edc1df4aa78067e7140b84c45ff95c938341f340321b674eef3f37",
+  "assertions": 701,
+  "apk_sha256": "604d2ee565793f060a63ab83bcb1a33d49f2b6b6359e50b9039de96317c7244f",
+  "bytes": 178221465,
+  "renderer": "OpenGL Compatibility",
+  "native_game_payload_verified": true,
+  "note": "Feedback revision installed, cold-launched, resumed and cloud relocation exercised. Native-tested runtime payload compared to current build; see android-feedback-check.json. Phone/GPU/performance/store qualification remains open."
 }

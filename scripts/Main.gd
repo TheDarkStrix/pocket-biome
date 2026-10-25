@@ -2,6 +2,10 @@ extends Node2D
 const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const Store = preload("res://scripts/SaveStore.gd")
+var ui_motion = preload("res://scripts/UIMotion.gd").new()
+var fusion_preview: Array[String] = []
+var fusion_controls := []
+var ledger_signature := ""
 var presentation = preload("res://scripts/WorldPresentation.gd").new()
 var audio_feedback = preload("res://scripts/AudioFeedback.gd").new()
 var campaign_ui = preload("res://scripts/CampaignUI.gd").new()
@@ -132,6 +136,7 @@ func button(text: String, action: Callable, parent: Node) -> Button:
  b.add_theme_stylebox_override("focus",focus)
  b.pressed.connect(action)
  parent.add_child(b)
+ ui_motion.bind_button(b,func(): return model.state.settings.reduced_motion)
  return b
 
 func build_ui() -> void:
@@ -215,6 +220,7 @@ func build_ui() -> void:
    model.message = "Placement canceled. Blueprint kept."
    refresh()
   elif targeting != "": cancel_target()
+  elif model.state.chapter == 3 and model.state.stats.fusions == 0: fusion_dialog()
   else: draft(),bottom)
  var dock := PanelContainer.new()
  dock.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
@@ -320,6 +326,7 @@ func modal_content(title: String) -> VBoxContainer:
  notice_toast.hide()
  input_controller.reset()
  modal.show()
+ ui_motion.reveal(modal,model.state.settings.reduced_motion)
  call_deferred("apply_layout")
  return modal_box
 
@@ -390,14 +397,43 @@ func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
  return {"caption":caption,"bar":bar}
 
 func fusion_dialog() -> void:
- var box := modal_content("Evolve a 2 × 2 sanctuary")
- label("Select the upper origin of four matching Forest, Water, Stone or Grass cells with no active pulse boosts. The entire footprint becomes one entity.",18,box)
- button("Confirm fusion",func():
-  if not model.fuse(selected): model.message = "Needs four matching Forest, Water, Stone or Grass cells in a 2 × 2 square."
-  modal.hide()
-  persist()
-  refresh(),box)
- button("Back",func(): modal.hide(),box)
+ var guide = preload("res://scripts/FusionGuide.gd")
+ var options: Array = guide.options(model,selected)
+ var box := modal_content("Create a sanctuary")
+ modal_screen = "fusion"
+ fusion_controls.clear()
+ label("Four matching tiles must form a 2 × 2 square, seen as a diamond on your island. Evolved tiles still count. Oak is not Forest.",17,box)
+ if options.is_empty():
+  label("Expand with Forest, Water, Stone or Meadow to begin a group.",17,box)
+ for option in options.slice(0,4):
+  var panel := PanelContainer.new()
+  panel.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER_ALT))
+  box.add_child(panel)
+  var content := VBoxContainer.new(); panel.add_child(content)
+  var row := HBoxContainer.new(); content.add_child(row)
+  var image = preload("res://scripts/TileThumbnail.gd").new()
+  image.tile_type = option.type; image.evolution = option.recipe.id
+  image.custom_minimum_size = Vector2(90,90); row.add_child(image)
+  var caption := label(option.recipe.name+"\n%d / 4 matching tiles" % option.matches,19,row)
+  caption.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  var reason := label(option.reason,15,content)
+  var origin: String = option.at
+  var footprint: Array[String] = option.cells
+  button("Show this group",func():
+   fusion_preview = footprint.duplicate(); selected = origin if model.origin(origin) != "" else selected
+   modal.hide(); model.message = "Highlighted diamond: four matching tiles. World → Fuse sanctuary to combine."
+   refresh(),content)
+  var confirm := button("Fuse into "+option.recipe.name,func():
+   if model.fuse(origin):
+    selected = origin; fusion_preview.clear(); modal.hide(); haptic(50)
+   else:
+    fusion_dialog(); model.message = "Group changed. Check its current requirements."
+   persist(); refresh(),content)
+  confirm.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACCENT))
+  confirm.add_theme_color_override("font_color",ThemeKit.PRIMARY_INK)
+  confirm.disabled = not option.ready
+  fusion_controls.append({"origin":origin,"action":confirm,"reason":reason})
+ button("Back to island",func(): modal.hide(),box)
 
 func queue_save() -> void:
  if not save_dirty: dirty_elapsed = 0.0
@@ -417,7 +453,7 @@ func refresh() -> void:
   for recipe in model.config.recipes+model.config.fusions:
    if recipe.id == id and recipe.rarity in ["rare","legendary"]: reveal_queue.append(id)
  presentation.sync(model.state.tiles)
- if model.state.settings.reduced_motion: presentation.advance(10.0)
+ if model.state.settings.reduced_motion: presentation.animations.clear()
  services.model = model
  services.save_path = store.path
  for cue in presentation.cues:
@@ -431,9 +467,16 @@ func refresh() -> void:
  update_pulse_width()
  draft_button.text = "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
  draft_button.disabled = targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
+ if model.state.chapter == 3 and model.state.stats.fusions == 0 and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty():
+  draft_button.text = "Find a sanctuary fusion"
+  draft_button.disabled = false
  draft_button.visible = not draft_button.disabled
  chapter_dial.display(model)
  inventory.add_theme_font_size_override("normal_font_size",scaled_font(16))
+ var signature := str([model.state.coins,model.state.inventory,model.state.tiles.size()])
+ if ledger_signature != "" and ledger_signature != signature:
+  ui_motion.emphasize(inventory,model.state.settings.reduced_motion)
+ ledger_signature = signature
  inventory.clear()
  inventory.add_image(preload("res://scripts/UIIcons.gd").texture("coins"),20,20,Color.WHITE,INLINE_ALIGNMENT_CENTER)
  inventory.add_text(" "+compact_amount(model.state.coins)+"   ")
@@ -457,13 +500,20 @@ func refresh() -> void:
  var k: String = model.origin(selected)
  if k != "":
   var t: Dictionary = model.state.tiles[k]
-  ecology_monitor.display(t)
+  ecology_monitor.display(t,model.state.settings.reduced_motion)
   var production: Dictionary = model.production(t)
   var remaining: int = ceili(maxf(0,t.ready-model.state.time))
   info.text = tile_title(t)+"\n"+("Ready to collect" if remaining == 0 and production.resource != "" else "Ready in %ds" % remaining if production.resource != "" else "Hold to discover its secrets")
 
  update_inspection()
  campaign_ui.update_live(self)
+ if modal.visible and modal_screen == "fusion":
+  var current: Array = preload("res://scripts/FusionGuide.gd").options(model,selected)
+  for controls in fusion_controls:
+   if not is_instance_valid(controls.action): continue
+   controls.action.disabled = not model.can_fuse(controls.origin)
+   for option in current:
+    if option.at == controls.origin: controls.reason.text = option.reason; break
  last_discoveries = model.state.discoveries.size()
  call_deferred("apply_layout")
  queue_redraw()
@@ -489,6 +539,7 @@ func tap(pos: Vector2) -> void:
  if launch_menu or photo_mode or not world_rect().has_point(pos) or modal.visible: return
  var harvest_path := false
  var k := pick(pos)
+ fusion_preview.clear()
  if placement_blueprint != "":
   if model.deploy(placement_blueprint,k):
    placement_blueprint = ""
@@ -499,7 +550,8 @@ func tap(pos: Vector2) -> void:
    preview = model.origin(k)
    model.message = "Area preview · tap center again to confirm; choose another tile to move it."
   elif model.pulse(targeting,k):
-   presentation.pulse(targeting,model.origin(k))
+   presentation.pulse(targeting,model.origin(k),model.pulse_targets(k))
+   model.message = targeting.capitalize()+" Pulse released · affects %d biomes" % model.pulse_targets(k).size()
    targeting = ""
    haptic(35)
    audio_feedback.play("pulse")
@@ -613,7 +665,8 @@ func _process(delta: float) -> void:
   cosmetic_clock = 0.0
   queue_redraw()
  if model.state.settings.reduced_motion:
-  if presentation.advance(10.0): queue_redraw()
+  presentation.animations.clear()
+  if presentation.advance(delta): queue_redraw()
  elif presentation.advance(delta): queue_redraw()
  clock += delta
  save_clock += delta
@@ -676,13 +729,10 @@ func _draw() -> void:
   draw_rect(get_viewport_rect(),palettes.get(palette,Color("17243a")))
   for i in range(28):
    draw_circle(Vector2(fmod(i*137.0,540),180+fmod(i*97.0,450)),1.0+float(i%2),Color(0.95,0.82,0.56,0.4))
- var visible_frontier: Array = [] if photo_mode or launch_menu else model.frontier()
+ var visible_frontier: Array = [] if photo_mode or launch_menu or targeting != "" or placement_blueprint != "" else model.frontier()
  for k in visible_frontier:
   var p := screen(model.coord(k))
-  var r := 25*zoom_level
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",p,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
-  draw_line(p-Vector2(7,0),p+Vector2(7,0),Color("8dbfe8"),2)
-  draw_line(p-Vector2(0,7),p+Vector2(0,7),Color("8dbfe8"),2)
  var keys := render_keys()
  for k in keys:
   var t: Dictionary = model.state.tiles[k]
@@ -745,17 +795,20 @@ func _draw() -> void:
     draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
   if not photo_mode and not launch_menu and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,ThemeKit.ACCENT,2*s)
 
- for effect in presentation.weather:
-  var center := entity_screen(effect.key)
-  var elapsed: float = effect.elapsed
-  var color: Color = {"rain":Color("8dbfe8"),"heat":Color("f2a56d"),"frost":Color("d3f4ff")}[effect.power]
-  color.a = 1.0-elapsed/1.2
-  draw_arc(center,(35+elapsed*55)*zoom_level,0,TAU,32,color,2*zoom_level)
-  for i in range(12):
-   var angle := TAU*i/12.0
-   var at: Vector2 = center+Vector2(cos(angle),sin(angle)*0.55)*(35+elapsed*45)*zoom_level
-   if effect.power == "rain": draw_line(at-Vector2(3,10)*zoom_level,at,color,2*zoom_level)
-   else: draw_circle(at,(2+sin(angle))*zoom_level,color)
+ # Draw expansion controls above the art they operate, matching their input priority.
+ for key in visible_frontier:
+  var at := screen(model.coord(key))
+  var breath := 1.0 if model.state.settings.reduced_motion else 1.0+0.07*sin(model.state.time*2.4)
+  draw_circle(at,13*breath,Color(0.14,0.19,0.24,0.85))
+  draw_arc(at,13*breath,0,TAU,24,Color(0.67,0.78,0.88,0.7),1.2,true)
+  draw_line(at-Vector2(6,0),at+Vector2(6,0),ThemeKit.INK,1.7,true)
+  draw_line(at-Vector2(0,6),at+Vector2(0,6),ThemeKit.INK,1.7,true)
+ for key in fusion_preview:
+  var at := screen(model.coord(key))
+  var diamond := PackedVector2Array([at+Vector2(0,-30)*zoom_level,at+Vector2(60,0)*zoom_level,at+Vector2(0,30)*zoom_level,at+Vector2(-60,0)*zoom_level,at+Vector2(0,-30)*zoom_level])
+  draw_colored_polygon(diamond,Color(0.67,0.65,0.83,0.22))
+  draw_polyline(diamond,ThemeKit.ACCENT,2.5,true)
+ draw_weather()
  for effect in presentation.harvests:
   var at := entity_screen(effect.key)+Vector2(-24,-55-effect.elapsed*30)*zoom_level
   var flight: float = clampf(effect.elapsed/0.4,0,1)
@@ -991,6 +1044,7 @@ func start_screen() -> void:
   label("An offline miniature-world discovery game. Version 0.9 test build. Original synthesized sound and generated diorama artwork. No mandatory ads or purchases.",17,box)
   campaign_ui.close_button(self,box),secondary)
  button("New world",new_world_dialog,secondary)
+ ui_motion.reveal(launch_screen,model.state.settings.reduced_motion)
  call_deferred("apply_layout")
  queue_redraw()
 
@@ -1019,6 +1073,8 @@ func start_play() -> void:
  launch_menu = false
  if launch_screen != null: launch_screen.hide()
  hud.show(); bottom.show(); modal.hide()
+ ui_motion.reveal(hud,model.state.settings.reduced_motion)
+ ui_motion.reveal(bottom,model.state.settings.reduced_motion)
  frame_on_layout = true
  if not model.state.settings.tutorial_seen:
   services.event("tutorial_started")
@@ -1056,7 +1112,21 @@ func render_keys() -> Array:
   return ca.x < cb.x if da == db else da < db)
  return keys
 
+func pick_frontier(position: Vector2) -> String:
+ var nearest := ""
+ # Overlapping mobile touch areas resolve to the closest visible marker.
+ var reach := maxf(22,22*logical_per_dp())
+ var distance := reach*reach
+ for key in model.frontier():
+  var current: float = position.distance_squared_to(screen(model.coord(key)))
+  if current <= distance:
+   distance = current; nearest = key
+ return nearest
+
 func pick(position: Vector2) -> String:
+ if targeting == "" and placement_blueprint == "":
+  var cloud := pick_frontier(position)
+  if cloud != "": return cloud
  var keys := render_keys()
  keys.reverse()
  for key in keys:
@@ -1166,3 +1236,35 @@ func update_stacked_buttons() -> void:
   action.custom_minimum_size.y = maxf(touch_height(),64*logical_per_dp()*model.state.text_scale)
   action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else ThemeKit.INK
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
+
+func draw_weather() -> void:
+ for effect in presentation.weather:
+  var elapsed: float = effect.elapsed
+  var fade: float = clampf((effect.duration-elapsed)/0.6,0,1)*clampf(elapsed/0.12,0,1)
+  var color: Color = {"rain":Color("a9d8fa"),"heat":Color("f2a56d"),"frost":Color("d3f4ff")}[effect.power]
+  color.a = fade*0.9
+  var targets: Array = effect.targets if not effect.targets.is_empty() else [effect.key]
+  for key in targets:
+   if model.origin(key) == "": continue
+   var center := entity_screen(key)
+   var span: float = maxf(0.65,zoom_level)
+   if model.state.settings.reduced_motion:
+    draw_arc(center,34*span,0,TAU,32,color,3,true)
+    continue
+   draw_arc(center+Vector2(0,2),32*span,0,TAU,32,Color(color,fade*0.25),2,true)
+   for i in range(22):
+    var phase := fposmod(elapsed*1.8+float(i)*0.137,1.0)
+    var x := (fposmod(float(i)*0.618,1.0)-0.5)*100*span
+    if effect.power == "rain":
+     var at := center+Vector2(x+phase*12*span,(-105+phase*125)*span)
+     draw_line(at,at+Vector2(3,14)*span,color,maxf(1.6,2*span),true)
+     if phase > 0.82:
+      var ripple := Vector2(x+12*span,8*span)
+      draw_arc(center+ripple,(phase-0.82)*38*span,0,TAU,16,Color(color,fade*(1-phase)*3),1.4,true)
+    else:
+     var angle := TAU*float(i)/22
+     var at := center+Vector2(cos(angle)*42,(sin(angle)*18-65*phase))*span
+     if effect.power == "frost":
+      draw_line(at-Vector2(3,0)*span,at+Vector2(3,0)*span,color,1.6,true)
+      draw_line(at-Vector2(0,3)*span,at+Vector2(0,3)*span,color,1.6,true)
+     else: draw_circle(at,(2+sin(phase*PI))*span,Color(color,fade*(1-phase)))

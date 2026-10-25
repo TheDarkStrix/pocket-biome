@@ -76,9 +76,15 @@ func cost() -> int:
  return roundi(config.economy.expansion_base * pow(config.economy.expansion_growth,state.expansions))
 
 func begin_draft(k: String) -> bool:
- if not state.pending.is_empty(): return state.pending.at == k
+ if not state.pending.is_empty():
+  if not frontier().has(k):
+   message = "Choose a cloud beside your island. Your card choices are kept."
+   return false
+  state.pending.at = k
+  message = "Draft moved to this plot. Your cards and price are unchanged."
+  return true
  if not frontier().has(k) or state.coins < cost():
-  message = "Harvest to earn coins, then choose an adjacent cloud."
+  message = "Expansion costs %d coins · you have %d. Harvest resources to earn more." % [cost(),state.coins] if state.coins < cost() else "Choose a cloud directly beside your island."
   return false
  if state.expansions == 0: record_event("first_draft")
  # Stable, persisted offers. Forest and Water guarantee the tutorial path.

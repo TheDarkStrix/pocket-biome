@@ -68,6 +68,7 @@ func run() -> void:
   h.model.tick(1)
   h.refresh()
   check(h.inspection_view.bars.moisture.bar.value > original,"visible inspector follows environmental DNA updates")
+  await create_timer(0.4).timeout
   check(h.ecology_monitor.bars.moisture.value == h.model.state.tiles["0,0"].dna.moisture,"compact ecological meter follows the selected tile through DNA changes")
   check(h.ecology_monitor.values.moisture.text == str(int(h.model.state.tiles["0,0"].dna.moisture)),"DNA readout uses integer units rather than JSON float formatting")
   check(h.inspection_view.title.text == h.tile_title(h.model.state.tiles["0,0"]),"inspector title follows the current biome")

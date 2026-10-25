@@ -2,6 +2,7 @@ extends SceneTree
 func _init() -> void:
  call_deferred("capture")
 func shot(name: String) -> void:
+ await create_timer(0.22).timeout
  await process_frame
  await process_frame
  await RenderingServer.frame_post_draw
@@ -76,6 +77,28 @@ func capture() -> void:
  scene.zoom_level = 1.0
  scene.refresh()
  await shot("06-fusion-art-review")
+ scene.modal.hide()
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ scene.model.state.tiles.clear()
+ for x in range(4):
+  for y in range(4): scene.model.add_tile(Vector2i(x,y),"forest" if x < 2 and y < 2 else "water" if y == 2 else "grass")
+ scene.model.state.chapter = 3; scene.model.state.coins = 200
+ scene.model.state.objectives = [0,1,2]
+ scene.presentation = preload("res://scripts/WorldPresentation.gd").new()
+ scene.selected = "1,1"; scene.refresh()
+ await process_frame
+ await process_frame
+ scene.frame_world()
+ await shot("13-expansion-controls")
+ scene.fusion_dialog()
+ await create_timer(0.25).timeout
+ await shot("14-fusion-guide")
+ scene.modal.hide()
+ scene.presentation.pulse("rain","1,1",scene.model.pulse_targets("1,1"))
+ scene.presentation.advance(0.45); scene.queue_redraw()
+ await shot("15-rain-pulse")
+ scene.presentation.advance(0.4); scene.queue_redraw()
+ await shot("16-rain-pulse-motion")
  scene.queue_free()
  await process_frame
  # Audio playback references are released asynchronously by the mixer.

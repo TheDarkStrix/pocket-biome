@@ -5,7 +5,7 @@ Authority: data/game.json; transaction/objective rules in WorldModel and Campaig
 - Start: 25 coins, four cells, no earned inventory. Expansion: rounded `12 × 1.24^N`, capped at 36 occupied cells.
 - Harvest: initial Oak 8s, Stone 12s, Fiber 6s. Manual taps accelerate cooldown 0.5s at most every 0.25s; a tap cannot extend a nearly-ready timer. Harvesting grants repeatable coin income, preventing reliance on ads.
 - Active play only: no offline production or clock-based income. Automated sources consume real recipe inputs and honor shared fused cooldowns.
-- Draft: three saved offers, guaranteed accessible tutorial sources; chapter pools expand. Confirmation alone charges. Optional rewarded reroll once per expansion never changes its quote.
+- Draft: three saved offers, guaranteed accessible tutorial sources; chapter pools expand. Confirmation alone charges. Moving an unfinished draft keeps its existing three offers and quote; it is not a free reroll. Optional rewarded reroll once per expansion never changes its quote.
 - DNA: five attributes bounded 0–100, buffered neighbor updates at 1Hz and monotonic tiers. Pulse costs 100 from a 200 cap, with 12s temporary effects. Rewards deduplicate after save/load.
 - Twenty discoveries: 6 common, 7 uncommon, 5 rare, 2 legendary. All are available through gameplay without purchases or advertisements.
 - Crafting: three concurrent slots, batch quantities 1–3; blueprints deploy explicitly. Essential source tiles are craftable, and retirement permits rearrangement at the land cap. Protected initial wood/stone/fiber sources preserve a recovery path.

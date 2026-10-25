@@ -1,0 +1,11 @@
+{
+  "source_sha256": "55b4ae9ea5edc1df4aa78067e7140b84c45ff95c938341f340321b674eef3f37",
+  "assertions": 701,
+  "apk_sha256": "80bd5afb7b34116d0110a11b7ea47005640f93af7ed540deaacad21b7fdda0ed",
+  "bytes": 96129541,
+  "abi": "arm64-v8a",
+  "retained_files_verified": 316,
+  "signature_and_alignment_verified": true,
+  "physical_device_tested": false,
+  "note": "Debug test build; identical retained game/native files to universal APK. Not store certification."
+}

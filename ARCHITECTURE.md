@@ -16,6 +16,8 @@ The original repository was empty with no working functionality or commits to pr
 | CampaignUI | Codex, workshop, world management, settings/tutorial; styled scrollable controls |
 | TileArtwork / TileThumbnail / UIIcons | Stable atlas regions, pivots, shared appearance selection and alpha picking; illustrated previews/icons |
 | WorldPresentation | Bounded cosmetic diffs, rise/crossfade/fusion/weather/harvest animations; never owns rewards |
+| FusionGuide | Read-only candidate discovery/ranking and blocker explanations; WorldModel owns fusion commits |
+| UIMotion | Interruptible, node-bound press/fade/highlight tweens; respects reduced motion |
 | GameTheme | Licensed fonts, graphite/pearl/muted-violet styles, shared UI palette independent of world skins |
 | AudioFeedback | Pooled cue voices and ambient loop; independent volume/mute and lifecycle handling |
 | ServiceHub / Telemetry | Optional provider bridge, durable reward ledger/caps, purchase entitlement handling, opt-in diagnostics/HTTPS delivery |
@@ -44,3 +46,5 @@ The latest user instruction selects Terra Nil as a reference and supersedes both
 Current GameTheme uses renamed static Inter derivatives and original SVG line controls. Header/type does not use decorative outlines, panel borders are thin, corners are small and shadows are removed. Official Terra Nil screenshot analysis is recorded in docs/UI_RESEARCH.md; no reference-game assets are distributed.
 
 ChapterDial reads real campaign metrics into a bounded chapter fraction. EcologyReadout renders selected-tile moisture/heat without owning simulation. Main positions their corner groups independently while reserving a full-width world. Initial gameplay camera framing waits for settled HUD geometry; pulse-number width follows font metrics.
+
+Expansion marker picking precedes terrain alpha picking only during ordinary collection/expansion mode; pulse/deployment mode hides these controls. Nearest visible marker wins overlapping mobile target areas. Moving a pending draft changes only its destination, keeping serialized offers and price. Rain presentation stores the actual authoritative affected keys and a bounded cosmetic lifetime.

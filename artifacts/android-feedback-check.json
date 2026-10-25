@@ -1,0 +1,31 @@
+{
+  "install_succeeded": true,
+  "source_sha256": "009a0d8cb9988f94c7062eb9379333e46fbfbb09632ab81dec44ef654614e540",
+  "save_fields": {
+    "seed": true,
+    "coins": true,
+    "discoveries": true,
+    "chapter": true,
+    "harvests": true,
+    "expansions": true,
+    "inventory": true,
+    "pending": true,
+    "entitlements": true,
+    "tiles_except_effect_schedule": true
+  },
+  "save_stable_fields_matched": true,
+  "active_seconds_between_snapshots": 39.05794566666009,
+  "note": "Old app remained active between snapshot and replacement install; next_effect clocks advanced. All other tile fields and listed progress fields match. Current APK cold-launched on API29 software emulator. Not physical ARM64/performance qualification.",
+  "native_menu_and_world_rendered": true,
+  "native_cloud_relocation": {
+    "different_target": true,
+    "same_cards": true,
+    "same_price": true,
+    "same_coins": true,
+    "same_land": true
+  },
+  "native_godot_errors": [],
+  "shader_cache_warning": true,
+  "current_build_source_sha256": "55b4ae9ea5edc1df4aa78067e7140b84c45ff95c938341f340321b674eef3f37",
+  "native_tested_payload_matches_current_build": true
+}

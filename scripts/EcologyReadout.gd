@@ -48,8 +48,18 @@ func _ready() -> void:
   value.mouse_filter = Control.MOUSE_FILTER_IGNORE
   row.add_child(value)
   bars[spec.id] = bar; values[spec.id] = value
-func display(tile: Dictionary) -> void:
+func display(tile: Dictionary, reduced: bool = false) -> void:
  for attribute in bars:
-  bars[attribute].value = tile.dna[attribute]
+  var bar: ProgressBar = bars[attribute]
+  var target: float = tile.dna[attribute]
+  if bar.get_meta("target_value",-1.0) != target:
+   var old = bar.get_meta("value_tween") if bar.has_meta("value_tween") else null
+   if old is Tween and old.is_valid(): old.kill()
+   bar.set_meta("target_value",target)
+   if reduced: bar.value = target
+   else:
+    var tween := create_tween()
+    bar.set_meta("value_tween",tween)
+    tween.tween_property(bar,"value",target,0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
   values[attribute].text = str(int(tile.dna[attribute]))
   values[attribute].tooltip_text = attribute.capitalize()+" DNA · 0–100"

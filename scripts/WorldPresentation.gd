@@ -44,7 +44,7 @@ func advance(delta: float) -> bool:
  var was_animating := not animations.is_empty() or not weather.is_empty() or not harvests.is_empty()
  for effect in weather.duplicate():
   effect.elapsed += delta
-  if effect.elapsed >= 1.2: weather.erase(effect)
+  if effect.elapsed >= effect.duration: weather.erase(effect)
  for effect in harvests.duplicate():
   effect.elapsed += delta
   if effect.elapsed >= 0.8: harvests.erase(effect)
@@ -61,9 +61,9 @@ func pose(key: String) -> Dictionary:
  var amount := 0.25 if animation.kind == "place" else 0.12
  return {"scale":1.0-amount*(1-eased)+sin(t*PI)*0.08,"rise":-28.0*(1-eased),"burst":sin(t*PI),"mix":eased if animation.kind == "evolve" else (clampf((t-0.25)/0.55,0,1) if animation.kind == "fusion" else 1.0),"previous":animation.previous,"parts":animation.parts,"progress":t}
 
-func pulse(power: String, key: String) -> void:
+func pulse(power: String, key: String, targets: Array = []) -> void:
  if weather.size() >= 2: weather.pop_front()
- weather.append({"power":power,"key":key,"elapsed":0.0})
+ weather.append({"power":power,"key":key,"targets":targets.duplicate(),"elapsed":0.0,"duration":3.2})
 func harvest(key: String, text: String, resource: String = "") -> void:
  if harvests.size() >= 12: harvests.pop_front()
  harvests.append({"key":key,"text":text,"resource":resource,"elapsed":0.0})

@@ -1,15 +1,15 @@
 {
-  "utc": "2026-10-25T04:37:01.307598+00:00",
-  "source_sha256": "c1679251ba51e3b140acd693188e0f347e4a06583019da7cd9a3a4c7c3f72650",
+  "utc": "2026-10-25T05:42:14.119236+00:00",
+  "source_sha256": "55b4ae9ea5edc1df4aa78067e7140b84c45ff95c938341f340321b674eef3f37",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 679,
+  "assertions": 701,
   "results": [
     {
       "suite": "run",
       "passed": true,
       "exit_code": 0,
-      "assertions": 37
+      "assertions": 41
     },
     {
       "suite": "campaign",
@@ -51,7 +51,7 @@
       "suite": "presentation",
       "passed": true,
       "exit_code": 0,
-      "assertions": 13
+      "assertions": 21
     },
     {
       "suite": "services",
@@ -75,7 +75,7 @@
       "suite": "touch_ui",
       "passed": true,
       "exit_code": 0,
-      "assertions": 13
+      "assertions": 23
     },
     {
       "suite": "mobile_layout",

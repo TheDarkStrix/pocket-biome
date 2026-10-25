@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 679 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 tracked progression operations (plus earning-loop harvests), using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
+`tools/check.sh`: 701 assertions across 13 suites pass, plus a public-action progression simulation completing 20 discoveries and 5 chapters in 119 tracked progression operations (plus earning-loop harvests), using 35 cells. These results establish system reachability, not player enjoyment or hardware performance. See TEST_REPORT.md for the tested source stage and remaining gates.
 
 Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
 
@@ -28,3 +28,9 @@ The user requested Terra Nil's style and gameplay information hierarchy, with Po
 Implemented camera fitting uses actual sprite extents, including tall fused biomes. Objectives preserve action captions alongside progress. Title/photo views hide gameplay markers. Native photo/export/system chooser checks passed without choosing a recipient. The actual current native screenshot is artifacts/android-02-restored-world.png.
 
 Store sandbox transactions, publisher/signing/telemetry configuration, physical-device performance/cutouts/audio and human playtesting remain release gates. This is not a certified public release.
+
+## Player feedback fixes
+
+Expansion controls render above canopy art and have nearest-center mobile hit areas. Unfinished drafts can relocate among adjacent clouds with the same offers/quote and no charge. Unaffordable expansion reports the exact price and balance. Fusion guidance detects groups from any selected member, distinguishes Oak from Forest, explains square geometry and active boosts/events, previews the footprint and commits through the unchanged authoritative fusion transaction. Chapter 3 exposes a direct fusion action.
+
+Rain now renders a 3.2-second shower and ripples over every affected biome; reduced motion retains a fading area confirmation. Buttons respond to press/release, menus/panels fade, chapter/ecology values interpolate, and resource changes highlight briefly. These are implemented interaction improvements; full aesthetic/human polish and external release gates remain open.

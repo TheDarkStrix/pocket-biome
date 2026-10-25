@@ -85,6 +85,71 @@ func run() -> void:
     if child is Button and child.text == "+": increase = child
  await click(increase.get_global_rect().get_center())
  check(h.campaign_ui.craft_quantity == 2 and h.modal.visible,"touch-triggered workshop replacement preserves GUI event lifetime")
+ h.modal.hide()
+ h.model.state.tiles.clear()
+ for x in range(4):
+  for y in range(4): h.model.add_tile(Vector2i(x,y),"forest" if x%2 == 0 else "water")
+ h.model.state.coins = 10000
+ h.model.state.chapter = 3
+ h.model.state.pending = {}
+ h.selected = "0,0"; h.targeting = ""
+ h.refresh()
+ await process_frame
+ await process_frame
+ h.frame_world()
+ await process_frame
+ var frontier: Array = h.model.frontier()
+ var offers := []
+ var all_open := true
+ var all_targets := true
+ for key in frontier:
+  await click(h.screen(h.model.coord(key)))
+  all_open = all_open and h.modal.visible
+  all_targets = all_targets and h.model.state.pending.get("at","") == key
+  if not h.model.state.pending.has("cards"):
+   printerr("Cloud missed: ",key," at ",h.screen(h.model.coord(key))," world ",h.world_rect()," picked ",h.pick(h.screen(h.model.coord(key))))
+   continue
+  if offers.is_empty(): offers = h.model.state.pending.cards.duplicate()
+  all_targets = all_targets and h.model.state.pending.cards == offers
+  h.modal.hide()
+ check(all_open,"every visible expansion marker opens through real touch on a dense island")
+ check(all_targets,"closing and moving drafts retains offers and selects each touched cloud")
+ check(h.model.state.coins == 10000 and h.model.state.tiles.size() == 16,"opening/relocating drafts cannot debit or place land")
+ h.model.state.pending = {}; h.model.state.energy = 200
+ h.refresh(); h.frame_world()
+ var origin := "2,2"
+ h.target("rain"); h.preview = origin
+ await click(h.screen(h.model.coord(origin)))
+ check(h.model.state.stats.pulses == 1 and h.presentation.weather.size() == 1,"real touch releases one Rain Pulse with visible weather state")
+ check(h.presentation.weather[0].targets.size() == 5,"rain covers the entire affected cross, not only the center")
+ h.model.state.settings.reduced_motion = true
+ h.refresh()
+ check(h.presentation.weather.size() == 1,"reduced motion preserves accessible pulse confirmation instead of deleting it")
+ h.targeting = ""; h.model.state.pending = {}; h.model.state.settings.reduced_motion = false
+ for at in [Vector2i.ZERO,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.ONE]: h.model.add_tile(at,"forest")
+ h.selected = "1,1"; h.reveal_queue.clear()
+ h.fusion_dialog()
+ await process_frame
+ var fusion_action: Button
+ for panel in h.modal_box.get_children():
+  if panel is PanelContainer:
+   for child in panel.get_child(0).get_children():
+    if child is Button and child.text.begins_with("Fuse into") and not child.disabled: fusion_action = child; break
+   if fusion_action != null: break
+ check(fusion_action != null,"fusion dialog offers a detected group without selecting its origin")
+ if fusion_action != null:
+  await process_frame
+  await click(fusion_action.get_global_rect().get_center())
+  check(h.model.state.stats.fusions == 1 and not h.modal.visible,"real touch confirms the detected fusion through the actual dialog")
+ h.model.state.settings.reduced_motion = false
+ h.modal.hide()
+ var pulse_position: Vector2 = h.pulse_button.get_global_rect().get_center()
+ touch(pulse_position,true)
+ await create_timer(0.09).timeout
+ check(h.pulse_button.scale.x < 1.0,"holding a HUD button produces visible press feedback")
+ touch(pulse_position,false)
+ await create_timer(0.2).timeout
+ check(h.pulse_button.scale.is_equal_approx(Vector2.ONE),"button response settles after release without changing its layout")
  h.queue_free()
  await process_frame
  print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])

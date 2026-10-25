@@ -17,6 +17,12 @@ func _init() -> void:
  check(not m.begin_draft("0,0"),"no overlap")
  check(not m.begin_draft("9,9"),"no disconnected expansion")
  check(m.begin_draft("-1,0"),"adjacent expansion")
+ var original_cards: Array = m.state.pending.cards.duplicate()
+ var original_cost: int = m.state.pending.cost
+ check(m.begin_draft("2,1") and m.state.pending.at == "2,1","unfinished draft relocates to any adjacent plot")
+ check(m.state.pending.cards == original_cards and m.state.pending.cost == original_cost and m.state.coins == 37,"relocation keeps offers, price and wallet")
+ check(not m.begin_draft("20,20") and m.state.pending.at == "2,1","invalid relocation keeps saved target")
+ check(m.begin_draft("-1,0"),"relocation returns to original cloud")
  var pending = m.state.pending.duplicate(true)
  check(m.state.coins == 37,"no debit before placement")
  var store = Store.new()

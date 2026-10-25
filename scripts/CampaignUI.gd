@@ -177,6 +177,8 @@ func world(h) -> void:
  h.button("Center island",func(): h.modal.hide(); h.frame_world(),actions)
  h.button("Fuse sanctuary",func(): h.fusion_dialog(),actions)
  h.button("Photo mode",func(): h.modal.hide(); h.begin_photo(),actions)
+ for index in range(actions.get_child_count()):
+  h.button_icon(actions.get_child(index),["codex","world","craft","settings"][index])
  var at: String = h.model.origin(h.selected)
  if at != "":
   var tile: Dictionary = h.model.state.tiles[at]

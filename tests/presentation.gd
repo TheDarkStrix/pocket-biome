@@ -47,5 +47,21 @@ func _init() -> void:
    var result: bool = art.hit(type,"",relative,132.0/418.0,true)
    if edge.x < 0 or edge.x >= width: atlas_edges_safe = atlas_edges_safe and not result
  check(atlas_edges_safe,"depleted atlas edge samples stay within their assigned texture regions")
+ p.pulse("rain","0,0",["0,0","-1,0"])
+ p.advance(1.3)
+ check(p.weather.size() == 1 and p.weather[0].targets.size() == 2,"rain persists beyond old one-second flash and retains affected tiles")
+ p.advance(2.0)
+ check(p.weather.is_empty(),"weather terminates after the bounded shower")
+ var guide = preload("res://scripts/FusionGuide.gd")
+ var square = Model.new(); square.state.tiles.clear()
+ for at in [Vector2i.ZERO,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.ONE]: square.add_tile(at,"forest")
+ for key in square.state.tiles:
+  var options: Array = guide.options(square,key)
+  check(options[0].ready and options[0].at == "0,0","any corner finds the same ready fusion group")
+ square.state.tiles["1,1"].boosts = [{"until":square.state.time+8}]
+ check(not guide.options(square,"1,1")[0].ready and guide.options(square,"1,1")[0].reason.contains("8s"),"fusion guide explains temporary pulse blocker")
+ square.state.tiles.clear()
+ for x in range(4): square.add_tile(Vector2i(x,0),"forest")
+ check(not guide.options(square,"2,0")[0].ready and guide.options(square,"2,0")[0].matches == 2,"four forests in a row are explained as an incomplete square")
  print("PRESENTATION RESULT: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

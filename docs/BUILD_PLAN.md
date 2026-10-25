@@ -31,3 +31,7 @@ Cloud install/start instructions and research domain additions are saved as a dr
 Dependencies verified under /workspace/runtime: Godot4.6.3, JDK17.0.16+8, SDK36/build36.1/NDK29, Gradle8.11.1. bootstrap_android.py --install-sdk reran successfully. Existing checkout is isolated; no worktree. Never create /home/agent/.emulator_console_auth_token (a granted file mount causes sandbox failures if that file exists). Processes do not survive snapshots. The assistant cannot automatically restart on a usage reset; a new user message resumes work.
 
 Latest local revision after be8a4ee:645 checks pass. Title camera now frames the island independently after Android resize; modal replacement hides/queues old controls instead of detaching during an active callback (modal_scroll stores the new scroll reference). Photo mode preserves gameplay camera, supports wide-world zoom, hides gameplay markers and uses a bounds-safe short-caption toolbar. Final APK rebuilt and signed; install/actual native pass is in progress. No more Godot calls while validating adb.
+
+## Player feedback checkpoint
+
+Expansion/fusion/rain and UI response changes pass 701 assertions plus the full progression simulation. Rebuild and distribute the replacement signed test APK; preserve existing schema-3 saves. Real player aesthetic/pacing feedback and physical-device qualification continue to be required.
