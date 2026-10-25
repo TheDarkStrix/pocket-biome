@@ -31,6 +31,19 @@ func run() -> void:
     captions_fit = captions_fit and caption.get_minimum_size().x <= action.size.x
    check(captions_fit,"footer icons/captions fit without splitting words or clipping at "+context)
    check(h.bottom.get_global_rect().end.y <= h.get_viewport_rect().end.y,"footer remains inside portrait screen at "+context)
+   h.start_screen()
+   await process_frame
+   await process_frame
+   var center := Vector2.ZERO
+   for key in h.model.state.tiles: center += h.screen(h.model.coord(key))
+   center /= h.model.state.tiles.size()
+   check(center.y > h.get_viewport_rect().size.y*0.25 and center.y < h.get_viewport_rect().size.y*0.65,"title island hero stays centered after portrait resize at "+context)
+   h.start_play(); h.modal.hide()
+   h.begin_photo()
+   h.apply_layout()
+   await process_frame
+   check(h.photo_controls.get_global_rect().end.y <= h.get_viewport_rect().end.y,"photo toolbar fits safe portrait viewport at "+context)
+   h.end_photo()
    h.queue_free()
    await process_frame
  print("MOBILE LAYOUT RESULT: %d checks, %d failures" % [checks,failures])

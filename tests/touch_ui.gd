@@ -75,6 +75,16 @@ func run() -> void:
  await click(h.pulse_button.get_global_rect().get_center())
  check(h.modal.visible and h.modal_title.text == "World Pulse","single HUD Pulse control opens all powers through touch")
  check(is_instance_valid(h.rain_button) and is_instance_valid(h.heat_button),"power selector exposes actual playable Rain and Heat controls")
+ h.modal.hide()
+ h.campaign_ui.workshop(h)
+ await process_frame
+ var increase: Button
+ for row in h.modal_box.get_children():
+  if row is HBoxContainer:
+   for child in row.get_children():
+    if child is Button and child.text == "+": increase = child
+ await click(increase.get_global_rect().get_center())
+ check(h.campaign_ui.craft_quantity == 2 and h.modal.visible,"touch-triggered workshop replacement preserves GUI event lifetime")
  h.queue_free()
  await process_frame
  print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])

@@ -13,11 +13,11 @@ Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | layout | 17 | Portrait geometries, safe-area transforms, scroll bounds and fallback |
 | presentation | 13 | Cosmetic isolation, terminating animation, alpha picking and no replay |
 | services | 25 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
-| screens | 79 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
+| screens | 80 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
 | scene_smoke | 22 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
-| touch_ui | 12 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
-| mobile_layout | 24 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
-| **Total** | **631** | Assertions; separate simulation and startup checks also run |
+| touch_ui | 13 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
+| mobile_layout | 36 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
+| **Total** | **645** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -35,6 +35,8 @@ Native touch testing exposed disabled mouse emulation preventing Godot Control b
 
 ## Latest builder UI verification
 
-631 assertions across13 suites pass, plus full progression simulation and headless startup. The real-event suite now exercises dock→Journal, close/scrim dismissal and Pulse selection as well as welcome/harvest/mixed gestures. Mobile metrics fixtures cover320×640,360×780 and540×960 at100%/120% text. Warm-paper style/rounded typography, compact HUD/dock, illustrated production ingredients and title hierarchy render through actual OpenGL in refreshed artifacts01–12. Final native validation of this redesign is separate and in progress.
+645 assertions across13 suites pass, plus full progression simulation and headless startup. The real-event suite now exercises dock→Journal, close/scrim dismissal and Pulse selection as well as welcome/harvest/mixed gestures. Mobile metrics fixtures cover320×640,360×780 and540×960 at100%/120% text. Warm-paper style/rounded typography, compact HUD/dock, illustrated production ingredients and title hierarchy render through actual OpenGL in refreshed artifacts01–12. Final native validation of this redesign is separate and in progress.
 
 The earlier touch-enabled native build was exercised through launch, harvest, Water draft inspection/confirmation and evolution. A saved-state read after that route contained five cells, chapter2, discoveries rainforest/mistforest/reedwater and one harvest, with no debug state injection. The emulator also produced System UI/launcher ANRs while booting; these are not attributed to an app crash. Do not claim physical FPS, reliable Play Billing transactions or finished store readiness from this evidence.
+
+Latest hardening: independent title-island framing after Android viewport resize, deferred modal control deletion during pointer callbacks, photo camera restoration, hidden expansion/selection markers in photos, and short safe photo-toolbar captions. Real-touch workshop quantity rebuild and six title/photo layout fixtures are included in the645 assertions.

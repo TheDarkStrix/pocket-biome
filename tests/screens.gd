@@ -35,10 +35,13 @@ func run() -> void:
  h.services_ui()
  check(h.modal.visible,"offline services fallback usable")
  h.modal.hide()
+ var prior_zoom: float = h.zoom_level
+ var prior_pan: Vector2 = h.pan
  h.begin_photo()
  check(h.photo_mode and not h.hud.visible and h.photo_controls.visible,"photo mode suppresses gameplay HUD")
  h.end_photo()
  check(not h.photo_mode and h.hud.visible,"photo mode restores controls")
+ check(is_equal_approx(h.zoom_level,prior_zoom) and h.pan.is_equal_approx(prior_pan),"leaving photo mode restores gameplay camera")
  for chapter in [1,2,3]:
   h.model.state.chapter = chapter
   for i in range(h.model.config.draft_pools[str(chapter)].size()):

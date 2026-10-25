@@ -8,3 +8,5 @@ builds/*.aab
 *.keystore
 
 artifacts/test-logs/
+
+builds/

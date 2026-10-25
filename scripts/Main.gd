@@ -14,6 +14,7 @@ var photo_mode := false
 var photo_controls: HBoxContainer
 var photo_light_button: Button
 var photo_lighting := "day"
+var photo_saved_view := {}
 var ui_root: Control
 var model = Model.new()
 var store = Store.new()
@@ -35,6 +36,7 @@ var rain_button: Button
 var heat_button: Button
 var pulse_button: Button
 var modal_title: Label
+var modal_scroll: ScrollContainer
 var modal_scrim: ColorRect
 var notice_toast: PanelContainer
 var last_notice := ""
@@ -89,7 +91,7 @@ func _ready() -> void:
  input_controller.tapped.connect(tap)
  input_controller.inspected.connect(inspect)
  input_controller.panned.connect(func(delta): pan += delta; constrain_camera(); queue_redraw())
- input_controller.zoomed.connect(func(factor): zoom_level = clampf(zoom_level*factor,0.5,2.0); constrain_camera(); queue_redraw())
+ input_controller.zoomed.connect(func(factor): zoom_level = clampf(zoom_level*factor,0.04 if photo_mode else 0.5,2.0); constrain_camera(); queue_redraw())
  refresh()
  if show_menu_on_launch: start_screen()
  elif not model.state.pending.is_empty(): draft()
@@ -232,9 +234,9 @@ func build_ui() -> void:
   photo_lighting = "dusk" if photo_lighting != "dusk" else "day"
   queue_redraw(),photo_controls)
  photo_light_button.tooltip_text = "Day / Dusk photo preview · unlocks in Chapter 2"
- button("Capture",capture_photo,photo_controls)
+ button("Save",capture_photo,photo_controls)
  button("Share",share_photo,photo_controls)
- button("Exit photo",end_photo,photo_controls)
+ button("Done",end_photo,photo_controls)
  photo_controls.hide()
  modal_scrim = ColorRect.new()
  modal_scrim.color = Color(0.10,0.19,0.20,0.36)
@@ -286,9 +288,10 @@ func modal_content(title: String) -> VBoxContainer:
  inspection_view.clear()
  inspection_mode = false
  for child in modal.get_children():
-  modal.remove_child(child)
+  child.hide()
   child.queue_free()
  var scroll := ScrollContainer.new()
+ modal_scroll = scroll
  scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
  modal.add_child(scroll)
  modal_box = VBoxContainer.new()
@@ -525,10 +528,24 @@ func apply_layout() -> void:
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
   modal.size.y = layout.modal.end.y-modal.position.y
- photo_controls.position = Vector2(safe.position.x+20,safe.end.y-touch_height()-12)
+ photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
- constrain_camera()
+ if launch_menu: frame_title_island(safe)
+ else: constrain_camera()
  queue_redraw()
+
+func frame_title_island(safe: Rect2) -> void:
+ # Android can resize after _ready; never reuse the gameplay pan for the title hero.
+ var bounds := Rect2()
+ var first := true
+ for key in model.state.tiles:
+  var point := project(model.coord(key))
+  if first: bounds = Rect2(point,Vector2.ZERO); first = false
+  else: bounds = bounds.expand(point)
+ bounds = bounds.grow(140)
+ var hero := Rect2(safe.position+Vector2(20,safe.size.y*0.20),Vector2(safe.size.x-40,safe.size.y*0.42))
+ zoom_level = clampf(minf(hero.size.x/bounds.size.x,hero.size.y/bounds.size.y),0.04,1.8)
+ pan = hero.get_center()-world_anchor()-bounds.get_center()*zoom_level
 
 func world_rect() -> Rect2:
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
@@ -635,7 +652,8 @@ func _draw() -> void:
  for i in range(16):
   var pos := Vector2(fmod(i*193.0,540),220+fmod(i*117.0,420))
   draw_circle(pos,30+float(i%3)*12,Color(0.6,0.8,0.9,0.035))
- for k in model.frontier():
+ var visible_frontier: Array = [] if photo_mode else model.frontier()
+ for k in visible_frontier:
   var p := screen(model.coord(k))
   var r := 25*zoom_level
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",p,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
@@ -701,7 +719,7 @@ func _draw() -> void:
     var opacity: float = 0.35+0.35*absf(sin(phase))
     draw_circle(glow,2*s,Color(1,0.85,0.5,opacity))
     draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
-  if selected == k or affected(k): draw_arc(p,38*s*size,0,TAU,32,Color("f2c46d"),2*s)
+  if not photo_mode and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,Color("f2c46d"),2*s)
 
  for effect in presentation.weather:
   var center := entity_screen(effect.key)
@@ -865,6 +883,8 @@ func frame_world() -> void:
  queue_redraw()
 
 func begin_photo() -> void:
+ if photo_mode: return
+ photo_saved_view = {"zoom":zoom_level,"pan":pan}
  photo_lighting = model.state.cosmetic
  photo_mode = true
  hud.hide(); bottom.hide(); photo_controls.show()
@@ -872,6 +892,10 @@ func begin_photo() -> void:
 
 func end_photo() -> void:
  photo_mode = false
+ if not photo_saved_view.is_empty():
+  zoom_level = photo_saved_view.zoom
+  pan = photo_saved_view.pan
+  photo_saved_view.clear()
  hud.show(); bottom.show(); photo_controls.hide()
  constrain_camera()
  queue_redraw()

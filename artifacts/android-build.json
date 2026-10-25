@@ -1,12 +1,12 @@
 {
-  "utc": "2026-10-25T03:16:16.097177+00:00",
+  "utc": "2026-10-25T03:28:54.989861+00:00",
   "engine": "4.6.3.stable",
   "type": "Signed debug test APK",
-  "source_sha256": "60141dddf03b33d658ac4e294f72a485a8d8990d7cd18bcacaec5b767c79f86f",
-  "assertions": 631,
-  "apk_sha256": "d42d5c72510928fce423f9f81f7842442e0253ecd65b8e0ec4157663b678994b",
-  "bytes": 177930883,
+  "source_sha256": "491f1a4e652fe056324daf2b32e6c09762dc49ecd672f5695535728d842d2d27",
+  "assertions": 645,
+  "apk_sha256": "bac719246b0f87cb11ebb6b33c61f4bedf4560a92d847c06d481db32c585b840",
+  "bytes": 177931515,
   "renderer": "OpenGL Compatibility; desktop and mobile explicitly configured",
   "native_gameplay_verified": false,
-  "note": "Earlier native touch build completed launch/harvest/draft/evolution; redesigned build validation pending."
+  "note": "Native core gameplay and save preservation previously checked; final camera/modal/photo revision verification in progress."
 }

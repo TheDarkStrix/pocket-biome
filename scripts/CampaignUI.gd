@@ -157,10 +157,10 @@ func update_live(h) -> void:
  if not h.modal.visible or h.modal_screen != "workshop": return
  var signature: String = JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.inventory,h.model.state.coins])
  if signature != workshop_signature:
-  var scroll: ScrollContainer = h.modal.get_child(0)
+  var scroll: ScrollContainer = h.modal_scroll
   var offset: int = scroll.scroll_vertical
   workshop(h)
-  h.modal.get_child(0).set_deferred("scroll_vertical",offset)
+  h.modal_scroll.set_deferred("scroll_vertical",offset)
   return
  if is_instance_valid(workshop_stock):
   var stock: Dictionary = h.model.state.inventory
