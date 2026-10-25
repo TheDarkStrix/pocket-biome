@@ -47,3 +47,5 @@ Prior 0.11 verified source:750 Godot assertions and eight Python audit tests; na
 0.13: current Play Store reference review and mobile HUD/World hub redesign implemented; current-source package/device observations are separately scoped. Physical-device and human approval remain required.
 
 0.14: user rejected dashboard-like0.13. Replaced persistent gameplay panels with a world-first atmosphere and small floating actions, retaining detail access and touch targets. Current rendered and Android evidence is separately scoped; human visual approval and physical-device validation remain open.
+
+0.15: modal text-list feedback addressed with purpose-specific illustrated sheets.880 Godot assertions/15 suites plus eight audit cases and complete progression routes pass. New draft-swipe, category-completeness and mobile sheet-layout checks qualify the interaction changes. Current native observations remain scoped separately from human visual/device/provider approval.

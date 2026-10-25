@@ -26,3 +26,5 @@ See ARCHITECTURE.md, ART_ASSET_MANIFEST.md, BALANCING.md, TEST_REPORT.md and doc
 Current visual direction is world-first: atmospheric sky/clouds, compact resources and goals, small floating tool icons and contextual tile details. This supersedes the user's rejected gray, panel-heavy0.13 HUD. See docs/DESIGN_DIRECTION.md and docs/UI_RESEARCH.md. This revision remains under human review.
 
 Production status and external gates: docs/PRODUCTION_READINESS.md. Ongoing foliage/water/structure effects are implemented; the exact animation inventory and remaining authored rigs are in docs/ANIMATION_STATUS.md. Preview artifact validation is distinct from commercial release certification.
+
+Gameplay sheets now use illustrated draft cards, a categorized crafting catalogue and job shelf, current-island World previews, Pulse footprint diagrams and bound setting switches. The gameplay HUD and economy remain unchanged. See fixtures33–39 and current TEST_REPORT.md; human visual approval remains open.

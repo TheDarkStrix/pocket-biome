@@ -16,6 +16,12 @@ func click(position: Vector2) -> void:
  await process_frame
  touch(position,false)
  await process_frame
+func find_trade(node: Node) -> Button:
+ if node is Button and node.get_meta("trade_resource","") == "wood" and node.get_meta("trade_quantity",0) == 20 and not node.disabled: return node
+ for child in node.get_children():
+  var match_button: Button = find_trade(child)
+  if match_button != null: return match_button
+ return null
 func run() -> void:
  root.size = Vector2i(540,960)
  var h = load("res://scenes/Main.tscn").instantiate()
@@ -213,18 +219,37 @@ func run() -> void:
  h.refresh(); h.campaign_ui.trade(h)
  await process_frame
  await process_frame
- var trade_twenty: Button
- for panel in h.modal_box.get_children():
-  if panel is PanelContainer:
-   for row in panel.get_child(0).get_children():
-    if row is HBoxContainer:
-     for action in row.get_children():
-      if action is Button and action.text == "20 → 20 coins" and not action.disabled: trade_twenty = action
+ var trade_twenty: Button = find_trade(h.modal_box)
  check(trade_twenty != null,"illustrated trade screen offers the real affordable batch")
  if trade_twenty != null:
   await click(trade_twenty.get_global_rect().get_center())
   check(h.model.state.inventory.wood == 5 and h.model.state.coins == 45,"trade touch spends exactly the selected stock and grants the displayed coins")
   check(h.store.load_state().inventory.wood == 5,"voluntary trade persists through the actual UI path")
+ h.model = preload("res://scripts/WorldModel.gd").new()
+ h.model.begin_draft("-1,0"); h.draft()
+ await process_frame
+ await process_frame
+ var carousel: ScrollContainer = h.modal_box.get_node("DraftCarousel")
+ var saved_offers: String = JSON.stringify(h.model.state.pending)
+ var saved_coins: int = h.model.state.coins
+ Input.emulate_touch_from_mouse = true
+ var swipe_start: Vector2 = carousel.global_position+Vector2(360,100)
+ touch(swipe_start,true)
+ await process_frame
+ var swipe_prior := swipe_start
+ for index in range(1,9):
+  var point := swipe_start-Vector2(index*24,0)
+  var drag := InputEventScreenDrag.new(); drag.index = 0; drag.position = point; drag.relative = point-swipe_prior
+  Input.parse_input_event(drag); Input.flush_buffered_events(); swipe_prior = point
+  await process_frame
+ touch(swipe_prior,false)
+ await process_frame
+ check(carousel.scroll_horizontal > 0,"real touch swipes the draft over its illustrated artwork")
+ check(JSON.stringify(h.model.state.pending) == saved_offers and h.model.state.coins == saved_coins and h.modal_screen == "draft","swiping cannot select, reroll or charge for a card")
+ Input.emulate_touch_from_mouse = false
+ var expected_type: String = h.model.state.pending.cards[2]
+ await click(h.draft_cards[2].get_global_rect().get_center())
+ check(h.modal_title.text.begins_with(expected_type.capitalize()) and is_instance_valid(h.confirm_card) and h.model.state.coins == saved_coins,"the newly revealed third card opens its actual inspection/confirmation without paying early")
  h.queue_free()
  await process_frame
  print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])

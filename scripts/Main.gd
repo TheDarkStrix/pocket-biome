@@ -3,6 +3,7 @@ const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const Store = preload("res://scripts/SaveStore.gd")
 var sky_backdrop: CanvasLayer
+var sheets = preload("res://scripts/GameSheets.gd").new()
 var game_hud = preload("res://scripts/GameHUD.gd").new()
 var ui_motion = preload("res://scripts/UIMotion.gd").new()
 var fusion_preview: Array[String] = []
@@ -116,10 +117,13 @@ func label(text: String, size: int, parent: Node) -> Label:
  l.text = tr(text)
  l.set_meta("base_font",size)
  l.add_theme_font_size_override("font_size",scaled_font(size))
- l.add_theme_color_override("font_color",ThemeKit.INK)
+ l.add_theme_color_override("font_color",ThemeKit.SHEET_INK if is_sheet(parent) else ThemeKit.INK)
  l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  parent.add_child(l)
  return l
+
+func is_sheet(parent: Node) -> bool:
+ return is_instance_valid(modal) and (parent == modal or modal.is_ancestor_of(parent))
 
 func button(text: String, action: Callable, parent: Node) -> Button:
  var b := Button.new()
@@ -141,6 +145,18 @@ func button(text: String, action: Callable, parent: Node) -> Button:
  focus.border_color = ThemeKit.ACCENT
  focus.set_border_width_all(2)
  b.add_theme_stylebox_override("focus",focus)
+ if is_sheet(parent):
+  b.add_theme_color_override("icon_normal_color",ThemeKit.SHEET_CTA)
+  b.add_theme_color_override("icon_hover_color",ThemeKit.SHEET_CTA)
+  b.add_theme_color_override("icon_pressed_color",ThemeKit.SHEET_INK)
+  b.add_theme_color_override("font_color",ThemeKit.SHEET_INK)
+  b.add_theme_color_override("font_hover_color",ThemeKit.SHEET_INK)
+  b.add_theme_color_override("font_pressed_color",ThemeKit.SHEET_INK)
+  b.add_theme_color_override("font_disabled_color",Color("8c9b91"))
+  b.add_theme_stylebox_override("normal",ThemeKit.sheet_panel(Color("dce6d8")))
+  b.add_theme_stylebox_override("hover",ThemeKit.sheet_panel(Color("c9ddc9")))
+  b.add_theme_stylebox_override("pressed",ThemeKit.sheet_panel(Color("b8cdbb")))
+  b.add_theme_stylebox_override("disabled",ThemeKit.sheet_panel(Color("e2e7dc")))
  b.pressed.connect(action)
  parent.add_child(b)
  ui_motion.bind_button(b,func(): return model.state.settings.reduced_motion)
@@ -193,7 +209,7 @@ func build_ui() -> void:
  modal = PanelContainer.new()
  modal.position = Vector2(20,240)
  modal.size = Vector2(500,400)
- modal.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
+ modal.add_theme_stylebox_override("panel",ThemeKit.sheet_panel(ThemeKit.SHEET_BG))
  root.add_child(modal)
  modal.visibility_changed.connect(func(): modal_scrim.visible = modal.visible)
  modal.hide()
@@ -208,28 +224,33 @@ func conditions_help() -> void:
  var box := modal_content("Tile conditions")
  var origin: String = model.origin(selected)
  if origin != "":
-  label("Selected tile: "+tile_title(model.state.tiles[origin]),19,box)
- label("These readings describe the tile you selected, not the whole island. Nearby tiles and World Pulses change its conditions and help it transform.",17,box)
- label("Moisture · how wet the ground is. Water nearby and Rain Pulse make it wetter.",17,box)
- label("Heat · how warm the tile is. Heat Pulse warms it; Frost Pulse cools it.",17,box)
- label("Each score runs from 0 to 100. Heat is a relative score, not degrees Celsius. Different transformations need different conditions; higher is not always better.",17,box)
- label("Try placing Water beside Oak or Forest. As moisture rises, you can discover a rainforest. Hold a tile to see all five conditions and its transformation requirements.",17,box)
- button("Inspect selected tile",func():
+  var tile: Dictionary = model.state.tiles[origin]
+  sheets.art(self,box,tile.type,tile.evolution,150)
+  label(tile_title(tile),20,box)
+ sheets.caption(self,"Neighbors and World Pulses change what your land can become.",box)
+ var example := HBoxContainer.new(); box.add_child(example)
+ for item in [{"type":"water","evolution":"","label":"Water"},{"type":"oak","evolution":"","label":"Oak"},{"type":"forest","evolution":"rainforest","label":"Rainforest"}]:
+  var group := VBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL; example.add_child(group)
+  sheets.art(self,group,item.type,item.evolution,88)
+  var caption: Label = sheets.caption(self,item.label,group); caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ for detail in [{"icon":"rain","title":"Moisture","text":"Nearby Water and Rain Pulse make the ground wetter."},{"icon":"heat","title":"Heat","text":"Heat Pulse warms the ground. Frost cools it."}]:
+  var content: VBoxContainer = sheets.card(box)
+  var row := HBoxContainer.new(); content.add_child(row); sheets.icon(row,detail.icon,30)
+  label(detail.title,19,row)
+  sheets.caption(self,detail.text,content)
+ sheets.caption(self,"Scores run from 0–100; Heat is not °C. Higher is not always better. The inspector shows every condition and transformation requirement.",box)
+ sheets.primary(self,"Inspect selected tile",func():
   if origin != "": open_inspector(origin),box)
  button("Back to island",func(): modal.hide(),box)
 
 func pulse_selector() -> void:
  var box := modal_content("World Pulse")
- var energy: int = model.state.energy
- label(("Ready" if energy >= 100 else "Charging")+" · %d / 200 energy" % energy,19,box)
- var descriptions := {"rain":"Refresh moisture across the selected cross.","heat":"Warm the ground and clear Dusk frost.","frost":"Cool the land and invite frozen discoveries."}
+ sheets.energy(self,box)
+ var descriptions := {"rain":"Refresh the center tile and its four neighbors.","heat":"Warm the same cross and clear Dusk frost.","frost":"Cool the cross and invite frozen discoveries."}
  for power in ["rain","heat","frost"]:
-  var action: Button = button(power.capitalize()+" · 100 energy",func(): modal.hide(); target(power),box)
-  button_icon(action,power)
+  var action: Button = sheets.power(self,box,power,descriptions[power])
   if power == "rain": rain_button = action
   elif power == "heat": heat_button = action
-  action.disabled = energy < 100 or (power == "frost" and model.state.chapter < 2)
-  label("Unlocks in Chapter 2" if power == "frost" and model.state.chapter < 2 else descriptions[power],15,box)
  button("Back to island",func(): modal.hide(),box)
 
 func target(power: String) -> void:
@@ -250,15 +271,17 @@ func modal_content(title: String) -> VBoxContainer:
   child.queue_free()
  var scroll := ScrollContainer.new()
  modal_scroll = scroll
+ sheets.scroll_skin(scroll)
  scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
  modal.add_child(scroll)
  modal_box = VBoxContainer.new()
  modal_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  modal_box.add_theme_constant_override("separation",14)
  scroll.add_child(modal_box)
+ modal_box.minimum_size_changed.connect(func(): call_deferred("apply_layout"))
  var heading := HBoxContainer.new()
  modal_box.add_child(heading)
- modal_title = label(title,25,heading)
+ modal_title = label(title,23,heading)
  modal_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  var close := button("×",func(): modal.hide(),heading)
  close.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -274,33 +297,36 @@ func modal_content(title: String) -> VBoxContainer:
 
 func draft() -> void:
  if model.state.pending.is_empty():
-  model.message = "Tap a cloud plot to open its three-card draft."
-  refresh()
-  return
- var box := modal_content("Choose Your Next Biome")
- modal_screen = "draft"
- draft_cards.clear()
- label("One card · %d Coins on placement · inspect a card, then confirm." % model.state.pending.cost,16,box)
+  model.message = "Tap a cloud plot to open its three-card draft."; refresh(); return
+ var box := modal_content("Choose your next biome")
+ modal_screen = "draft"; draft_cards.clear()
+ sheets.chips(self,box,{"coins":model.state.pending.cost})
+ sheets.caption(self,"Swipe through three offers. Coins are spent only on placement.",box)
+ var carousel := ScrollContainer.new()
+ carousel.name = "DraftCarousel"
+ carousel.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+ carousel.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+ carousel.custom_minimum_size.y = 344*model.state.text_scale
+ box.add_child(carousel)
+ var cards := HBoxContainer.new(); cards.add_theme_constant_override("separation",12); carousel.add_child(cards)
  for i in range(3):
   var type: String = model.state.pending.cards[i]
   var definition: Dictionary = model.config.tiles[type]
-  var panel := PanelContainer.new()
-  var style := panel_style(Color("20394a"))
-  style.border_color = rarity_color(definition.rarity)
-  panel.add_theme_stylebox_override("panel",style)
-  box.add_child(panel)
-  var row := HBoxContainer.new()
-  panel.add_child(row)
-  var preview_art = preload("res://scripts/TileThumbnail.gd").new()
-  preview_art.tile_type = type; preview_art.extent = 100
-  row.add_child(preview_art)
-  var content := VBoxContainer.new()
-  content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  row.add_child(content)
-  label(type.capitalize()+" · "+definition.rarity.capitalize(),18,content)
-  label(definition.category.capitalize()+" · "+card_hint(type),14,content)
-  label(preload("res://scripts/GameplayAdvisor.gd").placement(model,type,model.state.pending.at),14,content)
-  draft_cards.append(button("Inspect "+type.capitalize(),func(): inspect_card(i),content))
+  var content: VBoxContainer = sheets.card(cards)
+  content.get_parent().custom_minimum_size.x = 230
+  sheets.caption(self,definition.rarity.to_upper()+" · "+definition.category.to_upper(),content)
+  sheets.art(self,content,type,"",164)
+  label(type.capitalize(),22,content)
+  if definition.resource != "": sheets.caption(self,"Gather "+definition.resource.capitalize(),content)
+  else: sheets.caption(self,card_hint(type),content)
+  draft_cards.append(sheets.primary(self,"Inspect "+type.capitalize(),func(): inspect_card(i),content))
+ var paging := HBoxContainer.new(); box.add_child(paging)
+ var previous: Button = button("‹",func(): carousel.scroll_horizontal = maxi(0,carousel.scroll_horizontal-242),paging)
+ previous.custom_minimum_size.x = touch_height(); previous.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+ var offers: Label = sheets.caption(self,"3 offers · swipe to compare",paging)
+ offers.size_flags_horizontal = Control.SIZE_EXPAND_FILL; offers.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ var next: Button = button("›",func(): carousel.scroll_horizontal += 242,paging)
+ next.custom_minimum_size.x = touch_height(); next.size_flags_horizontal = Control.SIZE_SHRINK_END
  if not model.state.pending.get("ad_rerolled",false):
   var reroll := button("Optional test ad · one new draft",func(): services.request_reward("reroll"),box)
   reroll.disabled = not services.ad_ready or not services.reward_available()
@@ -312,14 +338,15 @@ func inspect_card(index: int) -> void:
  var type: String = model.state.pending.cards[index]
  var definition: Dictionary = model.config.tiles[type]
  var box := modal_content(type.capitalize()+" · "+definition.rarity.capitalize())
- var image = preload("res://scripts/TileThumbnail.gd").new()
- image.tile_type = type; image.extent = 180
- box.add_child(image)
+ sheets.art(self,box,type,"",188)
  label(card_hint(type),18,box)
  label(preload("res://scripts/GameplayAdvisor.gd").placement(model,type,model.state.pending.at),16,box)
  if definition.resource != "": label("Produces 1 %s every %ds" % [definition.resource.capitalize(),definition.cooldown],16,box)
- for i in range(5): dna_bar(box,model.config.attributes[i],definition.dna[i])
- confirm_card = button("Place here · %d Coins" % model.state.pending.cost,func():
+ var attributes := GridContainer.new(); attributes.columns = 2; attributes.add_theme_constant_override("h_separation",16); box.add_child(attributes)
+ for i in range(5):
+  var group := VBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL; attributes.add_child(group)
+  dna_bar(group,model.config.attributes[i],definition.dna[i])
+ confirm_card = sheets.primary(self,"Place here · %d Coins" % model.state.pending.cost,func():
   if model.place(index):
    modal.hide(); haptic(22)
   persist(); refresh(),box)
@@ -348,12 +375,13 @@ func open_ideas() -> void:
  label("Choose a direction. Your chapter goal can wait while you experiment.",16,box)
  for suggestion in suggestions:
   var panel := PanelContainer.new()
-  panel.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER_ALT))
+  panel.add_theme_stylebox_override("panel",ThemeKit.sheet_panel())
   box.add_child(panel)
   var content := VBoxContainer.new(); panel.add_child(content)
   var heading := HBoxContainer.new(); content.add_child(heading)
   var icon := TextureRect.new()
   icon.texture = preload("res://scripts/UIIcons.gd").texture(suggestion.icon)
+  if preload("res://scripts/UIIcons.gd").LINE.has(suggestion.icon): icon.modulate = ThemeKit.SHEET_CTA
   icon.custom_minimum_size = Vector2(40,40)
   icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
   icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -404,15 +432,13 @@ func fusion_dialog() -> void:
   label("Expand with Forest, Water, Stone or Meadow to begin a group.",17,box)
  for option in options.slice(0,4):
   var panel := PanelContainer.new()
-  panel.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER_ALT))
+  panel.add_theme_stylebox_override("panel",ThemeKit.sheet_panel())
   box.add_child(panel)
   var content := VBoxContainer.new(); panel.add_child(content)
-  var row := HBoxContainer.new(); content.add_child(row)
-  var image = preload("res://scripts/TileThumbnail.gd").new()
-  image.tile_type = option.type; image.evolution = option.recipe.id
-  image.custom_minimum_size = Vector2(90,90); row.add_child(image)
-  var caption := label(option.recipe.name+"\n%d / 4 matching tiles" % option.matches,19,row)
-  caption.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  var diagram = preload("res://scripts/FusionDiagram.gd").new()
+  diagram.type = option.type; diagram.evolution = option.recipe.id; diagram.matches = option.matches
+  content.add_child(diagram)
+  label(option.recipe.name+" · %d / 4 ready" % option.matches,19,content)
   var reason := label(option.reason,15,content)
   var origin: String = option.at
   var footprint: Array[String] = option.cells
@@ -426,8 +452,8 @@ func fusion_dialog() -> void:
    else:
     fusion_dialog(); model.message = "Group changed. Check its current requirements."
    persist(); refresh(),content)
-  confirm.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACCENT))
-  confirm.add_theme_color_override("font_color",ThemeKit.PRIMARY_INK)
+  confirm.add_theme_stylebox_override("normal",ThemeKit.sheet_panel(ThemeKit.SHEET_CTA))
+  confirm.add_theme_color_override("font_color",Color("fffdf2"))
   confirm.disabled = not option.ready
   fusion_controls.append({"origin":origin,"action":confirm,"reason":reason})
  button("Back to island",func(): modal.hide(),box)
@@ -599,7 +625,7 @@ func apply_layout() -> void:
  bottom.position = layout.bottom.position
  bottom.size = layout.bottom.size
  modal.position = layout.modal.position
- modal.size = layout.modal.size
+ modal.size = Vector2(layout.modal.size.x,minf(layout.modal.size.y,maxf(220,modal_box.get_combined_minimum_size().y+24))) if is_instance_valid(modal_box) else layout.modal.size
  if launch_menu and is_instance_valid(launch_screen) and is_instance_valid(menu_spacer):
   launch_screen.position = Vector2(safe.position.x+22,safe.position.y+40)
   launch_screen.size.x = safe.size.x-44
@@ -822,7 +848,7 @@ func _draw() -> void:
   draw_string_outline(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,3,Color(0.09,0.2,0.23,1-effect.elapsed/0.8))
   draw_string(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color(0.95,0.83,0.56,1-effect.elapsed/0.8))
  if photo_mode:
-  draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,ThemeKit.INK if visible_palette() == "day" else Color("fff4dc"))
+  draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,hud_ink())
 
 func draw_ellipse_shadow(p: Vector2,w: float) -> void:
  var points := PackedVector2Array()
@@ -844,9 +870,7 @@ func open_inspector(key: String) -> void:
  var tile: Dictionary = model.state.tiles[key]
  var box := modal_content(tile_title(tile))
  inspection_mode = true
- var image = preload("res://scripts/TileThumbnail.gd").new()
- image.tile_type = tile.type; image.evolution = tile.evolution; image.extent = 130
- box.add_child(image)
+ var image = sheets.art(self,box,tile.type,tile.evolution,180)
  inspection_view = {"key":key,"title":modal_title,"image":image,"bars":{},"conditions":[]}
  var production: Dictionary = model.production(tile)
  if production.resource != "": inspection_view["production"] = label("%d %s · %ds cycle · ready in %ds" % [production.amount,production.resource.replace("_"," ").capitalize(),production.cooldown,ceili(maxf(0,tile.ready-model.state.time))],16,box)
@@ -856,7 +880,10 @@ func open_inspector(key: String) -> void:
   var held := PackedStringArray()
   for resource in reserve: held.append("%d %s" % [reserve[resource],resource.capitalize()])
   label("Automatic production keeps "+", ".join(held)+" for construction. Manual crafting can use this reserve.",15,box)
- for attribute in model.config.attributes: inspection_view.bars[attribute] = dna_bar(box,attribute,tile.dna[attribute])
+ var readings := GridContainer.new(); readings.columns = 2; readings.add_theme_constant_override("h_separation",16); readings.add_theme_constant_override("v_separation",10); box.add_child(readings)
+ for attribute in model.config.attributes:
+  var group := VBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL; readings.add_child(group)
+  inspection_view.bars[attribute] = dna_bar(group,attribute,tile.dna[attribute])
  label("Neighbor influences",19,box)
  var count := 0
  for neighbor in model.neighbors(key):
@@ -868,7 +895,10 @@ func open_inspector(key: String) -> void:
   else:
    for attribute in effects: text += "%+d %s " % [effects[attribute]*source.get("level",1),attribute]
    text += "every %ds" % model.config.tiles[source.type].get("effect_interval",1)
-  label(text,14,box); count += 1
+  var source_row := HBoxContainer.new(); box.add_child(source_row)
+  var source_art = sheets.art(self,source_row,source.type,source.evolution,52); source_art.custom_minimum_size.x = 60
+  var source_text: Label = label(text,14,source_row); source_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  count += 1
  if count == 0: label("No environmental sources nearby.",14,box)
  label("Discovery opportunities",19,box)
  for recipe in model.config.recipes:
@@ -947,13 +977,23 @@ func services_ui() -> void:
  if not modal.visible or modal_screen != "services": services.event("store_opened")
  var box := modal_content("Optional Store · Sandbox")
  modal_screen = "services"
- label(services.status,16,box)
- label("Test advertisements only. Purchases require a Play sandbox tester installation. Connecting also enables occasional test ads at chapter breaks. No paid item is needed to finish the game.",15,box)
- button("Connect optional services",func(): services.initialize_online(),box).disabled = services.bridge == null
- button("Optional test ad · +25 coins",func(): services.request_reward("coins"); modal.hide(),box).disabled = not services.ad_ready or not services.reward_available()
- button("Optional test ad · +100 pulse",func(): services.request_reward("pulse"); modal.hide(),box).disabled = not services.ad_ready or not services.reward_available()
+ sheets.art(self,box,"shrine","",144)
+ label("Your world plays offline",21,box)
+ sheets.caption(self,"Optional extras. Core progression needs no purchase. Development test services only.",box)
+ sheets.caption(self,services.status,box)
+ sheets.primary(self,"Connect optional services",func(): services.initialize_online(),box).disabled = services.bridge == null
+ var rewards := GridContainer.new(); rewards.columns = 2; rewards.add_theme_constant_override("h_separation",10); box.add_child(rewards)
+ for offer in [{"kind":"coins","icon":"coins","amount":25,"title":"25 Coins"},{"kind":"pulse","icon":"rain","amount":100,"title":"100 Pulse energy"}]:
+  var content: VBoxContainer = sheets.card(rewards)
+  sheets.icon(content,offer.icon,72)
+  label(offer.title,18,content)
+  var ad: Button = sheets.primary(self,"Watch test ad",func(): services.request_reward(offer.kind); modal.hide(),content)
+  ad.disabled = not services.ad_ready or not services.reward_available()
  for product in services.products:
-  button(str(product.name)+" · "+str(product.price),func(): services.purchase(product.id),box)
+  var content: VBoxContainer = sheets.card(box)
+  sheets.art(self,content,"lantern" if "founder" in str(product.id) else "shrine","",112)
+  label(str(product.name),20,content)
+  sheets.primary(self,str(product.price),func(): services.purchase(product.id),content)
  button("Restore purchases",func(): services.restore(),box).disabled = services.bridge == null
  if model.state.entitlements.has("moon") or model.state.entitlements.has("founders"):
   button("Select Moonlit theme",func(): model.state.cosmetic = "moon"; persist(); refresh(),box)
@@ -1213,6 +1253,8 @@ func update_pulse_width() -> void:
 func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var texture: Texture2D = preload("res://scripts/UIIcons.gd").texture(id)
  if not stacked:
+  if is_sheet(target) and not preload("res://scripts/UIIcons.gd").LINE.has(id):
+   for state in ["icon_normal_color","icon_hover_color","icon_pressed_color"]: target.add_theme_color_override(state,Color.WHITE)
   target.icon = texture
   target.expand_icon = true
   target.add_theme_constant_override("icon_max_width",roundi(24*logical_per_dp()))

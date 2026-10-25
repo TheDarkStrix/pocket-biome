@@ -36,3 +36,5 @@ With fixed seed 90210, the public collect-ready route now reaches all 20 discove
 0.13 is a presentation pass: currency/material quantities, cooldowns, chapter rewards, prices, drafts and saved-state rules are unchanged. The energy ring displays stored Pulse energy and does not imply timed regeneration.
 
 0.14 changes presentation and information exposure, not resource yields, prices, cooldowns or progression. Detailed conditions and exact energy remain accessible; the default HUD is reduced.
+
+0.15 changes modal presentation, categories and navigation only. Recipe prices/prerequisites, three job slots, durations, batch quantities, saved draft quotes, reward limits and trade exchange rates are unchanged. UI ingredient badges read actual owned/required values; previews do not perform transactions.

@@ -152,6 +152,17 @@ func capture() -> void:
  scene.model.state.cosmetic = "dusk"; scene.refresh(); await shot("31-dusk-atmosphere")
  scene.model.state.cosmetic = "day"; scene.refresh()
  scene.campaign_ui.world(scene); await shot("28-world-hub")
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ scene.model.state.coins = 100; scene.model.begin_draft("-1,0"); scene.refresh(); scene.draft()
+ await shot("33-draft-card-carousel")
+ scene.model = preload("res://scripts/WorldModel.gd").new()
+ scene.model.state.inventory.wood = 30; scene.model.state.inventory.stone = 30; scene.model.state.inventory.fiber = 20
+ scene.model.craft("workbench"); scene.model.tick(4); scene.model.deploy("workbench","1,1"); scene.model.craft("windmill"); scene.refresh()
+ scene.campaign_ui.workshop_filter = "All"
+ scene.campaign_ui.workshop(scene); await shot("34-building-catalogue")
+ scene.pulse_selector(); await shot("35-illustrated-powers")
+ scene.campaign_ui.world(scene); await shot("36-diorama-world-hub")
+ scene.campaign_ui.settings(scene); await shot("37-setting-switches")
  scene.queue_free()
  await process_frame
  root.size = Vector2i(320,640)
@@ -167,6 +178,8 @@ func capture() -> void:
  mobile.notice_time = 0
  for frame in range(5): await process_frame
  mobile.frame_world(); await shot("29-small-screen-large-text")
+ mobile.pulse_selector(); await shot("38-large-text-power-sheet")
+ mobile.campaign_ui.world(mobile); await shot("39-large-text-world-sheet")
  mobile.queue_free()
  await process_frame
  # Audio playback references are released asynchronously by the mixer.

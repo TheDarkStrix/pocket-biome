@@ -11,6 +11,11 @@ const WATER = Color("9fcdd9")
 const READY = Color("bdd7b2")
 const PRIMARY_INK = Color("242832")
 const BORDER = Color("515963")
+const SHEET_BG = Color("edf0e4")
+const SHEET_CARD = Color("faf8ed")
+const SHEET_INK = Color("284442")
+const SHEET_MUTED = Color("637873")
+const SHEET_CTA = Color("42796d")
 const BODY = preload("res://assets/fonts/BiomeInterface.ttf")
 const DISPLAY = preload("res://assets/fonts/BiomeDisplay.ttf")
 static func theme() -> Theme:
@@ -42,4 +47,13 @@ static func floating(color: Color = PAPER, radius: int = 18) -> StyleBoxFlat:
 static func quiet() -> StyleBoxFlat:
  var style := panel(Color(0,0,0,0))
  style.set_border_width_all(0)
+ return style
+
+static func sheet_panel(color: Color = SHEET_CARD) -> StyleBoxFlat:
+ var style := panel(color)
+ style.border_color = Color("c6d4c5")
+ style.set_corner_radius_all(18)
+ style.shadow_color = Color(0.12,0.24,0.23,0.09)
+ style.shadow_size = 3
+ style.shadow_offset = Vector2(0,2)
  return style

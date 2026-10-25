@@ -13,7 +13,7 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 845 assertions across 14 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
+`tools/check.sh`: 880 assertions across 15 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
 
 Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
 
@@ -66,3 +66,7 @@ The small-screen/large-text visual pass caught cramped high resource counts; the
 ## 0.14 atmospheric world and compact HUD
 
 Implemented day/dusk/night atmosphere with controlled cloud drift, context-only conditions and selection details, a five-second inspect callout, smaller visible controls with retained touch targets, a direct Pulse icon and lighter World action styling. Exact economy/save behavior is unchanged. The current mobile fixtures verify world-height allocation, high resource counts, goal progress, selection reveal/expiry and inspector access. New shader/vector art is original; actual rendered evidence and scoped Android results are recorded separately.
+
+## 0.15 gameplay-sheet revision
+
+Implemented illustrated draft cards, categorized build catalogue and actual job shelf, current-island miniatures in World, Pulse footprint previews, input/output fusion art, item/Codex diorama stages, bound Settings switches, and illustrated trade/help/store layouts. Shared sheet styling is independent of the compact gameplay HUD. No gameplay recipe or backend service was replaced by a mock; all18 configured crafting recipes remain reachable through All/categories. Exact resource transactions and saved quotes are retained. Visual acceptance remains open; current-source automated and native evidence is recorded separately.

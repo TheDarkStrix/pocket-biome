@@ -6,6 +6,12 @@ func check(ok: bool, message: String) -> void:
  if not ok: failures += 1; printerr("FAIL: "+message)
 func _init() -> void:
  call_deferred("run")
+func named_button(node: Node, title: String) -> Button:
+ if node is Button and node.text == title: return node
+ for child in node.get_children():
+  var found: Button = named_button(child,title)
+  if found != null: return found
+ return null
 func run() -> void:
  var h = load("res://scenes/Main.tscn").instantiate()
  h.store.path = "user://screen-tests.json"
@@ -19,7 +25,18 @@ func run() -> void:
  h.campaign_ui.journal(h)
  check(h.modal.visible and h.modal_box.get_child_count() >= 6,"Codex includes all entries and chapter progress")
  h.campaign_ui.workshop(h)
- check(h.modal.visible and h.modal_box.get_child_count() > 20,"crafting and trade interface populated")
+ check(h.modal.visible and h.campaign_ui.craft_catalog.get_child_count() == h.model.config.crafting.size(),"illustrated catalogue contains every configured crafting recipe")
+ var unchanged: String = JSON.stringify(h.model.state)
+ named_button(h.modal_box,"Structures").pressed.emit()
+ var structures_only := true
+ var expected_structures := 0
+ for recipe in h.model.config.crafting:
+  if recipe.has("tile") and h.model.config.tiles[recipe.tile].category == "structure": expected_structures += 1
+ for entry in h.campaign_ui.craft_catalog.get_children():
+  structures_only = structures_only and h.model.config.tiles[entry.get_meta("recipe_id")].category == "structure"
+ check(structures_only and h.campaign_ui.craft_catalog.get_child_count() == expected_structures,"category switch presents all structural recipes through the actual control")
+ named_button(h.modal_box,"All").pressed.emit()
+ check(h.campaign_ui.craft_catalog.get_child_count() == h.model.config.crafting.size() and JSON.stringify(h.model.state) == unchanged,"returning to the full catalogue preserves all recipes and does not spend or mutate progression")
  h.campaign_ui.settings(h)
  check(h.modal_box.get_child_count() >= 10,"settings and guide available")
  h.campaign_ui.world(h)

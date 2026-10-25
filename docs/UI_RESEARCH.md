@@ -83,3 +83,7 @@ Pocket City / Pocket City 2, Pocket Build, Pocket Land and Land Builder are inve
 ## Implemented interpretation
 
 Parchment/brass/ink styling and licensed Nunito/Fredoka typography; compact resource header; four illustrated dock actions; a single Pulse selector; selected-biome context; transient notices; modal scrim and close affordance; live island title hero and clear Play/Continue hierarchy. Mobile text, touch routing and save restoration remain acceptance checks rather than assumed outcomes.
+
+## 0.15 modal feedback
+
+The user rejected the modal interiors as text/button lists with icons. The new sheets use original illustrated item-card/catalogue layouts and existing game artwork, real island miniatures and power/fusion schematics. These are not claimed as faithful reproductions of Pocket City2 or SimCity BuildIt. Actual screenshots33–39 and scoped interaction evidence document the implementation; subjective approval remains open.

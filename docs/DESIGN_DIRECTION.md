@@ -13,3 +13,11 @@ Touching land briefly reveals an inspect callout next to the tile. It expires af
 Neutral typography, original terrain/resource art and original navigation/leaf/camera icons remain in use. Daylight labels use dark ink; dusk/night labels become light. The existing supplied art sheet still guides terrain proportions. Terra Nil and the reviewed Play Store builders inform world-first composition, without copying their assets or requiring their palette.
 
 Mobile tests require at least55% of portrait height for the world at all tested sizes/text scales, readable high counts and goal progress, comfortable targets, working transient callouts and access to real detail screens. Rendered fixtures document the direction; human creative approval remains open.
+
+## 0.15 illustrated gameplay sheets
+
+The user rejected the modal interiors as gray text/button lists with added icons. Gameplay sheets now use an independent mineral-ivory/teal palette, large atlas illustrations and purpose-specific composition. This is an original revision under review; it is not presented as a faithful copy of another game's UI or human-approved final art.
+
+Drafts are a three-card horizontal carousel with touch scrolling and arrow alternatives. Each card has substantial terrain art and a real inspect action; confirmation retains the stored quote. Workshop is a categorized two-column catalogue with ingredient counts, a real three-slot crafting shelf, actual countdowns and finished-blueprint placement. World actions show the selected biome, the current island miniature and a sanctuary illustration. Pulse cards show the actual five-cell cross shape and illustrative rain/heat/frost effects before real targeting begins.
+
+Codex silhouettes, item detail stages, fusion input/result diagrams, illustrated learning/help and reward cards replace the repeated paragraph-list format. Settings use bound switch indicators with independent volume/text controls. Legal/privacy text remains readable and complete. Short sheets fit their content; long ones scroll within safe bounds. This changes presentation and discoverability, not rewards, costs, saves or provider configuration.
