@@ -1,6 +1,7 @@
 extends Node2D
 const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
+const MaterialUI = preload("res://scripts/MaterialUI.gd")
 const Store = preload("res://scripts/SaveStore.gd")
 var sky_backdrop: CanvasLayer
 var sheets = preload("res://scripts/GameSheets.gd").new()
@@ -122,6 +123,7 @@ func label(text: String, size: int, parent: Node) -> Label:
  l.set_meta("base_font",size)
  l.add_theme_font_size_override("font_size",scaled_font(size))
  l.add_theme_color_override("font_color",ThemeKit.SHEET_INK if is_sheet(parent) else ThemeKit.INK)
+ MaterialUI.lettering(l)
  l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  parent.add_child(l)
  return l
@@ -161,6 +163,9 @@ func button(text: String, action: Callable, parent: Node) -> Button:
   b.add_theme_stylebox_override("hover",ThemeKit.sheet_panel(Color("c9ddc9")))
   b.add_theme_stylebox_override("pressed",ThemeKit.sheet_panel(Color("b8cdbb")))
   b.add_theme_stylebox_override("disabled",ThemeKit.sheet_panel(Color("e2e7dc")))
+ for state in ["normal","hover","pressed","disabled"]:
+  b.add_theme_stylebox_override(state,MaterialUI.frame(Color("727a72") if state == "disabled" else Color("b7c1b0") if state == "pressed" else Color.WHITE))
+ for state in ["font_color","font_hover_color","font_pressed_color"]: b.add_theme_color_override(state,MaterialUI.CREAM)
  b.pressed.connect(action)
  parent.add_child(b)
  ui_motion.bind_button(b,func(): return model.state.settings.reduced_motion)
@@ -187,8 +192,9 @@ func build_ui() -> void:
  notice.max_lines_visible = 2
  notice_toast.hide()
  ecology_monitor = preload("res://scripts/EcologyReadout.gd").new()
+ ecology_monitor.settings_mode = true
  root.add_child(ecology_monitor)
- ecology_monitor.explanation_requested.connect(conditions_help)
+ ecology_monitor.explanation_requested.connect(func(): campaign_ui.settings(self))
  hud.visibility_changed.connect(func(): ecology_monitor.visible = hud.visible)
  photo_controls = HBoxContainer.new()
  photo_controls.position = Vector2(20,880)
@@ -213,7 +219,7 @@ func build_ui() -> void:
  modal = PanelContainer.new()
  modal.position = Vector2(20,240)
  modal.size = Vector2(500,400)
- modal.add_theme_stylebox_override("panel",ThemeKit.sheet_panel(ThemeKit.SHEET_BG))
+ modal.add_theme_stylebox_override("panel",MaterialUI.frame())
  root.add_child(modal)
  modal.visibility_changed.connect(func():
   modal_scrim.visible = modal.visible
@@ -273,7 +279,7 @@ func target(power: String) -> void:
 func modal_content(title: String) -> VBoxContainer:
  if modal_screen == "draft" and not launch_menu and not photo_mode:
   bottom.show(); restore_draft_view()
- modal.add_theme_stylebox_override("panel",ThemeKit.sheet_panel(ThemeKit.SHEET_BG))
+ modal.add_theme_stylebox_override("panel",MaterialUI.frame())
  modal_scrim.material = null
  modal_screen = ""
  inspection_view.clear()
@@ -295,6 +301,7 @@ func modal_content(title: String) -> VBoxContainer:
  modal_box.add_child(heading)
  modal_title = label(title,23,heading)
  modal_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ MaterialUI.lettering(modal_title,true)
  var close := button("×",func(): modal.hide(),heading)
  close.size_flags_horizontal = Control.SIZE_SHRINK_END
  close.custom_minimum_size.x = touch_height()
@@ -313,13 +320,15 @@ func draft() -> void:
  var signature: String = JSON.stringify(model.state.pending.cards)
  if signature != draft_signature:
   draft_selection = 1; draft_signature = signature
- var box := modal_content("Choose your next biome")
+ var box := modal_content("CHOOSE YOUR NEXT BIOME")
  modal_screen = "draft"; draft_cards.clear()
  draft_saved_view = {"zoom":zoom_level,"pan":pan}
  modal.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
  var shade := ShaderMaterial.new(); shade.shader = preload("res://assets/shaders/draft-scrim.gdshader")
  modal_scrim.material = shade
- modal_title.add_theme_font_override("font",preload("res://assets/fonts/Marcellus-Regular.ttf"))
+ modal_title.add_theme_font_override("font",ThemeKit.DISPLAY)
+ modal_title.set_meta("base_font",17)
+ modal_title.add_theme_font_size_override("font_size",scaled_font(17))
  modal_title.add_theme_color_override("font_color",Color("fff0cc"))
  modal_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  var close: Button = modal_title.get_parent().get_child(1)
@@ -383,7 +392,7 @@ func open_ideas() -> void:
   var heading := HBoxContainer.new(); content.add_child(heading)
   var icon := TextureRect.new()
   icon.texture = preload("res://scripts/UIIcons.gd").texture(suggestion.icon)
-  if preload("res://scripts/UIIcons.gd").LINE.has(suggestion.icon): icon.modulate = ThemeKit.SHEET_CTA
+  if preload("res://scripts/UIIcons.gd").LINE.has(suggestion.icon) and not preload("res://scripts/UIIcons.gd").PAINTED.has(suggestion.icon): icon.modulate = ThemeKit.SHEET_CTA
   icon.custom_minimum_size = Vector2(40,40)
   icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
   icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -454,7 +463,7 @@ func fusion_dialog() -> void:
    else:
     fusion_dialog(); model.message = "Group changed. Check its current requirements."
    persist(); refresh(),content)
-  confirm.add_theme_stylebox_override("normal",ThemeKit.sheet_panel(ThemeKit.SHEET_CTA))
+  confirm.add_theme_stylebox_override("normal",MaterialUI.primary())
   confirm.add_theme_color_override("font_color",Color("fffdf2"))
   confirm.disabled = not option.ready
   fusion_controls.append({"origin":origin,"action":confirm,"reason":reason})
@@ -654,7 +663,7 @@ func apply_layout() -> void:
  elif modal.visible and modal_screen == "draft":
   var bounds := world_art_bounds(false)
   var area := world_rect().grow(-8)
-  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y),0.04,2.0)
+  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y)*1.18,0.04,2.0)
   pan = area.get_center()-world_anchor()-bounds.get_center()*zoom_level
  elif frame_on_layout:
   frame_world()
@@ -678,7 +687,7 @@ func restore_draft_view() -> void:
 func world_rect() -> Rect2:
  if is_instance_valid(modal) and modal.visible and modal_screen == "draft":
   var start: float = layout.get("top",Rect2(20,20,500,90)).end.y+12
-  return Rect2(20,start,get_viewport_rect().size.x-40,maxf(100,modal.position.y-start-16))
+  return Rect2(20,start,get_viewport_rect().size.x-40,maxf(190,modal.position.y-start+100))
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
  return layout.get("world",Rect2(0,205,540,475))
 
@@ -777,7 +786,7 @@ func _draw() -> void:
  if palette not in ["day","sakura"]:
   for i in range(28):
    draw_circle(Vector2(fmod(i*137.0,get_viewport_rect().size.x),30+fmod(i*97.0,get_viewport_rect().size.y*0.65)),1.0+float(i%2),Color(0.95,0.9,0.76,0.5))
- var visible_frontier: Array = [] if photo_mode or launch_menu or targeting != "" or placement_blueprint != "" else model.frontier()
+ var visible_frontier: Array = [] if photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
  for k in visible_frontier:
   var p := screen(model.coord(k))
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",p,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
@@ -843,14 +852,13 @@ func _draw() -> void:
     var opacity: float = 0.35+0.35*absf(sin(phase))
     draw_circle(glow,2*s,Color(1,0.85,0.5,opacity))
     draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
-  if not photo_mode and not launch_menu and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,ThemeKit.ACCENT,2*s)
+  if not photo_mode and not launch_menu and not modal.visible and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,ThemeKit.ACCENT,2*s)
 
  # Draw expansion controls above the art they operate, matching their input priority.
  for key in visible_frontier:
   var at := screen(model.coord(key))
   var breath := 1.0 if model.state.settings.reduced_motion else 1.0+0.07*sin(model.state.time*2.4)
-  draw_circle(at,13*breath,Color(0.14,0.19,0.24,0.85))
-  draw_arc(at,13*breath,0,TAU,24,Color(0.67,0.78,0.88,0.7),1.2,true)
+  draw_circle(at,13*breath,Color(0.14,0.19,0.24,0.18))
   draw_line(at-Vector2(6,0),at+Vector2(6,0),ThemeKit.INK,1.7,true)
   draw_line(at-Vector2(0,6),at+Vector2(0,6),ThemeKit.INK,1.7,true)
  for key in fusion_preview:
@@ -862,7 +870,7 @@ func _draw() -> void:
  for effect in presentation.harvests:
   var at := entity_screen(effect.key)+Vector2(-24,-55-effect.elapsed*30)*zoom_level
   var flight: float = clampf(effect.elapsed/0.4,0,1)
-  var destination: Control = game_hud.resource_values.get(effect.resource,game_hud.selected_art)
+  var destination: Control = inventory if effect.resource == "coins" else game_hud.resource_values.get(effect.resource,game_hud.build_action)
   var icon_at: Vector2 = entity_screen(effect.key).lerp(destination.get_global_rect().get_center(),1-pow(1-flight,2))
   if flight < 1: preload("res://scripts/UIIcons.gd").draw(self,effect.resource,icon_at,32,Color(1,1,1,1-flight*0.6))
   draw_string_outline(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,3,Color(0.09,0.2,0.23,1-effect.elapsed/0.8))
@@ -982,6 +990,7 @@ func apply_settings() -> void:
   audio_feedback.ambience.volume_db = -80 if music <= 0 else -20+linear_to_db(music)
   audio_feedback.ambience.stream_paused = music <= 0
  if ui_root != null: update_fonts(ui_root)
+ if is_instance_valid(inventory): inventory.add_theme_font_size_override("normal_font_size",scaled_font(16))
  update_stacked_buttons()
  update_pulse_width()
  call_deferred("apply_layout")
@@ -1096,23 +1105,22 @@ func start_screen() -> void:
  launch_screen.size.x = get_viewport_rect().size.x-44
  launch_screen.add_theme_constant_override("separation",12)
  ui_root.add_child(launch_screen)
- var title := label("Pocket Biome",38,launch_screen)
- title.add_theme_font_override("font",ThemeKit.DISPLAY)
- title.add_theme_color_override("font_color",hud_ink())
- title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var subtitle := label("T I N Y   E X P A N S I O N",14,launch_screen)
- subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- subtitle.add_theme_color_override("font_color",hud_ink())
- var promise := label("An ecosystem in balance.",18,launch_screen)
- promise.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- promise.add_theme_color_override("font_color",hud_ink())
+ var logo := TextureRect.new()
+ logo.name = "PocketBiomeLogo"
+ logo.texture = preload("res://assets/ui/material/logo.png")
+ logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+ logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ logo.custom_minimum_size = Vector2(0,200)
+ logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ launch_screen.add_child(logo)
  menu_spacer = Control.new()
  menu_spacer.custom_minimum_size.y = get_viewport_rect().size.y*0.36
  launch_screen.add_child(menu_spacer)
  var play := button("Continue your world" if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
  play.custom_minimum_size.y = 60*logical_per_dp()
- play.add_theme_stylebox_override("normal",panel_style(ThemeKit.ACCENT))
- play.add_theme_color_override("font_color",ThemeKit.PRIMARY_INK)
+ play.add_theme_stylebox_override("normal",MaterialUI.primary())
+ play.add_theme_font_override("font",ThemeKit.DISPLAY)
+ play.add_theme_color_override("font_color",MaterialUI.CREAM)
  var secondary := HBoxContainer.new()
  launch_screen.add_child(secondary)
  button("Settings",func(): campaign_ui.settings(self),secondary)
@@ -1273,7 +1281,7 @@ func update_pulse_width() -> void:
 func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var texture: Texture2D = preload("res://scripts/UIIcons.gd").texture(id)
  if not stacked:
-  if is_sheet(target) and not preload("res://scripts/UIIcons.gd").LINE.has(id):
+  if is_sheet(target) and (not preload("res://scripts/UIIcons.gd").LINE.has(id) or preload("res://scripts/UIIcons.gd").PAINTED.has(id)):
    for state in ["icon_normal_color","icon_hover_color","icon_pressed_color"]: target.add_theme_color_override(state,Color.WHITE)
   target.icon = texture
   target.expand_icon = true
@@ -1295,7 +1303,7 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  medallion.mouse_filter = Control.MOUSE_FILTER_IGNORE
  medallion.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  var primary: bool = target.get_meta("primary_dock",false)
- var disc := ThemeKit.floating(ThemeKit.BUILD if primary else Color("3b434e"),32)
+ var disc := ThemeKit.floating(Color("303739"),32)
  disc.shadow_size = 3
  disc.content_margin_top = 7; disc.content_margin_bottom = 7
  disc.content_margin_left = 8; disc.content_margin_right = 8
@@ -1306,11 +1314,12 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  icon.texture = texture
  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- icon.custom_minimum_size = Vector2.ONE*24*minf(1.25,logical_per_dp())
- icon.modulate = ThemeKit.PRIMARY_INK if primary else ThemeKit.INK
+ icon.custom_minimum_size = Vector2.ONE*40*minf(1.25,logical_per_dp())
+ icon.modulate = Color.WHITE
  icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
  medallion.add_child(icon)
  var caption: Label = label(text,12,content)
+ MaterialUI.lettering(caption,true)
  caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
  caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  caption.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -1320,13 +1329,13 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  update_stacked_buttons()
 
 func hud_ink() -> Color:
- return Color("173844") if visible_palette() in ["day","sakura"] else ThemeKit.INK
+ return MaterialUI.CREAM
 
 func update_stacked_buttons() -> void:
  for action in stacked_buttons:
   if not is_instance_valid(action): continue
-  action.custom_minimum_size.y = maxf(touch_height(),64*logical_per_dp()*model.state.text_scale)
-  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else hud_ink()
+  action.custom_minimum_size.y = maxf(touch_height(),maxf(84.0,64*logical_per_dp())*model.state.text_scale)
+  action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else Color.WHITE
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
 
 func draw_weather() -> void:

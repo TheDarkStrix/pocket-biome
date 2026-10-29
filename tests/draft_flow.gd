@@ -21,7 +21,7 @@ func run() -> void:
  check(h.modal_screen == "draft" and h.draft_cards.size() == 3,"three saved offers form a single hand")
  check(h.draft_cards[1].chosen and not h.bottom.visible,"middle offer starts selected and dock makes room")
  check(h.confirm_card.text == "Place "+str(pending.cards[1]).capitalize(),"primary action names the selected terrain")
- check(h.draft_hand.quote.text == "%d Coins" % pending.cost,"hand displays the saved quote")
+ check(h.draft_hand.quote.text == str(pending.cost) and h.draft_hand.quote.tooltip_text.begins_with("%d Coins" % pending.cost),"hand displays the saved quote")
  h.model.state.settings.reduced_motion = true
  h.draft_cards[0].pressed.emit()
  check(h.draft_selection == 0 and h.draft_cards[0].chosen,"reduced-motion selection remains functional")

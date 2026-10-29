@@ -21,7 +21,7 @@ func configure(h, type: String) -> void:
   add_theme_color_override(state,Color.TRANSPARENT)
  title = Label.new(); title.text = tr(text.to_upper())
  title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- title.add_theme_font_override("font",preload("res://assets/fonts/Marcellus-Regular.ttf"))
+ title.add_theme_font_override("font",preload("res://assets/fonts/Title.tres"))
  title.add_theme_font_size_override("font_size",h.scaled_font(15))
  title.add_theme_color_override("font_color",Color("fff1d1"))
  title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

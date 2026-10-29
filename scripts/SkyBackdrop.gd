@@ -1,5 +1,6 @@
 extends CanvasLayer
-# Original low-cost atmosphere: three texture samples, no full-screen blur or scene reads.
+# Painted scenery is decorative. Actual land, input and UI are separate live layers.
+const PLATE = preload("res://assets/backgrounds/sky-realm.png")
 var material_sky: ShaderMaterial
 var elapsed := 0.0
 func _ready() -> void:
@@ -14,12 +15,20 @@ func _ready() -> void:
  cloud.noise = noise
  material_sky = ShaderMaterial.new()
  material_sky.shader = preload("res://assets/shaders/sky.gdshader")
+ material_sky.set_shader_parameter("painted_sky",PLATE)
  material_sky.set_shader_parameter("cloud_noise",cloud)
  var sky := ColorRect.new()
  sky.mouse_filter = Control.MOUSE_FILTER_IGNORE
  sky.material = material_sky
  sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  add_child(sky)
+ get_viewport().size_changed.connect(fit)
+ fit()
+func fit() -> void:
+ if material_sky == null: return
+ var size: Vector2 = get_viewport().get_visible_rect().size
+ var ratio := size.x/maxf(1,size.y)/(float(PLATE.get_width())/PLATE.get_height())
+ material_sky.set_shader_parameter("cover_scale",Vector2(minf(1,ratio),minf(1,1/ratio))/1.025)
 func display(palette: String, time: float) -> void:
  if material_sky == null: return
  elapsed = time
@@ -34,3 +43,6 @@ func display(palette: String, time: float) -> void:
  material_sky.set_shader_parameter("horizon",colors[1])
  material_sky.set_shader_parameter("cloud_color",colors[2])
  material_sky.set_shader_parameter("drift",elapsed)
+ material_sky.set_shader_parameter("grade",{
+  "day":Color.WHITE,"dusk":Color("aa899c"),"moon":Color("526c9c"),"celestial":Color("70a4ac"),"sakura":Color("f3d5d9")
+ }.get(palette,Color.WHITE))

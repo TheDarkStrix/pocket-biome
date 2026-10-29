@@ -18,14 +18,7 @@ func display(value: int, reduced: bool) -> void:
 func _draw() -> void:
  var center := size/2
  var radius := minf(size.x,size.y)/2-3
- draw_circle(center,radius,Color("413b54"))
- draw_arc(center,radius,-PI/2,TAU-PI/2,48,Color("6b627c"),2,true)
+ draw_circle(center,radius,Color("243439"))
+ draw_arc(center,radius,-PI/2,TAU-PI/2,48,Color("917956"),2,true)
  if shown > 0: draw_arc(center,radius,-PI/2,-PI/2+TAU*clampf(shown/200,0,1),48,Palette.ACCENT,3,true)
- var color: Color = Palette.ACCENT if energy >= 100 else Palette.MUTED
- # Original three-wave emblem for the area-changing ability.
- for line in range(3):
-  var points := PackedVector2Array()
-  for step in range(17):
-   var x := -10+20.0*step/16
-   points.append(center+Vector2(x,(line-1)*6+sin(x/10*PI)*2))
-  draw_polyline(points,color,1.8,true)
+ preload("res://scripts/UIIcons.gd").draw(self,"rain",center,radius*1.65,Color.WHITE)

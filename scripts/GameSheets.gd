@@ -1,4 +1,5 @@
 extends RefCounted
+const SurfaceKit = preload("res://scripts/MaterialUI.gd")
 const P = preload("res://scripts/GameTheme.gd")
 const Icons = preload("res://scripts/UIIcons.gd")
 const Stage = preload("res://scripts/DioramaPreview.gd")
@@ -6,7 +7,7 @@ func card(parent: Node, color: Color = P.SHEET_CARD) -> VBoxContainer:
  var panel := PanelContainer.new()
  panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  panel.mouse_filter = Control.MOUSE_FILTER_PASS
- var style := P.sheet_panel(color)
+ var style := SurfaceKit.frame(Color.WHITE)
  style.content_margin_left = 12; style.content_margin_right = 12
  style.content_margin_top = 12; style.content_margin_bottom = 12
  panel.add_theme_stylebox_override("panel",style)
@@ -23,7 +24,7 @@ func art(h, parent: Node, type: String, evolution: String = "", extent: float = 
 func icon(parent: Node, id: String, span: float = 28) -> TextureRect:
  var image := TextureRect.new()
  image.texture = Icons.texture(id)
- if Icons.LINE.has(id): image.modulate = P.SHEET_CTA
+ if Icons.LINE.has(id) and not Icons.PAINTED.has(id): image.modulate = P.SHEET_CTA
  image.custom_minimum_size = Vector2.ONE*span
  image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -43,10 +44,10 @@ func chips(h, parent: Node, values: Dictionary, costs: bool = false) -> HFlowCon
  return row
 func primary(h, text: String, run: Callable, parent: Node) -> Button:
  var action: Button = h.button(text,run,parent)
- action.add_theme_stylebox_override("normal",P.sheet_panel(P.SHEET_CTA))
+ action.add_theme_stylebox_override("normal",SurfaceKit.primary())
  action.add_theme_color_override("font_color",Color("fffdf2"))
  action.add_theme_color_override("font_hover_color",Color("fffdf2"))
- action.add_theme_stylebox_override("hover",P.sheet_panel(Color("35675d")))
+ action.add_theme_stylebox_override("hover",SurfaceKit.primary())
  return action
 func caption(h, text: String, parent: Node) -> Label:
  var result: Label = h.label(text,12,parent)
@@ -56,7 +57,7 @@ func action_card(h, title: String, detail: String, type: String, evolution: Stri
  var action: Button = h.button(title,run,parent)
  action.tooltip_text = title
  action.custom_minimum_size = Vector2(200,232*h.model.state.text_scale)
- var normal := P.sheet_panel(P.SHEET_CARD)
+ var normal := SurfaceKit.frame()
  action.add_theme_stylebox_override("normal",normal)
  for state in ["font_color","font_hover_color","font_pressed_color","font_disabled_color"]: action.add_theme_color_override(state,Color(0,0,0,0))
  var content := VBoxContainer.new()
@@ -76,7 +77,7 @@ func setting(h, name: String, enabled: bool, icon_id: String, run: Callable, par
  var row: Button = h.button(name+(" · On" if enabled else " · Off"),run,parent)
  row.alignment = HORIZONTAL_ALIGNMENT_LEFT
  h.button_icon(row,icon_id)
- var style := P.sheet_panel(P.SHEET_CARD)
+ var style := SurfaceKit.frame()
  style.content_margin_right = 60
  row.add_theme_stylebox_override("normal",style)
  var toggle := preload("res://scripts/ToggleMark.gd").new(); toggle.enabled = enabled

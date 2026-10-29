@@ -2,7 +2,9 @@ extends RefCounted
 # Native Godot controls, with presentation kept separate from gameplay authority.
 const Palette = preload("res://scripts/GameTheme.gd")
 const Icons = preload("res://scripts/UIIcons.gd")
+const SurfaceKit = preload("res://scripts/MaterialUI.gd")
 var resource_values := {}
+var resource_names := {}
 var land: Label
 var chapter_caption: Label
 var quest_progress: Label
@@ -39,37 +41,39 @@ func build(h, root: Control) -> void:
  h.hud.add_theme_constant_override("separation",4)
  root.add_child(h.hud)
  var resources := HBoxContainer.new()
- resources.add_theme_constant_override("separation",10)
+ resources.add_theme_constant_override("separation",0)
  h.hud.add_child(resources)
  h.chapter_dial = preload("res://scripts/ChapterDial.gd").new()
  resources.add_child(h.chapter_dial); h.chapter_dial.hide()
- var coin_row := HBoxContainer.new(); coin_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL; resources.add_child(coin_row)
- icon("coins",24,coin_row)
- h.inventory = RichTextLabel.new()
- h.inventory.fit_content = true; h.inventory.scroll_active = false
- h.inventory.autowrap_mode = TextServer.AUTOWRAP_OFF
- h.inventory.mouse_filter = Control.MOUSE_FILTER_IGNORE
- h.inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- h.inventory.add_theme_color_override("default_color",Color("173844"))
- coin_row.add_child(h.inventory)
- for id in ["wood","stone","fiber"]:
-  var group := HBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  resources.add_child(group)
-  icon(id,22,group)
-  var amount: Label = h.label("0",14,group)
-  amount.add_theme_color_override("font_color",Color("173844"))
-  amount.autowrap_mode = TextServer.AUTOWRAP_OFF
-  resource_values[id] = amount
+ for id in ["wood","stone","coins"]:
+  var cell := PanelContainer.new(); cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  cell.size_flags_stretch_ratio = 1; cell.custom_minimum_size.x = 0
+  cell.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,10)); resources.add_child(cell)
+  var group := HBoxContainer.new(); group.add_theme_constant_override("separation",4); cell.add_child(group)
+  icon(id,36,group)
+  var numbers := VBoxContainer.new(); numbers.add_theme_constant_override("separation",0); numbers.size_flags_horizontal = Control.SIZE_EXPAND_FILL; group.add_child(numbers)
+  var name: Label = h.label(id.to_upper(),10,numbers); name.autowrap_mode = TextServer.AUTOWRAP_OFF; SurfaceKit.lettering(name)
+  resource_names[id] = name
+  if id == "coins":
+   h.inventory = RichTextLabel.new(); h.inventory.fit_content = true; h.inventory.scroll_active = false
+   h.inventory.autowrap_mode = TextServer.AUTOWRAP_OFF
+   h.inventory.mouse_filter = Control.MOUSE_FILTER_IGNORE; h.inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+   h.inventory.add_theme_color_override("default_color",SurfaceKit.CREAM); numbers.add_child(h.inventory)
+  else:
+   var amount: Label = h.label("0",16,numbers); SurfaceKit.lettering(amount)
+   amount.autowrap_mode = TextServer.AUTOWRAP_OFF; resource_values[id] = amount
  land = h.label("",14,h.hud); land.hide()
  chapter_caption = h.label("",11,h.hud); chapter_caption.hide()
  quest_slot = MarginContainer.new(); h.hud.add_child(quest_slot)
- var quest_row := HBoxContainer.new(); quest_row.add_theme_constant_override("separation",6); quest_slot.add_child(quest_row)
+ var quest_panel := PanelContainer.new(); quest_panel.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,6)); quest_slot.add_child(quest_panel)
+ var quest_row := HBoxContainer.new(); quest_row.add_theme_constant_override("separation",4); quest_panel.add_child(quest_row)
  var quest_arrow: Button = h.button("",h.open_ideas,quest_row)
  quest_arrow.size_flags_horizontal = Control.SIZE_SHRINK_END
  quest_arrow.size_flags_vertical = Control.SIZE_SHRINK_CENTER
  quest_arrow.custom_minimum_size.x = h.touch_height()
  h.button_icon(quest_arrow,"codex")
- quest_arrow.add_theme_stylebox_override("normal",Palette.floating(Color("314d54"),30))
+ quest_arrow.add_theme_stylebox_override("normal",Palette.quiet())
+ quest_arrow.add_theme_constant_override("icon_max_width",42)
  quest_arrow.tooltip_text = "Chapter goal and things to try"
  var quest_body := VBoxContainer.new(); quest_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL; quest_body.size_flags_vertical = Control.SIZE_SHRINK_CENTER
  quest_body.custom_minimum_size.y = h.touch_height(); quest_body.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -79,7 +83,7 @@ func build(h, root: Control) -> void:
    quest_body.accept_event(); h.open_ideas())
  quest_row.add_child(quest_body)
  h.objective = h.label("",14,quest_body)
- h.objective.add_theme_color_override("font_color",Color("173844"))
+ SurfaceKit.lettering(h.objective)
  h.objective.max_lines_visible = -1
  h.objective.custom_minimum_size.y = 0
  h.objective.mouse_filter = Control.MOUSE_FILTER_STOP; h.objective.focus_mode = Control.FOCUS_ALL
@@ -88,7 +92,7 @@ func build(h, root: Control) -> void:
   if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed) or event.is_action_pressed("ui_accept"):
    h.objective.accept_event(); h.open_ideas())
  quest_progress = h.label("",12,quest_body)
- quest_progress.add_theme_color_override("font_color",Color("3d5c64"))
+ SurfaceKit.lettering(quest_progress)
  quest_progress.mouse_filter = Control.MOUSE_FILTER_STOP
  quest_progress.gui_input.connect(func(event: InputEvent):
   if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
@@ -122,7 +126,7 @@ func build(h, root: Control) -> void:
   else: h.draft(),h.bottom)
  h.draft_button.custom_minimum_size.x = 240
  h.draft_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
- h.draft_button.add_theme_stylebox_override("normal",Palette.floating(Color("314d54"),28))
+ h.draft_button.add_theme_stylebox_override("normal",SurfaceKit.frame())
  h.button_icon(h.draft_button,"world")
  var navigation := HBoxContainer.new(); navigation.add_theme_constant_override("separation",4); h.bottom.add_child(navigation)
  for action in [{"name":"Journal","icon":"codex","run":func(): h.campaign_ui.journal(h)}, {"name":"Build","icon":"craft","run":func(): h.campaign_ui.workshop(h)}, {"name":"Pulse","icon":"rain","run":h.pulse_selector}, {"name":"World","icon":"world","run":func(): h.campaign_ui.world(h)}, {"name":"Menu","icon":"settings","run":func(): h.campaign_ui.settings(h)}]:
@@ -196,7 +200,7 @@ func hub_action(h, title: String, detail: String, symbol: String, action: Callab
  return button
 
 func display(h) -> void:
- var ink: Color = h.hud_ink()
+ var ink: Color = SurfaceKit.CREAM
  h.inventory.add_theme_color_override("default_color",ink)
  h.objective.add_theme_color_override("font_color",ink)
  quest_progress.add_theme_color_override("font_color",ink)

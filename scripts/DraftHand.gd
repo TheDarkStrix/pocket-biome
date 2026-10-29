@@ -17,10 +17,12 @@ var selection_hint := ""
 func configure(h) -> void:
  host = h; selection = h.draft_selection
  add_theme_constant_override("separation",8)
- var cost := HBoxContainer.new(); cost.alignment = BoxContainer.ALIGNMENT_CENTER; cost.add_theme_constant_override("separation",4); add_child(cost)
+ var badge := PanelContainer.new(); badge.size_flags_horizontal = Control.SIZE_SHRINK_CENTER; badge.custom_minimum_size.x = 104
+ badge.add_theme_stylebox_override("panel",preload("res://scripts/MaterialUI.gd").frame(Color.WHITE,8)); add_child(badge)
+ var cost := HBoxContainer.new(); cost.alignment = BoxContainer.ALIGNMENT_CENTER; cost.add_theme_constant_override("separation",4); badge.add_child(cost)
  var coin: TextureRect = h.sheets.icon(cost,"coins",32)
  coin.modulate = Color.WHITE
- quote = h.label("",17,cost); quote.add_theme_color_override("font_color",Color("fff0ca")); quote.autowrap_mode = TextServer.AUTOWRAP_OFF
+ quote = h.label("",17,cost); quote.add_theme_font_override("font",PALETTE.DISPLAY); quote.add_theme_color_override("font_color",Color("fff0ca")); quote.autowrap_mode = TextServer.AUTOWRAP_OFF
  stage = Control.new(); stage.name = "DraftHand"; stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
  stage.custom_minimum_size.y = 240+60*(h.model.state.text_scale-1)+maxf(0,h.scaled_font(15)-15)*4
  add_child(stage)
@@ -39,15 +41,15 @@ func configure(h) -> void:
  info.custom_minimum_size.x = h.touch_height()
  style_quiet(info)
  place = h.button("",confirm,self); h.confirm_card = place
- var skin := StyleBoxTexture.new(); skin.texture = BUTTON; skin.region_rect = Rect2(22,276,1730,334)
+ place.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+ place.custom_minimum_size.x = 360
+ var skin := preload("res://scripts/MaterialUI.gd").primary()
  place.custom_minimum_size.y = maxf(64,host.touch_height())
- for edge in [SIDE_LEFT,SIDE_RIGHT]: skin.set_texture_margin(edge,24); skin.set_content_margin(edge,26)
- for edge in [SIDE_TOP,SIDE_BOTTOM]: skin.set_texture_margin(edge,15); skin.set_content_margin(edge,15)
  for state in ["normal","hover","pressed","disabled"]:
   var variant: StyleBoxTexture = skin.duplicate()
   variant.modulate_color = Color("d6decc") if state == "disabled" else Color("c5cbaa") if state == "pressed" else Color(1.12,1.12,1.04) if state == "hover" else Color.WHITE
   place.add_theme_stylebox_override(state,variant)
- place.add_theme_font_override("font",preload("res://assets/fonts/Marcellus-Regular.ttf"))
+ place.add_theme_font_override("font",preload("res://assets/fonts/Title.tres"))
  for state in ["font_color","font_hover_color","font_pressed_color"]: place.add_theme_color_override(state,Color("fff0cc"))
  place.add_theme_color_override("font_disabled_color",Color("a7ad9d"))
  var secondary := HBoxContainer.new(); secondary.add_theme_constant_override("separation",12); add_child(secondary)
@@ -83,7 +85,8 @@ func update_selection() -> void:
 func update_quote() -> void:
  if host.model.state.pending.is_empty(): return
  var cost: int = host.model.state.pending.cost
- quote.text = "%d Coins" % cost
+ quote.text = "%d" % cost
+ quote.tooltip_text = "%d Coins to place the selected biome" % cost
  place.disabled = host.model.state.coins < cost
  hint.text = tr("Need %d more Coins") % (cost-host.model.state.coins) if place.disabled else selection_hint
  place.tooltip_text = "Place the selected biome for %d Coins" % cost

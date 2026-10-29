@@ -54,3 +54,16 @@ Design-stage only: docs/design/cohesive-ui-concept.png is an original generated 
 | assets/shaders/draft-scrim.gdshader | Original single-pass vertical alpha gradient | Lower-screen contrast; no screen capture or blur dependency |
 
 Card title, cost, trait, selected glow and terrain are live game elements. The presentation board is never shipped as a background or cut into controls. Actual render evidence40–42 uses constructed world states. Independent title/tool/rail assets and the remaining menus are still outstanding; final human creative and physical-device reviews remain open.
+
+## 0.17 integrated setting and interface assets
+
+| Path | Source dimensions / preparation | Status |
+| --- | --- | --- |
+| assets/backgrounds/sky-realm.png |1024×1536 opaque independently generated painted cloud world | Runtime decorative background; cover scaling, small drift and palette grading; no playable land baked into center |
+| assets/ui/material/logo.png |1536×1024 independently generated transparent title | Actual title-screen branding; original full image retained |
+| assets/ui/material/slate-plaque.png |2172×724 independently generated blank frame | Shared rail/badge/panel/button material; cached virtual density avoids stretched rim bands |
+| assets/ui/material/tool-icons.png |1774×887 independently generated4×2 object atlas | Painted journal, hammer, rain totem, gear, compass, leaf and coin integrated; backpack prepared for the remaining navigation pass |
+| assets/fonts/Cinzel.ttf and Title.tres | SIL OFL licensed variable display font,650 weight plus subtle emboldening | Headings/card names/actions; LICENSE_Cinzel.txt included by export filter |
+| assets/fonts/Lato-Regular.ttf | SIL OFL readable body font | Body/counts/legal text; LICENSE_Lato.txt included by export filter |
+
+New background/UI images use lossy0.82 mobile imports; background maximum1536px, logo/plaque/tools maximum1024px. High-resolution original PNGs remain available. MaterialUI's virtual texture dimensions change runtime border metrics without modifying pixels. Existing raw-material atlas regions now exclude transparent gutters and a neighboring-row fringe; gameplay terrain art is unchanged. Actual fixtures43–50 show the combined art and live controls. This does not complete the contextual Build tray, three-tool layout, connected deep terrain, layered structure motion or final human creative/device acceptance.

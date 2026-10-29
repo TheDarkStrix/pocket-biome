@@ -52,6 +52,12 @@ func run() -> void:
     var amount: Label = h.game_hud.resource_values[resource]
     materials_fit = materials_fit and amount.get_global_rect().end.x <= h.hud.get_global_rect().end.x and not amount.get_global_rect().intersects(h.ecology_monitor.get_global_rect())
    check(materials_fit,"high material counts remain clear of conditions at "+context)
+   var names_fit: bool = h.game_hud.resource_names.size() == 3
+   for id in h.game_hud.resource_names:
+    var name: Label = h.game_hud.resource_names[id]
+    names_fit = names_fit and name.text == id.to_upper() and name.get_minimum_size().x <= name.size.x and h.hud.get_global_rect().encloses(name.get_global_rect())
+   check(names_fit,"each framed resource keeps its visible name with its count at "+context)
+   check(h.ecology_monitor.settings_mode and h.ecology_monitor.tooltip_text == "Settings","the top-right gear identifies its actual destination at "+context)
    check(h.game_hud.quest_progress.visible and h.game_hud.quest_progress.text.ends_with("4 / 8") and h.game_hud.quest_slot.get_global_rect().encloses(h.game_hud.quest_progress.get_global_rect()),"wrapped chapter instructions retain a separate visible progress count at "+context)
    check(h.world_rect().size.y >= h.get_viewport_rect().size.y*0.55,"world retains most of the screen with the compact HUD at "+context)
    check(not h.game_hud.inspect_action.visible,"selection details do not become a permanent dashboard at "+context)

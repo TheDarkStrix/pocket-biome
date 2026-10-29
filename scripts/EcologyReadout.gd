@@ -3,18 +3,18 @@ extends PanelContainer
 signal explanation_requested
 const Palette = preload("res://scripts/GameTheme.gd")
 var selected_conditions := {}
+var settings_mode := false
 func _ready() -> void:
  custom_minimum_size = Vector2(48,48)
  mouse_filter = Control.MOUSE_FILTER_STOP
  focus_mode = Control.FOCUS_ALL
- tooltip_text = "Tile conditions · tap to learn, hold land to inspect"
- var style := Palette.floating(Color("314d54"),30)
- style.set_border_width_all(0)
+ tooltip_text = "Settings" if settings_mode else "Tile conditions · tap to learn, hold land to inspect"
+ var style := preload("res://scripts/MaterialUI.gd").frame()
  style.content_margin_left = 12; style.content_margin_right = 12
  style.content_margin_top = 12; style.content_margin_bottom = 12
  add_theme_stylebox_override("panel",style)
  var icon := TextureRect.new()
- icon.texture = preload("res://scripts/UIIcons.gd").texture("ecology")
+ icon.texture = preload("res://scripts/UIIcons.gd").texture("settings" if settings_mode else "ecology")
  icon.custom_minimum_size = Vector2(24,24)
  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

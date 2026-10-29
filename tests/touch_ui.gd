@@ -95,7 +95,18 @@ func run() -> void:
  check(is_instance_valid(h.rain_button) and is_instance_valid(h.heat_button),"power selector exposes actual playable Rain and Heat controls")
  h.modal.hide()
  await click(h.ecology_monitor.get_global_rect().get_center())
- check(h.modal.visible and h.modal_title.text == "Tile conditions","mobile tap on conditions panel opens its player explanation")
+ check(h.modal.visible and h.modal_title.text == "Settings & Accessibility","the painted top-right gear opens actual Settings")
+ await process_frame
+ await process_frame
+ var condition_help: Button
+ for child in h.modal_box.get_children():
+  if child is Button and child.text == "Tile conditions": condition_help = child
+ check(condition_help != null,"Settings retains the tile-condition explanation")
+ if condition_help != null:
+  h.modal_scroll.ensure_control_visible(condition_help)
+  await process_frame
+  await click(condition_help.get_global_rect().get_center())
+ check(h.modal_title.text == "Tile conditions","the Settings help action opens the actual tile-condition explanation")
  h.modal.hide()
  await process_frame # The contextual callout returns after the modal hides.
  await click(h.game_hud.inspect_action.get_global_rect().get_center())

@@ -17,12 +17,18 @@ func run() -> void:
    h.model.add_tile(Vector2i(x,y),["forest","water","grass","stone","fiber","forest","water","grass","crystal"][x*3+y])
  h.model.state.coins = 103; h.model.state.pending = {"at":"-1,0","cards":["forest","water","crystal"],"cost":12}
  h.selected = "0,0"; h.refresh(); h.frame_world(); h.draft()
- await shot("40-biome-card-hand")
+ await shot("43-painted-world-draft")
  h.draft_cards[2].pressed.emit()
- await shot("41-biome-card-selected")
+ await shot("44-painted-world-selected")
+ h.modal.hide(); h.frame_world(); await shot("46-painted-world-play")
+ h.start_screen(); await shot("47-painted-world-title")
+ h.start_play(); h.modal.hide()
+ h.campaign_ui.workshop(h); await shot("48-material-workshop")
+ h.campaign_ui.settings(h); await shot("49-material-settings")
+ h.pulse_selector(); await shot("50-material-powers")
  root.size = Vector2i(320,640); h.display_dp = 1.6875
  h.model.state.text_scale = 1.2; h.apply_settings(); h.draft()
- await shot("42-biome-cards-large-text")
+ await shot("45-painted-world-large-text")
  h.queue_free()
  await process_frame
  await create_timer(0.15).timeout

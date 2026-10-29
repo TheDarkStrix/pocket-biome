@@ -1,8 +1,11 @@
 extends RefCounted
 const COMMON = preload("res://assets/ui/icons.png")
+const TOOLS = preload("res://assets/ui/material/tool-icons.png")
+const PAINTED = {"pack":Vector2i(0,0),"craft":Vector2i(1,0),"rain":Vector2i(2,0),"codex":Vector2i(3,0),"settings":Vector2i(0,1),"world":Vector2i(1,1),"ecology":Vector2i(2,1),"coins":Vector2i(3,1)}
 const RESOURCES = preload("res://assets/nodes/harvest_states.png")
 const CELLS = {"coins":Vector2i(0,0),"star_dew":Vector2i(1,0),"clay":Vector2i(2,0),"iron":Vector2i(0,1),"rain":Vector2i(1,1),"heat":Vector2i(2,1),"frost":Vector2i(0,2),"codex":Vector2i(1,2),"settings":Vector2i(2,2)}
 const MATERIALS = {"wood":Vector2i(2,1),"stone":Vector2i(0,2),"fiber":Vector2i(1,2),"brick":Vector2i(2,2)}
+const MATERIAL_BOUNDS = {"wood":Rect2(67,130,287,273),"stone":Rect2(93,112,256,221),"fiber":Rect2(61,69,325,283),"brick":Rect2(81,95,270,228)}
 const STRUCTURES = preload("res://assets/structures/structures.png")
 const ISLAND = preload("res://assets/app_icon.png")
 const LINE = {
@@ -23,8 +26,14 @@ const LINE = {
  "frost":preload("res://assets/ui/line/frost.svg")}
 static var textures := {}
 static func texture(id: String) -> Texture2D:
- if LINE.has(id): return LINE[id]
  if textures.has(id): return textures[id]
+ if PAINTED.has(id):
+  var result := AtlasTexture.new(); result.atlas = TOOLS
+  var span := Vector2(TOOLS.get_size())/Vector2(4,2)
+  result.region = Rect2(Vector2(PAINTED[id])*span,span)
+  result.filter_clip = true; textures[id] = result
+  return result
+ if LINE.has(id): return LINE[id]
  if id == "world": return ISLAND
  if id == "craft":
   var workbench := AtlasTexture.new()
@@ -39,6 +48,9 @@ static func texture(id: String) -> Texture2D:
  var atlas := AtlasTexture.new()
  atlas.atlas = COMMON if common else RESOURCES
  atlas.region = Rect2(cell.x*418,cell.y*418,418,418)
+ if MATERIAL_BOUNDS.has(id):
+  var bounds: Rect2 = MATERIAL_BOUNDS[id]
+  atlas.region = Rect2(atlas.region.position+bounds.position,bounds.size)
  atlas.filter_clip = true
  textures[id] = atlas
  return atlas

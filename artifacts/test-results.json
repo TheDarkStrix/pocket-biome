@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-29T19:11:51.080248+00:00",
-  "source_sha256": "7b9e5c8696b013c7bfbebe0cbabc463c1bd57a6ee2505cd6aa8709f1ed4c9850",
+  "utc": "2026-10-29T19:45:04.635183+00:00",
+  "source_sha256": "86b2f563cad2a1316f9c9dce68e20e338db9a39fe680c054e9979e1000b1157c",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 913,
+  "assertions": 927,
   "results": [
     {
       "suite": "run",
@@ -81,13 +81,13 @@
       "suite": "touch_ui",
       "passed": true,
       "exit_code": 0,
-      "assertions": 44
+      "assertions": 46
     },
     {
       "suite": "mobile_layout",
       "passed": true,
       "exit_code": 0,
-      "assertions": 132
+      "assertions": 144
     },
     {
       "suite": "sheet_layout",
