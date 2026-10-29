@@ -1,24 +1,22 @@
-# Pocket Biome 0.18.0 Android preview
+# Pocket Biome0.19.0 Android preview
 
 [Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
-ARM64 Android 7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
+ARM64 Android7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
 
-## Scenery attached to your land
+## The selected concept across the actual game
 
-The distant painted sky in0.17 did not supply the environment on/under the playable island. This update adds actual occupied-cell scenery:
+- Three large painted Pack / Build / Pulse tools replace five small routes. Pack retains all eight stock types, Journal, World (fusion/rotation/photo), Projects and Trade. The top book opens goals; the gear opens Settings.
+- A lower illustrated Build workbench keeps the actual island visible. Land/Structures/Craft tabs cover every configured recipe. Swipe the object shelf, select an object, see its exact ingredient cost and confirm Build/Craft.
+- A translucent structure preview and gold diamond indicate an eligible Meadow. Normal crafting completion changes the selected item to Place; canceling keeps the blueprint. Pending drafts/full islands explain blocked placement. All queue slots, batch controls and finished blueprints remain available.
+- Shared-ground clipping removes the separate baked soil skirts above the connected cliff foundation. Tall foliage keeps its existing sway. Deep painted stone, roots, local mist and exposed-water shader outlets from0.18 remain live and follow the real occupied-cell boundary.
+- Title uses the illustrated logo, centered green Start/Continue and small Sound/Settings controls. About/New World remain in Settings. Resource icons are larger; the quest plaque is shorter.
+- Three-card Draft retains the saved quote/offers, selected gold edge, real placement and Later/Info; Growth/Moisture/Magic and later traits now have symbols.
 
-- A shared foundation with painted rock faces, irregular tapered tips and connecting surface detail.
-- Hanging roots/ivy and soft local vapor at the real island boundary.
-- Shader-animated water ribbons/spray on exposed unfrozen water edges, capped at two outlets. Interior/frozen water does not leak through neighboring cells.
-- Boundary updates for expansion, fused ownership, holes and all four camera turns; pooled depth-ordered wall nodes hide farther outlets correctly.
-- Title/photo framing and static World miniatures include the new base, roots and spray.
-- Reduced-motion/photo modes keep decoration static. Cached geometry ignores cooldown/DNA clocks.
+The full element-by-element comparison and actual Godot screenshots60–64 are on main in docs/design/REFERENCE_COMPARISON.md. These are running screens built from independent assets, not a flattened concept image. Constructed art fixtures are not earned progression. Current installed-emulator observations are recorded separately in TEST_REPORT.md/artifacts; the replacement install retained the exact save.
 
-This is live geometry with separate material/root/water artwork. No complete island image replaces gameplay. Existing surface-pad soil bands remain above the new connected base; a complete surface-art replacement is not claimed. Distant sky, illustrated title, framed resource rail, UI type and menu materials from0.17 remain. The lower contextual Build tray, three-tool navigation, continuous3D orbit and some authored structure motion remain unfinished.
+Source:554336c on main. Digest:479f87f0318cf09b30791f07f649d6e4455544ce96a18c1581bc878efb69b7b1. All1,051 assertions across18 Godot suites, eight Python audit tests, startup and both complete campaign probes pass.75 new Build checks cover six display/text cases, all recipe access, restored camera, real touch debit/completion/place/cancel/save, horizontal scroll and blocked placement. The original model/save/economy/provider test configuration is retained.
 
-Source:8db8282 on main. Digest:f02463374599904bdad50f4740c6c1539232aec476940035bfb9328466e850fd. 975 Godot assertions across17 suites, eight Python audit tests, startup and both complete public-action progression routes pass. New coverage includes shared corners, exposed/owned cells, interior/frozen water, bounds, caching, reduced motion and triangulation of long/negative-coordinate staircases/rings in all four views. Existing real-touch expansion/placement/fusion/pulse/save tests pass. Actual rendered fixtures51–59 use constructed art states, not earned progression. Clock-only frames show cosmetic movement; no FPS claim is made.
+APK SHA256:1c526ba4e60b16bc38ee150fd1cdb1fc1e49f7d8911b5f798dbdcaee7d85237e. Size:101,045,424 bytes. Signature, 458 byte-identical retained members, ARM64 packaging,16KB ZIP/ELF alignment and source/test binding pass.
 
-APK SHA256:7917fa83fb7846a244fa52dd671116538998c15ac5a96780f9439a59f0499d15. Size:100,942,129 bytes. Signature,448 retained members, ARM64 packaging,16KB ZIP/ELF alignment and embedded source/test binding pass. Current native observations are scoped separately in main's TEST_REPORT.md and artifacts.
-
-Economy, saved fields/prices, resource production and provider test IDs are unchanged. Roots, rock sides, mist and waterfalls do not create gatherable resources or rewards. Production signing/configuration and physical-device/provider/creative evidence remain release gates. This is a development preview, not store certification. No production credentials or store publication were used.
+The concept's exact hand-shaped terrain contours/prop coloring and layered windmill rotor animation still differ or remain unfinished. Continuous3D orbit, physical-device performance/audio/cutouts, human creative/pacing validation and live provider sandbox/release configuration remain open. This is a development preview, not production/store certification. No production credentials or store publication were used.
