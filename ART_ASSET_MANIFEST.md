@@ -67,3 +67,14 @@ Card title, cost, trait, selected glow and terrain are live game elements. The p
 | assets/fonts/Lato-Regular.ttf | SIL OFL readable body font | Body/counts/legal text; LICENSE_Lato.txt included by export filter |
 
 New background/UI images use lossy0.82 mobile imports; background maximum1536px, logo/plaque/tools maximum1024px. High-resolution original PNGs remain available. MaterialUI's virtual texture dimensions change runtime border metrics without modifying pixels. Existing raw-material atlas regions now exclude transparent gutters and a neighboring-row fringe; gameplay terrain art is unchanged. Actual fixtures43–50 show the combined art and live controls. This does not complete the contextual Build tray, three-tool layout, connected deep terrain, layered structure motion or final human creative/device acceptance.
+
+## 0.18 island-edge artwork integrated
+
+| Path | Source dimensions / use | Status |
+| --- | --- | --- |
+| assets/environment/cliff-rock.png |1254×1254 independently generated natural rock/moss material | UV-mapped to occupied-cell cliff geometry; shape comes from runtime topology, not a painted whole island |
+| assets/environment/hanging-roots.png |1774×887 independently generated two-cluster RGBA atlas | Metadata regions isolate each root cluster; fixed attachments with slight tip sway |
+| assets/environment/waterfall.png |724×2172 independently generated transparent water ribbon/spray | Separate Sprite2D over exposed water-edge cliffs; downward streak lighting shader; no stream on frozen/interior water |
+| assets/shaders/island-waterfall.gdshader | Original two-sample stream shader | Shared controlled clock; reduced-motion/photo alternatives remain static |
+
+Sources remain intact. Rock/roots maximum1024px and waterfall maximum1536px use lossy0.82 imports. The connecting surface samples the existing painted grass atlas. Island-bound mist is lightweight procedural soft geometry; no resource/reward is implied by decorative roots, mist or water. Actual fixtures51–59 show integrated land and its foundation, outlets, turns, title/photo and sanctuary. The raised surface-pad soil artwork remains; removing all interior pad seams requires a later surface-art pass. Final human creative and physical-device performance approval remains open.

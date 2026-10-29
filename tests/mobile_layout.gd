@@ -95,6 +95,9 @@ func run() -> void:
    var sprite_scale: float = 132.0/418.0*art.normalization*2*h.zoom_level
    var rendered := Rect2(h.entity_screen("0,0")-art.pivot*sprite_scale,art.region.size*sprite_scale)
    check(h.world_rect().grow(1).encloses(rendered),"photo framing includes the full tall fused artwork at "+context)
+   var environment_bounds: Rect2 = h.island_environment.geometry.bounds
+   var surroundings := Rect2(h.island_environment.project(environment_bounds.position),environment_bounds.size*h.zoom_level)
+   check(h.world_rect().grow(1).encloses(surroundings),"photo framing includes hanging roots, cliff shards and waterfall spray at "+context)
    h.end_photo(); h.start_screen()
    await process_frame
    await process_frame

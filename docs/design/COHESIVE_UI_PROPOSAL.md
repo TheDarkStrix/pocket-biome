@@ -48,3 +48,5 @@ Settings/privacy/store: reachable utility surfaces with the same materials and c
 4. Verify real touch swipes/targets, large text and safe areas; retained quotes/recipes and exact transactions; native save restoration; shader/atlas/device performance. Then produce a new APK.
 
 Asset preparation is still required: independent logo components, transparent tool sprites, normal/pressed/disabled states, scalable frame corners/edges and catalogue selection pieces. Do not slice and stretch this presentation-board PNG into the game as final assets. The board's illustrative values, tiles and recipes are not authoritative balancing data. Human visual acceptance remains open; no permission question is required to make the proposal reviewable.
+
+Update0.18: the deep foundation and attached roots/mist/water scenery are now implemented around the actual occupied island, with dynamic boundaries and camera framing. Existing raised surface-pad seams, lower Build tray, navigation consolidation and final creative/device acceptance remain open; see REFERENCE_COMPARISON.md.

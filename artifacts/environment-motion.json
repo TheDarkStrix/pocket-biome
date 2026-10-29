@@ -1,0 +1,9 @@
+{
+  "method": "Actual OpenGL screenshots with the same constructed world/camera, ambient clock advanced0.7s; simulation held fixed.",
+  "changed_pixels_over_2": 6198,
+  "size": [
+    540,
+    960
+  ],
+  "note": "Shows cosmetic environment movement, not a physical FPS benchmark or earned progression."
+}

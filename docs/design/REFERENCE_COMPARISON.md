@@ -20,3 +20,7 @@ The backdrop, logo, blank plaque and tool atlas were independently generated for
 Playable terrain remains the existing atlas with its current ground shapes, spacing and soil depth; it is not identical to the concept's continuous deep-sided island. Build retains the categorized full catalogue/project slots, not the proposed lower placement tray. The dock exposes five existing routes rather than the proposed three-tool Pack/Build/Pulse structure. Layered structure art/rotor animation and human visual/performance approval remain separate work. Do not report a pixel-perfect reproduction or completed whole-game polish.
 
 Rendered fixtures43–50 show actual Godot screens, including a small-phone/120% text case. The larger fixture island is deliberately constructed for presentation review, not earned progression.
+
+## 0.18 attached-environment follow-up
+
+The user clarified that distant scenery alone did not supply the surroundings attached to their land. A real occupied-cell foundation now adds painted deep rock faces, irregular tips, hanging roots/ivy, local mist and controlled animated outlets from exposed unfrozen water. Expansion, fused ownership and four-view camera changes rebuild the actual boundary; title/photo bounds and World thumbnails include it. Thus the earlier missing deep foundation is now implemented. Existing raised terrain-pad soil bands above that foundation remain different from the concept's seamless surface, and human art/device acceptance remains open.

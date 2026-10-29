@@ -10,6 +10,7 @@ var tint := Color("d8e6d8")
 func _ready() -> void:
  custom_minimum_size = Vector2(0,extent)
  mouse_filter = Control.MOUSE_FILTER_IGNORE
+ if world: texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 func _draw() -> void:
  var center := Vector2(size.x/2,size.y*0.64)
  var radius := minf(size.x*0.43,size.y*0.48)
@@ -18,6 +19,7 @@ func _draw() -> void:
  if world and is_instance_valid(host):
   var bounds: Rect2 = host.world_art_bounds(false)
   var scale := minf((size.x-18)/bounds.size.x,(size.y-12)/bounds.size.y)
+  host.island_environment.paint_static(self,size/2-bounds.get_center()*scale,scale)
   for key in host.render_keys():
    var tile: Dictionary = host.model.state.tiles[key]
    var footprint: float = 2 if tile.size == 4 else 1

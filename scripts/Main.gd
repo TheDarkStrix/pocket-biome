@@ -3,6 +3,7 @@ const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const MaterialUI = preload("res://scripts/MaterialUI.gd")
 const Store = preload("res://scripts/SaveStore.gd")
+var island_environment = preload("res://scripts/IslandEnvironment.gd").new()
 var sky_backdrop: CanvasLayer
 var sheets = preload("res://scripts/GameSheets.gd").new()
 var game_hud = preload("res://scripts/GameHUD.gd").new()
@@ -174,6 +175,8 @@ func button(text: String, action: Callable, parent: Node) -> Button:
 func build_ui() -> void:
  sky_backdrop = preload("res://scripts/SkyBackdrop.gd").new()
  add_child(sky_backdrop)
+ island_environment.host = self
+ add_child(island_environment)
  var layer := CanvasLayer.new()
  add_child(layer)
  var root := Control.new()
@@ -787,9 +790,9 @@ func _draw() -> void:
   for i in range(28):
    draw_circle(Vector2(fmod(i*137.0,get_viewport_rect().size.x),30+fmod(i*97.0,get_viewport_rect().size.y*0.65)),1.0+float(i%2),Color(0.95,0.9,0.76,0.5))
  var visible_frontier: Array = [] if photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
- for k in visible_frontier:
-  var p := screen(model.coord(k))
-  preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",p,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
+ for key in visible_frontier:
+  var point := screen(model.coord(key))
+  preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",point,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
  var keys := render_keys()
  for k in keys:
   var t: Dictionary = model.state.tiles[k]
@@ -816,7 +819,6 @@ func _draw() -> void:
    tint *= Color(0.9+moisture*0.1,0.95+moisture*0.05,1)
   if palette == "moon": tint *= Color(0.82,0.88,1.0)
   elif palette == "celestial": tint *= Color(1.0,0.97,0.81)
-  draw_ellipse_shadow(p+Vector2(0,35*zoom_level),60*zoom_level*size)
   if not pose.parts.is_empty():
    var pull: float = clampf(pose.progress/0.5,0,1)
    for part in pose.parts:
@@ -1051,6 +1053,7 @@ func world_art_bounds(include_frontier: bool) -> Rect2:
    var visual := Rect2(project(model.coord(key))-cloud.pivot*scale,cloud.region.size*scale)
    bounds = bounds.merge(visual)
  if first: bounds = Rect2(-66,-66,132,132)
+ else: bounds = bounds.merge(island_environment.bounds(model.state.tiles,view_turn))
  return bounds.grow(24)
 
 func frame_world() -> void:

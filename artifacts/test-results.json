@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-29T19:45:04.635183+00:00",
-  "source_sha256": "86b2f563cad2a1316f9c9dce68e20e338db9a39fe680c054e9979e1000b1157c",
+  "utc": "2026-10-29T20:25:30.809619+00:00",
+  "source_sha256": "f02463374599904bdad50f4740c6c1539232aec476940035bfb9328466e850fd",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 927,
+  "assertions": 975,
   "results": [
     {
       "suite": "run",
@@ -87,7 +87,7 @@
       "suite": "mobile_layout",
       "passed": true,
       "exit_code": 0,
-      "assertions": 144
+      "assertions": 150
     },
     {
       "suite": "sheet_layout",
@@ -100,6 +100,12 @@
       "passed": true,
       "exit_code": 0,
       "assertions": 22
+    },
+    {
+      "suite": "island_environment",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 42
     },
     {
       "suite": "automation_pacing",
