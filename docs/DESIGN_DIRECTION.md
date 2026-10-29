@@ -1,5 +1,7 @@
 # Current design direction — 0.14 world-first revision
 
+Superseded as the final whole-game target by docs/design/COHESIVE_UI_PROPOSAL.md. The user selected its final Draft panel;0.16 implements that hand using independent slate/bronze and green-button assets. The remaining title, HUD and menu work is still pending. The description below records the existing0.14 gameplay presentation retained during this phased migration; it is not a claim of current user approval.
+
 The user rejected 0.13: gray background, large clunky HUD blocks, and an appearance closer to a complex dashboard than a game. This revision supersedes the earlier persistent-panel layout. It is implemented and under review; it is not claimed to be an approved final design.
 
 The island is the main scene. An original sky shader supplies a luminous gradient, soft distant clouds, cloud banks and slow controlled drift; dusk/night variants preserve the existing theme choices. It uses a generated256px noise texture, three texture samples and a few analytic soft cloud shapes rather than a full-screen blur. Actual phone GPU performance remains to be measured. Reduced motion freezes the animation clock.

@@ -56,6 +56,10 @@ var chapter_dial: Control
 var draft_button: Button
 var inventory: RichTextLabel
 var draft_cards: Array[Button] = []
+var draft_hand: Control
+var draft_selection := 1
+var draft_signature := ""
+var draft_saved_view := {}
 var stacked_buttons: Array[Button] = []
 var confirm_card: Button
 var inspection_view := {}
@@ -85,7 +89,7 @@ func _ready() -> void:
  services.changed.connect(func():
   refresh(); persist()
   if modal.visible and modal_screen == "services": services_ui()
-  elif modal.visible and modal_screen == "draft": draft()
+  elif modal.visible and modal_screen in ["draft","draft_info"]: draft()
   elif modal.visible and modal_screen == "codex_detail": campaign_ui.detail(self,campaign_ui.focus_id))
  var loaded = store.load_state()
  if not loaded.is_empty():
@@ -211,7 +215,11 @@ func build_ui() -> void:
  modal.size = Vector2(500,400)
  modal.add_theme_stylebox_override("panel",ThemeKit.sheet_panel(ThemeKit.SHEET_BG))
  root.add_child(modal)
- modal.visibility_changed.connect(func(): modal_scrim.visible = modal.visible)
+ modal.visibility_changed.connect(func():
+  modal_scrim.visible = modal.visible
+  if modal_screen == "draft" and not launch_menu and not photo_mode:
+   bottom.visible = not modal.visible
+   if not modal.visible: restore_draft_view())
  modal.hide()
 
 func cancel_target() -> void:
@@ -263,6 +271,10 @@ func target(power: String) -> void:
  refresh()
 
 func modal_content(title: String) -> VBoxContainer:
+ if modal_screen == "draft" and not launch_menu and not photo_mode:
+  bottom.show(); restore_draft_view()
+ modal.add_theme_stylebox_override("panel",ThemeKit.sheet_panel(ThemeKit.SHEET_BG))
+ modal_scrim.material = null
  modal_screen = ""
  inspection_view.clear()
  inspection_mode = false
@@ -298,39 +310,25 @@ func modal_content(title: String) -> VBoxContainer:
 func draft() -> void:
  if model.state.pending.is_empty():
   model.message = "Tap a cloud plot to open its three-card draft."; refresh(); return
+ var signature: String = JSON.stringify(model.state.pending.cards)
+ if signature != draft_signature:
+  draft_selection = 1; draft_signature = signature
  var box := modal_content("Choose your next biome")
  modal_screen = "draft"; draft_cards.clear()
- sheets.chips(self,box,{"coins":model.state.pending.cost})
- sheets.caption(self,"Swipe through three offers. Coins are spent only on placement.",box)
- var carousel := ScrollContainer.new()
- carousel.name = "DraftCarousel"
- carousel.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
- carousel.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
- carousel.custom_minimum_size.y = 344*model.state.text_scale
- box.add_child(carousel)
- var cards := HBoxContainer.new(); cards.add_theme_constant_override("separation",12); carousel.add_child(cards)
- for i in range(3):
-  var type: String = model.state.pending.cards[i]
-  var definition: Dictionary = model.config.tiles[type]
-  var content: VBoxContainer = sheets.card(cards)
-  content.get_parent().custom_minimum_size.x = 230
-  sheets.caption(self,definition.rarity.to_upper()+" · "+definition.category.to_upper(),content)
-  sheets.art(self,content,type,"",164)
-  label(type.capitalize(),22,content)
-  if definition.resource != "": sheets.caption(self,"Gather "+definition.resource.capitalize(),content)
-  else: sheets.caption(self,card_hint(type),content)
-  draft_cards.append(sheets.primary(self,"Inspect "+type.capitalize(),func(): inspect_card(i),content))
- var paging := HBoxContainer.new(); box.add_child(paging)
- var previous: Button = button("‹",func(): carousel.scroll_horizontal = maxi(0,carousel.scroll_horizontal-242),paging)
- previous.custom_minimum_size.x = touch_height(); previous.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
- var offers: Label = sheets.caption(self,"3 offers · swipe to compare",paging)
- offers.size_flags_horizontal = Control.SIZE_EXPAND_FILL; offers.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var next: Button = button("›",func(): carousel.scroll_horizontal += 242,paging)
- next.custom_minimum_size.x = touch_height(); next.size_flags_horizontal = Control.SIZE_SHRINK_END
- if not model.state.pending.get("ad_rerolled",false):
-  var reroll := button("Optional test ad · one new draft",func(): services.request_reward("reroll"),box)
-  reroll.disabled = not services.ad_ready or not services.reward_available()
- button("Keep choice for later",func(): modal.hide(); persist(),box)
+ draft_saved_view = {"zoom":zoom_level,"pan":pan}
+ modal.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
+ var shade := ShaderMaterial.new(); shade.shader = preload("res://assets/shaders/draft-scrim.gdshader")
+ modal_scrim.material = shade
+ modal_title.add_theme_font_override("font",preload("res://assets/fonts/Marcellus-Regular.ttf"))
+ modal_title.add_theme_color_override("font_color",Color("fff0cc"))
+ modal_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ var close: Button = modal_title.get_parent().get_child(1)
+ for state in ["font_color","font_hover_color","font_pressed_color"]: close.add_theme_color_override(state,Color("fff0cc"))
+ box.add_theme_constant_override("separation",8)
+ draft_hand = preload("res://scripts/DraftHand.gd").new()
+ box.add_child(draft_hand); draft_hand.configure(self)
+ bottom.hide()
+ call_deferred("apply_layout")
 
 func inspect_card(index: int) -> void:
  audio_feedback.play("card")
@@ -338,6 +336,7 @@ func inspect_card(index: int) -> void:
  var type: String = model.state.pending.cards[index]
  var definition: Dictionary = model.config.tiles[type]
  var box := modal_content(type.capitalize()+" · "+definition.rarity.capitalize())
+ modal_screen = "draft_info"
  sheets.art(self,box,type,"",188)
  label(card_hint(type),18,box)
  label(preload("res://scripts/GameplayAdvisor.gd").placement(model,type,model.state.pending.at),16,box)
@@ -351,6 +350,9 @@ func inspect_card(index: int) -> void:
    modal.hide(); haptic(22)
   persist(); refresh(),box)
  button("Back to three cards",draft,box)
+ if not model.state.pending.get("ad_rerolled",false):
+  var reroll: Button = button("Optional test ad · redraw offers",func(): services.request_reward("reroll"),box)
+  reroll.disabled = not services.ad_ready or not services.reward_available()
 
 func rarity_color(rarity: String) -> Color:
  return {"common":Color("8ea18f"),"uncommon":Color("78d4a2"),"rare":Color("a58be8"),"legendary":ThemeKit.ACCENT}.get(rarity,Color("8ea18f"))
@@ -520,6 +522,7 @@ func refresh() -> void:
 
  update_inspection()
  campaign_ui.update_live(self)
+ if modal.visible and modal_screen == "draft" and is_instance_valid(draft_hand): draft_hand.update_quote()
  if modal.visible and modal_screen == "fusion":
   var current: Array = preload("res://scripts/FusionGuide.gd").options(model,selected)
   for controls in fusion_controls:
@@ -639,12 +642,20 @@ func apply_layout() -> void:
  ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,hud.position.y+game_hud.quest_slot.position.y)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
+ if modal_screen == "draft" and not launch_menu and is_instance_valid(modal_box):
+  modal.size.y = minf(safe.size.y-100,modal_box.get_combined_minimum_size().y)
+  modal.position.y = safe.end.y-modal.size.y-16
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
   modal.size.y = layout.modal.end.y-modal.position.y
  photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
  if launch_menu: frame_title_island(safe)
+ elif modal.visible and modal_screen == "draft":
+  var bounds := world_art_bounds(false)
+  var area := world_rect().grow(-8)
+  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y),0.04,2.0)
+  pan = area.get_center()-world_anchor()-bounds.get_center()*zoom_level
  elif frame_on_layout:
   frame_world()
   frame_on_layout = false
@@ -658,7 +669,16 @@ func frame_title_island(safe: Rect2) -> void:
  zoom_level = clampf(minf(hero.size.x/bounds.size.x,hero.size.y/bounds.size.y),0.04,1.8)
  pan = hero.get_center()-world_anchor()-bounds.get_center()*zoom_level
 
+func restore_draft_view() -> void:
+ if draft_saved_view.is_empty(): return
+ zoom_level = draft_saved_view.zoom; pan = draft_saved_view.pan
+ draft_saved_view.clear()
+ queue_redraw()
+
 func world_rect() -> Rect2:
+ if is_instance_valid(modal) and modal.visible and modal_screen == "draft":
+  var start: float = layout.get("top",Rect2(20,20,500,90)).end.y+12
+  return Rect2(20,start,get_viewport_rect().size.x-40,maxf(100,modal.position.y-start-16))
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
  return layout.get("world",Rect2(0,205,540,475))
 

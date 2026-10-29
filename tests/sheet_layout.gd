@@ -23,11 +23,17 @@ func run() -> void:
    h.model.begin_draft("-1,0"); h.draft()
    await settle(h)
    var context := "%s text=%s" % [display.size,scale]
-   var carousel: ScrollContainer = h.modal_box.get_node("DraftCarousel")
+   var hand: Control = h.draft_hand.stage
    var cards_fit := true
+   var text_fits := true
    for action in h.draft_cards:
-    cards_fit = cards_fit and action.get_global_rect().end.y <= carousel.get_global_rect().end.y+1 and action.size.y >= h.touch_height()
-   check(cards_fit,"all three card actions fit vertically inside the horizontal carousel at "+context)
+    for corner in [Vector2.ZERO,Vector2(action.size.x,0),action.size,Vector2(0,action.size.y)]:
+     var point: Vector2 = hand.get_global_transform().affine_inverse()*(action.get_global_transform()*corner)
+     cards_fit = cards_fit and Rect2(Vector2(-2,-2),hand.size+Vector2(4,4)).has_point(point)
+    cards_fit = cards_fit and action.size.x >= h.touch_height() and action.size.y >= h.touch_height()
+    text_fits = text_fits and action.title.size.x >= action.title.get_minimum_size().x and action.trait_label.size.x >= action.trait_label.get_minimum_size().x
+   check(cards_fit,"all three selectable cards remain fully inside the hand with mobile touch targets at "+context)
+   check(text_fits and h.confirm_card.get_global_rect().end.y <= h.modal_scroll.get_global_rect().end.y+1,"card names, traits and placement control remain visible at "+context)
    h.campaign_ui.workshop(h)
    await settle(h)
    check(h.campaign_ui.craft_catalog.get_global_rect().end.x <= h.modal_scroll.get_global_rect().end.x+1,"two-column recipe catalogue stays inside the sheet at "+context)

@@ -74,3 +74,9 @@ Implemented illustrated draft cards, categorized build catalogue and actual job 
 ## Cohesive UI proposal — in progress
 
 The user still finds0.15 sheet-like and requests the original logo/asset-sheet identity across the entire game. docs/design/COHESIVE_UI_PROPOSAL.md and its generated four-screen board define a new whole-game direction informed by an actual fresh Play Store screenshot review. This is design work, not an implemented APK or delivered runtime asset pack. The0.15 client and its verification remain unchanged.
+
+## 0.16 — selected draft direction implemented
+
+The user selected the final (Draft) panel of the concept board. Implemented that interaction and material direction in the real draft: three simultaneously visible fanned terrain cards, a raised luminous selection, named saved Coin quote, one green framed Place action, optional detailed information and Later. Selection animates briefly, with an immediate reduced-motion alternative. The island is framed above the hand and the previous camera is restored on dismissal. Affordability and placement still use the real model; offers/prices/saves remain compatible.
+
+Integrated two independent generated blank frame/button assets and the licensed Marcellus typeface. The presentation board is not sliced into runtime UI. Actual rendered fixtures40–42 and new interaction/layout tests cover this specific screen. The rest of the whole-game proposal (title, grouped resource rail, Pack/Build/Pulse tools, contextual Build tray and remaining menus) is still in progress; this update does not claim the entire concept is implemented or production-qualified.

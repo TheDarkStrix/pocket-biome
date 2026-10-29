@@ -43,3 +43,14 @@ Current ambient motion uses original procedural canopy deformation and water/str
 0.15 adds original runtime diorama staging, Pulse footprint illustrations and fusion input/output diagrams using the existing integrated game atlas. It adds original32px sound/music/motion/shield/challenge SVGs and an actual bound vector switch indicator. No new hand-painted raster frame or reference-game asset is claimed. Cards/sheets use custom ivory/teal native styling; actual rendered fixtures33–39 document the result and large-text variants. Human creative approval and physical-device sampling remain open.
 
 Design-stage only: docs/design/cohesive-ui-concept.png is an original generated four-screen presentation using the supplied reference. It is not a shipping atlas, rendered game screen or approved final asset pack. Independent logo/tool/frame state assets and in-engine layout work are still required; see docs/design/COHESIVE_UI_PROPOSAL.md.
+
+0.16 draft assets integrated and rendered:
+
+| Path | Source / dimensions | Status |
+| --- | --- | --- |
+| assets/ui/draft/card-frame.png | Independently generated blank slate/bronze frame,1024×1536 RGBA | Used by all three real terrain cards; original retained intact; runtime region excludes external padding |
+| assets/ui/draft/place-button.png | Independently generated blank green/bronze button,1774×887 RGBA | Region rendered with a scalable StyleBoxTexture; live localized text, pressed/hover/disabled modulation and keyboard focus |
+| assets/fonts/Marcellus-Regular.ttf | Google Fonts Marcellus, SIL Open Font License1.1 | Used for draft names, heading and placement text; license in LICENSE_Marcellus.txt |
+| assets/shaders/draft-scrim.gdshader | Original single-pass vertical alpha gradient | Lower-screen contrast; no screen capture or blur dependency |
+
+Card title, cost, trait, selected glow and terrain are live game elements. The presentation board is never shipped as a background or cut into controls. Actual render evidence40–42 uses constructed world states. Independent title/tool/rail assets and the remaining menus are still outstanding; final human creative and physical-device reviews remain open.

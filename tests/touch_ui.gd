@@ -229,27 +229,24 @@ func run() -> void:
  h.model.begin_draft("-1,0"); h.draft()
  await process_frame
  await process_frame
- var carousel: ScrollContainer = h.modal_box.get_node("DraftCarousel")
  var saved_offers: String = JSON.stringify(h.model.state.pending)
  var saved_coins: int = h.model.state.coins
- Input.emulate_touch_from_mouse = true
- var swipe_start: Vector2 = carousel.global_position+Vector2(360,100)
- touch(swipe_start,true)
- await process_frame
- var swipe_prior := swipe_start
- for index in range(1,9):
-  var point := swipe_start-Vector2(index*24,0)
-  var drag := InputEventScreenDrag.new(); drag.index = 0; drag.position = point; drag.relative = point-swipe_prior
-  Input.parse_input_event(drag); Input.flush_buffered_events(); swipe_prior = point
-  await process_frame
- touch(swipe_prior,false)
- await process_frame
- check(carousel.scroll_horizontal > 0,"real touch swipes the draft over its illustrated artwork")
- check(JSON.stringify(h.model.state.pending) == saved_offers and h.model.state.coins == saved_coins and h.modal_screen == "draft","swiping cannot select, reroll or charge for a card")
- Input.emulate_touch_from_mouse = false
  var expected_type: String = h.model.state.pending.cards[2]
  await click(h.draft_cards[2].get_global_rect().get_center())
- check(h.modal_title.text.begins_with(expected_type.capitalize()) and is_instance_valid(h.confirm_card) and h.model.state.coins == saved_coins,"the newly revealed third card opens its actual inspection/confirmation without paying early")
+ check(h.draft_selection == 2 and h.confirm_card.text == "Place "+expected_type.capitalize(),"the third visible card directly selects its actual placement action")
+ check(h.draft_cards[2].chosen and not h.draft_cards[1].chosen,"card touch moves the selection highlight to exactly one offer")
+ check(JSON.stringify(h.model.state.pending) == saved_offers and h.model.state.coins == saved_coins,"selecting a card retains the saved offers and quoted price without paying")
+ await create_timer(0.2).timeout
+ await click(h.draft_hand.info.get_global_rect().get_center())
+ check(h.modal_title.text.begins_with(expected_type.capitalize()) and h.model.state.coins == saved_coins,"optional card information remains reachable without paying")
+ h.draft()
+ await process_frame
+ await process_frame
+ check(h.draft_selection == 2 and h.draft_cards[2].chosen,"returning from details retains the chosen card")
+ await click(h.confirm_card.get_global_rect().get_center())
+ check(h.model.state.tiles["-1,0"].type == expected_type and h.model.state.pending.is_empty() and not h.modal.visible,"the explicit placement button adds the chosen biome and closes the hand")
+ check(h.model.state.coins == saved_coins-int(JSON.parse_string(saved_offers).cost)+10 and h.model.state.objectives.has(1),"card confirmation debits the exact saved quote and grants the first-expansion objective once")
+ check(h.bottom.visible,"placement restores the island controls")
  h.queue_free()
  await process_frame
  print("TOUCH UI RESULT: %d checks, %d failures" % [checks,failures])

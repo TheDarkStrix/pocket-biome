@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITES = ['run', 'campaign', 'save_validation', 'save_io_failures', 'fusion_edges',
-          'input_gestures', 'layout', 'presentation', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout', 'sheet_layout']
+          'input_gestures', 'layout', 'presentation', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout', 'sheet_layout', 'draft_flow']
 
 def source_digest():
     digest = hashlib.sha256()

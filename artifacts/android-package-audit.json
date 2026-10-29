@@ -1,7 +1,7 @@
 {
   "apk": "builds/PocketBiome-debug.new.apk",
-  "apk_sha256": "33fc25e7d3237b089f93bdbd6e15c4b0f3dbb53b99c1bcec10a1fb0f293452fa",
-  "source_sha256": "8c764ef4bc4c99eabd054dc4edddeb861f14700babbed4d6f11b63583a79ca07",
+  "apk_sha256": "888ce6972ec8991fed512a90d4d78d0331439d2673bcc1d58447f18300d3f296",
+  "source_sha256": "7b9e5c8696b013c7bfbebe0cbabc463c1bd57a6ee2505cd6aa8709f1ed4c9850",
   "checks": {
     "matching_passing_tests": true,
     "package_identity": true,

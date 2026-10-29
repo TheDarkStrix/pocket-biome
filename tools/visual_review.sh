@@ -11,4 +11,4 @@ for attempt in $(seq 1 40); do
   if ! kill -0 "$display_pid" 2>/dev/null; then cat /workspace/runtime/display/visual-review.stdout; exit 1; fi
   sleep 0.25
 done
-timeout 60 ./tools/godot.sh --audio-driver Dummy --rendering-driver opengl3 --script tools/capture.gd
+timeout 60 ./tools/godot.sh --audio-driver Dummy --rendering-driver opengl3 --script "${1:-tools/capture.gd}"

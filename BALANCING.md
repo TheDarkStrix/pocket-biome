@@ -38,3 +38,6 @@ With fixed seed 90210, the public collect-ready route now reaches all 20 discove
 0.14 changes presentation and information exposure, not resource yields, prices, cooldowns or progression. Detailed conditions and exact energy remain accessible; the default HUD is reduced.
 
 0.15 changes modal presentation, categories and navigation only. Recipe prices/prerequisites, three job slots, durations, batch quantities, saved draft quotes, reward limits and trade exchange rates are unchanged. UI ingredient badges read actual owned/required values; previews do not perform transactions.
+# 0.16 draft presentation note
+
+The three-offer hand changes presentation and confirmation only. Draft pools, deterministic dealing, saved offers, exact Coin quote, adjacency effects, tutorial rewards and all crafting/automation costs are unchanged. Selection, Info and Later charge nothing. First expansion still grants its separate10-Coin objective reward after the quoted placement cost; interaction coverage explicitly distinguishes that reward from the charge. No new retention/economy claim is made.

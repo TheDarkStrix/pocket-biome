@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-25T17:20:39.888982+00:00",
-  "source_sha256": "8c764ef4bc4c99eabd054dc4edddeb861f14700babbed4d6f11b63583a79ca07",
+  "utc": "2026-10-29T19:11:51.080248+00:00",
+  "source_sha256": "7b9e5c8696b013c7bfbebe0cbabc463c1bd57a6ee2505cd6aa8709f1ed4c9850",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 880,
+  "assertions": 913,
   "results": [
     {
       "suite": "run",
@@ -81,7 +81,7 @@
       "suite": "touch_ui",
       "passed": true,
       "exit_code": 0,
-      "assertions": 39
+      "assertions": 44
     },
     {
       "suite": "mobile_layout",
@@ -93,7 +93,13 @@
       "suite": "sheet_layout",
       "passed": true,
       "exit_code": 0,
-      "assertions": 30
+      "assertions": 36
+    },
+    {
+      "suite": "draft_flow",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 22
     },
     {
       "suite": "automation_pacing",

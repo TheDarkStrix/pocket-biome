@@ -49,3 +49,7 @@ Prior 0.11 verified source:750 Godot assertions and eight Python audit tests; na
 0.14: user rejected dashboard-like0.13. Replaced persistent gameplay panels with a world-first atmosphere and small floating actions, retaining detail access and touch targets. Current rendered and Android evidence is separately scoped; human visual approval and physical-device validation remain open.
 
 0.15: modal text-list feedback addressed with purpose-specific illustrated sheets.880 Godot assertions/15 suites plus eight audit cases and complete progression routes pass. New draft-swipe, category-completeness and mobile sheet-layout checks qualify the interaction changes. Current native observations remain scoped separately from human visual/device/provider approval.
+
+## 0.16 continuation
+
+The user selected the final Draft panel of docs/design/cohesive-ui-concept.png. Its actual three-card hand/selection/placement, independent frame/button assets, serif draft labels, retained quotes and temporary island framing are implemented. Full automated checks and signed preview export pass; detailed current evidence is in TEST_REPORT.md and artifacts/test-results.json. Continue the same visual/material direction into the grouped named resource rail, Pack/Build/Pulse tools, contextual Build tray, title and remaining screens in independently testable steps. Do not treat the whole concept board as implemented, ship it as a screenshot background, or remove recipes/services to simplify the navigation.
