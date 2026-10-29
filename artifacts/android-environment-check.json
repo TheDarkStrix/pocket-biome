@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-29T20:40:31.173386+00:00",
+  "source_sha256": "f02463374599904bdad50f4740c6c1539232aec476940035bfb9328466e850fd",
+  "version": "0.18.0-preview",
+  "version_code": 10,
+  "environment": "API29 AOSP x86_64, software CPU, host Mesa OpenGL translator, no Play Store/GMS",
+  "replacement_install_succeeded": true,
+  "saved_world_identical_after_install": true,
+  "stable_save_fields_retained_after_ui": true,
+  "tile_data_preserved_except_next_effect_clock": true,
+  "observations": [
+    "Deep cliff foundation and hanging roots render under the actual loaded five-cell island on the title.",
+    "Continue restores the original saved draft and quoted price with the foundation behind it.",
+    "World miniatures include the same deep foundation.",
+    "Actual World \u2192 Rotate right control turns the live grid and its attached cliff/root geometry; the exposed water outlet renders at the new visible edge.",
+    "Actual World \u2192 Photo mode frames the entire foundation, hanging roots and waterfall spray.",
+    "Done returns to the same quarter-turn gameplay view and preserves the pending transaction."
+  ],
+  "coins": 150,
+  "cells": 5,
+  "pending": {
+    "at": "2,0",
+    "cards": [
+      "forest",
+      "water",
+      "iron"
+    ],
+    "cost": 15
+  },
+  "runtime_script_or_fatal_errors": [],
+  "screenshots": [
+    "android-41-deep-island-title.png",
+    "android-42-attached-environment-draft.png",
+    "android-43-environment-quarter-turn.png",
+    "android-44-environment-photo.png",
+    "android-45-environment-return.png"
+  ],
+  "native_placement_executed": false,
+  "native_all_four_views_tested": false,
+  "note": "Geometry triangulation is tested across all four turns; native QA verifies one actual turn, photo framing and restoration. Placement/fusion transactions are automated-test evidence. No physical FPS, battery, provider or final creative certification.",
+  "physical_device_tested": false,
+  "provider_transactions_tested": false,
+  "production_qualified": false
+}
