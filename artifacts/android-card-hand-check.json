@@ -1,0 +1,43 @@
+{
+  "utc": "2026-10-29T19:19:38.191566+00:00",
+  "source_sha256": "7b9e5c8696b013c7bfbebe0cbabc463c1bd57a6ee2505cd6aa8709f1ed4c9850",
+  "apk_version": "0.16.0-preview",
+  "version_code": 8,
+  "source_commit": "73c4854b7e3a72fba9e416ee16a9e7649f45253b",
+  "environment": "API29 AOSP x86_64, software CPU / host Mesa OpenGL translator, no Play Store/GMS",
+  "replacement_install_succeeded": true,
+  "save_exactly_identical_after_install": true,
+  "stable_save_fields_preserved_after_ui": true,
+  "tile_data_preserved_except_next_effect_clock": true,
+  "observations": [
+    "Continue opens the actual saved Forest/Water/Iron hand and15-Coin quote.",
+    "Stationary180ms native touch on Iron moves the selected frame and changes the actual action to Place Iron.",
+    "Later closes the hand without placing, spending, redealing or clearing the pending transaction."
+  ],
+  "pending": {
+    "at": "2,0",
+    "cards": [
+      "forest",
+      "water",
+      "iron"
+    ],
+    "cost": 15
+  },
+  "coins": 150,
+  "cells": 5,
+  "native_placement_executed": false,
+  "native_placement_note": "Actual placement/duplicate/affordability transactions are covered in automated Godot touch/model tests; native QA kept its saved pending plot.",
+  "script_or_fatal_errors": [],
+  "platform_notes": [
+    "Android System UI not-responding dialog during software-emulator cold startup; Wait dismissed it.",
+    "Translator reports unsupported glUtilsParamSize queries; cached-shader recompilation warning occurred."
+  ],
+  "screenshots": [
+    "android-34-biome-card-hand.png",
+    "android-35-card-selected.png",
+    "android-36-draft-dismissed.png"
+  ],
+  "physical_device_tested": false,
+  "provider_transactions_tested": false,
+  "production_qualified": false
+}
