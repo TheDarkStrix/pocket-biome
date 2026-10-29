@@ -50,9 +50,9 @@ func build(h, root: Control) -> void:
   cell.size_flags_stretch_ratio = 1; cell.custom_minimum_size.x = 0
   cell.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,10)); resources.add_child(cell)
   var group := HBoxContainer.new(); group.add_theme_constant_override("separation",4); cell.add_child(group)
-  icon(id,36,group)
+  icon(id,44,group)
   var numbers := VBoxContainer.new(); numbers.add_theme_constant_override("separation",0); numbers.size_flags_horizontal = Control.SIZE_EXPAND_FILL; group.add_child(numbers)
-  var name: Label = h.label(id.to_upper(),10,numbers); name.autowrap_mode = TextServer.AUTOWRAP_OFF; SurfaceKit.lettering(name)
+  var name: Label = h.label(id.to_upper(),11,numbers); name.autowrap_mode = TextServer.AUTOWRAP_OFF; SurfaceKit.lettering(name)
   resource_names[id] = name
   if id == "coins":
    h.inventory = RichTextLabel.new(); h.inventory.fit_content = true; h.inventory.scroll_active = false
@@ -65,7 +65,7 @@ func build(h, root: Control) -> void:
  land = h.label("",14,h.hud); land.hide()
  chapter_caption = h.label("",11,h.hud); chapter_caption.hide()
  quest_slot = MarginContainer.new(); h.hud.add_child(quest_slot)
- var quest_panel := PanelContainer.new(); quest_panel.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,6)); quest_slot.add_child(quest_panel)
+ var quest_panel := PanelContainer.new(); quest_panel.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,6)); quest_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN; quest_slot.add_child(quest_panel)
  var quest_row := HBoxContainer.new(); quest_row.add_theme_constant_override("separation",4); quest_panel.add_child(quest_row)
  var quest_arrow: Button = h.button("",h.open_ideas,quest_row)
  quest_arrow.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -82,16 +82,16 @@ func build(h, root: Control) -> void:
   if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
    quest_body.accept_event(); h.open_ideas())
  quest_row.add_child(quest_body)
- h.objective = h.label("",14,quest_body)
+ h.objective = h.label("",13,quest_body)
  SurfaceKit.lettering(h.objective)
- h.objective.max_lines_visible = -1
+ h.objective.max_lines_visible = 2
  h.objective.custom_minimum_size.y = 0
  h.objective.mouse_filter = Control.MOUSE_FILTER_STOP; h.objective.focus_mode = Control.FOCUS_ALL
  h.objective.tooltip_text = "Tap for useful next steps"
  h.objective.gui_input.connect(func(event: InputEvent):
   if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed) or event.is_action_pressed("ui_accept"):
    h.objective.accept_event(); h.open_ideas())
- quest_progress = h.label("",12,quest_body)
+ quest_progress = h.label("",11,quest_body)
  SurfaceKit.lettering(quest_progress)
  quest_progress.mouse_filter = Control.MOUSE_FILTER_STOP
  quest_progress.gui_input.connect(func(event: InputEvent):
@@ -129,7 +129,7 @@ func build(h, root: Control) -> void:
  h.draft_button.add_theme_stylebox_override("normal",SurfaceKit.frame())
  h.button_icon(h.draft_button,"world")
  var navigation := HBoxContainer.new(); navigation.add_theme_constant_override("separation",4); h.bottom.add_child(navigation)
- for action in [{"name":"Journal","icon":"codex","run":func(): h.campaign_ui.journal(h)}, {"name":"Build","icon":"craft","run":func(): h.campaign_ui.workshop(h)}, {"name":"Pulse","icon":"rain","run":h.pulse_selector}, {"name":"World","icon":"world","run":func(): h.campaign_ui.world(h)}, {"name":"Menu","icon":"settings","run":func(): h.campaign_ui.settings(h)}]:
+ for action in [{"name":"Pack","icon":"pack","run":func(): h.campaign_ui.pack(h)}, {"name":"Build","icon":"craft","run":func(): h.campaign_ui.workshop(h)}, {"name":"Pulse","icon":"rain","run":h.pulse_selector}]:
   var item: Button = h.button(action.name,action.run,navigation)
   item.set_meta("primary_dock",action.name == "Build")
   h.button_icon(item,action.icon,true)
@@ -143,8 +143,10 @@ func build(h, root: Control) -> void:
    var old_icon: Control = item.get_meta("icon_image")
    old_icon.hide()
    pulse_ring = preload("res://scripts/AbilityMedallion.gd").new()
+   old_icon.get_parent().symbol = ""
    old_icon.get_parent().add_child(pulse_ring)
-   pulse_ring.custom_minimum_size = Vector2(28,28)
+   pulse_ring.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+   pulse_ring.custom_minimum_size = Vector2.ONE*96*minf(1.25,h.logical_per_dp())
    pulse_amount = h.label("",12,item); pulse_amount.hide()
  h.pulse_bar = meter(Palette.ACCENT,h.bottom); h.pulse_bar.max_value = 200; h.pulse_bar.hide()
  h.hud.minimum_size_changed.connect(func(): h.call_deferred("apply_layout"))
@@ -152,13 +154,15 @@ func build(h, root: Control) -> void:
 
 func fit_header(h, _width: float, _conditions: Vector2) -> void:
  quest_slot.add_theme_constant_override("margin_right",ceili(h.touch_height())+12)
+ quest_slot.custom_minimum_size.x = 0
+ h.objective.custom_minimum_size.x = maxf(80,minf(240*minf(1.2,h.logical_per_dp()),_width-h.touch_height()*2-66))
  quest_slot.custom_minimum_size.y = 0
 
 func display_goal(h, goal: String) -> void:
  var lines := goal.split("\n",true,1)
  h.objective.text = lines[0]
  quest_progress.visible = lines.size() > 1
- quest_progress.text = "Chapter %d · %s" % [h.model.state.chapter,lines[1]] if lines.size() > 1 else ""
+ quest_progress.text = lines[1] if lines.size() > 1 else ""
 
 func show_selection() -> void:
  selection_time = 5.0

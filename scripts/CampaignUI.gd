@@ -1,5 +1,9 @@
 extends RefCounted
 var craft_quantity := 1
+var build_family := "Structures"
+var build_choice := "workbench"
+var build_tray: Control
+var pack_signature := ""
 var workshop_filter := "All"
 var craft_catalog: GridContainer
 var codex_filter := "All"
@@ -76,7 +80,37 @@ func detail(h, id: String) -> void:
  close_button(h,box)
 
 func workshop(h) -> void:
- var box: VBoxContainer = h.modal_content("Workshop")
+ var saved: Dictionary = h.build_saved_view.duplicate() if not h.build_saved_view.is_empty() else {"zoom":h.zoom_level,"pan":h.pan}
+ var box: VBoxContainer = h.modal_content("Build")
+ h.build_saved_view = saved
+ h.modal_screen = "build"
+ h.bottom.hide()
+ box.get_child(0).hide()
+ box.add_theme_constant_override("separation",0)
+ build_tray = preload("res://scripts/BuildTray.gd").new()
+ box.add_child(build_tray); build_tray.configure(h)
+ # A light scrim keeps the real island visible above the lower workbench.
+ h.modal_scrim.color = Color(0.035,0.055,0.05,0.14)
+ h.call_deferred("apply_layout")
+
+func pack(h) -> void:
+ var box: VBoxContainer = h.modal_content("Your Pack")
+ h.modal_screen = "pack"
+ pack_signature = JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints])
+ var stock := GridContainer.new(); stock.columns = 4; stock.add_theme_constant_override("h_separation",6); stock.add_theme_constant_override("v_separation",6); box.add_child(stock)
+ for id in ["wood","stone","fiber","clay","iron","brick","star_dew","coins"]:
+  var item: VBoxContainer = h.sheets.card(stock)
+  h.sheets.icon(item,id,40)
+  var amount: int = h.model.state.coins if id == "coins" else h.model.state.inventory[id]
+  var count: Label = h.label(str(amount),16,item); count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+  var name: Label = h.sheets.caption(h,"Dew" if id == "star_dew" else id.capitalize(),item); name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ var tools := GridContainer.new(); tools.columns = 2; tools.add_theme_constant_override("h_separation",8); tools.add_theme_constant_override("v_separation",8); box.add_child(tools)
+ for entry in [{"title":"Journal","icon":"codex","detail":"Discoveries & free clues","run":func(): journal(h)}, {"title":"World","icon":"world","detail":"Fusion, rotate & photo","run":func(): world(h)}, {"title":"Projects","icon":"craft","detail":"Queues & blueprints","run":func(): workshop_details(h)}, {"title":"Trade","icon":"coins","detail":"Materials into Coins","run":func(): trade(h)}]:
+  h.sheets.tool_card(h,entry.title,entry.detail,entry.icon,entry.run,tools)
+ close_button(h,box)
+
+func workshop_details(h) -> void:
+ var box: VBoxContainer = h.modal_content("Workbench & stock")
  h.modal_screen = "workshop"
  workshop_jobs.clear()
  workshop_signature = JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.inventory,h.model.state.coins])
@@ -102,16 +136,16 @@ func workshop(h) -> void:
    var plus: Label = h.label("+",25,slot); plus.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
    h.sheets.caption(h,"Empty slot",slot)
  var quantity_row := HBoxContainer.new(); box.add_child(quantity_row)
- var less: Button = h.button("−",func(): craft_quantity = maxi(1,craft_quantity-1); workshop(h),quantity_row)
+ var less: Button = h.button("−",func(): craft_quantity = maxi(1,craft_quantity-1); workshop_details(h),quantity_row)
  less.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN; less.custom_minimum_size.x = h.touch_height()
  var quantity_label: Label = h.label("Batch · %d" % craft_quantity,17,quantity_row)
  quantity_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL; quantity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var more: Button = h.button("+",func(): craft_quantity = mini(3,craft_quantity+1); workshop(h),quantity_row)
+ var more: Button = h.button("+",func(): craft_quantity = mini(3,craft_quantity+1); workshop_details(h),quantity_row)
  more.size_flags_horizontal = Control.SIZE_SHRINK_END; more.custom_minimum_size.x = h.touch_height()
  var tabs := ScrollContainer.new(); tabs.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED; tabs.custom_minimum_size.y = h.touch_height()+3; box.add_child(tabs)
  var categories := HBoxContainer.new(); tabs.add_child(categories)
  for category in ["All","Land","Structures","Materials"]:
-  h.sheets.tab(h,category,workshop_filter == category,func(): workshop_filter = category; workshop(h),categories)
+  h.sheets.tab(h,category,workshop_filter == category,func(): workshop_filter = category; workshop_details(h),categories)
  craft_catalog = GridContainer.new(); craft_catalog.columns = 2
  craft_catalog.add_theme_constant_override("h_separation",10); craft_catalog.add_theme_constant_override("v_separation",10)
  box.add_child(craft_catalog)
@@ -135,7 +169,7 @@ func workshop(h) -> void:
   if h.model.state.jobs.size() >= 3: missing.append("All project slots are busy")
   var seconds: int = ceili(h.model.campaign.crafting_seconds(h.model,recipe)*craft_quantity)
   var action: Button = h.sheets.primary(h,"Craft × %d · %ds" % [craft_quantity,seconds],func():
-   h.model.craft(recipe.id,craft_quantity); h.persist(); h.refresh(); workshop(h),content)
+   h.model.craft(recipe.id,craft_quantity); h.persist(); h.refresh(); workshop_details(h),content)
   action.disabled = not missing.is_empty(); action.tooltip_text = ", ".join(missing)
   if not prerequisite: h.sheets.caption(h,"Needs "+recipe.requires.capitalize(),content)
   elif h.model.state.jobs.size() >= 3: h.sheets.caption(h,"All slots busy",content)
@@ -159,6 +193,13 @@ func workshop(h) -> void:
 
 func update_live(h) -> void:
  if not h.modal.visible: return
+ if h.modal_screen == "build" and is_instance_valid(build_tray):
+  build_tray.update_live(); return
+ if h.modal_screen == "pack":
+  if pack_signature != JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints]):
+   var offset: int = h.modal_scroll.scroll_vertical
+   pack(h); h.modal_scroll.set_deferred("scroll_vertical",offset)
+  return
  if h.modal_screen == "trade":
   var current := JSON.stringify([h.model.state.inventory,h.model.state.coins])
   if current != trade_signature:
@@ -170,7 +211,7 @@ func update_live(h) -> void:
  if signature != workshop_signature:
   var scroll: ScrollContainer = h.modal_scroll
   var offset: int = scroll.scroll_vertical
-  workshop(h)
+  workshop_details(h)
   h.modal_scroll.set_deferred("scroll_vertical",offset)
   return
  if is_instance_valid(workshop_stock):
@@ -256,6 +297,8 @@ func settings(h) -> void:
   h.button("Ad privacy choices",func(): h.services.show_privacy_options(),box)
  h.button("Tile conditions",h.conditions_help,box)
  h.button("How to play",func(): tutorial(h),box)
+ h.button("About Pocket Biome",func(): about(h),box)
+ h.button("New world…",h.new_world_dialog,box)
  close_button(h,box)
 
 func styled_slider(h, low: float, high: float, step: float, value: float, parent: Node) -> HSlider:
@@ -276,7 +319,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, twist for quarter turns. World offers rotation and photo controls. Core play is offline and saves automatically."}]:
+ for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, twist for quarter turns. Pack → World offers rotation and photo controls. Core play is offline and saves automatically."}]:
   var content: VBoxContainer = h.sheets.card(box)
   var row := HBoxContainer.new(); content.add_child(row)
   var image = h.sheets.art(h,row,step.tile,"",84); image.custom_minimum_size.x = 90
@@ -334,4 +377,9 @@ func trade(h) -> void:
    action.tooltip_text = "%d %s → %d Coins" % [quantity,resource,quantity]
    action.disabled = h.model.state.inventory[resource] < quantity
  h.button("Back to Workshop",func(): workshop(h),box)
+ close_button(h,box)
+
+func about(h) -> void:
+ var box: VBoxContainer = h.modal_content("Pocket Biome · Tiny Expansion")
+ h.label("An offline miniature-world discovery game. Version %s. Original synthesized sound and generated diorama artwork. No purchase is needed to finish." % ProjectSettings.get_setting("application/config/version","development"),17,box)
  close_button(h,box)

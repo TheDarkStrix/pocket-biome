@@ -81,11 +81,19 @@ func run() -> void:
  await process_frame
  check(h.model.state.harvests == before and h.model.state.energy == energy,"mixed UI/world two-finger sequence cannot harvest or spend energy")
  check(h.input_controller.pointers.is_empty() and h.all_touches.is_empty(),"mixed sequence clears every pointer after release")
- var journal: Button
+ var pack: Button
  for action in h.stacked_buttons:
-  if action.get_meta("icon_caption").text == "Journal": journal = action
+  if action.get_meta("icon_caption").text == "Pack": pack = action
+ await click(pack.get_global_rect().get_center())
+ check(h.modal.visible and h.modal_title.text == "Your Pack","real touch opens Pack from the illustrated dock")
+ var journal: Button
+ for panel in h.modal_box.get_children():
+  if panel is GridContainer:
+   for action in panel.get_children():
+    if action is Button and action.tooltip_text == "Journal": journal = action
+ await process_frame
  await click(journal.get_global_rect().get_center())
- check(h.modal.visible and h.modal_title.text.begins_with("Field Journal"),"real touch opens Journal from the illustrated dock")
+ check(h.modal.visible and h.modal_title.text.begins_with("Field Journal"),"Pack retains Journal through its actual illustrated action")
  var close: Button = h.modal_title.get_parent().get_child(1)
  await process_frame
  await click(close.get_global_rect().get_center())
@@ -138,7 +146,7 @@ func run() -> void:
  await process_frame
  check(h.modal.visible and h.modal_title.text == "Privacy & your data","privacy disclosure is available without initializing online services")
  h.modal.hide()
- h.campaign_ui.workshop(h)
+ h.campaign_ui.workshop_details(h)
  await process_frame
  var increase: Button
  for row in h.modal_box.get_children():

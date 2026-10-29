@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
+Updated 2026-10-29. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
 
 | Phase | Implemented | Remaining acceptance work |
 |---|---|---|
@@ -13,9 +13,9 @@ Updated 2026-10-25. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-`tools/check.sh`: 880 assertions across 15 Godot suites and eight Python audit tests pass, plus startup and two fixed-seed public-action progression simulations reaching all 20 discoveries and five chapters. The collect-ready route takes 5,223 simulated active seconds; adding affordable level-two Windmill upgrades takes 4,810. These probes establish reachability and expose pacing risks, not human enjoyment or device performance. See TEST_REPORT.md and docs/GAMEPLAY_PACING_REVIEW.md.
+0.19 implements the selected concept board's four-screen composition: title identity and icon utilities; named resource rail/quest/gear and three painted Pack/Build/Pulse tools; illustrated lower Build tray with a live world preview, costs, all recipe categories and real queue-to-placement; three-card Draft with trait symbols and explicit confirmation. Pack retains every stock type and all prior Journal/World/Projects/Trade destinations. Runtime surface clipping removes the separate soil skirts above the connected deep foundation. See docs/design/REFERENCE_COMPARISON.md for every element and its limits.
 
-Current signed debug APK is installed and renders with OpenGL on the API29 software emulator. Native touch progression, save retention across replacement installation and the photo/system-share path have documented evidence. These checks do not certify physical-device performance or store transactions.
+`tools/check.sh`: 1,051 assertions across18 Godot suites and eight Python audit tests pass, plus startup and both fixed-seed public-action progression simulations. This includes75 new Build-flow checks across six display/text cases and actual touch transactions. Final Android packaging/native evidence for this exact revision is recorded in TEST_REPORT.md and artifacts/*.json, not inferred from prior versions.
 
 ## Continuity
 
@@ -23,11 +23,9 @@ Work continues autonomously in tested increments. Decisions and external depende
 
 ## Current presentation direction
 
-0.14 supersedes the user's rejected0.13 panel-heavy design. Gameplay now uses an original cloud/sky shader, a compact resource row and goal prompt, five small floating tools and transient tile inspection. Detailed conditions, exact power amounts and land capacity are available in the real detail screens. See docs/DESIGN_DIRECTION.md. This is a new visual revision under review, not an assertion of human approval.
+The selected Pocket Biome concept board supersedes the earlier graphite/violet, parchment and five-tool directions. The current design uses painted sky/foliage and tool objects, narrow slate/bronze materials, cream Cinzel/Lato lettering, a connected floating island and a green primary action. Older revision notes below are historical.
 
-Implemented camera fitting uses actual sprite extents, including tall fused biomes. Objectives preserve action captions alongside progress. Title/photo views hide gameplay markers. Native photo/export/system chooser checks passed without choosing a recipient. The earlier native screenshot is artifacts/android-02-restored-world.png; current 0.13 HUD/native evidence is scoped separately.
-
-Store sandbox transactions, publisher/signing/telemetry configuration, physical-device performance/cutouts/audio and human playtesting remain release gates. This is not a certified public release.
+Surface art silhouettes and hand-shaped contours still differ from the concept; windmill blades still need layered animation. Physical-device performance/cutouts/audio, human playtesting, live provider sandbox checks and publisher/release configuration remain open. This is a test preview, not a certified commercial release.
 
 ## Player feedback fixes
 

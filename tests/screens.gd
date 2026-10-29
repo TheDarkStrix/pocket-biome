@@ -24,7 +24,7 @@ func run() -> void:
  h.modal.hide()
  h.campaign_ui.journal(h)
  check(h.modal.visible and h.modal_box.get_child_count() >= 6,"Codex includes all entries and chapter progress")
- h.campaign_ui.workshop(h)
+ h.campaign_ui.workshop_details(h)
  check(h.modal.visible and h.campaign_ui.craft_catalog.get_child_count() == h.model.config.crafting.size(),"illustrated catalogue contains every configured crafting recipe")
  var unchanged: String = JSON.stringify(h.model.state)
  named_button(h.modal_box,"Structures").pressed.emit()
@@ -98,7 +98,7 @@ func run() -> void:
  h.model.state.inventory.wood = 30; h.model.state.inventory.stone = 30
  h.refresh()
  check(h.model.craft("workbench",2),"batch crafting accepted with sufficient resources")
- h.campaign_ui.workshop(h)
+ h.campaign_ui.workshop_details(h)
  check(h.campaign_ui.workshop_jobs.size() == 1,"workshop shows pending project")
  h.model.tick(1); h.refresh()
  var progress_text: String = h.campaign_ui.workshop_jobs.values()[0].text

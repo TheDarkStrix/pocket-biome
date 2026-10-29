@@ -18,7 +18,6 @@ func display(value: int, reduced: bool) -> void:
 func _draw() -> void:
  var center := size/2
  var radius := minf(size.x,size.y)/2-3
- draw_circle(center,radius,Color("243439"))
- draw_arc(center,radius,-PI/2,TAU-PI/2,48,Color("917956"),2,true)
+
  if shown > 0: draw_arc(center,radius,-PI/2,-PI/2+TAU*clampf(shown/200,0,1),48,Palette.ACCENT,3,true)
- preload("res://scripts/UIIcons.gd").draw(self,"rain",center,radius*1.65,Color.WHITE)
+ preload("res://scripts/UIIcons.gd").draw(self,"rain",center,radius*1.58,Color.WHITE)

@@ -78,3 +78,14 @@ New background/UI images use lossy0.82 mobile imports; background maximum1536px,
 | assets/shaders/island-waterfall.gdshader | Original two-sample stream shader | Shared controlled clock; reduced-motion/photo alternatives remain static |
 
 Sources remain intact. Rock/roots maximum1024px and waterfall maximum1536px use lossy0.82 imports. The connecting surface samples the existing painted grass atlas. Island-bound mist is lightweight procedural soft geometry; no resource/reward is implied by decorative roots, mist or water. Actual fixtures51–59 show integrated land and its foundation, outlets, turns, title/photo and sanctuary. The raised surface-pad soil artwork remains; removing all interior pad seams requires a later surface-art pass. Final human creative and physical-device performance approval remains open.
+
+##0.19 concept-wide runtime pass
+
+| Path / component | Source extent | Status |
+| --- | --- | --- |
+| assets/ui/material/tool-medallion.png |1254×1254 transparent PNG | Independent generated slate/bronze tool socket, integrated under Pack/Build/Pulse; lossy0.82 import capped512px |
+| assets/ui/line/moisture.svg |48×48 | Original two-tone droplet, integrated alongside painted Growth/Magic/resource traits |
+| ToolMedallion / ShelfCard | Responsive runtime controls | Live object icons, selected shelf glow, energy/focus/press feedback; no embedded text or values |
+| TileArtwork.joined_mesh | Original terrain atlases retained | Runtime front-plane clipping removes baked extrusion above shared caps; no generated single-picture island substitution |
+
+Actual Godot fixtures60–64 show Play, lower Build (selected Windmill preview), Pack, Draft and title. These scenes are deliberately constructed to review composition, not claimed earned progression. The surface still uses the existing atlas; the concept's exact contours/props/coloring and layered windmill rotor are not falsely marked delivered. Whole-screen boards remain documentation, excluded from Android resources.

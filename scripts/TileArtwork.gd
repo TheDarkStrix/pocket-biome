@@ -65,7 +65,8 @@ static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale
  if spec.is_empty(): return
  var normalized: float = scale*spec.normalization
  canvas.draw_texture_rect_region(spec.texture,Rect2(position-spec.pivot*normalized,spec.region.size*normalized),spec.region,tint*spec.tint)
-static func hit(type: String, evolution: String, relative_position: Vector2, scale: float, depleted: bool = false) -> bool:
+static func hit(type: String, evolution: String, relative_position: Vector2, scale: float, depleted: bool = false, joined: bool = false) -> bool:
+ if joined and relative_position.y+0.46*absf(relative_position.x) > 26.0*scale/(132.0/418.0): return false
  var spec := appearance(type,evolution,depleted)
  if spec.is_empty() or scale <= 0: return false
  var local: Vector2 = relative_position/(scale*spec.normalization)+spec.pivot
@@ -82,3 +83,36 @@ static func hit(type: String, evolution: String, relative_position: Vector2, sca
  # Floating-point edge addition may round a subpixel sample onto the atlas boundary.
  if point.x < 0 or point.y < 0 or point.x >= pixels.get_width() or point.y >= pixels.get_height(): return false
  return pixels.get_pixel(int(point.x),int(point.y)).a > 0.2
+
+static func joined_mesh(spec: Dictionary, scale: float, cut: float = 0.0) -> Dictionary:
+ # Clip the baked soil skirts at the shared island surface. Tall props/foliage
+ # retain their silhouettes; the foundation owns all extrusion below this plane.
+ var normalized: float = scale*spec.normalization
+ var left: float = -spec.pivot.x*normalized
+ var right: float = (spec.region.size.x-spec.pivot.x)*normalized
+ var top: float = (cut-spec.pivot.y)*normalized
+ var bottom: float = (spec.region.size.y-spec.pivot.y)*normalized
+ var points := PackedVector2Array([Vector2(left,top),Vector2(right,top),Vector2(right,bottom),Vector2(left,bottom)])
+ var edge: float = 26.0*scale/(132.0/418.0)
+ for normal in [Vector2(0.46,1),Vector2(-0.46,1)]:
+  var clipped := PackedVector2Array()
+  for index in range(points.size()):
+   var start: Vector2 = points[index]
+   var end: Vector2 = points[(index+1)%points.size()]
+   var a: float = start.dot(normal)-edge
+   var b: float = end.dot(normal)-edge
+   if a <= 0: clipped.append(start)
+   if (a < 0 and b > 0) or (a > 0 and b < 0): clipped.append(start.lerp(end,a/(a-b)))
+  points = clipped
+ var uvs := PackedVector2Array()
+ for point in points:
+  uvs.append((spec.region.position+spec.pivot+point/normalized)/Vector2(spec.texture.get_size()))
+ return {"points":points,"uvs":uvs}
+
+static func draw_joined(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false, cut: float = 0.0) -> void:
+ var spec := appearance(type,evolution,depleted)
+ if spec.is_empty() or scale <= 0: return
+ var mesh := joined_mesh(spec,scale,cut)
+ var points: PackedVector2Array = mesh.points
+ for index in range(points.size()): points[index] += position
+ if points.size() >= 3: canvas.draw_polygon(points,PackedColorArray([tint*spec.tint]),mesh.uvs,spec.texture)

@@ -62,6 +62,7 @@ var draft_hand: Control
 var draft_selection := 1
 var draft_signature := ""
 var draft_saved_view := {}
+var build_saved_view := {}
 var stacked_buttons: Array[Button] = []
 var confirm_card: Button
 var inspection_view := {}
@@ -226,9 +227,11 @@ func build_ui() -> void:
  root.add_child(modal)
  modal.visibility_changed.connect(func():
   modal_scrim.visible = modal.visible
-  if modal_screen == "draft" and not launch_menu and not photo_mode:
+  if modal_screen in ["draft","build"] and not launch_menu and not photo_mode:
    bottom.visible = not modal.visible
-   if not modal.visible: restore_draft_view())
+   if not modal.visible:
+    restore_draft_view(); restore_build_view()
+  call_deferred("apply_layout"))
  modal.hide()
 
 func cancel_target() -> void:
@@ -280,10 +283,13 @@ func target(power: String) -> void:
  refresh()
 
 func modal_content(title: String) -> VBoxContainer:
+ if modal_screen == "build" and not launch_menu and not photo_mode:
+  bottom.show(); restore_build_view()
  if modal_screen == "draft" and not launch_menu and not photo_mode:
   bottom.show(); restore_draft_view()
  modal.add_theme_stylebox_override("panel",MaterialUI.frame())
  modal_scrim.material = null
+ modal_scrim.color = Color(0.06,0.07,0.10,0.58)
  modal_screen = ""
  inspection_view.clear()
  inspection_mode = false
@@ -458,7 +464,7 @@ func fusion_dialog() -> void:
   var footprint: Array[String] = option.cells
   button("Show this group",func():
    fusion_preview = footprint.duplicate(); selected = origin if model.origin(origin) != "" else selected
-   modal.hide(); model.message = "Highlighted diamond: four matching tiles. World → Fuse sanctuary to combine."
+   modal.hide(); model.message = "Highlighted diamond: four matching tiles. Pack → World → Fuse sanctuary to combine."
    refresh(),content)
   var confirm := button("Fuse into "+option.recipe.name,func():
    if model.fuse(origin):
@@ -654,8 +660,10 @@ func apply_layout() -> void:
  ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,hud.position.y+game_hud.quest_slot.position.y)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
- if modal_screen == "draft" and not launch_menu and is_instance_valid(modal_box):
-  modal.size.y = minf(safe.size.y-100,modal_box.get_combined_minimum_size().y)
+ if modal_screen in ["draft","build"] and not launch_menu and is_instance_valid(modal_box):
+  var max_height: float = safe.size.y*0.57 if modal_screen == "build" else safe.size.y-100
+  var content_height: float = modal_box.get_combined_minimum_size().y+(24 if modal_screen == "build" else 0)
+  modal.size.y = minf(max_height,content_height)
   modal.position.y = safe.end.y-modal.size.y-16
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
@@ -663,10 +671,10 @@ func apply_layout() -> void:
  photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
  if launch_menu: frame_title_island(safe)
- elif modal.visible and modal_screen == "draft":
+ elif modal.visible and modal_screen in ["draft","build"]:
   var bounds := world_art_bounds(false)
   var area := world_rect().grow(-8)
-  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y)*1.18,0.04,2.0)
+  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y)*(1.0 if modal_screen == "build" else 1.18),0.04,2.0)
   pan = area.get_center()-world_anchor()-bounds.get_center()*zoom_level
  elif frame_on_layout:
   frame_world()
@@ -687,10 +695,16 @@ func restore_draft_view() -> void:
  draft_saved_view.clear()
  queue_redraw()
 
+func restore_build_view() -> void:
+ if build_saved_view.is_empty(): return
+ zoom_level = build_saved_view.zoom; pan = build_saved_view.pan
+ build_saved_view.clear()
+ queue_redraw()
+
 func world_rect() -> Rect2:
- if is_instance_valid(modal) and modal.visible and modal_screen == "draft":
+ if is_instance_valid(modal) and modal.visible and modal_screen in ["draft","build"]:
   var start: float = layout.get("top",Rect2(20,20,500,90)).end.y+12
-  return Rect2(20,start,get_viewport_rect().size.x-40,maxf(190,modal.position.y-start+100))
+  return Rect2(20,start,get_viewport_rect().size.x-40,maxf(100,modal.position.y-start+(0 if modal_screen == "build" else 100)))
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
  return layout.get("world",Rect2(0,205,540,475))
 
@@ -783,6 +797,23 @@ func tile_fraction(tile: Dictionary, attribute: String) -> float:
 func visible_palette() -> String:
  return photo_lighting if photo_mode else model.state.cosmetic
 
+func available_meadows() -> Array[String]:
+ var result: Array[String] = []
+ for key in model.state.tiles:
+  var tile: Dictionary = model.state.tiles[key]
+  if not tile.has("owner") and tile.type == "grass" and tile.evolution == "" and tile.size == 1 and not model.state.event.targets.has(key): result.append(key)
+ return result
+
+func build_preview() -> Dictionary:
+ if not modal.visible or modal_screen != "build": return {}
+ var type := ""
+ for recipe in model.config.crafting:
+  if recipe.id == campaign_ui.build_choice: type = recipe.get("tile",""); break
+ if type == "": return {}
+ var plots := available_meadows()
+ if plots.is_empty(): return {}
+ return {"key":selected if selected in plots else plots[0],"type":type}
+
 func _draw() -> void:
  var palette: String = visible_palette()
  sky_backdrop.display(palette,ambient_time)
@@ -794,6 +825,8 @@ func _draw() -> void:
   var point := screen(model.coord(key))
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",point,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
  var keys := render_keys()
+ var ghost := build_preview()
+ var meadows: Array = available_meadows() if placement_blueprint != "" else []
  for k in keys:
   var t: Dictionary = model.state.tiles[k]
   if t.has("owner"): continue
@@ -826,12 +859,16 @@ func _draw() -> void:
     var location: Vector2 = source.lerp(p,pull)
     draw_arc(source,28*zoom_level,0,TAU,24,Color(1,0.85,0.5,1.0-pull),2*zoom_level)
     draw_line(source,p,Color(0.95,0.77,0.43,(1.0-pull)*0.5),2*s)
-    preload("res://scripts/TileArtwork.gd").draw_tile(self,part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
+    preload("res://scripts/TileArtwork.gd").draw_joined(self,part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
-   preload("res://scripts/TileArtwork.gd").draw_tile(self,pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
+   preload("res://scripts/TileArtwork.gd").draw_joined(self,pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
   var still: bool = model.state.settings.reduced_motion or photo_mode
-  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still)
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,true)
   preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
+  if ghost.get("key","") == k:
+   preload("res://scripts/TileArtwork.gd").draw_joined(self,ghost.type,p,132.0/418.0*s,Color(1,1,1,0.74))
+   draw_plot_outline(p,s,Color("ffe1a0"),2.0)
+  elif k in meadows: draw_plot_outline(p,s,Color(0.96,0.85,0.60,0.75),1.5)
   if model.state.event.targets.has(k) and not model.state.event.cleared.has(k):
    var frost := p-Vector2(0,30*s)
    for i in range(3):
@@ -879,6 +916,11 @@ func _draw() -> void:
   draw_string(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color(0.95,0.83,0.56,1-effect.elapsed/0.8))
  if photo_mode:
   draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,hud_ink())
+
+func draw_plot_outline(at: Vector2, scale: float, color: Color, width: float) -> void:
+ var outline := PackedVector2Array()
+ for point in [Vector2(0,-31),Vector2(63,0),Vector2(0,31),Vector2(-63,0),Vector2(0,-31)]: outline.append(at+point*scale)
+ draw_polyline(outline,color,width,true)
 
 func draw_ellipse_shadow(p: Vector2,w: float) -> void:
  var points := PackedVector2Array()
@@ -1113,25 +1155,34 @@ func start_screen() -> void:
  logo.texture = preload("res://assets/ui/material/logo.png")
  logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- logo.custom_minimum_size = Vector2(0,200)
+ logo.custom_minimum_size = Vector2(0,220)
  logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
  launch_screen.add_child(logo)
  menu_spacer = Control.new()
  menu_spacer.custom_minimum_size.y = get_viewport_rect().size.y*0.36
  launch_screen.add_child(menu_spacer)
  var play := button("Continue your world" if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
- play.custom_minimum_size.y = 60*logical_per_dp()
+ play.custom_minimum_size = Vector2(360,60*logical_per_dp())
+ play.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  play.add_theme_stylebox_override("normal",MaterialUI.primary())
  play.add_theme_font_override("font",ThemeKit.DISPLAY)
  play.add_theme_color_override("font_color",MaterialUI.CREAM)
  var secondary := HBoxContainer.new()
  launch_screen.add_child(secondary)
- button("Settings",func(): campaign_ui.settings(self),secondary)
- button("About",func():
-  var box := modal_content("Pocket Biome · Tiny Expansion")
-  label("An offline miniature-world discovery game. Version %s. Original synthesized sound and generated diorama artwork. No purchase is needed to finish." % ProjectSettings.get_setting("application/config/version","development"),17,box)
-  campaign_ui.close_button(self,box),secondary)
- button("New world",new_world_dialog,secondary)
+ var sound := button("",func():
+  model.state.settings.sfx = not model.state.settings.sfx
+  model.state.settings.music = model.state.settings.sfx
+  apply_settings(); persist()
+  start_screen(),secondary)
+ sound.tooltip_text = "Sound · On" if model.state.settings.sfx or model.state.settings.music else "Sound · Off"
+ sound.modulate = Color.WHITE if model.state.settings.sfx or model.state.settings.music else Color("939e97")
+ sound.custom_minimum_size.x = touch_height(); sound.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+ button_icon(sound,"sound")
+ var gap := Control.new(); gap.size_flags_horizontal = Control.SIZE_EXPAND_FILL; secondary.add_child(gap)
+ var settings := button("",func(): campaign_ui.settings(self),secondary)
+ settings.tooltip_text = "Settings"
+ settings.custom_minimum_size.x = touch_height(); settings.size_flags_horizontal = Control.SIZE_SHRINK_END
+ button_icon(settings,"settings")
  ui_motion.reveal(launch_screen,model.state.settings.reduced_motion)
  call_deferred("apply_layout")
  queue_redraw()
@@ -1221,11 +1272,11 @@ func pick(position: Vector2) -> String:
   var tile: Dictionary = model.state.tiles[key]
   var size := 2.0 if tile.size == 4 else 1.0
   var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if size == 2 else Vector2.ZERO)
-  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time): return key
+  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,true): return key
  var selected_key: String = model.origin(selected)
  if selected_key != "":
   var selected_tile: Dictionary = model.state.tiles[selected_key]
-  if selected_tile.ready > model.state.time and preload("res://scripts/TileArtwork.gd").hit(selected_tile.type,selected_tile.evolution,position-screen(model.coord(selected_key)),132.0/418.0*zoom_level): return selected_key
+  if selected_tile.ready > model.state.time and preload("res://scripts/TileArtwork.gd").hit(selected_tile.type,selected_tile.evolution,position-screen(model.coord(selected_key)),132.0/418.0*zoom_level,true,true): return selected_key
  return hit(position)
 
 func _input(event: InputEvent) -> void:
@@ -1302,24 +1353,16 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  content.offset_top = inset; content.offset_bottom = -inset
  content.alignment = BoxContainer.ALIGNMENT_CENTER
  content.add_theme_constant_override("separation",5)
- var medallion := PanelContainer.new()
- medallion.mouse_filter = Control.MOUSE_FILTER_IGNORE
- medallion.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  var primary: bool = target.get_meta("primary_dock",false)
- var disc := ThemeKit.floating(Color("303739"),32)
- disc.shadow_size = 3
- disc.content_margin_top = 7; disc.content_margin_bottom = 7
- disc.content_margin_left = 8; disc.content_margin_right = 8
- disc.border_color = Color("f0d39e") if primary else Color("626b77")
- medallion.add_theme_stylebox_override("panel",disc)
+ var medallion := preload("res://scripts/ToolMedallion.gd").new()
+ medallion.symbol = id; medallion.primary = primary
+ medallion.custom_minimum_size = Vector2.ONE*(112 if primary else 96)*minf(1.25,logical_per_dp())
+ medallion.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  content.add_child(medallion)
  var icon := TextureRect.new()
  icon.texture = texture
- icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
- icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- icon.custom_minimum_size = Vector2.ONE*40*minf(1.25,logical_per_dp())
- icon.modulate = Color.WHITE
  icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ icon.hide()
  medallion.add_child(icon)
  var caption: Label = label(text,12,content)
  MaterialUI.lettering(caption,true)
@@ -1337,7 +1380,7 @@ func hud_ink() -> Color:
 func update_stacked_buttons() -> void:
  for action in stacked_buttons:
   if not is_instance_valid(action): continue
-  action.custom_minimum_size.y = maxf(touch_height(),maxf(84.0,64*logical_per_dp())*model.state.text_scale)
+  action.custom_minimum_size.y = maxf(touch_height(),maxf(152.0,126*logical_per_dp())*model.state.text_scale)
   action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else Color.WHITE
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
 

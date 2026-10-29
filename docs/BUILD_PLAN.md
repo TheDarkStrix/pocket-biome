@@ -1,3 +1,9 @@
+# Current checkpoint —0.19,2026-10-29
+
+User asks to implement every visible element of the project's own selected concept, not only regenerate images. Runtime title/Play/Pack/Build/Draft composition and common-ground clipping are implemented. All1,051 assertions pass, including75 Build-flow checks. The exact-version Android build and retained-save native checks are being finalized; use TEST_REPORT.md and current artifacts JSON for verified distribution/evidence. No final polish or production certification claim. Open art/device/provider gates are in docs/design/REFERENCE_COMPARISON.md and docs/PRODUCTION_READINESS.md.
+
+# Historical checkpoints below (superseded)
+
 # Current completion checkpoint
 
 Latest code: original graphite/pearl/violet three-zone HUD, chapter dial/resources left, local ecology right, contextual bottom controls.679 assertions pass (66 mobile-layout checks, real touch/replacement tests, complete20-discovery/five-chapter public-action simulation). Latest signed debug APK installed and resumed. Native photo capture/export and Android system share chooser were actually exercised; no destination selected. Full visual bounds (not only grid cells) fit tall fused artwork in title/photo views. Compact goal caption retains its action and progress. User instruction is style/hierarchy inspired by Terra Nil, explicitly not its palette.

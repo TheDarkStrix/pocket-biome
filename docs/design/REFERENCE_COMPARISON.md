@@ -1,26 +1,37 @@
-# Reference comparison — 0.17 presentation pass
+# Concept-to-game comparison — 0.19
 
-The 0.16 draft changed the cards, not the surrounding design. Comparing its actual fixture40 with the user's selected final panel made that mismatch clear. The concept board is a reference, never a flattened gameplay background.
+Reference: the original four-panel board [cohesive-ui-concept.png](cohesive-ui-concept.png), generated in this project and selected by the user. This is an element-by-element implementation audit. The board remains a proposal image; actual gameplay uses independent runtime assets and live controls.
 
-| Element | 0.16 mismatch | Current implemented change |
+| Reference element | Implemented runtime counterpart | Evidence / limit |
 | --- | --- | --- |
-| Setting | Flat cyan gradient and sparse procedural clouds | Independent painted cloud-realm plate with distant wooded islands, mist, warm light and soft foreground foliage; aspect-correct cover and subtle controlled drift |
-| Resources | Four disconnected icons/counts with no names | Three named Wood/Stone/Coins groups in a material rail; all other materials remain in the full Workshop stock/trade surfaces |
-| Goal and utility | Unframed text and leaf control | Journal-object goal plaque and a gear that opens Settings; conditions help remains in Settings and tile inspection |
-| Lettering | Thin heading and mixed interface type | Cinzel display lettering, Lato readable body type, cream/shadow contrast and a framed live price badge |
-| World behind draft | Small island constrained above the heading, inactive plus markers | Larger live island behind the draft composition; inactive expansion markers/selection rings disappear while a modal blocks interaction |
-| Primary action | Overwide thin green texture with stretched corners | Narrower green confirmation frame with correct virtual border density |
-| Title | Plain text and purple action | Independent illustrated Pocket Biome logo, painted setting and green primary action |
-| Other screens | Separate ivory/teal UI and line-only navigation | Shared slate/bronze surfaces and painted journal/hammer/totem/compass/gear tools; actual routes, recipes and legal/settings content retained |
+| Warm cloud realm and distant wooded islands | Painted sky with foreground foliage, distance haze and controlled drift/lighting | Actual views60–64; one background plate, not separately animated distant islands |
+| Deep floating island silhouette | Occupied-cell cliff mesh with painted stone, irregular tips, hanging roots and local mist | Expansion, fusion reservations, irregular layouts and all four quarter turns supported |
+| Water descending from the island | Shader-animated ribbons and spray at up to two exposed unfrozen water edges | Real native0.18 outlet and environment tests; water type and boundary determine eligibility |
+| Connected grassy surface | Shared textured caps; runtime polygon clipping removes baked sprite soil skirts |0.19 removes the stack of separate raised pads; atlas surface colors/prop forms still differ from the illustration |
+| Oak, pond, rocks, planting beds, structures | Existing authored-atlas terrain/node/structure sprites | Real data-driven objects; not a literal reconstruction of the illustration's island arrangement |
+| Wood/leaf Pocket Biome logo | Independent transparent illustrated logo on the live title scene | No concept-board crop is shipped as a screen |
+| One large title action | Centered green Start/Continue control | Live save-sensitive action; width360 logical pixels |
+| Small sound and settings title controls | Opposite-side icon buttons; mute state indicated by tint/tooltip | About and safe New World confirmation retained in Settings |
+| Compact named Wood/Stone/Coins bar | Three connected framed groups, larger painted icons and exact/compact amounts | Full eight-currency stock remains in Pack; other materials were not removed |
+| Goal-book plaque and Settings gear | Short quest plaque/book opens real next-step guidance; gear opens Settings | Live action/progress, touch and large text validated; no invented unread-count notification |
+| Three tactile bottom tools | Painted medallions for Pack, larger Build, Pulse with live energy ring | Replaces five small tools; all old destinations retained |
+| Pack/inventory hub | Eight illustrated stock cells and Journal/World/Projects/Trade tools | Exact counts and actual routes; its layout is original because no Pack panel was shown in the board |
+| Lower Build tray over visible island | Compact framed workbench occupying at most57% of safe height | World stays visible, previous camera restored on close; it is a blocking selection tray, not free camera input through a modal |
+| Land / Structures / Craft tabs | Three illustrated, touch-safe tabs | All18 configured recipes remain reachable across the three categories |
+| Three visible illustrated Build choices | Horizontal selectable object shelf, retained selection, gold focus frame | Three fit at standard portrait width; horizontal swipe exposes the rest; Workbench/Windmill/Totem lead Structures |
+| Highlighted structure on the actual land | Translucent selected-object preview and gold diamond on an eligible empty Meadow | Cosmetic only; selecting/browsing never reserves or deploys land |
+| Material objects beside one Build action | Exact required ingredient icons and Build/Craft action; live missing-resource/prerequisite explanations | CampaignSystem owns debit, queue and completion; no mock construction |
+| Finished structure placement | Same selected object changes to Place after normal queue completion | Returns to island, highlights valid Meadows; cancellation keeps blueprint; saved land draft/full island conflicts explained |
+| Project/blueprint access | Compact working/ready summary links to complete existing queues, batches and stock | All three slots and batch1–3 retained |
+| Darkened island above Draft | Actual live diorama under a gradient scrim | Inactive expansion controls suppressed; camera restored on dismissal |
+| Draft heading and coin badge | Cinzel title and framed live Coin quote | Uses saved quote, not illustrative board values |
+| Three illustrated draft cards | Focusable three-card hand, raised selected card, gold edge, terrain art | Selection and Info preserve saved offers; reroll/placement use existing authorities |
+| Growth / Moisture / Magic markers | Painted leaf/Dew and authored droplet symbols with readable trait names | Heat/Frost/resource traits supported for later offers too |
+| Place selected terrain / Later | Green named confirmation and quiet Later action | Exact saved quote charged once; Later retains transaction |
+| Consistent text and material language | Cinzel display/Lato body, cream/shadow lettering, shared slate/bronze frames and green primary action | Large-text, small-phone and touch checks; no claim of pixel-identical typography or approved creative finish |
 
-The backdrop, logo, blank plaque and tool atlas were independently generated for runtime use. No Play Store screenshot or complete concept panel is packaged as game UI. Text, quantities, selection, targets and world sprites remain live. Source artwork is retained with mobile texture imports. Frame rendering uses a cached virtual texture size to keep source borders proportional on short badges and tall panels; original artwork pixels are untouched.
+Actual screenshots60–64 are constructed Godot art fixtures, not earned progression or generated mockups. Native evidence is scoped separately in TEST_REPORT.md. The generated medallion is an independent blank tool socket; its icon, text, energy, hit target and response remain live. No reference-game screenshot or flattened board is used as executable UI.
 
-## Differences still open
+## Still requires acceptance
 
-Playable terrain remains the existing atlas with its current ground shapes, spacing and soil depth; it is not identical to the concept's continuous deep-sided island. Build retains the categorized full catalogue/project slots, not the proposed lower placement tray. The dock exposes five existing routes rather than the proposed three-tool Pack/Build/Pulse structure. Layered structure art/rotor animation and human visual/performance approval remain separate work. Do not report a pixel-perfect reproduction or completed whole-game polish.
-
-Rendered fixtures43–50 show actual Godot screens, including a small-phone/120% text case. The larger fixture island is deliberately constructed for presentation review, not earned progression.
-
-## 0.18 attached-environment follow-up
-
-The user clarified that distant scenery alone did not supply the surroundings attached to their land. A real occupied-cell foundation now adds painted deep rock faces, irregular tips, hanging roots/ivy, local mist and controlled animated outlets from exposed unfrozen water. Expansion, fused ownership and four-view camera changes rebuild the actual boundary; title/photo bounds and World thumbnails include it. Thus the earlier missing deep foundation is now implemented. Existing raised terrain-pad soil bands above that foundation remain different from the concept's seamless surface, and human art/device acceptance remains open.
+The concept's illustrated props, individual flower arrangements, hand-shaped terrain contours and surface coloration are not identical to the current atlas artwork. Windmill blade layering/rotation remains unfinished; mist/canopy/water effects do not stand in for that missing animation. Human creative review, actual mid-range device performance/audio and provider/store qualification remain open. This pass implements the four panels' navigation/composition and transactions; it is not certification of production readiness or final visual approval.

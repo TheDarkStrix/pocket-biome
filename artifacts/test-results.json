@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-29T20:25:30.809619+00:00",
-  "source_sha256": "f02463374599904bdad50f4740c6c1539232aec476940035bfb9328466e850fd",
+  "utc": "2026-10-29T20:59:55.260086+00:00",
+  "source_sha256": "479f87f0318cf09b30791f07f649d6e4455544ce96a18c1581bc878efb69b7b1",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 975,
+  "assertions": 1051,
   "results": [
     {
       "suite": "run",
@@ -81,7 +81,7 @@
       "suite": "touch_ui",
       "passed": true,
       "exit_code": 0,
-      "assertions": 46
+      "assertions": 47
     },
     {
       "suite": "mobile_layout",
@@ -106,6 +106,12 @@
       "passed": true,
       "exit_code": 0,
       "assertions": 42
+    },
+    {
+      "suite": "build_flow",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 75
     },
     {
       "suite": "automation_pacing",

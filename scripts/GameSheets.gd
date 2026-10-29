@@ -122,3 +122,16 @@ func scroll_skin(scroll: ScrollContainer) -> void:
  var thumb := track.duplicate(); thumb.bg_color = Color(0.26,0.47,0.43,0.35); thumb.set_corner_radius_all(3)
  bar.add_theme_stylebox_override("scroll",track)
  for state in ["grabber","grabber_highlight","grabber_pressed"]: bar.add_theme_stylebox_override(state,thumb)
+
+func tool_card(h, title: String, detail: String, symbol: String, run: Callable, parent: Node) -> Button:
+ var action: Button = h.button("",run,parent)
+ action.tooltip_text = title
+ action.custom_minimum_size.y = 136*h.model.state.text_scale
+ var body := VBoxContainer.new(); body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ action.add_child(body); body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ body.offset_left = 8; body.offset_right = -8; body.offset_top = 8; body.offset_bottom = -8
+ icon(body,symbol,56)
+ var name: Label = h.label(title,17,body); name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; name.mouse_filter = Control.MOUSE_FILTER_IGNORE; SurfaceKit.lettering(name,true)
+ var sub: Label = caption(h,detail,body); sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; sub.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ body.minimum_size_changed.connect(func(): action.custom_minimum_size.y = maxf(136*h.model.state.text_scale,body.get_combined_minimum_size().y+16))
+ return action

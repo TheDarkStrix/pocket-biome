@@ -1,3 +1,9 @@
+# Current design direction —0.19 concept composition
+
+The selected Pocket Biome concept is implemented across title, Play, lower Build and Draft, with a Pack hub retaining all other routes. Painted cloud setting and tool objects, connected ground/cliff scenery, named resource rail, compact goal/gear, three large medallions, illustrated lower workbench and cream Cinzel/Lato text supersede the older descriptions below. See docs/design/REFERENCE_COMPARISON.md for the element-by-element audit, actual fixtures and explicit remaining art/animation/acceptance limits.
+
+# Historical directions below
+
 # Current design direction — 0.14 world-first revision
 
 Superseded as the final whole-game target by docs/design/COHESIVE_UI_PROPOSAL.md. The user selected its final Draft panel;0.16 implements that hand using independent slate/bronze and green-button assets. The remaining title, HUD and menu work is still pending. The description below records the existing0.14 gameplay presentation retained during this phased migration; it is not a claim of current user approval.

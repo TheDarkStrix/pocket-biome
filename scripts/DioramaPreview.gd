@@ -25,7 +25,7 @@ func _draw() -> void:
    var footprint: float = 2 if tile.size == 4 else 1
    var point: Vector2 = host.project(Vector2(host.model.coord(key))+(Vector2(0.5,0.5) if footprint == 2 else Vector2.ZERO))
    var at := size/2+(point-bounds.get_center())*scale
-   preload("res://scripts/TileArtwork.gd").draw_tile(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
+   preload("res://scripts/TileArtwork.gd").draw_joined(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
  else:
   var artwork = preload("res://scripts/TileArtwork.gd")
   var spec: Dictionary = artwork.appearance(tile_type,evolution)

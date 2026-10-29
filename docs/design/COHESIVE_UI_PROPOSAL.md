@@ -1,3 +1,9 @@
+# Current implementation —0.19
+
+The selected four-panel proposal is now translated into the title, Play HUD/three-tool navigation, lower Build workbench and Draft compositions. Connected ground clipping and a live selected-object preview are implemented; all prior destinations and transactions are retained. The full element-by-element evidence and remaining art/animation/device acceptance limits are in [REFERENCE_COMPARISON.md](REFERENCE_COMPARISON.md). The board is still not a screenshot or a pixel-perfect asset specification.
+
+# Historical proposal and checkpoints
+
 # Cohesive interface proposal — design stage
 
 Update0.17: painted atmosphere, illustrated title identity, named resource rail, journal/Settings header, display/body typography and shared slate/bronze surfaces are now integrated in the actual game. The lower Build tray, three-tool navigation consolidation and connected deep terrain remain open. See REFERENCE_COMPARISON.md and actual fixtures43–50; the historical design-only statements below describe earlier checkpoints.

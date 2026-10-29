@@ -34,7 +34,7 @@ func run() -> void:
     text_fits = text_fits and action.title.size.x >= action.title.get_minimum_size().x and action.trait_label.size.x >= action.trait_label.get_minimum_size().x
    check(cards_fit,"all three selectable cards remain fully inside the hand with mobile touch targets at "+context)
    check(text_fits and h.confirm_card.get_global_rect().end.y <= h.modal_scroll.get_global_rect().end.y+1,"card names, traits and placement control remain visible at "+context)
-   h.campaign_ui.workshop(h)
+   h.campaign_ui.workshop_details(h)
    await settle(h)
    check(h.campaign_ui.craft_catalog.get_global_rect().end.x <= h.modal_scroll.get_global_rect().end.x+1,"two-column recipe catalogue stays inside the sheet at "+context)
    h.campaign_ui.world(h)

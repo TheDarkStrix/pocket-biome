@@ -1,6 +1,6 @@
 # Test report
 
-Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fresh machine-readable results, timestamp and tested source digest are written to artifacts/test-results.json; individual logs remain ignored under artifacts/test-logs/. The runner rejects missing/zero-assertion suites, timeouts, script errors, nonzero exits and source changes during a run.
+Updated 2026-10-29. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fresh machine-readable results, timestamp and tested source digest are written to artifacts/test-results.json; individual logs remain ignored under artifacts/test-logs/. The runner rejects missing/zero-assertion suites, timeouts, script errors, nonzero exits and source changes during a run.
 
 | Suite | Assertions passed | Coverage |
 |---|---:|---|
@@ -14,15 +14,19 @@ Updated 2026-10-25. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | presentation | 29 | Cosmetic isolation, terminating animation, alpha picking and no replay |
 | gameplay_pacing | 28 | Seeded offer diversity/eligibility, tutorial stability, local placement descriptions, actionable advice, reserves, upgrade quote protection and save continuity |
 | services | 29 | Provider unavailable behavior, callback deduplication, receipt persistence, save-failure retry, reroll/hint contexts, entitlements and diagnostics opt-out/bounds |
-| screens | 83 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
-| scene_smoke | 41 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
-| touch_ui | 35 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
-| mobile_layout | 72 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
-| **Total** | **783** | Assertions; separate simulation and startup checks also run |
+| screens | 85 | Menu, Codex/workshop/settings/world/services/photo and complete draft pools |
+| scene_smoke | 42 | Launch-to-first-evolution, real card callback path, targeting, lifecycle and persistence |
+| touch_ui | 47 | Actual ScreenTouch→Godot Control launch/welcome path; one harvest despite mouse emulation; mixed UI/world two-finger safety |
+| mobile_layout | 150 | Three portrait dimensions × normal/enlarged text; HUD/world separation, caption fitting and viewport bounds |
+| sheet_layout | 36 | Draft hand/actions, catalogue, World cards, power controls and setting switches at three portrait sizes/two text scales |
+| draft_flow | 22 | Saved offers/quote, retained selection, Info/redraw safety, affordability, one placement and camera restoration |
+| island_environment | 42 | Four-turn cliff topology/triangulation, fused owners, roots/outlets/cache and photo framing |
+| build_flow | 75 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
+| **Total** | **1,051** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
-Public-action simulation: all 20 discoveries, all five chapters, 35 cells, 119 tracked progression operations, plus earning-loop harvests, 5199 simulated active seconds, 1293 final coins; save/restore included. Accelerated simulation is not a human pacing result.
+Public-action simulations: both collect-ready and automation-first routes reach all20 discoveries, five chapters and35 cells, with117 tracked progression operations plus earning loops. Their simulated active times are5,223 and4,810 seconds; final Coins1,215 and1,358. Save/restore is included. These are deterministic reachability probes, not a human pacing result.
 
 `tools/visual_review.sh` renders through actual Godot OpenGL with Xorg dummy/Mesa. Current captures 01–04 show the gameplay/draft/evolution/inspector route; 07–10 show Codex/detail/workshop/settings. Captures 05–06 deliberately construct visual fixtures and are not progression evidence. No cloud audio listening claim is made.
 
@@ -141,3 +145,15 @@ Actual OpenGL fixtures51–59 cover initial four-cell land, larger attached scen
 0.18.0-preview/code10 export succeeds, source/test/embedded digest f02463374599904bdad50f4740c6c1539232aec476940035bfb9328466e850fd. ARM64 APK 100,942,129 bytes, SHA256 7917fa83fb7846a244fa52dd671116538998c15ac5a96780f9439a59f0499d15;448 retained members, signature and16KB alignment pass. Production audit exits2 with the same10 real release blockers.
 
 Final-source0.18 native: replacement installation succeeds as code10 and preserves the exact saved world before launch. Title and restored draft show the real five-cell island's cliff foundation/roots. World miniatures include the same foundation. Real touch activates Rotate right; the cliff/root geometry follows and an exposed water ribbon renders at the new visible edge. Real touch opens Photo mode, which includes the full base/roots/spray, and Done restores the previous quarter-turn gameplay view. Stable root fields and all tile data remain unchanged except time/next-effect clocks; the original pending Forest/Water/Iron offers and15-Coin quote remain. Bounded current-process logs contain no script/fatal errors. Native QA tests one actual turn, not all four native views; all-four-turn mesh validity and placement/fusion are automated evidence. No physical-device performance, provider or human creative qualification is claimed. See android-environment-check.json and native captures41–45.
+
+##0.19 concept-wide composition verification
+
+All1,051 assertions/18 Godot suites pass, plus eight Python audit tests, startup and both complete campaign probes. New75-case Build flow uses actual ScreenTouch events to open the primary tool, pay the selected Workbench4 Wood/2 Stone once, wait normal model time, observe Place without reopening, cancel while retaining the blueprint, and deploy/save on an empty Grass tile. Six small-phone/portrait/text cases verify all categories/Close/selected actions fit, retained selection is revealed, all18 configured recipes remain available with no browsing debit, and closing restores the prior exact camera/dock. Horizontal drag does not select/build. Pending drafts/full islands explain placement conflicts. Every atlas/structure/discovery/fused/depleted shared-ground mesh triangulates with valid UVs; cosmetic previews do not mutate gameplay.
+
+Existing screen/catalogue tests now explicitly target the retained detailed Projects screen; new Build-flow tests exercise the actual lower tray. The real-touch route opens Pack and then Journal, preserving old destinations after the three-tool consolidation. Whole-suite output is rejected on script errors even when assertion totals pass; a typed empty-array optimization error was caught during final build checks and fixed before packaging.
+
+Actual OpenGL fixtures60–64 show current Play, lower Build and ghost, Pack, Draft trait symbols, and title. They use a constructed10-cell art fixture with an existing Windmill/Workbench and supplied review stock, not earned progression. The conceptual board is excluded from packaged resources. Captures are actual Godot output, not generated full-screen mockups.
+
+Android0.19 export, payload/signature/alignment/source proof and installed-emulator evidence are recorded below when complete. Physical-device performance, continuous3D orbit, layered windmill rotor animation, human creative/pacing qualification and real provider sandbox/release gates remain open.
+
+Final0.19 source/test/export digest `479f87f0318cf09b30791f07f649d6e4455544ce96a18c1581bc878efb69b7b1`. ARM64 download 101,045,424 bytes, SHA256 `1c526ba4e60b16bc38ee150fd1cdb1fc1e49f7d8911b5f798dbdcaee7d85237e`; all458 retained members are byte-identical to the universal APK, signatures and16KB ZIP/ELF alignment pass. Production audit still exits2 with10 real release blockers. A nonfatal ObjectDB shutdown warning appeared under the Xorg94 fixture runner; a final-source verbose OpenGL render under Xorg95 exited without it. No runtime script/render error appeared; no long-duration leak-free claim is made.

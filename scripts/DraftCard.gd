@@ -7,6 +7,7 @@ var chosen := false:
   queue_redraw()
 var title: Label
 var trait_label: Label
+var trait_icon: TextureRect
 var art: Control
 var host: Node
 
@@ -38,6 +39,12 @@ func configure(h, type: String) -> void:
  trait_label.add_theme_color_override("font_color",Color("dedbc7"))
  trait_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(trait_label)
+ trait_icon = TextureRect.new()
+ trait_icon.texture = preload("res://scripts/UIIcons.gd").texture({"forest":"ecology","water":"moisture","crystal":"star_dew","vent":"heat","glacier":"frost","stone":"stone","fiber":"fiber","clay":"clay","iron":"iron"}.get(type,"ecology"))
+ trait_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+ trait_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ trait_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ add_child(trait_icon)
  resized.connect(arrange)
  mouse_entered.connect(queue_redraw); mouse_exited.connect(queue_redraw)
  focus_entered.connect(queue_redraw); focus_exited.connect(queue_redraw)
@@ -46,8 +53,13 @@ func arrange() -> void:
  if not is_instance_valid(title): return
  var title_height: float = host.scaled_font(15)*2.2
  title.position = Vector2(12,16); title.size = Vector2(size.x-24,title_height)
- trait_label.position = Vector2(10,size.y-host.scaled_font(12)-22)
- trait_label.size = Vector2(size.x-20,host.scaled_font(12)+6)
+ var trait_width: float = trait_label.get_theme_font("font").get_string_size(trait_label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,host.scaled_font(12)).x
+ var symbol_size := 17.0
+ var total: float = minf(size.x-16,trait_width+symbol_size+4)
+ trait_icon.position = Vector2((size.x-total)/2,size.y-host.scaled_font(12)-24)
+ trait_icon.size = Vector2.ONE*symbol_size
+ trait_label.position = Vector2(trait_icon.position.x+symbol_size+4,size.y-host.scaled_font(12)-22)
+ trait_label.size = Vector2(maxf(0,total-symbol_size-4),host.scaled_font(12)+6)
  art.position = Vector2(5,title.position.y+title_height)
  art.size = Vector2(size.x-10,maxf(24,trait_label.position.y-art.position.y-8))
  art.queue_redraw()

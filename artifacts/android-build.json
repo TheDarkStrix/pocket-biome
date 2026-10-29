@@ -1,21 +1,21 @@
 {
-  "utc": "2026-10-25T17:23:37.204739+00:00",
+  "utc": "2026-10-29T21:03:03.048090+00:00",
   "engine": "4.6.3.stable",
-  "version": "0.15.0-preview",
-  "version_code": 7,
+  "version": "0.19.0-preview",
+  "version_code": 11,
   "type": "Signed debug preview",
-  "source_sha256": "8c764ef4bc4c99eabd054dc4edddeb861f14700babbed4d6f11b63583a79ca07",
-  "assertions": 880,
+  "source_sha256": "479f87f0318cf09b30791f07f649d6e4455544ce96a18c1581bc878efb69b7b1",
+  "assertions": 1051,
   "python_audit_tests": 8,
-  "apk_sha256": "33fc25e7d3237b089f93bdbd6e15c4b0f3dbb53b99c1bcec10a1fb0f293452fa",
-  "bytes": 179199291,
+  "apk_sha256": "7621776d91805978d447690fa8526b14735c67a71f8fb3575f4812402e71ffd3",
+  "bytes": 183192538,
   "renderer": "OpenGL Compatibility",
   "dependencies": {
     "com.google.android.gms:play-services-ads": "25.5.0",
     "com.google.android.ump:user-messaging-platform": "4.0.0",
     "com.android.billingclient:billing": "8.3.0"
   },
-  "native_ui_verified_this_revision": true,
+  "native_ui_verified_this_revision": false,
   "store_release_ready": false,
-  "note": "Final-source illustrated draft swipe, catalogue, slot glyph/resource order and Sound Off/On persistence verified on software emulator. Stable progress retained; bounded logs contain no script/runtime errors. See android-sheets-check.json. Production/physical/creative gates remain open."
+  "note": "Concept-wide title/Play/Pack/Build/Draft runtime composition. Current installed-native evidence is pending; exact-source automatic checks/payload/signature/alignment passed. See TEST_REPORT.md."
 }

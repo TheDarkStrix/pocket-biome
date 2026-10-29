@@ -9,6 +9,7 @@ const MATERIAL_BOUNDS = {"wood":Rect2(67,130,287,273),"stone":Rect2(93,112,256,2
 const STRUCTURES = preload("res://assets/structures/structures.png")
 const ISLAND = preload("res://assets/app_icon.png")
 const LINE = {
+ "moisture":preload("res://assets/ui/line/moisture.svg"),
  "sound":preload("res://assets/ui/line/sound.svg"),
  "music":preload("res://assets/ui/line/music.svg"),
  "motion":preload("res://assets/ui/line/motion.svg"),
