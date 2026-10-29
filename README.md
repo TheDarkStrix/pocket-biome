@@ -1,22 +1,27 @@
-# Pocket Biome 0.16.0 Android preview
+# Pocket Biome 0.17.0 Android preview
 
 [Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
 ARM64 Android 7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
 
-## The selected biome-card direction, implemented
+## Reference setting, lettering and HUD correction
 
-- All three saved terrain offers appear together as illustrated, slightly fanned slate/bronze cards.
-- Selecting raises and highlights one offer; one green framed Place button names the selected biome.
-- The exact saved Coin quote remains visible. Selection, Info and Later spend nothing; insufficient funds are explained and placement is disabled.
-- The actual island remains framed above the hand. Closing the hand restores the previous camera and dock.
-- Detailed biome/environment information and the optional test-ad redraw remain reachable through Info. Asynchronous redraw replaces stale details with the real new offers.
-- Short selection motion respects reduced-motion settings; names, traits and controls fit the tested small-phone and larger-text layouts.
+The0.16 draft changed cards but retained a flat sky, loose counters and a different interface. This update carries the selected concept's surrounding composition into actual game presentation:
 
-This implements the final Draft panel's direction, using two independent generated blank frame/button assets, existing terrain art and the licensed Marcellus font. The presentation-board image is not cut into game controls. The title, gameplay HUD, contextual Build tray and other menus have not yet been converted to the entire concept. No claim of finished whole-game visual polish is made.
+- Independent painted cloud-realm background with distant wooded islands, mist, foreground foliage, gentle controlled drift and day/dusk/night grading.
+- Illustrated Pocket Biome title logo and green framed main action.
+- Named Wood/Stone/Coins resource rail, journal-object goal plaque and a top-right gear that opens actual Settings.
+- Cinzel display lettering, readable Lato body text and cream/shadow contrast.
+- Larger live island behind the draft, framed live Coin price, three actual illustrated offers and a narrower green Place action.
+- Correct frame border density on badges and tall panels; shared slate/bronze menu surfaces and painted tools.
+- Full material stock remains in Workshop/trading; Tile conditions remains connected through Settings and tile inspection. Gameplay transactions, saves, prices, rewards and provider test IDs are unchanged.
 
-Source: 73c4854 (main). Source digest: 7b9e5c8696b013c7bfbebe0cbabc463c1bd57a6ee2505cd6aa8709f1ed4c9850. 913 Godot assertions across16 suites, eight Python audit tests, startup and two complete public-action progression routes pass. Tests cover actual touch selection/Info/placement, exact quote and separate objective reward, persisted offers, insufficient-funds rejection, camera restoration and duplicate-confirmation rejection. Rendered fixtures40–42 are constructed presentation states, not earned progression or human approval.
+The background/logo/frame/tools are independent runtime assets. No complete concept image or Play Store screen is used as a flattened game interface. Text, controls and the playable world are live.
 
-Signature,417 retained files, ARM64 packaging,16KB ZIP/ELF alignment and embedded source provenance are verified. SHA256: 5dd33c60575ded69f6046472ce129e212e07aca465ffe0b80f7578f71855cddb. Size:99,181,922 bytes.
+Remaining differences are explicit: Build retains the existing categorized catalogue/project slots rather than the lower placement tray; the dock still exposes five routes; existing terrain spacing and soil depth differ from the concept. This is not completed whole-game polish or a production release. See docs/design/REFERENCE_COMPARISON.md on main.
 
-Physical-device performance, real Google provider transactions and human creative acceptance remain unqualified. Economy, saves, quoted prices and provider test IDs are unchanged. The four-view camera remains; continuous3D orbit is not implemented. Some painted parts still lack authored motion; see docs/ANIMATION_STATUS.md on main. Production signing/configuration, hosted publisher details and device/store/creative evidence remain release gates. No store publication was performed. See main's TEST_REPORT.md and docs/PRODUCTION_READINESS.md for scoped evidence.
+Source: fba2e41 on main. Source digest:86b2f563cad2a1316f9c9dce68e20e338db9a39fe680c054e9979e1000b1157c. 927 Godot assertions across16 suites, eight Python audit cases, startup and both complete public-action progression routes pass. Coverage includes named resource containment at three phone sizes/two text scales, actual gear-to-Settings-to-condition-help touch routing, and retained draft transaction/save checks. Actual rendered fixtures43–50 are constructed presentation states, not human creative approval.
+
+APK SHA256:3fe53b5df18a258ec076b148e1b4a1992b52f7da33fa287c1a8a3b314f1d61a0. Size:100,289,639 bytes. Signature,435 retained files, ARM64 packaging,16KB ZIP/ELF alignment and embedded source/test binding pass. Current native observations are separately scoped in main's TEST_REPORT.md and artifacts.
+
+Physical-device performance, real Google provider transactions and human creative acceptance remain unqualified. Development signing, preview/service/test IDs, publisher configuration and current release evidence remain gates. Camera quarter turns remain; continuous3D orbit and some authored structure motion remain unfinished. No store publication or production-credential substitution was performed.
