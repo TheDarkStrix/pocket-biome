@@ -1,22 +1,22 @@
-# Pocket Biome 0.15.0 Android preview
+# Pocket Biome 0.16.0 Android preview
 
 [Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
 ARM64 Android 7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
 
-## Illustrated gameplay sheets
+## The selected biome-card direction, implemented
 
-- Three illustrated draft cards with real touch swiping, arrow alternatives and stored-price confirmation.
-- Two-column building catalogue, All/Land/Structures/Materials categories, owned/required ingredient art and the actual three-job shelf/countdowns.
-- Real island miniatures and selected-biome/sanctuary art in World.
-- Rain/Heat/Frost cards with five-cell footprint illustrations and small illustrative effects; selecting still opens the actual world-targeting flow.
-- Fusion input/result diagrams, Codex/inspector diorama stages, illustrated trade/help/reward layouts and bound setting switches.
-- Mineral-ivory/teal modal styling, shorter content-sized sheets and safe scrolling. The compact sky-backed gameplay HUD remains intact.
+- All three saved terrain offers appear together as illustrated, slightly fanned slate/bronze cards.
+- Selecting raises and highlights one offer; one green framed Place button names the selected biome.
+- The exact saved Coin quote remains visible. Selection, Info and Later spend nothing; insufficient funds are explained and placement is disabled.
+- The actual island remains framed above the hand. Closing the hand restores the previous camera and dock.
+- Detailed biome/environment information and the optional test-ad redraw remain reachable through Info. Asynchronous redraw replaces stale details with the real new offers.
+- Short selection motion respects reduced-motion settings; names, traits and controls fit the tested small-phone and larger-text layouts.
 
-Every crafting recipe is retained. Artwork is the existing integrated atlas, original runtime diagrams and original vector controls; no reference-game asset is shipped and no new hand-painted frame is claimed. This is an original revision under review, not a claim of reproducing another game's interface.
+This implements the final Draft panel's direction, using two independent generated blank frame/button assets, existing terrain art and the licensed Marcellus font. The presentation-board image is not cut into game controls. The title, gameplay HUD, contextual Build tray and other menus have not yet been converted to the entire concept. No claim of finished whole-game visual polish is made.
 
-Source: b247e7d3b90998a1909fab4444730f9d19ebac9e. 880 Godot assertions across 15 suites, eight Python audit tests, startup and two complete public-action progression routes pass. Real-touch cases verify swipe-without-payment, third-card inspection and the 20-material trade. Category tests retain every recipe; 30 sheet-layout cases cover three portrait sizes/two text scales. Actual rendered fixtures33–39 use constructed presentation states, not earned progression or human approval. Current-source native observations are scoped in artifacts/android-sheets-check.json.
+Source: 73c4854 (main). Source digest: 7b9e5c8696b013c7bfbebe0cbabc463c1bd57a6ee2505cd6aa8709f1ed4c9850. 913 Godot assertions across16 suites, eight Python audit tests, startup and two complete public-action progression routes pass. Tests cover actual touch selection/Info/placement, exact quote and separate objective reward, persisted offers, insufficient-funds rejection, camera restoration and duplicate-confirmation rejection. Rendered fixtures40–42 are constructed presentation states, not earned progression or human approval.
 
-Signature, ARM64 files, 16 KB ZIP/ELF alignment and embedded source provenance are verified. Physical-device performance, real Google provider transactions and human creative acceptance remain unqualified. Economy, saves, quotes and provider test IDs are unchanged. Camera quarter turns remain; continuous 3D orbit is not implemented. Some painted parts still lack authored motion, as documented in docs/ANIMATION_STATUS.md.
+Signature,417 retained files, ARM64 packaging,16KB ZIP/ELF alignment and embedded source provenance are verified. SHA256: 5dd33c60575ded69f6046472ce129e212e07aca465ffe0b80f7578f71855cddb. Size:99,181,922 bytes.
 
-Production signing/configuration, hosted publisher details and device/store/creative evidence remain release gates. No store publication was performed. See docs/PRODUCTION_READINESS.md. Checksum is alongside the APK; source development continues on main.
+Physical-device performance, real Google provider transactions and human creative acceptance remain unqualified. Economy, saves, quoted prices and provider test IDs are unchanged. The four-view camera remains; continuous3D orbit is not implemented. Some painted parts still lack authored motion; see docs/ANIMATION_STATUS.md on main. Production signing/configuration, hosted publisher details and device/store/creative evidence remain release gates. No store publication was performed. See main's TEST_REPORT.md and docs/PRODUCTION_READINESS.md for scoped evidence.
