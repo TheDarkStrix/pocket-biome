@@ -37,7 +37,7 @@ func chips(h, parent: Node, values: Dictionary, costs: bool = false) -> HFlowCon
   var group := HBoxContainer.new(); row.add_child(group)
   icon(group,id,26)
   var owned: int = h.model.state.coins if id == "coins" else h.model.state.inventory.get(id,0)
-  var amount: Label = h.label("%d/%d" % [owned,values[id]] if costs else str(values[id]),14,group)
+  var amount: Label = h.label("%d/%d" % [owned,values[id]] if costs else "%d" % values[id],14,group)
   amount.autowrap_mode = TextServer.AUTOWRAP_OFF
   amount.tooltip_text = id.capitalize()+(" · available / required" if costs else "")
   if costs and owned < values[id]: amount.add_theme_color_override("font_color",Color("a94f3c"))

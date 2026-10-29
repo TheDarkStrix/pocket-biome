@@ -1,6 +1,6 @@
 # Current checkpoint —0.19,2026-10-29
 
-User asks to implement every visible element of the project's own selected concept, not only regenerate images. Runtime title/Play/Pack/Build/Draft composition and common-ground clipping are implemented. All1,051 assertions pass, including75 Build-flow checks. The exact-version Android build and retained-save native checks are being finalized; use TEST_REPORT.md and current artifacts JSON for verified distribution/evidence. No final polish or production certification claim. Open art/device/provider gates are in docs/design/REFERENCE_COMPARISON.md and docs/PRODUCTION_READINESS.md.
+User asks to implement every visible element of the project's own selected concept, not only regenerate images. Runtime title/Play/Pack/Build/Draft composition and common-ground clipping are implemented. All 1,053 assertions pass, including 77 Build-flow checks. The exact-version Android build and retained-save native checks are being finalized; use TEST_REPORT.md and current artifacts JSON for verified distribution/evidence. No final polish or production certification claim. Open art/device/provider gates are in docs/design/REFERENCE_COMPARISON.md and docs/PRODUCTION_READINESS.md.
 
 # Historical checkpoints below (superseded)
 
@@ -38,11 +38,11 @@ Dependencies verified under /workspace/runtime: Godot4.6.3, JDK17.0.16+8, SDK36/
 
 Latest local revision after be8a4ee:645 checks pass. Title camera now frames the island independently after Android resize; modal replacement hides/queues old controls instead of detaching during an active callback (modal_scroll stores the new scroll reference). Photo mode preserves gameplay camera, supports wide-world zoom, hides gameplay markers and uses a bounds-safe short-caption toolbar. Final APK rebuilt and signed; install/actual native pass is in progress. No more Godot calls while validating adb.
 
-## Player feedback checkpoint
+# # Player feedback checkpoint
 
 Expansion/fusion/rain and UI response changes pass 701 assertions plus the full progression simulation. Rebuild and distribute the replacement signed test APK; preserve existing schema-3 saves. Real player aesthetic/pacing feedback and physical-device qualification continue to be required.
 
-## Production engineering checkpoint
+# # Production engineering checkpoint
 
 Ongoing ambient art motion, timer cadence and privacy/provider hardening implemented. Preview build is verified against724 Godot assertions, eight Python audit tests and actual APK checks. Final production gate intentionally blocks development credentials and missing device/store/creative evidence. Do not treat a debug APK or static audit as a certified public release.
 
@@ -56,7 +56,7 @@ Prior 0.11 verified source:750 Godot assertions and eight Python audit tests; na
 
 0.15: modal text-list feedback addressed with purpose-specific illustrated sheets.880 Godot assertions/15 suites plus eight audit cases and complete progression routes pass. New draft-swipe, category-completeness and mobile sheet-layout checks qualify the interaction changes. Current native observations remain scoped separately from human visual/device/provider approval.
 
-## 0.16 continuation
+# # 0.16 continuation
 
 The user selected the final Draft panel of docs/design/cohesive-ui-concept.png. Its actual three-card hand/selection/placement, independent frame/button assets, serif draft labels, retained quotes and temporary island framing are implemented. Full automated checks and signed preview export pass; detailed current evidence is in TEST_REPORT.md and artifacts/test-results.json. Continue the same visual/material direction into the grouped named resource rail, Pack/Build/Pulse tools, contextual Build tray, title and remaining screens in independently testable steps. Do not treat the whole concept board as implemented, ship it as a screenshot background, or remove recipes/services to simplify the navigation.
 

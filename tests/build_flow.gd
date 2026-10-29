@@ -68,8 +68,10 @@ func run() -> void:
  var old := {"wood":h.model.state.inventory.wood,"stone":h.model.state.inventory.stone,"coins":h.model.state.coins}
  var action: Button = confirm(tray)
  check(not action.disabled,"the selected workbench is buildable with exact required stock")
+ check(not tray.projects.visible,"the idle tray avoids an empty queue row while Projects stays in Pack")
  await click(action); await settle(h)
  check(h.model.state.jobs.size() == 1 and h.model.state.jobs[0].recipe == "workbench" and h.model.state.inventory.wood == old.wood-4 and h.model.state.inventory.stone == old.stone-2,"one Build touch starts the displayed recipe and spends its quote once")
+ check(tray.projects.visible and tray.projects.text.contains("1/3 working"),"starting a project reveals the real queue summary without reopening")
  check(h.store.load_state().jobs.size() == 1 and h.model.state.coins == old.coins,"Build persists the real queue without inventing a coin fee")
  h.model.tick(5); h.refresh(); await settle(h)
  tray = h.campaign_ui.build_tray

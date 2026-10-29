@@ -2,7 +2,7 @@
 
 The original repository was empty with no working functionality or commits to preserve. Godot 4.6.3 stable official is the pinned engine. The supplied specification is docs/MASTER_PRD_v4.md. Android uses OpenGL Compatibility explicitly, minimum API24, target36, ARM64 and x86_64 debug validation.
 
-## Runtime composition
+# # Runtime composition
 
 `scenes/Main.tscn` instantiates Main, the presentation/input/UI coordinator. It delegates authoritative transactions to WorldModel and CampaignSystem. All game definitions live in data/game.json; provider configuration lives in data/services.json.
 
@@ -26,7 +26,7 @@ The original repository was empty with no working functionality or commits to pr
 | ServiceHub / Telemetry | Optional provider bridge, durable reward ledger/caps, purchase entitlement handling, opt-in diagnostics/HTTPS delivery |
 | PocketServices.kt | Native test Ads/UMP, Billing, rewarded receipts, Android crash diagnostics and user-initiated photo content-URI sharing |
 
-## State and invariants
+# # State and invariants
 
 Coordinates are stable `x,y` keys independent of projection. Maximum gameplay occupancy is 36 cells; storage validates up to 64. Fused entities have one origin and three reservations; all cooldown, DNA, influence and picking queries resolve that origin. Fusion commits atomically before animation and never grants duplicate discovery rewards.
 
@@ -36,13 +36,13 @@ Expansion stores target, frozen three offers and quoted cost; payment occurs onl
 
 Schema 3 includes world, IDs, inventory, timers, pulse modifiers, discoveries, pending draft, chapters/rewards, crafting, blueprints, event state, cosmetics/entitlements, rewarded requests/receipts, accessibility and audio settings. Nested validation precedes load/write. Unknown schemas are rejected. Writes use a temporary file and validated backup before rename; copy/rename failures preserve committed state. This is not a physical power-loss durability guarantee.
 
-## Native build and isolation
+# # Native build and isolation
 
 `tools/prepare_native.py` generates ignored android/build from the pinned Godot template and copies maintained Kotlin/resources. It adds Google Ads 23.6.0, UMP 3.1.0 and Play Billing 8.0.0. `tools/build_android.sh` imports, runs checks, exports a staging APK, verifies its signature and promotes it only on success. APKs/toolchains/caches are not source-controlled.
 
 Tests instantiate the model without a scene tree; scene suites exercise real UI callbacks with isolated save paths. Graphical captures use Xorg/Mesa through tools/visual_review.sh. Native emulator evidence and remaining release gates are tracked separately from model coverage.
 
-## Builder interface revision
+# # Builder interface revision
 
 The latest user instruction selects Terra Nil as a reference and supersedes both earlier navy/green and parchment assumptions. Compact HUD and a four-icon dock leave more room for the island. A single Pulse control opens the real power selector; the World hub retains center/fusion/photo actions. Global DNA detail lives in the inspector, production uses illustrated ingredient counts, and a transient notice layer does not resize the world. GameTheme centralizes interface colors/fonts. Modal close controls and a scrim handle dismissal; launch-menu spacing responds to viewport height. See docs/UI_RESEARCH.md for actually reviewed sources and access limitations.
 
@@ -78,7 +78,7 @@ GameHUD.gd builds the gameplay HUD separately from Main and reads model state wi
 
 0.18: IslandTopology is a pure occupied-cell builder including fusion-owned cells. It rotates occupancy into view space, builds only exposed front faces, joins shared lower corners, bounds horizontal taper and adds irregular cliff tips. Bounds include roots, mist and outlet spray. IslandEnvironment caches geometry by occupancy/type/evolution/view, pools IslandWall children in depth order behind Main's land, draws the common surface/mist and updates controlled30Hz cosmetic time. IslandWall draws painted cliff/roots; its Sprite2D child uses a shared waterfall shader, so nearer wall nodes correctly cover farther outlets. Main retains expansion clouds/markers above the foundation and all existing picking authority. Photo/title bounds merge the environment. DioramaPreview uses the same wall/cap painter for static World miniatures. No environmental presentation state is serialized.
 
-##0.19 concept composition and shared ground
+## 0.19 concept composition and shared ground
 
 Pack consolidates the prior five-tool navigation into three physical tools without removing destinations. The goal-book still opens GameplayAdvisor; Pack→Journal supplies Codex, Pack→World supplies fusion/rotation/photo, Pack→Projects supplies the complete queues/batch/catalogue, and the header gear supplies Settings/About/New World. All eight stock types stay visible in Pack.
 

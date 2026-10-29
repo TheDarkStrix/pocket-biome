@@ -14,17 +14,17 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 | assets/app_icon.png | 1254×1254 PNG | Launcher/splash identity | Integrated in Android export |
 | assets/audio/*.wav | PCM 22050Hz | Eleven original synthesized feedback cues and 32s ambient loop | Integrated; headless encoding verified; human listening open |
 
-## Specifications and delivery rules
+# # Specifications and delivery rules
 
 Use 2:1 isometric ground planes, consistent light from upper left, warm earthy sides, soft painted contours, readable silhouettes and generous transparent margins. Atlas cells are nominally 418px wide, with measured row bounds and pivots in TileArtwork.gd. Base rendered ground width is 132 logical pixels; fused footprints span four grid cells. UI uses custom graphite surfaces, amber Build emphasis, violet Pulse controls, pearl text, rarity borders and illustrated textures. No engine-default button styling is intended as final UI.
 
 Future standalone delivery: transparent RGBA PNG, terrain 512×384 with ground anchor (256,256); tall nodes/structures 512×640 with ground anchor (256,480); fused sanctuaries 1024×768 with ground anchor (512,512); UI/resource icons 256×256 with 24px inset. Maintain atlas manifests and source files. Do not crop by visual guess: verify shared ground anchors in engine and matching alpha hit testing.
 
-## Remaining review
+# # Remaining review
 
 Inspect high-zoom alpha fringes, transitions and consistent ground dimensions on Android. Perform human visual/audio review and device sampling. These integrated generated assets are not a claim of final creative sign-off. Rare reveals, silhouettes, depletion, fusion choreography and photo mode use real asset references; additional hand-painted animation frames may improve quality but are not falsely marked delivered.
 
-## Current interface assets
+# # Current interface assets
 
 assets/fonts/BiomeInterface.ttf and BiomeDisplay.ttf are static500/350-weight neutral interface/display derivatives of Google Fonts Inter. The modified font families are renamed and the original SIL OFL notice is retained as LICENSE_Inter.txt and included in Android exports. Source: https://github.com/google/fonts/tree/main/ofl/inter . Static instances avoid a variable-font importer instability encountered during the prior pass. Nunito/Fredoka have been retired from this interface after the user's rejection of the playful style.
 
@@ -55,7 +55,7 @@ Design-stage only: docs/design/cohesive-ui-concept.png is an original generated 
 
 Card title, cost, trait, selected glow and terrain are live game elements. The presentation board is never shipped as a background or cut into controls. Actual render evidence40–42 uses constructed world states. Independent title/tool/rail assets and the remaining menus are still outstanding; final human creative and physical-device reviews remain open.
 
-## 0.17 integrated setting and interface assets
+# # 0.17 integrated setting and interface assets
 
 | Path | Source dimensions / preparation | Status |
 | --- | --- | --- |
@@ -68,7 +68,7 @@ Card title, cost, trait, selected glow and terrain are live game elements. The p
 
 New background/UI images use lossy0.82 mobile imports; background maximum1536px, logo/plaque/tools maximum1024px. High-resolution original PNGs remain available. MaterialUI's virtual texture dimensions change runtime border metrics without modifying pixels. Existing raw-material atlas regions now exclude transparent gutters and a neighboring-row fringe; gameplay terrain art is unchanged. Actual fixtures43–50 show the combined art and live controls. This does not complete the contextual Build tray, three-tool layout, connected deep terrain, layered structure motion or final human creative/device acceptance.
 
-## 0.18 island-edge artwork integrated
+# # 0.18 island-edge artwork integrated
 
 | Path | Source dimensions / use | Status |
 | --- | --- | --- |
@@ -79,7 +79,7 @@ New background/UI images use lossy0.82 mobile imports; background maximum1536px,
 
 Sources remain intact. Rock/roots maximum1024px and waterfall maximum1536px use lossy0.82 imports. The connecting surface samples the existing painted grass atlas. Island-bound mist is lightweight procedural soft geometry; no resource/reward is implied by decorative roots, mist or water. Actual fixtures51–59 show integrated land and its foundation, outlets, turns, title/photo and sanctuary. The raised surface-pad soil artwork remains; removing all interior pad seams requires a later surface-art pass. Final human creative and physical-device performance approval remains open.
 
-##0.19 concept-wide runtime pass
+## 0.19 concept-wide runtime pass
 
 | Path / component | Source extent | Status |
 | --- | --- | --- |

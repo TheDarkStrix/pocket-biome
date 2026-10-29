@@ -22,7 +22,7 @@ Reference: the original four-panel board [cohesive-ui-concept.png](cohesive-ui-c
 | Highlighted structure on the actual land | Translucent selected-object preview and gold diamond on an eligible empty Meadow | Cosmetic only; selecting/browsing never reserves or deploys land |
 | Material objects beside one Build action | Exact required ingredient icons and Build/Craft action; live missing-resource/prerequisite explanations | CampaignSystem owns debit, queue and completion; no mock construction |
 | Finished structure placement | Same selected object changes to Place after normal queue completion | Returns to island, highlights valid Meadows; cancellation keeps blueprint; saved land draft/full island conflicts explained |
-| Project/blueprint access | Compact working/ready summary links to complete existing queues, batches and stock | All three slots and batch1–3 retained |
+| Project/blueprint access | Working/ready summary appears when relevant and links to complete existing queues, batches and stock; idle access stays in Pack | All three slots and batch1–3 retained |
 | Darkened island above Draft | Actual live diorama under a gradient scrim | Inactive expansion controls suppressed; camera restored on dismissal |
 | Draft heading and coin badge | Cinzel title and framed live Coin quote | Uses saved quote, not illustrative board values |
 | Three illustrated draft cards | Focusable three-card hand, raised selected card, gold edge, terrain art | Selection and Info preserve saved offers; reroll/placement use existing authorities |
@@ -32,6 +32,6 @@ Reference: the original four-panel board [cohesive-ui-concept.png](cohesive-ui-c
 
 Actual screenshots60–64 are constructed Godot art fixtures, not earned progression or generated mockups. Native evidence is scoped separately in TEST_REPORT.md. The generated medallion is an independent blank tool socket; its icon, text, energy, hit target and response remain live. No reference-game screenshot or flattened board is used as executable UI.
 
-## Still requires acceptance
+# # Still requires acceptance
 
 The concept's illustrated props, individual flower arrangements, hand-shaped terrain contours and surface coloration are not identical to the current atlas artwork. Windmill blade layering/rotation remains unfinished; mist/canopy/water effects do not stand in for that missing animation. Human creative review, actual mid-range device performance/audio and provider/store qualification remain open. This pass implements the four panels' navigation/composition and transactions; it is not certification of production readiness or final visual approval.

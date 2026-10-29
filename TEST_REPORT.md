@@ -21,16 +21,16 @@ Updated 2026-10-29. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | sheet_layout | 36 | Draft hand/actions, catalogue, World cards, power controls and setting switches at three portrait sizes/two text scales |
 | draft_flow | 22 | Saved offers/quote, retained selection, Info/redraw safety, affordability, one placement and camera restoration |
 | island_environment | 42 | Four-turn cliff topology/triangulation, fused owners, roots/outlets/cache and photo framing |
-| build_flow | 75 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
-| **Total** | **1,051** | Assertions; separate simulation and startup checks also run |
+| build_flow | 77 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
+| **Total** | **1,053** | Assertions; separate simulation and startup checks also run |
 
-## Progression and graphics
+# # Progression and graphics
 
 Public-action simulations: both collect-ready and automation-first routes reach all20 discoveries, five chapters and35 cells, with117 tracked progression operations plus earning loops. Their simulated active times are5,223 and4,810 seconds; final Coins1,215 and1,358. Save/restore is included. These are deterministic reachability probes, not a human pacing result.
 
 `tools/visual_review.sh` renders through actual Godot OpenGL with Xorg dummy/Mesa. Current captures 01–04 show the gameplay/draft/evolution/inspector route; 07–10 show Codex/detail/workshop/settings. Captures 05–06 deliberately construct visual fixtures and are not progression evidence. No cloud audio listening claim is made.
 
-## Android evidence and limitations
+# # Android evidence and limitations
 
 The native plugin compiled and the signed debug package installed on an API29 AOSP x86_64 software emulator. Current APK resumes and renders through explicitly selected OpenGL Compatibility. Bounded current-process log review found no errors; see artifacts/android-runtime-check.json. The software emulator also raised Android System UI/launcher ANRs while booting; these are not attributed to the game.
 
@@ -40,13 +40,13 @@ Native photo mode hid gameplay HUD/expansion markers, exported a 320×640 PNG an
 
 Remaining: physical touch/cutout/lifecycle matrix, real GPU FPS/memory/thermal/audio, actual test-ad reward and Play Billing sandbox purchase/restore, configured consent/telemetry, human first-session comprehension and store signing. Provider callback tests exercise the service boundary, not real Google transactions. Local crash collection does not establish delivery to a configured backend or a crash-free percentage.
 
-## Current presentation verification
+# # Current presentation verification
 
 The user requested Terra Nil's style/structure rather than its colors. Current UI uses an original graphite/pearl/violet palette, chapter/resources upper-left, local ecology upper-right and contextual bottom tools. Actual OpenGL captures 01–12 and native captures show the revision. Earlier playful/parchment and slate/rust skins are superseded.
 
 Mobile fixtures cover three portrait dimensions at normal/enlarged text. They check settled HUD framing, Pulse-number width, separated corner panels, title hero and photo-toolbar bounds. Actual sprite extents drive camera fitting. A tall 32-cell visual fixture derives Ancient Grove bounds independently from renderer atlas metadata; it is not earned-progression evidence. Real-event tests cover navigation, modal replacement and quantity rebuilding. Objective captions retain the action instruction and progress.
 
-## First player feedback regression pass
+# # First player feedback regression pass
 
 701 assertions pass across 13 suites, plus progression/startup. Added cases cover pending-draft relocation without debit/reroll; every visible frontier center through real ScreenTouch events on a 16-cell fixture; any-corner fusion detection; four-in-a-row rejection; pulse-blocker explanation; actual dialog confirmation; full-cross rain state surviving refresh/reduced-motion; bounded weather lifetime; and HUD press/release settling. The ecology readout assertion now waits for the real interpolation to finish.
 
@@ -54,13 +54,13 @@ Actual OpenGL fixtures 13–16 show raised expansion controls, an illustrated fu
 
 Current native feedback checks: replacement installation succeeded, title and resumed-world screens rendered, and a top-left canopy-adjacent cloud opened a real draft. Closing it and touching a different cloud changed the saved destination from -2,0 to 2,0 with identical cards, quote, balance and tile set. Stable progress fields survived installation; the old app stayed active for 39 seconds between the first snapshot and installation, so its effect clocks advanced. A shader-cache recompile warning appeared; bounded app logs contained no script/runtime errors. See android-feedback-check.json and captures 05–07. Native phone GPU/performance and rain appearance still require physical-device feedback; native emulator checks do not replace that.
 
-## Tile-conditions clarity update
+# # Tile-conditions clarity update
 
 708 assertions pass. The HUD now names Moisture and Heat under Tile conditions. A real touchscreen tap opens the player explanation, which identifies the selected tile, defines the 0–100 scores, distinguishes warmth from Celsius, and explains neighbor/Pulse influences and transformation requirements. Tutorial copy uses conditions; inspector scores include /100. Internal DNA data and schema are unchanged.
 
 The six mobile size/text fixtures now verify named-reading separation and the full panel above the world. Enlarged text exposed both a height issue and a width overlap; layout now measures the conditions panel when reserving header space. Real-touch help navigation passes. Current native device recheck is separate; previous native captures show the prior HUD wording.
 
-## Animation and production hardening
+# # Animation and production hardening
 
 724 Godot assertions across 13 suites pass, plus complete progression/startup. Eight separate Python audit-policy/ELF-parser tests pass. Added cases cover grounded canopy deformation, UV bounds, bounded displacement, reduced-motion invariance, no activity from paused machines, cosmetic isolation, frame-jitter-safe environment/automation cadence, no stalled reward bursts, diagnostic deletion/cancellation and offline privacy navigation.
 
@@ -68,7 +68,7 @@ Current preview export compiled with Ads25.5.0/UMP4.0.0/Billing8.3.0, Kotlin2.3.
 
 Actual OpenGL frame comparison uses a constructed six-cell visual fixture at two fixed cosmetic times:3,904 canopy pixels and605 water-region pixels changed; the sampled Oak ground patch stayed identical. This demonstrates visible ambient motion and grounded art, not player progression, physical GPU FPS or complete sprite rigs. See artifacts/ambient-frame-check.json, frames17–18 and docs/ANIMATION_STATUS.md. Native lifecycle evidence for this revision is separately scoped in its JSON report.
 
-## Native scrolling, consent and cardinal-camera follow-up
+# # Native scrolling, consent and cardinal-camera follow-up
 
 Latest 750 Godot assertions and eight Python audit tests pass. A touch-drag regression first failed with menu buttons consuming input, then passed after buttons allowed propagation to ScrollContainer. It also verifies no button toggles and no leaked world pointers. The headless fixture enables touch capability for this native ScrollContainer path; the test sends real ScreenTouch/ScreenDrag events rather than setting a scrollbar value.
 
@@ -78,7 +78,7 @@ Native crash capture now follows the actual diagnostics preference and ignores h
 
 Latest native750-source follow-up:current APK installed and rendered, World rotation reached90°, dragging menu controls scrolled to below-fold privacy actions, and privacy disclosure opened. Reading actual native preferences confirmed diagnostics enabled=true after the On control and=false after Off. Stable save/progression fields remained unchanged; bounded current-process logs had no script/runtime error lines. The JNI privacy dispatch bug was reproduced as missing preference writes before the fix and corrected via the known compiled interface. These are software-emulator checks, not physical-device gesture/performance or provider certification.
 
-## 0.12 gameplay pass
+# # 0.12 gameplay pass
 
 783 assertions across 14 Godot suites pass, plus eight Python audit cases, startup and two public progression policies. Real-touch tests open objective suggestions, return to the island without auto-harvesting, and execute/persist an illustrated 20-material trade. Dealer tests sample multiple seeds/chapters, verify unique eligible stable hands and unchanged saved drafts. Model cases cover the reported surplus-Wood/cash-short fixture, local effect/reach descriptions, nonmutating advice, useful automation guidance, reserved plot coins and automatic/manual Furnace input behavior.
 
@@ -86,7 +86,7 @@ Both fixed-seed public routes finish the full 20-discovery/five-chapter campaign
 
 Native 0.12: the exact final universal APK installed over the existing save; every ZIP member matched the exported package. The title/restored world, objective suggestions and direct Workshop trade screen rendered and accepted touch navigation. Legacy pending cards/quote and stable progress fields were retained; active clocks advanced. Insufficient stock correctly disabled the trade controls; no native sale was executed. The real 20-material transaction/save is covered separately by the automated touch fixture. Bounded current-process logs contained no script/runtime error lines; a cached shader was recompiled. See android-gameplay-check.json and captures17–18.
 
-## 0.13 HUD verification
+# # 0.13 HUD verification
 
 The current source adds high-count layout checks at three portrait sizes and two text scales, selected-name/inspect separation, ability ring/count containment, mobile inspect/Build target sizes and an actual touch path from the selected-biome inspect control. The existing touch route also caught a newly visible fusion shortcut temporarily reshaping its footer; reserving action width and listening for minimum-size changes fixed the stale world-input bounds.
 
@@ -98,7 +98,7 @@ Native visual review of the first 0.13 candidate exposed a hidden chapter count 
 
 Final 0.13 native check: replacement installation succeeded; the final-source HUD showed the restored world and separate5/8 goal count. Touching the selected-biome arrow opened Mistwood Refuge inspection, the Pulse medallion opened actual powers without spending energy, and World opened the action-card hub. Stable save fields and tile data were retained except active environmental clocks. Bounded current-process logs contain no script/runtime errors; cached shader recompilation is recorded. See android-hud-check.json and native captures19–22.
 
-## 0.14 world-first presentation checks
+# # 0.14 world-first presentation checks
 
 Mobile layout now has132 checks, including a world-height floor of55% at all six portrait size/text fixtures, high counts, full quest progress, retained targets, actual land-touch callout reveal and expiry. The prior persistent-meter tests now check correct selection context and live numerical readings in the real inspector. Touch tests wait for a post-modal frame before interacting with the returning transient callout. Scene smoke adds reduced-motion freezing of the cloud animation clock. Actual OpenGL captures27/29/30/31 show the compact HUD, large-text layout, temporary callout and dusk variant. These are constructed visual fixtures, not human approval or earned progression. Current package/native evidence is separately scoped.
 
@@ -106,7 +106,7 @@ Current 0.14 automated total:845 assertions across14 Godot suites, eight Python 
 
 Final 0.14 native: the shader renders the sky/clouds on the software-emulator OpenGL backend. The restored HUD is compact; Pulse/World/leaf controls open actual screens, land interaction reveals a Grass callout, and tapping it opens the full inspector. Stable save fields and tile data were retained except active clocks. Current-process bounded logs have no script/runtime errors; cached shader recompilation is recorded. A host-driven750ms stationary swipe produced the callout rather than direct inspection, so native hold timing is not certified by this run. The callout-to-inspector route passed. See android-atmosphere-check.json and captures23–28.
 
-## 0.15 sheet interaction and layout verification
+# # 0.15 sheet interaction and layout verification
 
 880 assertions across 15 Godot suites pass, plus eight Python audit cases, startup and both public-action campaign simulations. New real-touch cases swipe across draft artwork, verify unchanged saved offers/balance, and open the third card's actual confirmation. Catalogue category controls expose the complete structure subset and return every configured recipe without changing model state. The 20-material trade still executes/persists the actual transaction. The new 30-case sheet-layout suite covers three portrait sizes/two text scales: card actions, catalogue width, World art/title/description containment, power targets and setting switches.
 
@@ -116,7 +116,7 @@ The first 0.15 native candidate exposed an unsupported full-width plus in empty 
 
 Final-source0.15 native: replacement installation retained all stable save/progression fields and tile data except active clocks. The original Forest/Water/Iron offers and15-Coin quote render correctly; a real swipe moves the gallery without charging/redealing. Catalogue slot markers and resource order are corrected. Reading the actual save confirms Sound Off=false and then On=true. Bounded current-process logs have no script/runtime error lines; cached shader recompilation is recorded. See android-sheets-check.json and native captures29–33.
 
-## 0.16 card-hand verification
+# # 0.16 card-hand verification
 
 913 assertions across16 Godot suites pass, plus eight Python audit cases, startup and both complete public-action campaign simulations. The new22-case draft suite checks saved-quote display, one active selection, reduced-motion behavior, no selection/Info debit, real SaveStore round-trip, insufficient-funds rejection, restored camera/dock, one chosen placement and duplicate-confirmation rejection. Native-style screen-touch coverage now selects the third visible card directly, opens its actual Info and confirms the exact terrain/quote plus the separate first-expansion objective reward. The36-case sheet-layout suite checks all three rotated card bounds, mobile target sizes, names/traits and confirmation containment across three portrait sizes/two text scales, alongside the existing catalogue/powers/settings cases.
 
@@ -126,7 +126,7 @@ Actual OpenGL fixtures40–42 show the implemented hand, changed selection and s
 
 Final-source0.16 native: replacement install succeeds as code8 and preserves the exact saved world before launch. Continue opens the existing Forest/Water/Iron offers and15-Coin quote. Real180ms stationary touch selects Iron, moves the glowing frame and changes the action to Place Iron. Later returns to the island/dock; all saved fields and tile data remain unchanged except active time/next-effect clocks. Native QA deliberately leaves the pending plot unplaced; actual placement, reward, affordability and duplicate-confirmation transactions are automated-test evidence. Bounded current-process logs have no script/fatal errors. The software emulator showed an Android System UI ANR during cold startup, unsupported translator query messages and a cached-shader recompilation warning; none establishes physical-device performance or app crash rate. See android-card-hand-check.json and native captures34–36.
 
-## 0.17 setting, typography and shared-material verification
+# # 0.17 setting, typography and shared-material verification
 
 927 assertions across16 Godot suites pass, plus eight Python audit cases, startup and both complete public-action progression simulations. Mobile coverage now includes visible names on all three framed resource groups across three portrait sizes/two text scales and the Settings destination of the top-right gear. Real screen-touch coverage opens the gear, scrolls its actual Tile conditions action into view and opens help through the connected button. Existing draft selection/Info/affordability/placement/reward/save tests remain passing.
 
@@ -136,7 +136,7 @@ Actual OpenGL fixtures43–50 cover draft, changed selection, gameplay, illustra
 
 Final-source0.17 native: replacement installation succeeds as code9 and preserves the exact saved world before launch. The illustrated logo/cloud plate/green action render on the actual title. Continue restores Forest/Water/Iron and the15-Coin quote with the named resource rail. Real180ms touch selects Iron and changes the actual confirmation to Place Iron. Later keeps the pending transaction; the gear opens actual Settings with the new frames/type/indicators. Stable root fields and tile data remain unchanged except time/next-effect clocks. Bounded current-process logs contain no script/fatal errors. Native QA deliberately leaves the pending plot unplaced; actual placement and other transactions remain automated-test evidence. This software emulator does not qualify physical performance, audio comfort, provider transactions or human creative acceptance. See android-material-ui-check.json and native captures37–40.
 
-## 0.18 attached-island environment verification
+# # 0.18 attached-island environment verification
 
 975 assertions across17 Godot suites pass, plus eight Python audit tests, startup and both complete public-action progression simulations. The42-case island suite covers empty/starting/expanded/hollow/large negative-coordinate footprints, shared corner continuity, fused owners, exposed versus enclosed/frozen water, a two-outlet budget, geometry caching, photo bounds and reduced motion. It validates every cliff mesh in long staircases and rings through all four turns. An early global taper inverted some long-island faces; the corrected taper is horizontally bounded and every bottom corner remains below its ground corner. Existing real-touch expansion/placement/fusion/pulse/save tests continue to pass. Mobile layout now150 checks, including root/cliff/outlet photo bounds across three sizes/two text scales.
 
@@ -146,9 +146,9 @@ Actual OpenGL fixtures51–59 cover initial four-cell land, larger attached scen
 
 Final-source0.18 native: replacement installation succeeds as code10 and preserves the exact saved world before launch. Title and restored draft show the real five-cell island's cliff foundation/roots. World miniatures include the same foundation. Real touch activates Rotate right; the cliff/root geometry follows and an exposed water ribbon renders at the new visible edge. Real touch opens Photo mode, which includes the full base/roots/spray, and Done restores the previous quarter-turn gameplay view. Stable root fields and all tile data remain unchanged except time/next-effect clocks; the original pending Forest/Water/Iron offers and15-Coin quote remain. Bounded current-process logs contain no script/fatal errors. Native QA tests one actual turn, not all four native views; all-four-turn mesh validity and placement/fusion are automated evidence. No physical-device performance, provider or human creative qualification is claimed. See android-environment-check.json and native captures41–45.
 
-##0.19 concept-wide composition verification
+## 0.19 concept-wide composition verification
 
-All1,051 assertions/18 Godot suites pass, plus eight Python audit tests, startup and both complete campaign probes. New75-case Build flow uses actual ScreenTouch events to open the primary tool, pay the selected Workbench4 Wood/2 Stone once, wait normal model time, observe Place without reopening, cancel while retaining the blueprint, and deploy/save on an empty Grass tile. Six small-phone/portrait/text cases verify all categories/Close/selected actions fit, retained selection is revealed, all18 configured recipes remain available with no browsing debit, and closing restores the prior exact camera/dock. Horizontal drag does not select/build. Pending drafts/full islands explain placement conflicts. Every atlas/structure/discovery/fused/depleted shared-ground mesh triangulates with valid UVs; cosmetic previews do not mutate gameplay.
+All 1,053 assertions/18 Godot suites pass, plus eight Python audit tests, startup and both complete campaign probes. New 77-case Build flow uses actual ScreenTouch events to open the primary tool, pay the selected Workbench4 Wood/2 Stone once, wait normal model time, observe Place without reopening, cancel while retaining the blueprint, and deploy/save on an empty Grass tile. Six small-phone/portrait/text cases verify all categories/Close/selected actions fit, retained selection is revealed, all18 configured recipes remain available with no browsing debit, and closing restores the prior exact camera/dock. Horizontal drag does not select/build. Pending drafts/full islands explain placement conflicts. Every atlas/structure/discovery/fused/depleted shared-ground mesh triangulates with valid UVs; cosmetic previews do not mutate gameplay.
 
 Existing screen/catalogue tests now explicitly target the retained detailed Projects screen; new Build-flow tests exercise the actual lower tray. The real-touch route opens Pack and then Journal, preserving old destinations after the three-tool consolidation. Whole-suite output is rejected on script errors even when assertion totals pass; a typed empty-array optimization error was caught during final build checks and fixed before packaging.
 
@@ -156,4 +156,8 @@ Actual OpenGL fixtures60–64 show current Play, lower Build and ghost, Pack, Dr
 
 Android0.19 export, payload/signature/alignment/source proof and installed-emulator evidence are recorded below when complete. Physical-device performance, continuous3D orbit, layered windmill rotor animation, human creative/pacing qualification and real provider sandbox/release gates remain open.
 
-Final0.19 source/test/export digest `479f87f0318cf09b30791f07f649d6e4455544ce96a18c1581bc878efb69b7b1`. ARM64 download 101,045,424 bytes, SHA256 `1c526ba4e60b16bc38ee150fd1cdb1fc1e49f7d8911b5f798dbdcaee7d85237e`; all458 retained members are byte-identical to the universal APK, signatures and16KB ZIP/ELF alignment pass. Production audit still exits2 with10 real release blockers. A nonfatal ObjectDB shutdown warning appeared under the Xorg94 fixture runner; a final-source verbose OpenGL render under Xorg95 exited without it. No runtime script/render error appeared; no long-duration leak-free claim is made.
+Initial0.19 source/test/export digest `479f87f0318cf09b30791f07f649d6e4455544ce96a18c1581bc878efb69b7b1`. ARM64 download 101,045,424 bytes, SHA256 `1c526ba4e60b16bc38ee150fd1cdb1fc1e49f7d8911b5f798dbdcaee7d85237e`; all458 retained members are byte-identical to the universal APK, signatures and16KB ZIP/ELF alignment pass. Production audit still exits2 with10 real release blockers. A nonfatal ObjectDB shutdown warning appeared under the Xorg94 fixture runner; a final-source verbose OpenGL render under Xorg95 exited without it. No runtime script/render error appeared; no long-duration leak-free claim is made.
+
+The installed0.19 preview exposed fractional formatting of JSON recipe costs (4.0/2.0) and an unnecessary idle project row. Final code formats resource quantities as integers and hides the idle summary while keeping Pack→Projects. Starting a job reveals the live queue summary; completion still exposes Place. These branches add two focused checks, bringing the final total to1,053. Final-source screenshots/native evidence supersede the initial0.19 captures.
+
+Final export after the installed-UI fixes: source/test/export digest `c330f85c1bf183bd887776f22514f128618d3c97e64b95514cb06dcb81e2d901`; ARM64 101,045,424 bytes, SHA256 `6e1a686a8e39bd35417229b1d357bc6971f82c9b7d35dce21ba680ef699a794f`, 458 retained payload members verified, all 1,053 assertions and source/signature/16KB ZIP+ELF alignment pass.

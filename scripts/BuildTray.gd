@@ -139,5 +139,6 @@ func update_live() -> void:
  jobs.text = " · ".join(progress) if not progress.is_empty() else "Three project slots available"
  var ready := 0
  for amount in host.model.state.blueprints.values(): ready += amount
+ projects.visible = not host.model.state.jobs.is_empty() or ready > 0
  projects.text = "Projects · %d/3 working" % host.model.state.jobs.size()+(" · %d ready" % ready if ready > 0 else "")
  projects.tooltip_text = jobs.text+" · Tap for queues, batches and blueprints"

@@ -12,7 +12,7 @@ Update0.16: the user selected the final Draft panel. Its three-card selection/co
 
 The user rejects the current interface as a data sheet and explicitly asks to return to their Pocket Biome logo/asset-sheet reference. The current 0.15 APK is unchanged. The generated four-screen board is a visual proposal, not an implemented build, production asset pack, tested layout, approved design or screenshot of gameplay. It is deliberately labelled that way.
 
-## Basis actually reviewed
+# # Basis actually reviewed
 
 The supplied docs/references/user_art_direction.jpg contains the material vocabulary we previously failed to carry into the interface: sculpted wood/stone/leaf branding, dark inset metal surfaces, narrow warm edges, painted physical resource objects, a compact hub rail, backpack/hammer/settings tool silhouettes and an illustrated recipe frame. The new board uses these as its primary identity reference.
 
@@ -24,7 +24,7 @@ Current public Google Play listings and publisher screenshots were fetched and v
 
 Exact screenshot URLs/access limitations are in playstore-review.json. The proposed board is original, inspired by the user's supplied sheet. It is not claimed to match any reference game's entire UI. A candidate Pocket Land URL returned404 and provides no evidence.
 
-## One visual system across the game
+# # One visual system across the game
 
 World: the diorama is the main subject; atmospheric depth and distant land create a setting. Any backdrop must preserve contrast with expansion clouds and node silhouettes. The actual game's 2:1 ground geometry, anchors and four-view camera remain technical constraints, regardless of a concept illustration's perspective.
 
@@ -46,7 +46,7 @@ Codex/objectives: field-journal object with discovery artwork/silhouettes, page/
 
 Settings/privacy/store: reachable utility surfaces with the same materials and clear controls; legal/consent text stays complete. Test-provider disclosures and actual localized purchase prices remain explicit. No production configuration or monetization behavior changes in this design stage.
 
-## Implementation sequence and acceptance
+# # Implementation sequence and acceptance
 
 1. Establish reusable frame/icon/rail assets and an isolated gameplay/title presentation. Preserve the working0.15 interaction/economy/save layer.
 2. Implement one complete gameplay-to-Build-to-placement flow and one draft/confirm flow. Compare actual rendered screens with the board; do not count an image-generation result as implemented artwork or UI.
