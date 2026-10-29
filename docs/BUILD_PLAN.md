@@ -1,6 +1,6 @@
 # Current checkpoint —0.19,2026-10-29
 
-User asks to implement every visible element of the project's own selected concept, not only regenerate images. Runtime title/Play/Pack/Build/Draft composition and common-ground clipping are implemented. All 1,053 assertions pass, including 77 Build-flow checks. The exact-version Android build and retained-save native checks are being finalized; use TEST_REPORT.md and current artifacts JSON for verified distribution/evidence. No final polish or production certification claim. Open art/device/provider gates are in docs/design/REFERENCE_COMPARISON.md and docs/PRODUCTION_READINESS.md.
+User asks to implement every visible element of the project's own selected concept, not only regenerate images. Runtime title/Play/Pack/Build/Draft composition and common-ground clipping are implemented. All 1,053 assertions pass, including 77 Build-flow checks. The exact-version Android APK is packaged and installed; retained-save and title/draft/Play/Build/Pack/World native checks pass. Use TEST_REPORT.md and current artifacts JSON for distribution/evidence. No final polish or production certification claim. Open art/device/provider gates are in docs/design/REFERENCE_COMPARISON.md and docs/PRODUCTION_READINESS.md.
 
 # Historical checkpoints below (superseded)
 

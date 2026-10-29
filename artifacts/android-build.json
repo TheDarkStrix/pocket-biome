@@ -15,7 +15,7 @@
     "com.google.android.ump:user-messaging-platform": "4.0.0",
     "com.android.billingclient:billing": "8.3.0"
   },
-  "native_ui_verified_this_revision": false,
+  "native_ui_verified_this_revision": true,
   "store_release_ready": false,
-  "note": "Concept-wide title/Play/Pack/Build/Draft runtime composition. Current installed-native evidence is pending; exact-source automatic checks/payload/signature/alignment passed. See TEST_REPORT.md."
+  "note": "Final-source replacement install retained byte-identical save. Actual title/draft/Play/Build/Pack/Pack\u2192World touch views verified. Stable fields/tiles retained except active time and next-effect clocks; bounded PID log has no script/fatal errors. See android-cohesive-ui-check.json. Physical/provider/creative/release gates remain open."
 }
