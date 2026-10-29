@@ -1,5 +1,7 @@
 # Cohesive interface proposal — design stage
 
+Update0.17: painted atmosphere, illustrated title identity, named resource rail, journal/Settings header, display/body typography and shared slate/bronze surfaces are now integrated in the actual game. The lower Build tray, three-tool navigation consolidation and connected deep terrain remain open. See REFERENCE_COMPARISON.md and actual fixtures43–50; the historical design-only statements below describe earlier checkpoints.
+
 Update0.16: the user selected the final Draft panel. Its three-card selection/confirmation flow, generated frame/button materials, serif labels and visible-world layout are now implemented and covered by rendered fixtures40–42. The rest of this board remains a proposal. The historical description below describes the original design-only checkpoint and must not be read as claiming all four screens ship.
 
 The user rejects the current interface as a data sheet and explicitly asks to return to their Pocket Biome logo/asset-sheet reference. The current 0.15 APK is unchanged. The generated four-screen board is a visual proposal, not an implemented build, production asset pack, tested layout, approved design or screenshot of gameplay. It is deliberately labelled that way.

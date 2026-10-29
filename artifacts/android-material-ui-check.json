@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-29T19:54:55.981729+00:00",
+  "source_sha256": "86b2f563cad2a1316f9c9dce68e20e338db9a39fe680c054e9979e1000b1157c",
+  "version": "0.17.0-preview",
+  "version_code": 9,
+  "environment": "API29 AOSP x86_64, software CPU, host Mesa OpenGL translator, no Play Store/GMS",
+  "replacement_install_succeeded": true,
+  "saved_world_identical_after_install": true,
+  "stable_save_fields_preserved_after_ui": true,
+  "tile_data_preserved_except_next_effect": true,
+  "observations": [
+    "Illustrated title logo, painted cloud realm and green action render in the installed build.",
+    "Continue restores the saved Forest/Water/Iron offers and15-Coin quote with named Wood/Stone/Coins header.",
+    "Stationary180ms touch selects Iron, moves the selected card and changes the live action to Place Iron.",
+    "Later returns to gameplay without spending or replacing saved offers.",
+    "Stationary180ms touch on the top-right gear opens the actual Settings & Accessibility screen, with shared material frames, text and bound indicators."
+  ],
+  "coins": 150,
+  "cells": 5,
+  "pending": {
+    "at": "2,0",
+    "cards": [
+      "forest",
+      "water",
+      "iron"
+    ],
+    "cost": 15
+  },
+  "runtime_script_or_fatal_errors": [],
+  "platform_notes": [
+    "Software-emulator startup/driver timing is not physical performance evidence.",
+    "OpenGL translator/cached-shader diagnostics are not used as app crash-rate evidence."
+  ],
+  "screenshots": [
+    "android-37-painted-title.png",
+    "android-38-painted-draft.png",
+    "android-39-painted-selection.png",
+    "android-40-material-settings.png"
+  ],
+  "native_placement_executed": false,
+  "physical_device_tested": false,
+  "provider_transactions_tested": false,
+  "production_qualified": false
+}
