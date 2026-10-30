@@ -27,8 +27,9 @@ Updated 2026-10-30. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | island_environment | 42 | Four-turn cliff topology/triangulation, fused owners, roots/outlets/cache and photo framing |
 | build_flow | 77 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
 | expansion_pricing | 26 | Early-price parity, late budget, strict legacy/current quotes, relocation/payment/save and malformed revision rejection |
-| orbit_world | 140 | Shipping3D camera,72 yaw/pitch poses, first evolution/save, complete profiles/portraits, fusion, ghost, native twist/compass, mobile fit, weather and lifecycle |
-| **Total** | **1,229** | Assertions; separate simulation and startup checks also run |
+| orbit_world | 140 | Experimental3D camera,72 yaw/pitch poses, first evolution/save, complete profiles/portraits, fusion, ghost, native twist/compass, mobile fit, weather and lifecycle |
+| painted_art | 12 | Actual default original land/card assets, four-view picking, no replacement scenery or disconnected falls |
+| **Total** | **1,241** | Assertions; separate simulation and startup checks also run |
 
 ## 0.21 living-world verification
 
@@ -207,3 +208,7 @@ Runtime source commit:c11772a. Tested/exported source digest:2a6216f329dfa787261
 Runtime source:af58aa7; tested/exported digest:21c28f7b4ad091cf8b90f6510afb8e4dbf3ef6e96a1f5bb5842ef8b4fd08ebb7. All1,229 assertions pass (140 shipping3D cases), plus eight Python audit cases, startup and two full campaign probes. Camera bounds now reserve the settled fusion size during growth and the entire Windmill sail sweep; UI portraits fit their model geometry more tightly. Version0.21.0-preview/code14. Universal APK SHA256:0d7521b91a4f3aa12d2a3095ee6160f43214ccaed3020f7c9cf4885f9547e906. Phone APK SHA256:a674185f660dc258b6eda471fb5ab89b06195cb7732349c93433c78908877a23, 102216554 bytes. All575 retained entries, signature/alignment and exact-source binding pass.
 
 Current native validation:the exact af58aa7/code14 universal APK installed over the existing API29 software-emulator game. The primary save was byte-identical immediately after replacement. Title, Continue, legacy15-Coin draft, Later, gameplay, native compass drag and Build rendered in captures61–65. The drag visibly changes yaw/pitch and the compass needle while resources, pending offer/quote, chapter, discoveries, ownership and cooldown identity stay unchanged. The sampled1600-entry runtime log has no script/fatal/game-ANR entries. The app was force-stopped after checks. See artifacts/android-orbit-check.json. Cold-start delay and software rendering do not certify physical-phone performance; live providers and human creative/pacing qualification remain open.
+
+## Restored painted0.21.1 package and session pause
+
+Runtime sourcefa96a28; source SHA256:e7813bf2a0989e8a521e2238cd5f7044d674cd6eea24b2afb2986113fdce2de2. Version0.21.1-preview/code15. Phone APK SHA256:02af7b5afb437de9ec855adacda9a256cefd11e949a45920adec594354657d34, 102216554 bytes. All575 retained files, source binding, signature and16KB alignment pass. Universal replacement installation on the existing API29 test emulator preserved the primary save byte-for-byte. See artifacts/android-painted-install-check.json. Native UI/interaction/photo revalidation for this restored version is pending;0.21 native3D evidence is historical. The test app was force-stopped and feature work paused at the user’s request. No physical-device or final creative approval is claimed.

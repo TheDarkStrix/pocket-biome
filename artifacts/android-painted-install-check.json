@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-30T07:26:58.108807+00:00",
+  "runtime_source_commit": "fa96a28",
+  "source_sha256": "e7813bf2a0989e8a521e2238cd5f7044d674cd6eea24b2afb2986113fdce2de2",
+  "version": "0.21.1-preview",
+  "version_code": 15,
+  "replacement_install_save_byte_identical": true,
+  "retained_save_sha256": "c2f7e7ed874e4cce7e57c56f1dfe7f1f3398a74ab1ca40285387f17ecc242649",
+  "app_force_stopped": true,
+  "native_ui_interaction_photo_revalidation": "pending; work paused at user request",
+  "physical_device_tested": false
+}

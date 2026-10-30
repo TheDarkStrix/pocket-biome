@@ -13,6 +13,8 @@ Updated 2026-10-30. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone — original painted land restored
 
+**Session paused at the user’s request.** Read SESSION_HANDOFF.md before resuming. Runtime sourcefa96a28;0.21.1-preview/code15; tested source digest `e7813bf2a0989e8a521e2238cd5f7044d674cd6eea24b2afb2986113fdce2de2`. Android export/phone packaging and replacement installation pass; the save stayed byte-identical. Native UI/interaction/photo checks for the restored build remain pending. The rejected3D package is superseded by the restored painted build on the download branch.
+
 0.21.1 restores the earlier painted land from before the added cliff-base/shared-grass pass. Main defaults to `orbit_enabled=false` and `connected_land=false`: original painted terrain/nodes/structures retain their complete surfaces and warm earth edges. No new meshes, flat grass carpet or generated3D portraits appear in the normal game. Drafts, Workshop, Journal and world miniatures again use the original painted source artwork. Current HUD/menu controls and gameplay/save/economy remain.
 
 The0.21 procedural3D presentation was a rejected visual change. Its code remains isolated for technical regression only, with explicit opt-in in experimental tests/capture tools; it is not the player-facing default or approved art direction. The restored painted camera supports pan/pinch and four90° views, not continuous3D orbit. Automatic art-style replacement is prohibited by this recorded user preference.
