@@ -1,0 +1,70 @@
+{
+  "utc": "2026-10-30T04:08:41.666941+00:00",
+  "version": "0.20.0-preview",
+  "version_code": 12,
+  "source_commit": "d885f75",
+  "source_sha256": "489a4b3d13763da89de63350992befc1ab879dc2ad87079298c0f58d6acf0116",
+  "phone_apk_sha256": "cb68e1d97abb8a95371fe84525b8476f68d9a03fc822082bccd46f82ac9b9312",
+  "device": "API29 x86_64 AOSP software emulator, host Mesa llvmpipe, no Play services",
+  "renderer": "OpenGL Compatibility",
+  "replacement_install_succeeded": true,
+  "save_byte_identical_before_launch": true,
+  "stable_root_fields_after_ui": {
+    "audio_levels": true,
+    "blueprints": true,
+    "chapter": true,
+    "chapter_rewards": true,
+    "coins": true,
+    "cosmetic": true,
+    "discoveries": true,
+    "energy": true,
+    "entitlements": true,
+    "event": true,
+    "expansions": true,
+    "harvests": true,
+    "hints": true,
+    "inventory": true,
+    "jobs": true,
+    "next_id": true,
+    "next_job": true,
+    "objectives": true,
+    "pending": true,
+    "reward_limits": true,
+    "reward_requests": true,
+    "seed": true,
+    "settings": true,
+    "stats": true,
+    "text_scale": true,
+    "transactions": true,
+    "version": true
+  },
+  "tile_state_stable_except_next_effect": true,
+  "restored_pending": {
+    "at": "2,0",
+    "cards": [
+      "forest",
+      "water",
+      "iron"
+    ],
+    "cost": 15
+  },
+  "script_or_fatal_lines": [],
+  "observed": [
+    "real title Continue and original saved Draft",
+    "Later shows clean resource rail, larger simple painted tools, framed Build caption and continuous grass joins",
+    "Build opens thin framed lower workbench, ground-free structure thumbnails and integer4 Wood/2 Stone quote with real disabled shortage",
+    "Back and Pack preserve all eight stock types and Journal/World/Projects/Trade",
+    "Pack\u2192World\u2192Rotate right visibly changes orientation; connected floor/foliage/foundation and exposed waterfall remain attached",
+    "backgrounding retains original transaction, coins, inventory, tile footprint/evolutions and progress; only active time/next-effect advance"
+  ],
+  "screenshots": [
+    "android-52-reference-title.png",
+    "android-53-reference-draft.png",
+    "android-54-connected-reference-play.png",
+    "android-55-reference-workbench.png",
+    "android-56-reference-pack.png",
+    "android-57-connected-quarter-turn.png"
+  ],
+  "download_commit": "cbb83fa7fda457270cec9f6291e391257f0c73d1",
+  "scope": "Final exact-source UI/installation/save and one native camera turn. No native rotor-motion/crafting/provider purchase/ad/physical FPS/thermal/audio or human creative acceptance is asserted. Motor motion and complete campaign/legacy quote compatibility are separate automated/OpenGL evidence."
+}

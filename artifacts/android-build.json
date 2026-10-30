@@ -15,7 +15,7 @@
     "com.google.android.ump:user-messaging-platform": "4.0.0",
     "com.android.billingclient:billing": "8.3.0"
   },
-  "native_ui_verified_this_revision": false,
+  "native_ui_verified_this_revision": true,
   "store_release_ready": false,
-  "note": "Final exact-source clean reference tools/rail/workbench and continuous floor, layered windmill and revisioned pacing pass. Automated/export/signature/alignment checks pass; installed-native evidence pending."
+  "note": "Final0.20 installed title/Draft/Play/Build/Pack/World camera turn verified. Byte-identical save retained on update; stable fields/tiles preserved after UI except active time/next-effect. No bounded-PID script/fatal errors. Physical/provider/creative/continuous3D gates remain open. See android-reference-correction-check.json."
 }

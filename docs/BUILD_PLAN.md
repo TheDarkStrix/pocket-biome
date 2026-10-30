@@ -1,6 +1,6 @@
 # Current checkpoint —0.20,2026-10-30
 
-Latest steering: close land gaps and match the reference Workshop, resource bar and bottom tools. Connected opaque ground/soft skirts, clean continuous rail, thin frames and complete painted medallions are implemented. Windmill rotor layers and revisioned late-game pricing are implemented. All1,087 assertions/19 suites and both full campaign probes pass. Android export/payload/signature/alignment pass; native UI/save evidence/distribution are being finalized. Production gates and continuous3D orbit remain open; no completed-public-release claim.
+Latest steering: close land gaps and match the reference Workshop, resource bar and bottom tools. Connected opaque ground/soft skirts, clean continuous rail, thin frames and complete painted medallions are implemented. Windmill rotor layers and revisioned late-game pricing are implemented. All1,087 assertions/19 suites and both full campaign probes pass. Android export/payload/signature/alignment pass; native UI/save/quarter-turn checks and APK publication pass. Production gates and continuous3D orbit remain open; no completed-public-release claim.
 
 # Current checkpoint —0.19,2026-10-29
 

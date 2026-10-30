@@ -48,7 +48,7 @@ Your next discovery might be one plot away.
 
 - feature-graphic.png:1024×500 rendered from the game's own current world/art and logo; a staged promotional composition, not a screenshot of normal portrait controls.
 - Actual portrait game screenshots: ../../artifacts/70-connected-reference-play.png,71-reference-workbench.png,72-reference-pack.png,73-reference-draft.png,74-reference-title.png. They are staged but achievable in-game art states; not a claim of earned progression or human creative acceptance.
-- Existing app icon: ../../assets/app_icon.png. Verify final Play Console icon sizing/cropping and adapt it from its original source before submission.
+- store-icon.png:512×512 opaque engine-rendered rendition of the existing launcher identity, with reproducible capture_icon.gd; final publisher creative review remains required.
 
 ## Publisher fields still required
 
