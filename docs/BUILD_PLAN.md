@@ -1,6 +1,6 @@
 # Current checkpoint —0.20.1
 
-Final saved-price readout regression is fixed and covered. All1,089 assertions/19 suites, eight Python audits, startup and both full campaign probes pass.0.20 visual/native evidence remains valid for the unchanged presentation; exact0.20.1 install/restored-quote checks are being finalized. No further runtime edits are pending. Production gates and continuous3D orbit remain explicitly open.
+Final saved-price readout regression is fixed and covered. All1,089 assertions/19 suites, eight Python audits, startup and both full campaign probes pass.0.20 visual/native evidence remains valid for the unchanged presentation; exact0.20.1 installed-version/save/Draft/HUD checks pass. No further runtime edits are pending. Production gates and continuous3D orbit remain explicitly open.
 
 # Current checkpoint —0.20,2026-10-30
 

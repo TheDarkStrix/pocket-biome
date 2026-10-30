@@ -15,7 +15,7 @@
     "com.google.android.ump:user-messaging-platform": "4.0.0",
     "com.android.billingclient:billing": "8.3.0"
   },
-  "native_ui_verified_this_revision": false,
+  "native_ui_verified_this_revision": true,
   "store_release_ready": false,
-  "note": "Quote-display compatibility patch: model cost readouts honor frozen saved quotes. Full1089 checks/source/signature/alignment pass. Final installed patch restoration check pending;0.20 visual evidence is separately documented."
+  "note": "Final0.20.1/code13 installed and restored exact save/draft; current title/Draft/HUD native views recorded. Stable fields/tiles preserved except clocks; no script/fatal errors.0.20 exercises unchanged Build/Pack/quarter-turn visuals separately. See android-quote-patch-check.json. Release gates remain open."
 }

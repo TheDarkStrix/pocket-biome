@@ -1,0 +1,61 @@
+{
+  "utc": "2026-10-30T04:24:59.395860+00:00",
+  "version": "0.20.1-preview",
+  "version_code": 13,
+  "source_commit": "4d60e96",
+  "source_sha256": "dccc0c279837dbe293b6020fefb788607e5c7ed15232c9635d1c6f858fa3b339",
+  "device": "API29 AOSP software emulator / OpenGL Compatibility",
+  "byte_identical_save_after_install": true,
+  "stable_root_fields": {
+    "audio_levels": true,
+    "blueprints": true,
+    "chapter": true,
+    "chapter_rewards": true,
+    "coins": true,
+    "cosmetic": true,
+    "discoveries": true,
+    "energy": true,
+    "entitlements": true,
+    "event": true,
+    "expansions": true,
+    "harvests": true,
+    "hints": true,
+    "inventory": true,
+    "jobs": true,
+    "next_id": true,
+    "next_job": true,
+    "objectives": true,
+    "pending": true,
+    "reward_limits": true,
+    "reward_requests": true,
+    "seed": true,
+    "settings": true,
+    "stats": true,
+    "text_scale": true,
+    "transactions": true,
+    "version": true
+  },
+  "tiles_unchanged_except_next_effect": true,
+  "restored_pending": {
+    "at": "2,0",
+    "cards": [
+      "forest",
+      "water",
+      "iron"
+    ],
+    "cost": 15
+  },
+  "script_or_fatal_errors": [],
+  "observed": [
+    "code13/name0.20.1 confirmed through Android package manager",
+    "actual title and Continue restores original saved hand and quote",
+    "Later restores new reference resource rail and clean bottom tools over the connected floor",
+    "backgrounding persists all stable progress/stock/quotes; only active time and effect clocks change"
+  ],
+  "screenshots": [
+    "android-58-quote-patch-title.png",
+    "android-59-retained-quote-draft.png",
+    "android-60-quote-reference-play.png"
+  ],
+  "scope": "Exact final-source install/restore/draft/HUD check.0.20 separately exercises unchanged Build/Pack/quarter-turn presentation. Late legacy higher-quote display is exercised by the failing-then-passing automated regression, not this five-cell native save. Physical/provider/creative/continuous3D release gates remain open."
+}
