@@ -4,6 +4,9 @@ signal inspected(position: Vector2)
 signal panned(delta: Vector2)
 signal zoomed(factor: float)
 signal rotated(steps: int)
+signal orbited(radians: float)
+var continuous_orbit := false
+var twist_active := false
 var twist := 0.0
 var pointers := {}
 var start := Vector2.ZERO
@@ -17,6 +20,7 @@ func reset() -> void:
  dragged = false
  pinched = false
  twist = 0.0
+ twist_active = false
 
 func begin(id: int, position: Vector2, now: float) -> void:
  pointers[id] = position
@@ -28,6 +32,7 @@ func begin(id: int, position: Vector2, now: float) -> void:
  else:
   pinched = true
   twist = 0.0
+  twist_active = false
 
 func finish(id: int, position: Vector2, now: float, canceled: bool = false) -> void:
  if not pointers.has(id): return
@@ -50,11 +55,18 @@ func move(id: int, position: Vector2) -> void:
   var after_vector: Vector2 = pointers[ids[1]]-pointers[ids[0]]
   var after: float = after_vector.length()
   if before > 24 and after > 24:
-   twist += wrapf(after_vector.angle()-before_vector.angle(),-PI,PI)
-   if absf(twist) >= PI/3:
-    var step := 1 if twist > 0 else -1
-    twist -= step*PI/2
-    rotated.emit(step)
+   var rotation_delta:=wrapf(after_vector.angle()-before_vector.angle(),-PI,PI)
+   if continuous_orbit:
+    if twist_active:orbited.emit(-rotation_delta)
+    else:
+     twist+=rotation_delta
+     if absf(twist)>deg_to_rad(7):
+      twist_active=true;orbited.emit(-(twist-signf(twist)*deg_to_rad(7)))
+   else:
+    twist+=rotation_delta
+    if absf(twist)>=PI/3:
+     var step:=1 if twist>0 else -1
+     twist-=step*PI/2;rotated.emit(step)
   if before > 1.0: zoomed.emit(after/before)
  elif pointers.size() == 1:
   if position.distance_to(start) > 12.0: dragged = true

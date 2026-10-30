@@ -70,6 +70,7 @@ func run() -> void:
     for point in wall.mesh: valid = valid and shape_geometry.bounds.has_point(point)
    check(valid,"all%s cliff faces triangulate and fit bounds at turn%d" % [shape,rotation])
  var h = preload("res://scenes/Main.tscn").instantiate()
+ h.orbit_enabled = false
  h.store.path = "user://island-environment-tests.json"; h.show_menu_on_launch = false
  root.add_child(h)
  h.model = Model.new(); h.refresh(); h.modal.hide()

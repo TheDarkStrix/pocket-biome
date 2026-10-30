@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-30T04:12:15.733388+00:00",
-  "source_sha256": "dccc0c279837dbe293b6020fefb788607e5c7ed15232c9635d1c6f858fa3b339",
+  "utc": "2026-10-30T06:38:49.614937+00:00",
+  "source_sha256": "2a6216f329dfa7872611cc8372110015b478d8200262d85a910d974aed143405",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 1089,
+  "assertions": 1227,
   "results": [
     {
       "suite": "run",
@@ -118,6 +118,12 @@
       "passed": true,
       "exit_code": 0,
       "assertions": 26
+    },
+    {
+      "suite": "orbit_world",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 138
     },
     {
       "suite": "automation_pacing",

@@ -3,6 +3,9 @@ const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const MaterialUI = preload("res://scripts/MaterialUI.gd")
 const Store = preload("res://scripts/SaveStore.gd")
+var orbit_enabled := true
+var orbit_world: CanvasLayer
+var orbit_pad: Control
 var island_environment = preload("res://scripts/IslandEnvironment.gd").new()
 var sky_backdrop: CanvasLayer
 var sheets = preload("res://scripts/GameSheets.gd").new()
@@ -84,6 +87,7 @@ var dirty_elapsed := 0.0
 var last_discoveries := 0
 var suspended := false
 var discard_resume_delta := false
+var mouse_orbit_drag := false
 
 func _ready() -> void:
  add_child(audio_feedback)
@@ -109,9 +113,12 @@ func _ready() -> void:
  apply_layout()
  input_controller.tapped.connect(tap)
  input_controller.inspected.connect(inspect)
+ input_controller.continuous_orbit = orbit_enabled
+ input_controller.orbited.connect(func(angle):
+  if orbit_enabled and not launch_menu: orbit_world.orbit(angle); queue_redraw())
  input_controller.panned.connect(func(delta): pan += delta; constrain_camera(); queue_redraw())
  input_controller.rotated.connect(rotate_camera)
- input_controller.zoomed.connect(func(factor): zoom_level = clampf(zoom_level*factor,0.04 if photo_mode else 0.5,2.0); constrain_camera(); queue_redraw())
+ input_controller.zoomed.connect(func(factor): zoom_level = clampf(zoom_level*factor,0.04 if photo_mode else 0.12 if orbit_enabled else 0.5,3.0 if orbit_enabled else 2.0); constrain_camera(); queue_redraw())
  refresh()
  if show_menu_on_launch: start_screen()
  elif not model.state.pending.is_empty(): draft()
@@ -178,6 +185,9 @@ func build_ui() -> void:
  add_child(sky_backdrop)
  island_environment.host = self
  add_child(island_environment)
+ if orbit_enabled:
+  orbit_world=preload("res://scripts/OrbitWorld.gd").new();orbit_world.host=self;add_child(orbit_world)
+  island_environment.hide();island_environment.process_mode=Node.PROCESS_MODE_DISABLED
  var layer := CanvasLayer.new()
  add_child(layer)
  var root := Control.new()
@@ -187,6 +197,8 @@ func build_ui() -> void:
  root.theme = ThemeKit.theme()
  layer.add_child(root)
  game_hud.build(self,root)
+ if orbit_enabled:
+  orbit_pad=preload("res://scripts/OrbitPad.gd").new();orbit_pad.host=self;root.add_child(orbit_pad)
  notice_toast = PanelContainer.new()
  notice_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
  notice_toast.add_theme_stylebox_override("panel",panel_style(ThemeKit.PAPER))
@@ -569,15 +581,18 @@ func project(c: Vector2) -> Vector2:
 func rotate_camera(steps: int) -> void:
  if launch_menu or photo_mode: return
  view_turn = posmod(view_turn+steps,4)
+ if orbit_enabled: orbit_world.orbit(steps*PI/2)
  frame_world()
- model.message = "View %d° · Two-finger twist turns the island; pinch to zoom." % (view_turn*90)
+ model.message = "Twist two fingers or drag the compass to look around; pinch to zoom." if orbit_enabled else "View %d°" % (view_turn*90)
  haptic(12)
  refresh()
 
 func screen(c: Vector2) -> Vector2:
+ if orbit_enabled and is_instance_valid(orbit_world): return orbit_world.project(Vector3(c.x,0.025,c.y))
  return world_anchor()+pan+project(c)*zoom_level
 
 func hit(pos: Vector2) -> String:
+ if orbit_enabled: return orbit_world.cell_at(pos)
  var p := (pos-world_anchor()-pan)/zoom_level
  var c := Vector2(p.x/132+p.y/66,p.y/66-p.x/132)
  for step in range(view_turn): c = Vector2(c.y,-c.x)
@@ -622,6 +637,12 @@ func tap(pos: Vector2) -> void:
  refresh()
 
 func _unhandled_input(event: InputEvent) -> void:
+ if orbit_enabled and not launch_menu and not modal.visible:
+  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+   mouse_orbit_drag=event.pressed and world_rect().has_point(event.position)
+   get_viewport().set_input_as_handled();return
+  if event is InputEventMouseMotion and mouse_orbit_drag:
+   orbit_world.orbit(-event.relative.x*0.01,event.relative.y*0.006);queue_redraw();get_viewport().set_input_as_handled();return
  if mixed_touch_sequence:
   input_controller.reset()
   return
@@ -668,10 +689,16 @@ func apply_layout() -> void:
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
   modal.size.y = layout.modal.end.y-modal.position.y
+ if orbit_enabled and is_instance_valid(orbit_pad):
+  orbit_pad.visible = not launch_menu and not photo_mode and not modal.visible and targeting == "" and placement_blueprint == ""
+  orbit_pad.size=Vector2.ONE*touch_height()
+  orbit_pad.position=Vector2(safe.end.x-orbit_pad.size.x-24,layout.world.end.y-orbit_pad.size.y-8)
  photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
  if launch_menu: frame_title_island(safe)
  elif modal.visible and modal_screen in ["draft","build"]:
+  if orbit_enabled:
+   orbit_world.fit(world_rect().grow(-8));queue_redraw();return
   var bounds := world_art_bounds(false)
   var area := world_rect().grow(-8)
   zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y)*(1.0 if modal_screen == "build" else 1.18),0.04,2.0)
@@ -683,6 +710,8 @@ func apply_layout() -> void:
  queue_redraw()
 
 func frame_title_island(safe: Rect2) -> void:
+ if orbit_enabled:
+  orbit_world.fit(Rect2(safe.position+Vector2(20,safe.size.y*0.20),Vector2(safe.size.x-40,safe.size.y*0.42)));return
  # Android can resize after _ready; never reuse the gameplay pan for the title hero.
  var bounds := world_art_bounds(false)
  var hero := Rect2(safe.position+Vector2(20,safe.size.y*0.20),Vector2(safe.size.x-40,safe.size.y*0.42))
@@ -713,6 +742,8 @@ func world_anchor() -> Vector2:
 
 
 func constrain_camera() -> void:
+ if orbit_enabled:
+  orbit_world.constrain();return
  # Keep at least the island's projected center reachable in the play area.
  var bounds := Rect2()
  var initialized := false
@@ -737,6 +768,7 @@ func _process(delta: float) -> void:
  notice_time = maxf(0,notice_time-delta)
  notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible
  if not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
+ if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return
  if discard_resume_delta:
   discard_resume_delta = false
@@ -766,7 +798,7 @@ func _process(delta: float) -> void:
 
 func _notification(what: int) -> void:
  if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
-  input_controller.reset()
+  input_controller.reset();mouse_orbit_drag=false
   all_touches.clear(); mixed_touch_sequence = false
  if what == NOTIFICATION_WM_GO_BACK_REQUEST:
   if modal.visible: modal.hide()
@@ -821,6 +853,9 @@ func _draw() -> void:
  if palette not in ["day","sakura"]:
   for i in range(28):
    draw_circle(Vector2(fmod(i*137.0,get_viewport_rect().size.x),30+fmod(i*97.0,get_viewport_rect().size.y*0.65)),1.0+float(i%2),Color(0.95,0.9,0.76,0.5))
+ if orbit_enabled:
+  draw_orbit_feedback()
+  return
  var visible_frontier: Array = [] if photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
  for key in visible_frontier:
   var point := screen(model.coord(key))
@@ -1100,6 +1135,8 @@ func world_art_bounds(include_frontier: bool) -> Rect2:
  return bounds.grow(24)
 
 func frame_world() -> void:
+ if orbit_enabled:
+  orbit_world.fit(world_rect(),not photo_mode);queue_redraw();return
  var bounds := world_art_bounds(not photo_mode)
  var area := world_rect()
  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y),0.04 if photo_mode else 0.5,2.0)
@@ -1109,6 +1146,7 @@ func frame_world() -> void:
 func begin_photo() -> void:
  if photo_mode: return
  photo_saved_view = {"zoom":zoom_level,"pan":pan}
+ if orbit_enabled:photo_saved_view["yaw"]=orbit_world.yaw;photo_saved_view["pitch"]=orbit_world.pitch
  photo_lighting = model.state.cosmetic
  photo_mode = true
  hud.hide(); bottom.hide(); photo_controls.show()
@@ -1119,6 +1157,8 @@ func end_photo() -> void:
  if not photo_saved_view.is_empty():
   zoom_level = photo_saved_view.zoom
   pan = photo_saved_view.pan
+  if orbit_enabled:
+   orbit_world.yaw=photo_saved_view.yaw;orbit_world.pitch=photo_saved_view.pitch
   photo_saved_view.clear()
  hud.show(); bottom.show(); photo_controls.hide()
  call_deferred("apply_layout")
@@ -1264,6 +1304,11 @@ func pick_frontier(position: Vector2) -> String:
  return nearest
 
 func pick(position: Vector2) -> String:
+ if orbit_enabled:
+  if targeting == "" and placement_blueprint == "":
+   var cloud := pick_frontier(position)
+   if cloud != "": return cloud
+  return orbit_world.pick(position)
  if targeting == "" and placement_blueprint == "":
   var cloud := pick_frontier(position)
   if cloud != "": return cloud
@@ -1397,6 +1442,16 @@ func update_stacked_buttons() -> void:
 
 func draw_weather() -> void:
  for effect in presentation.weather:
+  if orbit_enabled and not model.state.settings.reduced_motion:
+   var alpha:float=clampf((effect.duration-effect.elapsed)/effect.duration,0,1)*0.5
+   for key in effect.targets:
+    var origin:String=model.origin(key)
+    if origin=="":continue
+    var c:Vector2=Vector2(model.coord(origin));var outline:=PackedVector2Array()
+    var edge:float=1.48 if model.state.tiles[origin].size==4 else 0.48
+    for offset in [Vector2(-0.48,-0.48),Vector2(edge,-0.48),Vector2(edge,edge),Vector2(-0.48,edge),Vector2(-0.48,-0.48)]:outline.append(screen(c+offset))
+    draw_polyline(outline,Color(0.68,0.88,0.96,alpha),2,true)
+   continue
   var elapsed: float = effect.elapsed
   var fade: float = clampf((effect.duration-elapsed)/0.6,0,1)*clampf(elapsed/0.12,0,1)
   var color: Color = {"rain":Color("a9d8fa"),"heat":Color("f2a56d"),"frost":Color("d3f4ff")}[effect.power]
@@ -1426,3 +1481,29 @@ func draw_weather() -> void:
       draw_line(at-Vector2(3,0)*span,at+Vector2(3,0)*span,color,1.6,true)
       draw_line(at-Vector2(0,3)*span,at+Vector2(0,3)*span,color,1.6,true)
      else: draw_circle(at,(2+sin(phase*PI))*span,Color(color,fade*(1-phase)))
+
+func draw_orbit_feedback() -> void:
+ var show_clouds: bool=not photo_mode and not launch_menu and not modal.visible and targeting=="" and placement_blueprint==""
+ if show_clouds:
+  for key in model.frontier():
+   var at:=screen(model.coord(key))
+   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",at,0.16*zoom_level,Color(0.9,0.97,1,0.45))
+   draw_circle(at,13,Color(0.12,0.22,0.25,0.26))
+   draw_line(at-Vector2(6,0),at+Vector2(6,0),Color("fff3d7"),2,true)
+   draw_line(at-Vector2(0,6),at+Vector2(0,6),Color("fff3d7"),2,true)
+ if not modal.visible and not launch_menu and not photo_mode:
+  var targets: Array=model.pulse_targets(preview) if targeting!="" else [selected]
+  if placement_blueprint!="":targets=available_meadows()
+  for key in targets:
+   if model.origin(key)=="":continue
+   var origin:String=model.origin(key)
+   var c: Vector2=Vector2(model.coord(origin));var shape:=PackedVector2Array()
+   var edge:float=1.48 if model.state.tiles[origin].size==4 else 0.48
+   for offset in [Vector2(-0.48,-0.48),Vector2(edge,-0.48),Vector2(edge,edge),Vector2(-0.48,edge),Vector2(-0.48,-0.48)]:shape.append(screen(c+offset))
+   draw_polyline(shape,Color(0.97,0.88,0.64,0.85),1.8,true)
+ draw_weather()
+ for effect in presentation.harvests:
+  var at:=entity_screen(effect.key)+Vector2(-25,-35-effect.elapsed*35)
+  preload("res://scripts/UIIcons.gd").draw(self,effect.resource,at-Vector2(10,8),23,Color(1,1,1,1-effect.elapsed/0.8))
+  draw_string_outline(ThemeKit.BODY,at+Vector2(8,0),effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,15,3,Color("23362e"))
+  draw_string(ThemeKit.BODY,at+Vector2(8,0),effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("fff2cc"))

@@ -234,7 +234,7 @@ func world(h) -> void:
  var turns := HBoxContainer.new(); box.add_child(turns)
  h.button("Rotate left",func(): h.modal.hide(); h.rotate_camera(-1),turns)
  h.button("Rotate right",func(): h.modal.hide(); h.rotate_camera(1),turns)
- h.label("Four isometric views · twist two fingers to turn; pinch to zoom.",14,box)
+ h.label("Drag the compass to orbit and tilt. Twist two fingers to orbit continuously; pinch to zoom.",14,box)
  var at: String = h.model.origin(h.selected)
  if at != "":
   var tile: Dictionary = h.model.state.tiles[at]
@@ -319,7 +319,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, twist for quarter turns. Pack → World offers rotation and photo controls. Core play is offline and saves automatically."}]:
+ for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, twist to orbit, or drag the compass to orbit and tilt. Pack → World offers rotation and photo controls. Core play is offline and saves automatically."}]:
   var content: VBoxContainer = h.sheets.card(box)
   var row := HBoxContainer.new(); content.add_child(row)
   var image = h.sheets.art(h,row,step.tile,"",84); image.custom_minimum_size.x = 90

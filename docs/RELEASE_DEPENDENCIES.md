@@ -15,6 +15,6 @@ Runtime: OpenGL Compatibility is selected for both regular and mobile rendering,
 
 Current engineering/checklist: docs/PRODUCTION_READINESS.md. Current animation coverage and remaining authored rotor/body rigs: docs/ANIMATION_STATUS.md. SDK artifact pins are current as verified from official repositories; current store/regional policy and provider flows still need final review. The production audit intentionally fails for development signing/test IDs and missing external acceptance evidence.
 
-Camera extension:four 90° views are implemented; continuous free-angle orbit requires a 3D renderer and directional assets. It is not marked complete. See docs/CAMERA_ORBIT_PLAN.md.
+Camera extension:0.21 implements continuous3D yaw/pitch, actual model backs/sides, camera-aware picking and bounds. Automated and software-rendered checks are documented; human creative approval and physical-device qualification remain open. See docs/CAMERA_ORBIT_PLAN.md.
 
 Store review materials are prepared in store/LISTING.md and store/PRIVACY_DRAFT.md, with staged current-game captures and a documentation-only feature-graphic renderer. Final publisher/audience/contact/hosted-policy and store approvals remain external. These drafts are not public store submissions.

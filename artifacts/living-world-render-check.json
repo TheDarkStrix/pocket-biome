@@ -1,0 +1,17 @@
+{
+  "camera_pitch": 0.663225115757845,
+  "camera_yaw": 0.785398163397448,
+  "fixture": true,
+  "frames": 24,
+  "interval": 0.12,
+  "mesh_instances": 72,
+  "model_unchanged_during_ambient_animation": true,
+  "renderer": "Compatibility OpenGL, Mesa software; not phone performance",
+  "triangles": 42416,
+  "changed_pixels_between_fixed_camera_frames": 30543,
+  "image_size": [
+    540,
+    960
+  ],
+  "motion_verified": true
+}

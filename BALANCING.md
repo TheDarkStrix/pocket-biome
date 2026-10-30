@@ -2,7 +2,7 @@
 
 Authority: data/game.json; transaction/objective rules in WorldModel and CampaignSystem. Numerical choices remain tuning hypotheses pending player validation.
 
-- Start: 25 coins, four cells, no earned inventory. Expansion: rounded `12 × 1.24^N`, capped at 36 occupied cells.
+- Start: 25 coins, four cells, no earned inventory. Expansion revision2: rounded `12 × 1.24^N` through N=12; thereafter +12 per purchase, capped at360 Coins, with36 occupied cells maximum. Legacy pending quotes retain their exact revision1 price.
 - Harvest: initial Oak 8s, Stone 12s, Fiber 6s. Manual taps accelerate cooldown 0.5s at most every 0.25s; a tap cannot extend a nearly-ready timer. Harvesting grants repeatable coin income, preventing reliance on ads.
 - Active play only: no offline production or clock-based income. Automated sources consume real recipe inputs and honor shared fused cooldowns.
 - Draft: three saved offers, guaranteed accessible tutorial sources; chapter pools expand. Confirmation alone charges. Moving an unfinished draft keeps its existing three offers and quote; it is not a free reroll. Optional rewarded reroll once per expansion never changes its quote.
@@ -15,7 +15,7 @@ Authority: data/game.json; transaction/objective rules in WorldModel and Campaig
 
 ## Verified progression simulation
 
-`tests/progression_simulation.gd` uses public gameplay transactions and advances active time; it does not inject inventory or discoveries. Latest run: all 20 discoveries, all five chapters, 35 occupied cells, 119 tracked progression operations, plus earning-loop harvests, 5199 active seconds, ending with 1293 coins. It includes save/restore. This establishes reachability, not an expected human completion time or optimal strategy. The script deliberately accelerates waiting and knows recipe conditions.
+`tests/progression_simulation.gd` uses public gameplay transactions and advances active time; it does not inject inventory or discoveries. Latest normal/automation-first routes: all20 discoveries, all five chapters,35 occupied cells,117 tracked progression operations plus earning-loop harvests;1,097/1,076 active seconds, ending with1,114/1,155 Coins. It includes save/restore. This establishes reachability, not an expected human completion time or optimal strategy. The script deliberately accelerates waiting and knows recipe conditions.
 
 First normal path: harvest Oak, open adjacent cloud, inspect Water and confirm placement; moisture crosses the Rainforest threshold in a few active seconds. Scene smoke exercises this launch-to-evolution route with real UI callbacks.
 
@@ -57,3 +57,7 @@ Revision2 keeps the first13 quotes (counters0–12) identical, then adds12 Coins
 Expert collect-ready/automation routes now complete20 discoveries/five chapters/35 cells in1,097/1,076 active seconds, with1,662/1,509 manual collections and68-second maximum logged progression gaps. The old routes took5,223/4,810 seconds,10,939/10,057 collections and791/744-second gaps. These are accelerated solvers, not human playtests, minimal tap requirements or retention results. Human session/challenge testing remains required.
 
 0.20.1 also protects price communication: World/advice readouts show the stored pending quote, including older higher quotes, instead of the new curve.26 pricing checks cover both policies; charge/rewards and the new curve remain unchanged.
+
+## 0.21 presentation isolation
+
+The3D migration changes no economy coefficients, recipe thresholds or progression transactions. The fixed-camera animation probe verifies byte-identical model state while geometry/shaders animate. Both complete public-transaction progression routes retain their0.20 outcomes. Rendering smoothness and human enjoyment still require physical/device playtesting.

@@ -2,6 +2,18 @@
 
 The original repository was empty with no working functionality or commits to preserve. Godot 4.6.3 stable official is the pinned engine. The supplied specification is docs/MASTER_PRD_v4.md. Android uses OpenGL Compatibility explicitly, minimum API24, target36, ARM64 and x86_64 debug validation.
 
+## Living3D presentation — 0.21
+
+The shipping view is now `OrbitWorld.gd`, a CanvasLayer between the painted sky and the2D feedback/HUD. It owns an isolated transparent3D SubViewport, orthographic Camera3D, shared materials, sunlight, one connected foundation, integer-keyed visual entities and bounded effects. Yaw/pitch, projection/ray-AABB picking, mobile viewport density,3D fitting and cosmetic retirement are separate from the model. The earlier2D atlas view remains only as an internal regression option.
+
+`DioramaGeometry` merges authored miniature forms by material; `DioramaProps` builds the complete base/structure/discovery catalog using `data/diorama.json`. Material shaders animate grounded foliage, water, ivy and flowing falls. The Windmill has a separate rotor. Depleted models derive from actual cooldown state, and old fusion constituents converge while the replacement grows. These visual nodes never own occupancy or rewards.
+
+`DioramaLife` pools six mist planes,18 smoke planes, three winged butterflies and two70-particle weather systems. Cosmetic clocks respect accessibility/lifecycle/photo states; background disables the offscreen renderer. `OrbitPad` handles drag/keyboard camera movement without gameplay transactions. `InputController` emits continuous twist angles after a7° threshold while preserving native pinch and suppression of tap-on-release.
+
+`DioramaPortraits`/`DioramaPreview` use40 transparent engine-rendered cache images of the actual props; world previews sample the live viewport. Regenerate the cache with `tools/capture_diorama_previews.gd` after geometry/material changes, then reimport before testing/export. No3D asset generation service or external mesh pack is implied.
+
+The3D regression suite exercises actual default-mode gameplay and camera behavior. Legacy atlas-specific suites explicitly select the old view; passing them alone is insufficient evidence for3D readiness. Physical GPU/thermal/frame-time and human creative acceptance remain open.
+
 ## Runtime composition
 
 `scenes/Main.tscn` instantiates Main, the presentation/input/UI coordinator. It delegates authoritative transactions to WorldModel and CampaignSystem. All game definitions live in data/game.json; provider configuration lives in data/services.json.
@@ -38,7 +50,7 @@ Schema 3 includes world, IDs, inventory, timers, pulse modifiers, discoveries, p
 
 ## Native build and isolation
 
-`tools/prepare_native.py` generates ignored android/build from the pinned Godot template and copies maintained Kotlin/resources. It adds Google Ads 23.6.0, UMP 3.1.0 and Play Billing 8.0.0. `tools/build_android.sh` imports, runs checks, exports a staging APK, verifies its signature and promotes it only on success. APKs/toolchains/caches are not source-controlled.
+`tools/prepare_native.py` generates ignored android/build from the pinned Godot template and copies maintained Kotlin/resources. It adds Google Ads25.5.0, UMP4.0.0 and Play Billing8.3.0. `tools/build_android.sh` imports, runs checks, exports a staging APK, verifies its signature and promotes it only on success. APKs/toolchains/caches are not source-controlled.
 
 Tests instantiate the model without a scene tree; scene suites exercise real UI callbacks with isolated save paths. Graphical captures use Xorg/Mesa through tools/visual_review.sh. Native emulator evidence and remaining release gates are tracked separately from model coverage.
 

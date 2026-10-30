@@ -4,8 +4,8 @@ This is a signed development preview, not a store-ready or commercially certifie
 
 ## Completed engineering in this pass
 
-- Four cardinal isometric views with rotation buttons and a two-finger twist; continuous 3D orbit remains unimplemented (docs/CAMERA_ORBIT_PLAN.md).
-- Ongoing foliage deformation with fixed terrain/trunk seam, water-surface ripples, furnace/vent smoke and embers, a registered rotating Windmill rotor with work dust, and helper/totem/shrine activity lights. Cosmetic state cannot alter rewards or saved occupancy. Paused automation has no work effects. Reduced motion freezes idle activity; photos keep still framing. World redraw is bounded to 30 Hz; app rendering is capped at 60 FPS.
+- Continuous3D camera yaw/pitch with pan/pinch/twist, compass drag, actual model backs/sides, ray-based picking and3D mobile fitting (docs/CAMERA_ORBIT_PLAN.md).
+- Ongoing foliage deformation with fixed terrain/trunk seam, water-surface ripples, furnace/vent smoke and embers, a registered rotating Windmill rotor with work dust, and helper/totem/shrine activity lights. Cosmetic state cannot alter rewards or saved occupancy. Paused automation has no work effects. Reduced motion freezes idle activity; photos keep still framing. The2D feedback redraw is bounded to30Hz; app/3D rendering is capped at60FPS.
 - Preserved placement, crossfade/evolution, fusion, three World Pulse effects and responsive HUD/menu animations.
 - Fixed environment/automation timing drift caused by slightly late frames; preserve scheduled cadence and skip stalled slots without bursts.
 - In-app privacy/data disclosure and local diagnostic deletion. Opt-out cancels pending diagnostic delivery. Native crash capture follows the diagnostics opt-in, including avoiding historical exits from opt-out periods. Ad measurement initialization is delayed in the manifest. Native Google UMP privacy choices are reachable from Settings when required; consent can retry after connection failure, and ad loading/showing checks release consent.

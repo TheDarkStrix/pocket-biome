@@ -23,11 +23,20 @@ Updated 2026-10-30. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | island_environment | 42 | Four-turn cliff topology/triangulation, fused owners, roots/outlets/cache and photo framing |
 | build_flow | 77 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
 | expansion_pricing | 26 | Early-price parity, late budget, strict legacy/current quotes, relocation/payment/save and malformed revision rejection |
-| **Total** | **1,089** | Assertions; separate simulation and startup checks also run |
+| orbit_world | 138 | Shipping3D camera,72 yaw/pitch poses, first evolution/save, complete profiles/portraits, fusion, ghost, native twist/compass, mobile fit, weather and lifecycle |
+| **Total** | **1,227** | Assertions; separate simulation and startup checks also run |
+
+## 0.21 living-world verification
+
+All20 suites, eight Python audit cases, startup and both complete public campaign routes pass for the source digest in artifacts/test-results.json. New3D tests run separately from explicitly retained legacy2D atlas fixtures. Actual OpenGL/Mesa captures80–86 cover start, mixed island, non-cardinal orbit, moving parts, Build, draft and Rain. Forty menu portraits were captured from the runtime geometry/materials. The shader/render logs report no script/shader errors after corrections.
+
+`artifacts/living-world.gif` captures24 actual-engine frames at a fixed camera. The staged model stays byte-identical;30,543 pixels change beyond an8-value RGB threshold. The nine-cell fixture uses42,416 triangles and72 MeshInstances including pooled ambient effects. This verifies visible motion and bounded scene composition, not physical Android FPS or creative approval. Golem limbs remain unrigged; final art-direction/human playtesting stays open.
+
+The current Android package/native results are appended below after exact-source export and installation checks. Production release gates remain unchanged.
 
 ## Progression and graphics
 
-Public-action simulations: both collect-ready and automation-first routes reach all20 discoveries, five chapters and35 cells, with117 tracked progression operations plus earning loops. Their simulated active times are5,223 and4,810 seconds; final Coins1,215 and1,358. Save/restore is included. These are deterministic reachability probes, not a human pacing result.
+Public-action simulations: both collect-ready and automation-first routes reach all20 discoveries, five chapters and35 cells, with117 tracked progression operations plus earning loops. Their simulated active times are1,097 and1,076 seconds; final Coins1,114 and1,155. Save/restore is included. These are deterministic reachability probes, not a human pacing result.
 
 `tools/visual_review.sh` renders through actual Godot OpenGL with Xorg dummy/Mesa. Current captures 01–04 show the gameplay/draft/evolution/inspector route; 07–10 show Codex/detail/workshop/settings. Captures 05–06 deliberately construct visual fixtures and are not progression evidence. No cloud audio listening claim is made.
 

@@ -1,20 +1,22 @@
-# Animation inventory
+# Animation inventory — 0.21 preview
+
+The shipping world is now a real3D scene. Cosmetic clocks/state remain separate from WorldModel rewards, ownership and saves.
 
 | Element | Implemented motion | Limits |
 |---|---|---|
-| Oak/Forest/Fiber and supported leafy sanctuaries | Texture-mapped canopy sways; lower terrain stays fixed | Procedural two-part deformation, not a full skeletal rig; depleted stumps remain still |
-| Water and watery discoveries | Continuous expanding/fading surface ripples | Existing illustrated water texture is not a frame-by-frame fluid simulation |
-| Furnace/vents | Drifting smoke and warm flicker/embers | Raster body remains fixed |
-| Windmill | Separate painted four-sail rotor rotates at a registered facade axle; work dust | Stops at its current pose for paused automation, reduced motion, photo/background; continuous3D prop backs are not provided |
-| Golem/totem/shrine | Moving activity lights when enabled | No body/limb rig; helper production is a stationary tile system |
-| Placement/evolution/fusion | Scale/rise, crossfade, particles and four-part fusion pull | Bounded effects; simulation commits independently |
-| Rain/Heat/Frost | 3.2-second area effects; falling rain/ripples, heat motes and frost flakes | Reduced motion uses a fading area confirmation |
-| Harvest | Resource flight and floating yield | Cosmetic only; capped concurrent effects |
-| HUD/menus | Press/release, panel fades, chapter/condition interpolation, resource highlights | Motion responds to state and interaction; controls do not continually drift |
-| Photo mode | Stable still rendering | Ambient motion suppressed; no camera alteration to gameplay |
+| Trees, shrubs, reeds, tufts and flowers | Ground-pinned spatial wind deformation; textured foliage | Original modeled forms; final creative approval open |
+| Water and pools | Real mesh displacement, animated ripples/caustics and specular response | Stylized surface, not fluid simulation |
+| Island edges | Flowing waterfall ribbons on at most two exposed water edges, hanging ivy sway and six drifting mist planes | Fixed mobile effect budgets |
+| Windmill | Independently rotating3D sail assembly at its axle | Retained clock freezes when disabled, reduced motion, photo or background |
+| Furnace/vents/mist biomes | Up to18 drifting smoke puffs across at most six sources; emissive accents | Enabled/source-state cues; no simulated combustion |
+| Wildlife | Three moving butterflies with independently flapping wings | Hidden during photo/reduced motion/background |
+| Harvest | Real stump/fragment state, bounded regrowth and yield flight | Cosmetic state derives from actual cooldown; no bonus resources |
+| Placement/evolution/fusion | Rise/scale; retained old models converge and retire while the sanctuary grows | Atomic model transaction precedes animation; no selectable duplicate entities |
+| Rain/Heat/Frost | Two pooled70-particle3D emitters;3.2-second showers/motes; affected-cell outlines | Reduced motion retains static/fading area feedback |
+| Build | Translucent3D structure ghost on an eligible Meadow | Preview never reserves land or spends currency |
+| Golem/totem/shrine | Emissive rune accents | Golem body/limbs remain unrigged; no walking-helper claim |
+| UI | Press/release, panel transitions, resource highlights and compass orientation | Cards/menus use40 engine-rendered portraits of the runtime models |
 
-The world is not a fully rigged 3D scene. Remaining authored animation work is recorded explicitly rather than claiming every sprite is animated. Physical-device comfort/performance and final human creative review are still required.
+Ambient, shader, motor and regrowth animation respects reduced motion, photo/background handling. Background disables the3D viewport. Weather is transient and is not replayed from saved pulse counts after loading. The model has no dependency on rendered-frame rate for rewards.
 
-Remaining optional helper-art specification: Golem body/arms separated on transparent418×390 canvases with identical registration/ground pivot. The helper currently has real activity lights, not a limb rig. Windmill body/rotor layers are now supplied in assets/structures/windmill-layers.png, with registered source regions, shared previews/alpha picking and full-revolution camera bounds.
-
-0.18/0.19 add attached root sway, controlled water-ribbon shader flow and local mist around the actual boundary. The three painted tool medallions retain press/release feedback and the live Pulse ring; selected shelf/draft cards show gold focus/selection. The Build placement ghost is a static preview; it is not claimed as an additional simulation or completed construction. Runtime ground clipping preserves the existing canopy's moving upper mesh and fixed lower surface.
+`artifacts/living-world.gif` and `living-world-render-check.json` document an actual-engine fixed-camera staged island, not a gameplay completion or phone performance result. Human aesthetic, motion comfort, audio and physical-device qualification remain open.

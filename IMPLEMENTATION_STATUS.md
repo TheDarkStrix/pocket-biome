@@ -13,13 +13,13 @@ Updated 2026-10-30. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 
 ## Current verified milestone
 
-0.20 addresses the reported gaps, Workshop/header styling and bottom-tool mismatch. The floor now uses an opaque continuous grass material and soft skirt joins; one restrained resource rail replaces three chunky frames; simple Log/Stone/Coin art and complete reference-matched Pack/wooden-mallet/Pulse medallions replace noisy details. Workshop previews show structures without raised soil pads or concentric backplates. Thin shared slate/bronze and green action materials, a real gear and a Build label complete the correction. Actual captures70–75 document the result; exact hand-shaped props and human creative approval are not claimed.
+0.21 replaces the default four-angle sprite world with a continuously orbiting3D diorama. Pan, pinch, two-finger twist, a draggable compass and desktop right-drag now move around actual model backs/sides; tilt is constrained to22–68°. The connected grass/cliff island uses shared geometry, hanging ivy, water edges and mist. All20 discoveries have modeled appearance profiles and all40 base/discovery portraits match the runtime models.
 
-The Windmill now has a separate painted body/rotor, registered alpha picking and complete revolution bounds. Its retained motor clock freezes for paused automation, reduced motion, photo/background. New late-expansion quotes follow a capped linear tail; saved revision1 quotes remain exact and validated, including original offers and price.0.20.1 also makes every model price readout honor that frozen quote; independent validation still rejects mutations. All20 discoveries/five chapters remain reachable through public transactions.
+Visible life includes grounded foliage/reed/flower wind, animated water/caustics and waterfall flow, independent Windmill sails, three flapping butterflies, bounded source smoke, real3D Rain/Heat/Frost particles and stump/regrowth feedback. Four old models converge into a fused sanctuary; Build uses a translucent3D placement ghost. Cosmetic activity never grants resources or changes saved occupancy. Golem limbs remain unrigged; these original procedural miniature forms still require human art-direction approval.
 
-All1,089 assertions across19 Godot suites, eight Python audit cases, startup and both complete campaign probes pass. Expert routes now take1,097/1,076 active seconds and1,662/1,509 manual collections, with a68-second maximum logged progression gap. These are simulated reachability results, not human completion time or retention evidence. Current package/source/native evidence is in TEST_REPORT.md and artifacts.
+All1,227 assertions across20 Godot suites, eight Python audit cases, startup and both full campaign probes pass. The new138-assertion suite covers the shipping renderer,72 camera poses, first-evolution/save flow, fusion, previews, native twist, compass, mobile fitting and accessibility/lifecycle. An actual-engine fixed-camera capture shows30,543 changing pixels while the staged model remains byte-identical. Its nine-cell island contains42,416 triangles and72 mesh instances including pooled effects; this is a scene measurement, not phone performance evidence.
 
-Store copy/privacy review drafts and a rendered1024×500 feature graphic are prepared in docs/store, without submission or invented publisher details. Continuous3D orbit, real provider sandbox, production configuration/signing, physical-device performance/audio and human creative/pacing qualification remain open. This is a development preview, not the completed public release.
+Android0.21 packaging and native acceptance are recorded in TEST_REPORT.md and artifacts. Public release remains blocked by the documented signing/provider/configuration/physical-device and creative review requirements. No production credentials have been introduced.
 
 ## Continuity
 
@@ -29,7 +29,7 @@ Work continues autonomously in tested increments. Decisions and external depende
 
 The selected Pocket Biome concept board supersedes the earlier graphite/violet, parchment and five-tool directions. The current design uses painted sky/foliage and tool objects, narrow slate/bronze materials, cream Cinzel/Lato lettering, a connected floating island and a green primary action. Older revision notes below are historical.
 
-Surface art silhouettes and hand-shaped contours still differ from the concept; windmill blades still need layered animation. Physical-device performance/cutouts/audio, human playtesting, live provider sandbox checks and publisher/release configuration remain open. This is a test preview, not a certified commercial release.
+Surface silhouettes and hand-shaped contours still differ from the concept. Windmill blades now have a separately animated3D assembly. Physical-device performance/cutouts/audio, human playtesting, live provider sandbox checks and publisher/release configuration remain open. This is a test preview, not a certified commercial release.
 
 ## Player feedback fixes
 

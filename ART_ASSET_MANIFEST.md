@@ -14,7 +14,20 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 | assets/app_icon.png | 1254×1254 PNG | Launcher/splash identity | Integrated in Android export |
 | assets/audio/*.wav | PCM 22050Hz | Eleven original synthesized feedback cues and 32s ambient loop | Integrated; headless encoding verified; human listening open |
 
-## Specifications and delivery rules
+## Current3D assets — 0.21
+
+| Asset | Specification | Status |
+|---|---|---|
+| scripts/DioramaGeometry.gd / DioramaProps.gd | Original authored miniature geometry, one unit per cell, Y-up; fused props span2×2 cells; material-merged meshes | Implemented; creative/device approval open |
+| data/diorama.json | Explicit palettes/features for all20 discoveries | Implemented and catalog-tested |
+| assets/terrain/foliage-material.png | Unchanged generated opaque leaf-material source;512px mipmapped lossy import | Integrated on swaying3D foliage; not a generated mesh |
+| assets/diorama_previews/*.png | Forty256×256 transparent engine captures of runtime props/materials | Integrated in cards/menu thumbnails; regenerate after visual changes |
+| assets/shaders/diorama-*.gdshader | Spatial surface wind/glow, water displacement/caustics, ivy and falls | Rendered in-engine |
+| Existing grass/cliff/roots/waterfall art | Materials on actual connected3D foundation and edge meshes | Reused without pixel editing |
+
+The catalog above supersedes the2D sprite world as the shipping presentation. Older atlas entries remain retained regression/authoring sources. Generated foliage is an image material; no external GLB pack or completed artist-approved model collection is claimed. Golem limbs remain unrigged. The reference design board continues to guide visual review; geometric coverage is not final aesthetic acceptance. See docs/ANIMATION_STATUS.md.
+
+## Historical2D specifications and delivery rules
 
 Use 2:1 isometric ground planes, consistent light from upper left, warm earthy sides, soft painted contours, readable silhouettes and generous transparent margins. Atlas cells are nominally 418px wide, with measured row bounds and pivots in TileArtwork.gd. Base rendered ground width is 132 logical pixels; fused footprints span four grid cells. UI uses custom graphite surfaces, amber Build emphasis, violet Pulse controls, pearl text, rarity borders and illustrated textures. No engine-default button styling is intended as final UI.
 

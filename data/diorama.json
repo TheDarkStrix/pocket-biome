@@ -1,0 +1,120 @@
+{
+  "profiles": {
+    "rainforest": {
+      "foliage": "518f53",
+      "features": [
+        "lush"
+      ]
+    },
+    "ember": {
+      "foliage": "b89650",
+      "features": [
+        "warm_crystals"
+      ]
+    },
+    "lake": {
+      "features": [
+        "blue_crystals"
+      ]
+    },
+    "steam": {
+      "foliage": "67985a",
+      "features": [
+        "pool",
+        "mist"
+      ]
+    },
+    "frozen": {
+      "foliage": "b5d7cf",
+      "features": [
+        "ice"
+      ]
+    },
+    "meadow": {
+      "features": [
+        "flowers"
+      ]
+    },
+    "mossrock": {
+      "features": [
+        "moss"
+      ]
+    },
+    "reedwater": {
+      "features": [
+        "reeds"
+      ]
+    },
+    "sunstone": {
+      "features": [
+        "warm_crystals"
+      ]
+    },
+    "mistforest": {
+      "foliage": "8eaf9f",
+      "features": [
+        "mist"
+      ]
+    },
+    "crystalforest": {
+      "foliage": "69946c",
+      "features": [
+        "purple_crystals"
+      ]
+    },
+    "oasis": {
+      "features": [
+        "pool",
+        "oasis_tree"
+      ]
+    },
+    "ironwood": {
+      "foliage": "ad995d",
+      "features": [
+        "stone"
+      ]
+    },
+    "moonflower": {
+      "features": [
+        "purple_flowers",
+        "purple_crystals"
+      ]
+    },
+    "obsidian": {
+      "features": [
+        "obsidian"
+      ]
+    },
+    "celestial": {
+      "foliage": "8cbfae",
+      "features": [
+        "pool",
+        "blue_crystals",
+        "purple_flowers"
+      ]
+    },
+    "grove": {
+      "features": [
+        "ancient_tree"
+      ]
+    },
+    "lagoon": {
+      "features": [
+        "blue_crystals"
+      ]
+    },
+    "quarry": {
+      "features": [
+        "blue_crystals",
+        "stone"
+      ]
+    },
+    "verdant": {
+      "features": [
+        "oasis_tree",
+        "flowers"
+      ]
+    }
+  },
+  "art_direction": "Sculpted real3D miniature forms with painted grain, coherent sunlight and independently animated parts. Creative/device approval remains open."
+}

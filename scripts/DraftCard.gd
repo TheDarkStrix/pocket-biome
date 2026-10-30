@@ -29,7 +29,7 @@ func configure(h, type: String) -> void:
  title.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(title)
  art = preload("res://scripts/DioramaPreview.gd").new()
- art.tile_type = type; art.extent = 0; art.tint = Color("dac47e")
+ art.host = h; art.tile_type = type; art.extent = 0; art.tint = Color("dac47e")
  add_child(art)
  trait_label = Label.new()
  var attributes := {"forest":"Growth","water":"Moisture","crystal":"Magic","vent":"Warmth","glacier":"Cooling","stone":"Stone","fiber":"Fiber","clay":"Clay","iron":"Iron"}
