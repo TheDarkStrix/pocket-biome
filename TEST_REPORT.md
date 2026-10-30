@@ -1,5 +1,9 @@
 # Test report
 
+## Current0.21.1 — earlier painted land restored
+
+All1,241 assertions across21 Godot suites, eight Python audit cases, startup and two full campaign routes pass. `painted_art` adds12 assertions for default original land rendering, original cards/menu previews, four-view picking/state isolation and no disconnected waterfalls. Default scene/mobile tests no longer force a renderer override; they exercise the real player default. The3D suite is explicitly experimental. Captures90–92 show the earlier painted land before the added cliff base and shared grass layer, with the existing HUD/menu controls. Individual Golem/workbench animation remains unfinished. Package/native results follow; older3D sections are historical.
+
 Updated 2026-10-30. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fresh machine-readable results, timestamp and tested source digest are written to artifacts/test-results.json; individual logs remain ignored under artifacts/test-logs/. The runner rejects missing/zero-assertion suites, timeouts, script errors, nonzero exits and source changes during a run.
 
 | Suite | Assertions passed | Coverage |

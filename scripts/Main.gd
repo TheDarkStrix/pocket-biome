@@ -3,7 +3,8 @@ const Model = preload("res://scripts/WorldModel.gd")
 const ThemeKit = preload("res://scripts/GameTheme.gd")
 const MaterialUI = preload("res://scripts/MaterialUI.gd")
 const Store = preload("res://scripts/SaveStore.gd")
-var orbit_enabled := true
+var orbit_enabled := false # Keep the original painted art; procedural3D is internal only.
+var connected_land := false # Original individual painted land, before the foundation/grass pass.
 var orbit_world: CanvasLayer
 var orbit_pad: Control
 var island_environment = preload("res://scripts/IslandEnvironment.gd").new()
@@ -185,6 +186,8 @@ func build_ui() -> void:
  add_child(sky_backdrop)
  island_environment.host = self
  add_child(island_environment)
+ if not connected_land:
+  island_environment.hide();island_environment.process_mode=Node.PROCESS_MODE_DISABLED
  if orbit_enabled:
   orbit_world=preload("res://scripts/OrbitWorld.gd").new();orbit_world.host=self;add_child(orbit_world)
   island_environment.hide();island_environment.process_mode=Node.PROCESS_MODE_DISABLED
@@ -895,14 +898,14 @@ func _draw() -> void:
     var location: Vector2 = source.lerp(p,pull)
     draw_arc(source,28*zoom_level,0,TAU,24,Color(1,0.85,0.5,1.0-pull),2*zoom_level)
     draw_line(source,p,Color(0.95,0.77,0.43,(1.0-pull)*0.5),2*s)
-    preload("res://scripts/TileArtwork.gd").draw_joined(self,part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
+    draw_land_art(part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
-   preload("res://scripts/TileArtwork.gd").draw_joined(self,pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
+   draw_land_art(pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
   var still: bool = model.state.settings.reduced_motion or photo_mode
-  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,true,presentation.motor_times.get(k,0.0))
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0))
   preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
   if ghost.get("key","") == k:
-   preload("res://scripts/TileArtwork.gd").draw_joined(self,ghost.type,p,132.0/418.0*s,Color(1,1,1,0.74))
+   draw_land_art(ghost.type,p,132.0/418.0*s,Color(1,1,1,0.74))
    draw_plot_outline(p,s,Color("ffe1a0"),2.0)
   elif k in meadows: draw_plot_outline(p,s,Color(0.96,0.85,0.60,0.75),1.5)
   if model.state.event.targets.has(k) and not model.state.event.cleared.has(k):
@@ -1131,7 +1134,7 @@ func world_art_bounds(include_frontier: bool) -> Rect2:
    var visual := Rect2(project(model.coord(key))-cloud.pivot*scale,cloud.region.size*scale)
    bounds = bounds.merge(visual)
  if first: bounds = Rect2(-66,-66,132,132)
- else: bounds = bounds.merge(island_environment.bounds(model.state.tiles,view_turn))
+ elif connected_land: bounds = bounds.merge(island_environment.bounds(model.state.tiles,view_turn))
  return bounds.grow(24)
 
 func frame_world() -> void:
@@ -1318,11 +1321,11 @@ func pick(position: Vector2) -> String:
   var tile: Dictionary = model.state.tiles[key]
   var size := 2.0 if tile.size == 4 else 1.0
   var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if size == 2 else Vector2.ZERO)
-  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,true,presentation.motor_times.get(key,0.0)*0.55): return key
+  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,connected_land,presentation.motor_times.get(key,0.0)*0.55): return key
  var selected_key: String = model.origin(selected)
  if selected_key != "":
   var selected_tile: Dictionary = model.state.tiles[selected_key]
-  if selected_tile.ready > model.state.time and preload("res://scripts/TileArtwork.gd").hit(selected_tile.type,selected_tile.evolution,position-screen(model.coord(selected_key)),132.0/418.0*zoom_level,true,true): return selected_key
+  if selected_tile.ready > model.state.time and preload("res://scripts/TileArtwork.gd").hit(selected_tile.type,selected_tile.evolution,position-screen(model.coord(selected_key)),132.0/418.0*zoom_level,true,connected_land): return selected_key
  return hit(position)
 
 func _input(event: InputEvent) -> void:
@@ -1507,3 +1510,8 @@ func draw_orbit_feedback() -> void:
   preload("res://scripts/UIIcons.gd").draw(self,effect.resource,at-Vector2(10,8),23,Color(1,1,1,1-effect.elapsed/0.8))
   draw_string_outline(ThemeKit.BODY,at+Vector2(8,0),effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,15,3,Color("23362e"))
   draw_string(ThemeKit.BODY,at+Vector2(8,0),effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("fff2cc"))
+
+func draw_land_art(type:String, at:Vector2, scale:float, tint:Color, evolution:String="") -> void:
+ var art=preload("res://scripts/TileArtwork.gd")
+ if connected_land:art.draw_joined(self,type,at,scale,tint,evolution)
+ else:art.draw_tile(self,type,at,scale,tint,evolution)

@@ -3,6 +3,7 @@ extends SceneTree
 func _init() -> void:call_deferred("run")
 func run() -> void:
  var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://preview-render-only.json"
+ h.orbit_enabled=true # Internal experiment only; do not replace the default painted game.
  root.add_child(h);h.set_process(false);h.hide()
  await process_frame;await process_frame
  var view=h.orbit_world;view.set_process(false);view.life.set_process(false);view.life.hide()

@@ -2,7 +2,11 @@
 
 This is a signed development preview, not a store-ready or commercially certified release. The user requested autonomous work; missing external requirements are recorded here without blocking independent engineering.
 
-## Completed engineering in this pass
+## Current visual correction
+
+0.21.1 restores the original painted land from before the added foundation/grass pass. Procedural3D models and their menu portraits are disabled. The default camera is again painted pan/zoom/four-view rotation. Decorative edge falls are suppressed pending real source-connected artwork; individual Golem/workbench animation is still open. Earlier3D evidence below is historical.
+
+## Earlier engineering evidence
 
 - Continuous3D camera yaw/pitch with pan/pinch/twist, compass drag, actual model backs/sides, ray-based picking and3D mobile fitting (docs/CAMERA_ORBIT_PLAN.md).
 - Ongoing foliage deformation with fixed terrain/trunk seam, water-surface ripples, furnace/vent smoke and embers, a registered rotating Windmill rotor with work dust, and helper/totem/shrine activity lights. Cosmetic state cannot alter rewards or saved occupancy. Paused automation has no work effects. Reduced motion freezes idle activity; photos keep still framing. The2D feedback redraw is bounded to30Hz; app/3D rendering is capped at60FPS.

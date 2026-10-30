@@ -1,5 +1,5 @@
 extends Control
-# UI portraits come from the same modeled props as the playable island.
+# Preserve the original painted artwork throughout the default game.
 var tile_type := "grass"
 var evolution := ""
 var silhouette := false
@@ -15,7 +15,7 @@ func _ready() -> void:
 func _process(_delta:float) -> void:
  if world and is_visible_in_tree() and is_instance_valid(host) and host.orbit_enabled:queue_redraw()
 func _draw() -> void:
- if not world and preload("res://scripts/DioramaPortraits.gd").paint(self,tile_type,evolution,Rect2(Vector2(6,6),size-Vector2(12,12)),silhouette):return
+ if not world and uses_modeled_art() and preload("res://scripts/DioramaPortraits.gd").paint(self,tile_type,evolution,Rect2(Vector2(6,6),size-Vector2(12,12)),silhouette):return
  if world and is_instance_valid(host) and host.orbit_enabled:
   var view=host.orbit_world
   var crop:Rect2=view.projected_bounds(false).intersection(view.frame)
@@ -28,13 +28,15 @@ func _draw() -> void:
  if world and is_instance_valid(host):
   var bounds: Rect2 = host.world_art_bounds(false)
   var scale := minf((size.x-18)/bounds.size.x,(size.y-12)/bounds.size.y)
-  host.island_environment.paint_static(self,size/2-bounds.get_center()*scale,scale)
+  if host.connected_land:host.island_environment.paint_static(self,size/2-bounds.get_center()*scale,scale)
   for key in host.render_keys():
    var tile: Dictionary = host.model.state.tiles[key]
    var footprint: float = 2 if tile.size == 4 else 1
    var point: Vector2 = host.project(Vector2(host.model.coord(key))+(Vector2(0.5,0.5) if footprint == 2 else Vector2.ZERO))
    var at := size/2+(point-bounds.get_center())*scale
-   preload("res://scripts/TileArtwork.gd").draw_joined(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
+   var art=preload("res://scripts/TileArtwork.gd")
+   if host.connected_land:art.draw_joined(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
+   else:art.draw_tile(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
  else:
   var artwork = preload("res://scripts/TileArtwork.gd")
   var spec: Dictionary = artwork.appearance(tile_type,evolution)
@@ -44,3 +46,6 @@ func _draw() -> void:
   var at: Vector2 = size/2-bounds.get_center()*scale
   if prop_only: artwork.draw_joined(self,tile_type,at,132.0/418.0*scale,Color("355254") if silhouette else Color.WHITE,evolution)
   else: artwork.draw_tile(self,tile_type,at,132.0/418.0*scale,Color("355254") if silhouette else Color.WHITE,evolution)
+
+func uses_modeled_art() -> bool:
+ return is_instance_valid(host) and host.orbit_enabled

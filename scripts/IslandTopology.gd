@@ -28,7 +28,7 @@ static func build(tiles: Dictionary, rotation: int) -> Dictionary:
   cells[at] = key; center += Vector2(at)
  if cells.is_empty(): return {"caps":[],"walls":[],"bounds":Rect2(),"waterfalls":0}
  center /= cells.size()
- var cap_list := []; var walls := []; var candidates := []
+ var cap_list := []; var walls := []
  var bounds := Rect2(project(center),Vector2.ZERO)
  var positions := cells.keys()
  positions.sort_custom(func(a: Vector2i,b: Vector2i): return a.x < b.x if a.x+a.y == b.x+b.y else a.x+a.y < b.x+b.y)
@@ -59,18 +59,10 @@ static func build(tiles: Dictionary, rotation: int) -> Dictionary:
    var mesh := PackedVector2Array([top_a,top_b,bottom_b,notch_b,notch_a,bottom_a])
    var wall := {"mesh":mesh,"key":key,"origin":origin,"side":side,"points":points,"top":middle,"seed":seed,"root":root,"fall":false}
    walls.append(wall)
-   if not frozen and (tile.get("type","") == "water" or tile.get("evolution","") in ["lake","reedwater","lagoon"]):
-    candidates.append(wall)
    for point in mesh: bounds = bounds.expand(point)
    bounds = bounds.expand(middle+Vector2(-35,116)); bounds = bounds.expand(middle+Vector2(35,116))
    if root:
     bounds = bounds.expand(middle+Vector2(-21,8)); bounds = bounds.expand(middle+Vector2(21,137))
- # Limit overdraw on water-heavy islands. Pick separated outlets deterministically.
- var outlets := []
- for wall in candidates:
-  var spaced := true
-  for prior in outlets: spaced = spaced and wall.top.distance_to(prior) >= 75
-  if not spaced or outlets.size() >= 2: continue
-  wall.fall = true; outlets.append(wall.top)
-  bounds = bounds.expand(wall.top+Vector2(-28,0)); bounds = bounds.expand(wall.top+Vector2(28,174))
- return {"caps":cap_list,"walls":walls,"bounds":bounds.grow(12),"waterfalls":outlets.size()}
+ # Painted pond artwork has no registered pond-to-lip outlet. An exposed
+ # water tile alone must never spawn a disconnected decorative waterfall.
+ return {"caps":cap_list,"walls":walls,"bounds":bounds.grow(12),"waterfalls":0}

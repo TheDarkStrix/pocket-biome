@@ -1,3 +1,9 @@
+# Current camera — painted graphics restored
+
+0.21.1 restores the earlier painted land. Pan, pinch/wheel and four90° World/twist views remain. Continuous3D orbit is disabled because the procedural model replacement failed the requested art direction. Do not report continuous orbit as available with the restored default artwork. Reintroducing a different rendering approach must preserve the approved painted appearance and be reviewed before it becomes the normal game.
+
+The source below records the rejected technical experiment and remains historical.
+
 # Continuous camera — 0.21 preview
 
 The default playable world now uses a real isolated `SubViewport`/`Camera3D` in `OrbitWorld.gd`. Orthographic yaw is continuous through360°, pitch is limited to22–68° and the horizon remains upright. Dragging land pans; pinching zooms; twisting two fingers orbits after a7° dead zone. The small compass supports orbit/tilt dragging and keyboard arrows. Desktop right-drag also orbits/tilts. World retains convenient quarter-turn shortcuts.

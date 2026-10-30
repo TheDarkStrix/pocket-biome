@@ -1,5 +1,7 @@
 # Art and audio asset manifest
 
+Current0.21.1 default:restore the original painted terrain, resources, structures, discoveries and menu/card art. Full tile surfaces/earth edges are rendered; added shared grass/cliff foundations and procedural3D models/portraits are disabled. The user explicitly rejected the3D visual replacement. Keep original source images and do not change the art style to implement animation. Disconnected decorative waterfalls are suppressed until an actual registered pond-to-lip source is supplied. Individual Golem/workbench rigs are still missing.
+
 Generated raster candidates are integrated and rendered in the actual engine. Source sheets are retained unchanged; scripts address atlas regions/pivots, rather than editing pixels. The earlier navy/green layout is superseded by the user's request for a complete game interface; docs/references/user_art_direction.jpg guides materials and proportions.
 
 | Asset | Size/format | Use | Status |
@@ -14,7 +16,7 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 | assets/app_icon.png | 1254×1254 PNG | Launcher/splash identity | Integrated in Android export |
 | assets/audio/*.wav | PCM 22050Hz | Eleven original synthesized feedback cues and 32s ambient loop | Integrated; headless encoding verified; human listening open |
 
-## Current3D assets — 0.21
+## Rejected3D experiment assets — internal only
 
 | Asset | Specification | Status |
 |---|---|---|
@@ -25,7 +27,7 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 | assets/shaders/diorama-*.gdshader | Spatial surface wind/glow, water displacement/caustics, ivy and falls | Rendered in-engine |
 | Existing grass/cliff/roots/waterfall art | Materials on actual connected3D foundation and edge meshes | Reused without pixel editing |
 
-The catalog above supersedes the2D sprite world as the shipping presentation. Older atlas entries remain retained regression/authoring sources. Generated foliage is an image material; no external GLB pack or completed artist-approved model collection is claimed. Golem limbs remain unrigged. The reference design board continues to guide visual review; geometric coverage is not final aesthetic acceptance. See docs/ANIMATION_STATUS.md.
+The catalog above is disabled in the normal game. The original painted atlas entries are the current presentation. Generated foliage is an image material; no external GLB pack or completed artist-approved model collection is claimed. Golem limbs remain unrigged. The reference design board continues to guide visual review; geometric coverage is not final aesthetic acceptance. See docs/ANIMATION_STATUS.md.
 
 ## Historical2D specifications and delivery rules
 

@@ -14,7 +14,6 @@ func named_button(node: Node, title: String) -> Button:
  return null
 func run() -> void:
  var h = load("res://scenes/Main.tscn").instantiate()
- h.orbit_enabled = false
  h.store.path = "user://screen-tests.json"
  root.add_child(h)
  check(h.launch_menu and not h.hud.visible,"launch screen owns input before play")

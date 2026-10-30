@@ -61,3 +61,7 @@ Expert collect-ready/automation routes now complete20 discoveries/five chapters/
 ## 0.21 presentation isolation
 
 The3D migration changes no economy coefficients, recipe thresholds or progression transactions. The fixed-camera animation probe verifies byte-identical model state while geometry/shaders animate. Both complete public-transaction progression routes retain their0.20 outcomes. Rendering smoothness and human enjoyment still require physical/device playtesting.
+
+## Painted restoration0.21.1
+
+Restoring original tile/card graphics changes no recipe, inventory, quote, cooldown, purchase or save schema. Both campaign probes and the default painted launch-to-evolution path pass. No economy reset or compensation transaction is introduced.

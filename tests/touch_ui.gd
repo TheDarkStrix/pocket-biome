@@ -25,7 +25,6 @@ func find_trade(node: Node) -> Button:
 func run() -> void:
  root.size = Vector2i(540,960)
  var h = load("res://scenes/Main.tscn").instantiate()
- h.orbit_enabled = false
  h.store.path = "user://touch-ui-tests.json"
  root.add_child(h)
  h.model = preload("res://scripts/WorldModel.gd").new()

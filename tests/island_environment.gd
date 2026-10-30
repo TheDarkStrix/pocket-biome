@@ -32,7 +32,7 @@ func run() -> void:
  model.add_tile(Vector2i(2,0),"water")
  var expanded: Dictionary = Topology.build(model.state.tiles,0)
  check(expanded.caps.size() == 5 and expanded.walls.size() == 5,"expansion adds its actual ground and replaces the former border")
- check(expanded.waterfalls == 1,"an exposed water edge has a bounded cosmetic outlet")
+ check(expanded.waterfalls == 0,"an exposed pond cannot spawn a disconnected waterfall without a registered source channel")
  model.state.tiles["2,0"].evolution = "frozen"
  check(Topology.build(model.state.tiles,0).waterfalls == 0,"frozen water cannot show a flowing liquid waterfall")
  model.state.tiles.clear()
@@ -70,7 +70,7 @@ func run() -> void:
     for point in wall.mesh: valid = valid and shape_geometry.bounds.has_point(point)
    check(valid,"all%s cliff faces triangulate and fit bounds at turn%d" % [shape,rotation])
  var h = preload("res://scenes/Main.tscn").instantiate()
- h.orbit_enabled = false
+ h.connected_land=true # Explicit historical foundation regression only.
  h.store.path = "user://island-environment-tests.json"; h.show_menu_on_launch = false
  root.add_child(h)
  h.model = Model.new(); h.refresh(); h.modal.hide()

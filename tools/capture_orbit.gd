@@ -5,6 +5,7 @@ func shot(id: String) -> void:
  root.get_texture().get_image().save_png("res://artifacts/"+id+".png")
 func run() -> void:
  var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://orbit-art-fixture.json"
+ h.orbit_enabled=true # Internal experiment only; do not replace the default painted game.
  root.add_child(h);h.set_process(false)
  h.model=preload("res://scripts/WorldModel.gd").new();h.model.state.settings.tutorial_seen=true
  h.refresh();h.modal.hide();await process_frame;h.apply_layout();h.frame_world()

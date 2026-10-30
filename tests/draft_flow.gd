@@ -9,7 +9,6 @@ func settle() -> void:
  for frame in range(5): await process_frame
 func run() -> void:
  var h = preload("res://scenes/Main.tscn").instantiate()
- h.orbit_enabled = false
  h.store.path = "user://draft-hand-test.json"; h.show_menu_on_launch = false
  root.add_child(h); h.set_process(false)
  h.model = preload("res://scripts/WorldModel.gd").new()

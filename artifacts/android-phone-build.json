@@ -1,7 +1,7 @@
 {
-  "source_sha256": "21c28f7b4ad091cf8b90f6510afb8e4dbf3ef6e96a1f5bb5842ef8b4fd08ebb7",
-  "assertions": 1229,
-  "apk_sha256": "a674185f660dc258b6eda471fb5ab89b06195cb7732349c93433c78908877a23",
+  "source_sha256": "e7813bf2a0989e8a521e2238cd5f7044d674cd6eea24b2afb2986113fdce2de2",
+  "assertions": 1241,
+  "apk_sha256": "02af7b5afb437de9ec855adacda9a256cefd11e949a45920adec594354657d34",
   "bytes": 102216554,
   "abi": "arm64-v8a",
   "retained_files_verified": 575,

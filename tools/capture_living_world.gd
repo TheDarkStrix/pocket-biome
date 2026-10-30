@@ -2,6 +2,7 @@ extends SceneTree
 func _init() -> void:call_deferred("run")
 func run() -> void:
  var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://living-world-render-fixture.json"
+ h.orbit_enabled=true # Internal experiment only; do not replace the default painted game.
  root.add_child(h);h.set_process(false)
  h.model=preload("res://scripts/WorldModel.gd").new();h.model.state.settings.tutorial_seen=true;h.model.state.tiles.clear()
  var types: Array=["oak","water","grass","stone","forest","windmill","fiber","crystal","furnace"]

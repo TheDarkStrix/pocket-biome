@@ -2,7 +2,13 @@
 
 The original repository was empty with no working functionality or commits to preserve. Godot 4.6.3 stable official is the pinned engine. The supplied specification is docs/MASTER_PRD_v4.md. Android uses OpenGL Compatibility explicitly, minimum API24, target36, ARM64 and x86_64 debug validation.
 
-## Living3D presentation — 0.21
+## Current painted presentation — 0.21.1
+
+The normal game uses original full painted tile sprites via TileArtwork/WorldAmbience. `Main.orbit_enabled=false` and `Main.connected_land=false` preserve the land appearance from before the shared-grass/deep-cliff pass. The unused IslandEnvironment is hidden and process-disabled. Bounds, picking, fusion remnants, photo mode and world miniature rendering follow the full painted artwork. Current HUD and menus remain; their previews use original atlases rather than modeled portrait caches. Schema/economy/provider behavior is unchanged.
+
+The3D renderer and historical connected foundation require explicit internal opt-in. Experimental tests cover them separately; the default scene/mobile suites now exercise the actual painted default. Disconnected edge falls are disabled because no painted pond-to-lip source asset is registered. Proper outlets and further per-object rigs remain work, not delivered functionality.
+
+## Prior3D experiment — disabled after visual rejection
 
 The shipping view is now `OrbitWorld.gd`, a CanvasLayer between the painted sky and the2D feedback/HUD. It owns an isolated transparent3D SubViewport, orthographic Camera3D, shared materials, sunlight, one connected foundation, integer-keyed visual entities and bounded effects. Yaw/pitch, projection/ray-AABB picking, mobile viewport density,3D fitting and cosmetic retirement are separate from the model. The earlier2D atlas view remains only as an internal regression option.
 

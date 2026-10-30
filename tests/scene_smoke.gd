@@ -8,7 +8,6 @@ func _init() -> void:
  call_deferred("run")
 func run() -> void:
  var scene = load("res://scenes/Main.tscn").instantiate()
- scene.orbit_enabled = false
  scene.store.path = "user://scene-test.json"
  scene.show_menu_on_launch = false
  root.add_child(scene)

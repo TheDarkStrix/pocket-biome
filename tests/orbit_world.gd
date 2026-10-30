@@ -7,11 +7,12 @@ func check(ok:bool,message:String) -> void:
 func _init() -> void:call_deferred("run")
 func run() -> void:
  var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://orbit-camera-tests.json"
+ h.orbit_enabled=true # Explicit experimental renderer coverage, never the player default.
  root.add_child(h);h.set_process(false)
  h.model=preload("res://scripts/WorldModel.gd").new();h.model.state.settings.tutorial_seen=true
  h.refresh();h.modal.hide();await process_frame;h.apply_layout();h.frame_world()
  var view=h.orbit_world
- check(h.orbit_enabled and view.camera is Camera3D and view.viewport.own_world_3d,"shipping default uses a real isolated 3D camera")
+ check(h.orbit_enabled and view.camera is Camera3D and view.viewport.own_world_3d,"explicit experimental opt-in uses a real isolated3D camera")
  check(h.island_environment.process_mode==Node.PROCESS_MODE_DISABLED and h.island_environment.slots.is_empty(),"legacy hidden renderer cannot consume CPU or create duplicate scenery")
  var original:String=JSON.stringify(h.model.state)
  for elevation in [22,38,68]:
