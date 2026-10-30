@@ -22,8 +22,8 @@ Updated 2026-10-30. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | draft_flow | 22 | Saved offers/quote, retained selection, Info/redraw safety, affordability, one placement and camera restoration |
 | island_environment | 42 | Four-turn cliff topology/triangulation, fused owners, roots/outlets/cache and photo framing |
 | build_flow | 77 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
-| expansion_pricing | 24 | Early-price parity, late budget, strict legacy/current quotes, relocation/payment/save and malformed revision rejection |
-| **Total** | **1,087** | Assertions; separate simulation and startup checks also run |
+| expansion_pricing | 26 | Early-price parity, late budget, strict legacy/current quotes, relocation/payment/save and malformed revision rejection |
+| **Total** | **1,089** | Assertions; separate simulation and startup checks also run |
 
 ## Progression and graphics
 
@@ -176,3 +176,9 @@ Actual OpenGL fixtures70–75 use a constructed10-cell review world. Motor-only 
 Final0.20 export digest `489a4b3d13763da89de63350992befc1ab879dc2ad87079298c0f58d6acf0116`; ARM64 101,579,779 bytes, SHA256 `cb68e1d97abb8a95371fe84525b8476f68d9a03fc822082bccd46f82ac9b9312`. All476 retained members are byte-identical to the universal APK; signatures, source binding and16KB ZIP/ELF alignment pass. Production audit still exits2 with10 real blockers.
 
 Final installed0.20 update retains a byte-identical0.19 save before launch. Actual Continue/Draft/Later/Play/Build/Back/Pack/World/Rotate right inputs render the cleaner rail/tools/workbench and continuous floor. One native quarter turn preserves joins and attached waterfall scenery. All27 stable root fields and tile state remain unchanged except active time/next-effect clocks; original Forest/Water/Iron offers and15-Coin quote remain. No script/fatal lines appear in the bounded current-PID log. See android-reference-correction-check.json and captures52–57. Native rotating-sail playback/payment/provider/physical performance are not inferred; rotor motion and transactions are tested separately. Current OpenGL render exits without script/render errors.
+
+## 0.20.1 saved-price readout compatibility
+
+A new late-world legacy quote regression first fails because WorldModel.cost returned the new curve although payment retained the saved old quote. WorldModel.cost now returns the actual frozen pending quote whenever present; new draft creation still uses revision2 when no quote exists. Validation remains independent in ExpansionPricing and still rejects arbitrary/mutated prices. Both legacy/current readout cases pass; pricing coverage is26 and total1,089 assertions/19 suites, with all eight Python audits, startup and both full campaign probes passing. No visual, reward, stored-price or owned-land change is included in this patch.
+
+Final0.20.1 source/test/export digest `dccc0c279837dbe293b6020fefb788607e5c7ed15232c9635d1c6f858fa3b339`; ARM64 101,579,779 bytes, SHA256 `26615c91e83aa125f2205da63060e649d4cdda63a058f96a305965a953f2c9b0`, all476 retained payload members verified, signatures and16KB alignment pass.

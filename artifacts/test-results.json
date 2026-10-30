@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-30T03:46:19.745322+00:00",
-  "source_sha256": "489a4b3d13763da89de63350992befc1ab879dc2ad87079298c0f58d6acf0116",
+  "utc": "2026-10-30T04:12:15.733388+00:00",
+  "source_sha256": "dccc0c279837dbe293b6020fefb788607e5c7ed15232c9635d1c6f858fa3b339",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 1087,
+  "assertions": 1089,
   "results": [
     {
       "suite": "run",
@@ -117,7 +117,7 @@
       "suite": "expansion_pricing",
       "passed": true,
       "exit_code": 0,
-      "assertions": 24
+      "assertions": 26
     },
     {
       "suite": "automation_pacing",

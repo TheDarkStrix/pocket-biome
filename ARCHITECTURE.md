@@ -93,3 +93,5 @@ IslandEnvironment uses an opaque world-aligned grass carpet across occupied caps
 Registered Windmill body/rotor regions share previews, alpha picking and complete-revolution bounds. WorldPresentation retains a bounded clock per machine, advances only enabled motors and freezes for photo/reduced/background. Building/ground geometry stays fixed.
 
 ExpansionPricing revision2 preserves counters0–12, then uses a12-Coin linear tail capped360. New drafts store pricing_revision2. Missing revision means1 and validates against the original exact formula. SaveStore canonicalizes the optional field without repricing old drafts. Moving/confirming retains the saved quote; only future purchases use the new policy. Schema3/owned land remain unchanged.
+
+0.20.1: WorldModel.cost is the active price readout: a pending draft returns its actual saved cost. Only absence of a draft evaluates the current curve. Save validation continues to use independent policy calculations, preventing a self-validating quote.

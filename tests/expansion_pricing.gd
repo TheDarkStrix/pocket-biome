@@ -38,6 +38,7 @@ func _init() -> void:
   check(store.save_state(world.state),"a valid revision%d quote saves" % revision)
   var restored = Model.new(); restored.state = store.load_state()
   check(restored.state.pending == quote,"saved revision%d offers, coordinates and price restore exactly" % revision)
+  check(restored.cost() == quote.cost,"world/advice price readouts honor the actual saved revision%d quote" % revision)
   var before: int = restored.state.coins
   check(restored.begin_draft("18,1") and restored.state.pending.cards == quote.cards and restored.state.pending.cost == quote.cost,"relocation retains the quote's original policy and offers")
   check(restored.place(0) and restored.state.coins == before-int(quote.cost),"confirmation charges exactly the legacy or current saved quote once")

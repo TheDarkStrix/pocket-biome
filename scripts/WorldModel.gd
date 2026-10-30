@@ -73,6 +73,7 @@ func frontier() -> Array[String]:
  return out
 
 func cost() -> int:
+ if not state.pending.is_empty(): return int(state.pending.cost)
  return preload("res://scripts/ExpansionPricing.gd").price(config.economy,int(state.expansions))
 
 func begin_draft(k: String) -> bool:

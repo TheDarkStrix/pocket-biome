@@ -1,3 +1,7 @@
+# Current checkpoint —0.20.1
+
+Final saved-price readout regression is fixed and covered. All1,089 assertions/19 suites, eight Python audits, startup and both full campaign probes pass.0.20 visual/native evidence remains valid for the unchanged presentation; exact0.20.1 install/restored-quote checks are being finalized. No further runtime edits are pending. Production gates and continuous3D orbit remain explicitly open.
+
 # Current checkpoint —0.20,2026-10-30
 
 Latest steering: close land gaps and match the reference Workshop, resource bar and bottom tools. Connected opaque ground/soft skirts, clean continuous rail, thin frames and complete painted medallions are implemented. Windmill rotor layers and revisioned late-game pricing are implemented. All1,087 assertions/19 suites and both full campaign probes pass. Android export/payload/signature/alignment pass; native UI/save/quarter-turn checks and APK publication pass. Production gates and continuous3D orbit remain open; no completed-public-release claim.
