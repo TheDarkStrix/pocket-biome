@@ -1,22 +1,26 @@
-# Pocket Biome0.19.0 Android preview
+# Pocket Biome 0.20.0 Android preview
 
-[Download the updated APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
+[Download APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
-ARM64 Android7.0+ (API24). Signed development preview. Install over the existing game to retain your island; do not uninstall.
+ARM64 Android7.0+ / API24. Signed development preview. Install over your existing game to keep the island; do not uninstall.
 
-## The selected concept across the actual game
+## Reported visual problems corrected
 
-- Three large painted Pack / Build / Pulse tools replace five small routes. Pack retains all eight stock types, Journal, World (fusion/rotation/photo), Projects and Trade. The top book opens goals; the gear opens Settings.
-- A lower illustrated Build workbench keeps the actual island visible. Land/Structures/Craft tabs cover every configured recipe. Swipe the object shelf, select an object, see its exact ingredient cost and confirm Build/Craft.
-- A translucent structure preview and gold diamond indicate an eligible Meadow. Normal crafting completion changes the selected item to Place; canceling keeps the blueprint. Pending drafts/full islands explain blocked placement. All queue slots, batch controls and finished blueprints remain available.
-- Shared-ground clipping removes the separate baked soil skirts above the connected cliff foundation. Tall foliage keeps its existing sway. Deep painted stone, roots, local mist and exposed-water shader outlets from0.18 remain live and follow the real occupied-cell boundary.
-- Title uses the illustrated logo, centered green Start/Continue and small Sound/Settings controls. About/New World remain in Settings. Resource icons are larger; the quest plaque is shorter.
-- Three-card Draft retains the saved quote/offers, selected gold edge, real placement and Later/Info; Growth/Moisture/Magic and later traits now have symbols.
+- Occupied land uses an opaque continuous grass carpet and soft sprite-edge joins. The old cap sampling included brown soil, making channels between plots; that source is removed. Intentionally empty cells stay empty.
+- One compact resource rail with simple Log/Stone/Coin art replaces three heavy gold boxes. Thin slate/bronze/green materials replace oversized frame hardware throughout the UI.
+- Bottom tools now use complete clean tan backpack, wooden mallet and blue rain-totem medallions matched to the selected concept, with a framed Build label and live Pulse ring. The unrelated stone warhammer/gritty plates are replaced.
+- Workshop structures are shown without raised soil blocks or concentric halo rings. All recipe categories, exact costs, missing requirements, queue/completion/placement/cancellation and Pack destinations remain.
 
-The full element-by-element comparison and actual Godot screenshots60–64 are on main in docs/design/REFERENCE_COMPARISON.md. These are running screens built from independent assets, not a flattened concept image. Constructed art fixtures are not earned progression. Current installed-emulator observations are recorded separately in TEST_REPORT.md/artifacts; the replacement install retained the exact save.
+## Gameplay and animation
 
-Source:6701687 on main. Digest:c330f85c1bf183bd887776f22514f128618d3c97e64b95514cb06dcb81e2d901. All1,053 assertions across18 Godot suites, eight Python audit tests, startup and both complete campaign probes pass.77 new Build checks cover six display/text cases, all recipe access, restored camera, real touch debit/completion/place/cancel/save, horizontal scroll and blocked placement. The original model/save/economy/provider test configuration is retained. Ingredient counts are integers, and the idle project summary stays hidden; working/ready projects reveal it when relevant. Pack always retains complete Projects access.
+Windmill sails now rotate as an independent painted layer around a registered axle. Pausing automation, reduced motion, photo mode and backgrounding keep its current pose; full-revolution bounds and moving alpha picking are covered. Terrain, building body and game state do not rotate with the sails.
 
-APK SHA256:6e1a686a8e39bd35417229b1d357bc6971f82c9b7d35dce21ba680ef699a794f. Size:101,045,424 bytes. Signature, 458 byte-identical retained members, ARM64 packaging,16KB ZIP/ELF alignment and source/test binding pass.
+New late-land prices keep counters0–12 unchanged, then use a linear12-Coin step capped360. The full32-purchase budget is6,025 Coins rather than48,754. Already-saved drafts retain their exact old offers, target and price, validated against their original policy. No owned land or paid extras reset.
 
-The concept's exact hand-shaped terrain contours/prop coloring and layered windmill rotor animation still differ or remain unfinished. Continuous3D orbit, physical-device performance/audio/cutouts, human creative/pacing validation and live provider sandbox/release configuration remain open. This is a development preview, not production/store certification. No production credentials or store publication were used.
+Source:d885f75. Source/test/export digest:489a4b3d13763da89de63350992befc1ab879dc2ad87079298c0f58d6acf0116. All1,087 assertions across19 Godot suites, eight Python audit cases, startup and both complete20-discovery/five-chapter progression probes pass. The expert probes take1,097/1,076 active seconds and1,662/1,509 manual collections; these are not human completion-time, enjoyment or retention claims.
+
+Actual staged OpenGL captures70–75, native observations and store-review materials are on main in TEST_REPORT.md/artifacts/docs/store. No generated concept board is used as a flattened screen. Current native install/save/UI evidence is documented separately; screenshots are not physical-device qualification.
+
+APK SHA256:cb68e1d97abb8a95371fe84525b8476f68d9a03fc822082bccd46f82ac9b9312. 101,579,779 bytes. All476 retained members match the universal APK byte-for-byte. Signature,16KB ZIP/ELF alignment and tested-source binding pass.
+
+Continuous true3D orbit, real provider sandbox/production configuration/signing, physical-device performance/audio and human creative/pacing review remain open. Test advertising/product IDs remain configured. Store copy/privacy drafts and the feature graphic are not a public store submission. This is not production certification.
