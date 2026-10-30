@@ -53,9 +53,11 @@ func run() -> void:
  h.presentation=preload("res://scripts/WorldPresentation.gd").new();h.refresh();view.sync()
  h.model.fuse("0,0");h.refresh();view.sync()
  check(view.entities.size()==1 and view.remnants.get("0,0",[]).size()==4,"fusion retains four old models while one authoritative sanctuary replaces them")
+ var growing_bounds:Rect2=view.projected_bounds(false)
  h.presentation.advance(0.9);view.sync()
  check(view.entities["0,0"].scale.x>1 and not view.remnants["0,0"][0].node.visible,"fusion converges into the larger visible model")
  h.presentation.advance(1);view.sync();await process_frame
+ check(growing_bounds.is_equal_approx(view.projected_bounds(false)),"fusion framing reserves its full settled height throughout growth")
  check(view.remnants.is_empty(),"retired fusion geometry is freed after its bounded transition")
  for angle in [0.13,1.31,2.77,4.2,5.88]:
   view.yaw=angle;view.sync_camera()
@@ -70,6 +72,7 @@ func run() -> void:
  h.modal.hide();view.sync();check(not is_instance_valid(view.ghost),"closing Build removes the unplaced preview")
  h.model.add_tile(Vector2i(2,1),"windmill");h.model.add_tile(Vector2i(2,0),"water");h.refresh();view.sync()
  h.presentation.advance_motors(h.model.state.tiles,0.1);view.sync()
+ check(view.bounds_by_key["2,1"].end.y>=1.3,"windmill camera bounds include the entire circular sail sweep")
  check(not is_zero_approx(view.entities["2,1"].get_node("Rotor").rotation.z),"windmill rotor uses retained simulation-independent motion")
  check(view.water_nodes.get_child_count()<=2 and view.fauna.size()==3 and view.life.smoke.size()==18,"world ambient effects obey fixed mobile object budgets")
  h.ambient_time=2.0;view._process(0)

@@ -23,8 +23,8 @@ Updated 2026-10-30. Engine: Godot 4.6.3 official. Runner: `./tools/check.sh`. Fr
 | island_environment | 42 | Four-turn cliff topology/triangulation, fused owners, roots/outlets/cache and photo framing |
 | build_flow | 77 | Six mobile/text cases; complete recipe reachability, focus/scroll/controls/camera; real touch craft/completion/place/cancel/save; blocked placement and cosmetic ground mesh/preview |
 | expansion_pricing | 26 | Early-price parity, late budget, strict legacy/current quotes, relocation/payment/save and malformed revision rejection |
-| orbit_world | 138 | Shipping3D camera,72 yaw/pitch poses, first evolution/save, complete profiles/portraits, fusion, ghost, native twist/compass, mobile fit, weather and lifecycle |
-| **Total** | **1,227** | Assertions; separate simulation and startup checks also run |
+| orbit_world | 140 | Shipping3D camera,72 yaw/pitch poses, first evolution/save, complete profiles/portraits, fusion, ghost, native twist/compass, mobile fit, weather and lifecycle |
+| **Total** | **1,229** | Assertions; separate simulation and startup checks also run |
 
 ## 0.21 living-world verification
 
@@ -193,3 +193,7 @@ A new late-world legacy quote regression first fails because WorldModel.cost ret
 Final0.20.1 source/test/export digest `dccc0c279837dbe293b6020fefb788607e5c7ed15232c9635d1c6f858fa3b339`; ARM64 101,579,779 bytes, SHA256 `26615c91e83aa125f2205da63060e649d4cdda63a058f96a305965a953f2c9b0`, all476 retained payload members verified, signatures and16KB alignment pass.
 
 Final exact0.20.1/code13 installed-native check: Android package manager confirms version13/0.20.1. Update preserves a byte-identical save before launch. Actual Continue→Draft→Later restores original Forest/Water/Iron offers and15-Coin quote, current rail/tools and connected floor. All27 stable root fields/tile data survive backgrounding; only time/next-effect clocks change. Bounded current-process logs have no script/fatal errors. See android-quote-patch-check.json and captures58–60. The late high-price legacy case is automated evidence; this native save has one expansion and is not represented as that scenario. The earlier0.20 native Build/Pack/quarter-turn evidence covers unchanged presentation.
+
+## First0.21 package checkpoint — superseded by framing follow-up
+
+Runtime source commit:c11772a. Tested/exported source digest:2a6216f329dfa7872611cc8372110015b478d8200262d85a910d974aed143405. Version0.21.0-preview, code14. Universal APK SHA256:9b7010f59f4a045947018809a95eeb6f6dde85eba82b61e31f126bf73920707e. Phone ARM64 APK SHA256:2d42ade52e7d0da78f43b05fe7e2e17e01b78f2ffe602c93daee82f0313987fa,102,159,210 bytes. All575 retained members are byte-identical to the universal export. Source binding, signature, portrait/package/SDK and16KB ZIP/ELF checks pass. The production audit still returns the ten documented release blockers; it is not a store-readiness pass.

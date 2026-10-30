@@ -226,12 +226,21 @@ func measure(node: Node3D) -> AABB:
  var result:=AABB(Vector3(-0.44,0,-0.44),Vector3(0.88,0.08,0.88))
  for child in node.get_children():
   if child is MeshInstance3D:result=result.merge(child.transform*child.mesh.get_aabb())
-  elif child is Node3D:result=result.merge(child.transform*measure(child))
+  elif child is Node3D:
+   var child_box:AABB=measure(child)
+   if child.name=="Rotor":child_box=child_box.merge(AABB(Vector3(-0.62,-0.62,-0.04),Vector3(1.24,1.24,0.08)))
+   result=result.merge(child.transform*child_box)
  return result
 func projected_bounds(include_frontier: bool = false) -> Rect2:
  sync();sync_camera()
  var world_box:=scenery_bounds
- for key in entities:world_box=world_box.merge(entities[key].transform*bounds_by_key[key])
+ for key in entities:
+  var tile:Dictionary=host.model.state.tiles[key]
+  var cell:Vector2i=host.model.coord(key)
+  var span:float=2.0 if tile.size==4 else 1.0
+  var at:=Vector3(cell.x+(0.5 if span==2 else 0),0,cell.y+(0.5 if span==2 else 0))
+  # Fit the settled model, not a temporary placement/fusion animation scale.
+  world_box=world_box.merge(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*span),at)*bounds_by_key[key])
  if is_instance_valid(ghost):world_box=world_box.merge(ghost.transform*ghost_bounds)
  var first:=true;var box:=Rect2()
  for i in range(8):
