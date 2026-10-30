@@ -1,26 +1,21 @@
-# Pocket Biome 0.20.1 Android preview
+# Pocket Biome 0.21.0 Android preview
 
 [Download APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
-ARM64 Android7.0+ / API24. Signed development preview. Install over your existing game to keep the island; do not uninstall.
+ARM64 Android7.0+ / API24. Install over the existing game to keep the island; do not uninstall. Signed development preview with test advertising/product configuration.
 
-## Reported visual problems corrected
+## Living island and free camera
 
-- Occupied land uses an opaque continuous grass carpet and soft sprite-edge joins. The old cap sampling included brown soil, making channels between plots; that source is removed. Intentionally empty cells stay empty.
-- One compact resource rail with simple Log/Stone/Coin art replaces three heavy gold boxes. Thin slate/bronze/green materials replace oversized frame hardware throughout the UI.
-- Bottom tools now use complete clean tan backpack, wooden mallet and blue rain-totem medallions matched to the selected concept, with a framed Build label and live Pulse ring. The unrelated stone warhammer/gritty plates are replaced.
-- Workshop structures are shown without raised soil blocks or concentric halo rings. All recipe categories, exact costs, missing requirements, queue/completion/placement/cancellation and Pack destinations remain.
+The world now uses actual3D miniature models and a continuous360° camera, with visible backs/sides. Drag land to pan, pinch to zoom and twist two fingers to orbit. Drag the small compass to orbit/tilt; desktop right-drag and keyboard arrows on the compass are also supported. World retains quarter-turn shortcuts. Camera movement never spends resources or rearranges saved land.
 
-## Gameplay and animation
+Trees, reeds and flowers sway in wind; water ripples and catches light; waterfalls flow down exposed edges; ivy, mist, smoke and three flapping butterflies bring movement around the island. Windmills have independent3D sails. Rain/Heat/Frost use pooled3D particles with affected-area feedback. Harvested nodes show stumps/fragments and regrow when the real cooldown ends. Four forest models converge into their fused sanctuary. Build has a translucent placement ghost and all40 base/discovery portraits match the runtime models.
 
-Windmill sails now rotate as an independent painted layer around a registered axle. Pausing automation, reduced motion, photo mode and backgrounding keep its current pose; full-revolution bounds and moving alpha picking are covered. Terrain, building body and game state do not rotate with the sails.
+The existing reference-inspired resource rail, Pack/Build/Pulse tools and menus remain. All20 discovery profiles, five chapters, crafting, objectives, automation, optional service routes and validated saves are retained. Original authored procedural geometry is implemented; final human art-direction approval and a separately rigged Golem are not claimed.
 
-New late-land prices keep counters0–12 unchanged, then use a linear12-Coin step capped360. The full32-purchase budget is6,025 Coins rather than48,754. Already-saved drafts retain their exact old offers, target and price, validated against their original policy. No owned land or paid extras reset.0.20.1 also fixes World/advice price readouts to show the stored quote, including older higher prices; independent save validation continues to reject altered prices. The26 pricing cases include that regression.
+Source:af58aa7. Tested/exported source SHA256:21c28f7b4ad091cf8b90f6510afb8e4dbf3ef6e96a1f5bb5842ef8b4fd08ebb7. All1,229 assertions across20 Godot suites, eight Python audit cases, startup and both complete campaign probes pass. The new140 cases cover the shipping3D camera/gameplay separately from retained legacy atlas fixtures. Actual-engine captures80–86 and an animated living-world GIF are on main under artifacts.
 
-Source:4d60e96. Source/test/export digest:dccc0c279837dbe293b6020fefb788607e5c7ed15232c9635d1c6f858fa3b339. All1,089 assertions across19 Godot suites, eight Python audit cases, startup and both complete20-discovery/five-chapter progression probes pass. The expert probes take1,097/1,076 active seconds and1,662/1,509 manual collections; these are not human completion-time, enjoyment or retention claims.
+APK SHA256:a674185f660dc258b6eda471fb5ab89b06195cb7732349c93433c78908877a23. 102,216,554 bytes. All575 retained members match the universal APK; signature,16KB ZIP/ELF alignment and exact tested-source binding pass.
 
-Actual staged OpenGL captures70–75, native observations and store-review materials are on main in TEST_REPORT.md/artifacts/docs/store. No generated concept board is used as a flattened screen. Current native install/save/UI evidence is documented separately; screenshots are not physical-device qualification.
+Physical-device frame-time/thermal/audio/input qualification, final human creative/pacing review, provider sandbox acceptance and production signing/publisher configuration remain open. Software-emulator observations are scoped in TEST_REPORT.md and do not certify phone performance. This is a development preview, not the completed public store release.
 
-APK SHA256:26615c91e83aa125f2205da63060e649d4cdda63a058f96a305965a953f2c9b0. 101,579,779 bytes. All476 retained members match the universal APK byte-for-byte. Signature,16KB ZIP/ELF alignment and tested-source binding pass.
-
-Continuous true3D orbit, real provider sandbox/production configuration/signing, physical-device performance/audio and human creative/pacing review remain open. Test advertising/product IDs remain configured. Store copy/privacy drafts and the feature graphic are not a public store submission. This is not production certification.
+Native code14/source af58aa7 check:replacement installation preserved the save byte-for-byte; actual Android Title/Continue/Draft/Later/Build rendered, and a compass touch swipe visibly changed yaw/pitch without spending or changing owned tiles. Sampled logs show no script/fatal/game-ANR entries. See main artifacts/android-orbit-check.json and captures61–65.
