@@ -1,0 +1,57 @@
+{
+  "utc": "2026-10-30T06:58:46.735417+00:00",
+  "runtime_source_commit": "af58aa7",
+  "source_sha256": "21c28f7b4ad091cf8b90f6510afb8e4dbf3ef6e96a1f5bb5842ef8b4fd08ebb7",
+  "version": "0.21.0-preview",
+  "version_code": 14,
+  "device": "API29 x86_64 software emulator; OpenGL ES3.1/Mesa llvmpipe; no physical phone benchmark",
+  "replacement_install_save_byte_identical": true,
+  "retained_save_sha256": "3edda3a0d8b611157689cd2d81042ead25922dd0795630bfb8e5506fcb4345e7",
+  "stable_fields_after_ui_checks": {
+    "coins": true,
+    "inventory": true,
+    "pending": true,
+    "discoveries": true,
+    "harvests": true,
+    "chapter": true,
+    "energy": true,
+    "expansions": true,
+    "next_id": true
+  },
+  "tile_identity_and_cooldowns_preserved": true,
+  "camera_drag_stable_fields": {
+    "coins": true,
+    "inventory": true,
+    "pending": true,
+    "discoveries": true,
+    "harvests": true,
+    "chapter": true,
+    "energy": true,
+    "expansions": true,
+    "next_id": true
+  },
+  "camera_drag_tile_identity_preserved": true,
+  "observed": [
+    "Title rendered actual3D saved island",
+    "Continue restored legacy pending Forest/Water/Iron draft at15 Coins",
+    "Later returned to saved five-cell world",
+    "Native touch compass swipe visibly changed yaw/pitch and needle",
+    "Build opened illustrated shelf, costs and placement ghost; Android Back action delivered"
+  ],
+  "script_fatal_or_game_anr_log_entries": [],
+  "app_force_stopped_after_checks": true,
+  "captures": [
+    "android-61-orbit-title.png",
+    "android-62-orbit-continue.png",
+    "android-63-orbit-play.png",
+    "android-64-orbit-drag.png",
+    "android-65-orbit-build.png"
+  ],
+  "limits": [
+    "Slow software-emulator cold start is not physical-device performance evidence",
+    "Live provider/reward/billing restoration and real-device cutout/audio/thermal/FPS remain unverified",
+    "Final human creative/pacing approval remains open"
+  ],
+  "passed": true,
+  "runtime_log_scope": "Last1600 logcat entries collected after UI checks"
+}

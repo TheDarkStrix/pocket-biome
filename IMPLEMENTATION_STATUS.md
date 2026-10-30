@@ -19,7 +19,7 @@ Visible life includes grounded foliage/reed/flower wind, animated water/caustics
 
 All1,229 assertions across20 Godot suites, eight Python audit cases, startup and both full campaign probes pass. The new140-assertion suite covers the shipping renderer,72 camera poses, first-evolution/save flow, fusion, previews, native twist, compass, mobile fitting and accessibility/lifecycle. An actual-engine fixed-camera capture shows30,543 changing pixels while the staged model remains byte-identical. Its nine-cell island contains42,416 triangles and72 mesh instances including pooled effects; this is a scene measurement, not phone performance evidence.
 
-Android0.21 packaging and native acceptance are recorded in TEST_REPORT.md and artifacts. Public release remains blocked by the documented signing/provider/configuration/physical-device and creative review requirements. No production credentials have been introduced.
+Android0.21 packaging passes with a102,216,554-byte ARM64 APK. The exact-source API29 native install preserves the save byte-for-byte, and actual compass touch changes yaw/pitch without altering resources, pending quotes or tile identity. Title/draft/play/Build captures and scoped log checks are recorded in TEST_REPORT.md and artifacts/android-orbit-check.json. Public release remains blocked by the documented signing/provider/configuration/physical-device and creative review requirements. No production credentials have been introduced.
 
 ## Continuity
 
