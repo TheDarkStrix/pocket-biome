@@ -22,7 +22,7 @@ Neutral typography, original terrain/resource art and original navigation/leaf/c
 
 Mobile tests require at least55% of portrait height for the world at all tested sizes/text scales, readable high counts and goal progress, comfortable targets, working transient callouts and access to real detail screens. Rendered fixtures document the direction; human creative approval remains open.
 
-# # 0.15 illustrated gameplay sheets
+## 0.15 illustrated gameplay sheets
 
 The user rejected the modal interiors as gray text/button lists with added icons. Gameplay sheets now use an independent mineral-ivory/teal palette, large atlas illustrations and purpose-specific composition. This is an original revision under review; it is not presented as a faithful copy of another game's UI or human-approved final art.
 

@@ -13,19 +13,19 @@ Authority: data/game.json; transaction/objective rules in WorldModel and Campaig
 - Five chapters: deterministic goals/rewards and persistent completion IDs. Optional Dusk Tide cannot destroy progress; players may ignore it.
 - Ads: optional rewards capped at three per UTC day; interstitials require eight active minutes, ten-minute spacing and at most two per session, only at eligible breaks. Entitlements remove forced ads; no banners in primary gameplay.
 
-# # Verified progression simulation
+## Verified progression simulation
 
 `tests/progression_simulation.gd` uses public gameplay transactions and advances active time; it does not inject inventory or discoveries. Latest run: all 20 discoveries, all five chapters, 35 occupied cells, 119 tracked progression operations, plus earning-loop harvests, 5199 active seconds, ending with 1293 coins. It includes save/restore. This establishes reachability, not an expected human completion time or optimal strategy. The script deliberately accelerates waiting and knows recipe conditions.
 
 First normal path: harvest Oak, open adjacent cloud, inspect Water and confirm placement; moisture crosses the Rainforest threshold in a few active seconds. Scene smoke exercises this launch-to-evolution route with real UI callbacks.
 
-# # Remaining tuning
+## Remaining tuning
 
 Measure comprehension, early decision quality, harvest fatigue, energy cadence, saturation, scarcity and time between discoveries with people. Validate PRD retention targets through actual playtests and analytics before calling the economy commercially proven. Store prices come from localized Billing queries, not hardcoded mock checkout prices.
 
 Timer hardening: environmental and automation cycles now retain anchored deadlines. Slightly late frames no longer stretch a cycle by a whole scheduler tick. Stalled slots are skipped rather than granting a backlog burst. This fixes timing accuracy without changing authored yields, prices or intervals; production-paced frame-jitter regression tests cover it.
 
-# # 0.12 gameplay pacing pass
+## 0.12 gameplay pacing pass
 
 Post-tutorial drafts now provide a rotating resource-producing option and two varied seeded choices; the initial Forest/Water/Crystal tutorial is unchanged. Saved offers and quotes are preserved. Placement descriptions are local to the chosen plot. Advice and trade shortcuts expose already implemented alternatives rather than granting resources.
 
@@ -49,3 +49,9 @@ The three-offer hand changes presentation and confirmation only. Draft pools, de
 ## 0.19 interface/economy integrity
 
 The concept-wide UI pass changes no economy or game-definition values. Recipe tabs cover every configured recipe, the lower tray displays required quantities for the retained batch selection, and CampaignSystem alone charges/queues/deploys. Focused real-touch checks verify one4 Wood/2 Stone Workbench debit, normal active-time completion, no second placement charge, retained blueprint on cancellation, and save restoration after deployment. Cosmetic ghosts/ground clipping/tool navigation never mutate inventory, occupancy or progression. Both full progression probes retain4,810/5,223 active-second outcomes; they do not establish enjoyment or human completion time.
+
+## 0.20 late-expansion correction
+
+Revision2 keeps the first13 quotes (counters0–12) identical, then adds12 Coins from the159-Coin anchor, capped360. The32-purchase budget drops from48,754 to6,025 Coins. Harvest/automation/discovery rewards and paid benefits do not change. Existing revision1 drafts retain exact offers/target/price;24 focused checks cover both policies through save/load/relocation/payment and reject arbitrary costs/revisions. No refund or ownership reset occurs.
+
+Expert collect-ready/automation routes now complete20 discoveries/five chapters/35 cells in1,097/1,076 active seconds, with1,662/1,509 manual collections and68-second maximum logged progression gaps. The old routes took5,223/4,810 seconds,10,939/10,057 collections and791/744-second gaps. These are accelerated solvers, not human playtests, minimal tap requirements or retention results. Human session/challenge testing remains required.

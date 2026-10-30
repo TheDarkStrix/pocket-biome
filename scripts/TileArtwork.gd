@@ -1,5 +1,6 @@
 extends RefCounted
 # Reviewed candidate atlas regions; source retained unchanged. Not final art approval.
+const WINDMILL = preload("res://assets/structures/windmill-layers.png")
 const DEPLETED = preload("res://assets/nodes/harvest_states.png")
 const DEPLETED_CELLS = {"oak":Vector2i(0,0),"forest":Vector2i(0,0),"stone":Vector2i(1,0),"fiber":Vector2i(2,0),"clay":Vector2i(0,1),"iron":Vector2i(1,1)}
 const BIOMES_A = preload("res://assets/biomes/biomes_a.png")
@@ -52,6 +53,9 @@ static func appearance(type: String, evolution: String, depleted: bool = false) 
  if EVOLUTIONS.has(art):
   var cell: Vector2i = EVOLUTIONS[art]
   return {"texture":EVOLVED,"region":Rect2(cell.x*418,cell.y*627,418,627),"pivot":Vector2(209,450 if cell.y == 0 else 393),"normalization":418.0/334.0,"tint":tint}
+ if type == "windmill":
+  var factor := Vector2(WINDMILL.get_size())/Vector2(1774,887)
+  return {"texture":WINDMILL,"region":Rect2(Vector2(40,90)*factor,Vector2(920,785)*factor),"pivot":Vector2(460,480)*factor,"normalization":418.0/(920*factor.x),"tint":tint,"rotor":true}
  if STRUCTURE_CELLS.has(type):
   var cell: Vector2i = STRUCTURE_CELLS[type]
   var row_top := [0,445,835]
@@ -60,15 +64,17 @@ static func appearance(type: String, evolution: String, depleted: bool = false) 
   return {"texture":STRUCTURES,"region":Rect2(cell.x*418,row_top[cell.y],418,row_height[cell.y]),"pivot":Vector2(209,ground_y[cell.y]),"normalization":1.0,"tint":tint}
  if not REGIONS.has(type): return {}
  return {"texture":SOURCE,"region":REGIONS[type][0],"pivot":REGIONS[type][1],"normalization":1.0,"tint":tint}
-static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false) -> void:
+static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false, rotor_angle: float = 0.0) -> void:
  var spec := appearance(type,evolution,depleted)
  if spec.is_empty(): return
  var normalized: float = scale*spec.normalization
  canvas.draw_texture_rect_region(spec.texture,Rect2(position-spec.pivot*normalized,spec.region.size*normalized),spec.region,tint*spec.tint)
-static func hit(type: String, evolution: String, relative_position: Vector2, scale: float, depleted: bool = false, joined: bool = false) -> bool:
+ if spec.get("rotor",false): paint_rotor(canvas,position,scale,tint*spec.tint,rotor_angle)
+static func hit(type: String, evolution: String, relative_position: Vector2, scale: float, depleted: bool = false, joined: bool = false, rotor_angle: float = 0.0) -> bool:
  if joined and relative_position.y+0.46*absf(relative_position.x) > 26.0*scale/(132.0/418.0): return false
  var spec := appearance(type,evolution,depleted)
  if spec.is_empty() or scale <= 0: return false
+ if spec.get("rotor",false) and rotor_hit(relative_position,scale,rotor_angle): return true
  var local: Vector2 = relative_position/(scale*spec.normalization)+spec.pivot
  if not Rect2(Vector2.ZERO,spec.region.size).has_point(local): return false
  var texture: Texture2D = spec.texture
@@ -109,10 +115,85 @@ static func joined_mesh(spec: Dictionary, scale: float, cut: float = 0.0) -> Dic
   uvs.append((spec.region.position+spec.pivot+point/normalized)/Vector2(spec.texture.get_size()))
  return {"points":points,"uvs":uvs}
 
-static func draw_joined(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false, cut: float = 0.0) -> void:
+static func clipped(points: PackedVector2Array, normal: Vector2, edge: float) -> PackedVector2Array:
+ var result := PackedVector2Array()
+ for index in range(points.size()):
+  var start := points[index]; var end := points[(index+1)%points.size()]
+  var a := start.dot(normal)-edge; var b := end.dot(normal)-edge
+  if a <= 0: result.append(start)
+  if (a < 0 and b > 0) or (a > 0 and b < 0): result.append(start.lerp(end,a/(a-b)))
+ return result
+
+static func surface_parts(spec: Dictionary, scale: float, cut: float = 0.0) -> Array:
+ var mesh := joined_mesh(spec,scale,cut)
+ var outer: PackedVector2Array = mesh.points
+ var unit: float = scale/(132.0/418.0)
+ var edge := 26.0*unit; var inner := 14.0*unit
+ var regions := []
+ var top := clipped(clipped(outer,Vector2(0.46,1),inner),Vector2(-0.46,1),inner)
+ regions.append(top)
+ for sign in [1.0,-1.0]:
+  var normal := Vector2(sign*0.46,1)
+  var band := clipped(outer,-normal,-inner)
+  band = clipped(band,Vector2(-sign,0),0)
+  regions.append(band)
+ var parts := []
+ for points in regions:
+  if points.size() < 3: continue
+  var uvs := PackedVector2Array(); var alphas := PackedFloat32Array()
+  for point in points:
+   uvs.append((spec.region.position+spec.pivot+point/(scale*spec.normalization))/Vector2(spec.texture.get_size()))
+   alphas.append(clampf((edge-point.y-0.46*absf(point.x))/(edge-inner),0,1))
+  parts.append({"points":points,"uvs":uvs,"alpha":alphas})
+ return parts
+
+static func draw_joined(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false, cut: float = 0.0, rotor_angle: float = 0.0) -> void:
  var spec := appearance(type,evolution,depleted)
  if spec.is_empty() or scale <= 0: return
- var mesh := joined_mesh(spec,scale,cut)
+ for part in surface_parts(spec,scale,cut):
+  var points: PackedVector2Array = part.points
+  var colors := PackedColorArray()
+  for index in range(points.size()):
+   points[index] += position
+   var color: Color = tint*spec.tint; color.a *= part.alpha[index]; colors.append(color)
+  canvas.draw_polygon(points,colors,part.uvs,spec.texture)
+ if spec.get("rotor",false) and cut == 0: paint_rotor(canvas,position,scale,tint*spec.tint,rotor_angle)
+
+static func rotor_mesh(scale: float, angle: float) -> Dictionary:
+ var unit: float = scale/(132.0/418.0)
+ var hub := Vector2(64,-325)*(132.0/920.0)*unit
+ var source := Rect2(995,110,704,684)
+ var center := Vector2(1348,452)
+ var points := PackedVector2Array(); var uvs := PackedVector2Array()
+ for source_point in [source.position,source.position+Vector2(source.size.x,0),source.end,source.position+Vector2(0,source.size.y)]:
+  var local: Vector2 = ((source_point-center)*(72.0/704.0)).rotated(angle)
+  local.y *= 0.88
+  points.append(hub+local*unit); uvs.append(source_point/Vector2(1774,887))
+ return {"points":points,"uvs":uvs,"hub":hub}
+static func paint_rotor(canvas: CanvasItem, position: Vector2, scale: float, tint: Color, angle: float) -> void:
+ var mesh := rotor_mesh(scale,angle)
  var points: PackedVector2Array = mesh.points
  for index in range(points.size()): points[index] += position
- if points.size() >= 3: canvas.draw_polygon(points,PackedColorArray([tint*spec.tint]),mesh.uvs,spec.texture)
+ canvas.draw_polygon(points,PackedColorArray([tint]),mesh.uvs,WINDMILL)
+static func rotor_hit(relative: Vector2, scale: float, angle: float) -> bool:
+ var unit: float = scale/(132.0/418.0)
+ var local := relative/unit-Vector2(64,-325)*(132.0/920.0)
+ local.y /= 0.88; local = local.rotated(-angle)
+ var source := Vector2(1348,452)+local/(72.0/704.0)
+ if not Rect2(995,110,704,684).has_point(source): return false
+ var id := WINDMILL.get_instance_id()
+ if not images.has(id):
+  var pixels := WINDMILL.get_image()
+  if pixels.is_compressed(): pixels.decompress()
+  images[id] = pixels
+ var pixel: Vector2i = Vector2i(source*Vector2(WINDMILL.get_size())/Vector2(1774,887))
+ var data: Image = images[id]
+ return data.get_pixelv(pixel).a > 0.2
+static func visual_bounds(spec: Dictionary, scale: float) -> Rect2:
+ var normalized: float = scale*spec.normalization
+ var box := Rect2(-spec.pivot*normalized,spec.region.size*normalized)
+ if spec.get("rotor",false):
+  var unit: float = scale/(132.0/418.0)
+  var hub := Vector2(64,-325)*(132.0/920.0)*unit
+  box = box.merge(Rect2(hub-Vector2(53,47)*unit,Vector2(106,94)*unit))
+ return box

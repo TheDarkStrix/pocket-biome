@@ -6,16 +6,13 @@ var silhouette := false
 var extent := 152.0
 var host: Node
 var world := false
+var prop_only := false
 var tint := Color("d8e6d8")
 func _ready() -> void:
  custom_minimum_size = Vector2(0,extent)
  mouse_filter = Control.MOUSE_FILTER_IGNORE
  if world: texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 func _draw() -> void:
- var center := Vector2(size.x/2,size.y*0.64)
- var radius := minf(size.x*0.43,size.y*0.48)
- for band in range(8,0,-1):
-  draw_circle(center-Vector2(0,12),radius*float(band)/8,Color(tint,0.025+0.018*(8-band)))
  if world and is_instance_valid(host):
   var bounds: Rect2 = host.world_art_bounds(false)
   var scale := minf((size.x-18)/bounds.size.x,(size.y-12)/bounds.size.y)
@@ -30,6 +27,8 @@ func _draw() -> void:
   var artwork = preload("res://scripts/TileArtwork.gd")
   var spec: Dictionary = artwork.appearance(tile_type,evolution)
   if spec.is_empty(): return
-  var scale := minf((size.x-18)/spec.region.size.x,(size.y-12)/spec.region.size.y)
-  var at: Vector2 = size/2+(spec.pivot-spec.region.size/2)*scale
-  artwork.draw_tile(self,tile_type,at,scale/spec.normalization,Color("355254") if silhouette else Color.WHITE,evolution)
+  var bounds: Rect2 = artwork.visual_bounds(spec,132.0/418.0)
+  var scale := minf((size.x-18)/bounds.size.x,(size.y-12)/bounds.size.y)
+  var at: Vector2 = size/2-bounds.get_center()*scale
+  if prop_only: artwork.draw_joined(self,tile_type,at,132.0/418.0*scale,Color("355254") if silhouette else Color.WHITE,evolution)
+  else: artwork.draw_tile(self,tile_type,at,132.0/418.0*scale,Color("355254") if silhouette else Color.WHITE,evolution)

@@ -16,8 +16,7 @@ func display(value: int, reduced: bool) -> void:
   response.tween_method(func(v: float): shown = v; queue_redraw(),shown,float(value),0.35)
  queue_redraw()
 func _draw() -> void:
+ var side := minf(size.x,size.y)
  var center := size/2
- var radius := minf(size.x,size.y)/2-3
-
- if shown > 0: draw_arc(center,radius,-PI/2,-PI/2+TAU*clampf(shown/200,0,1),48,Palette.ACCENT,3,true)
- preload("res://scripts/UIIcons.gd").draw(self,"rain",center,radius*1.58,Color.WHITE)
+ preload("res://scripts/ToolMedallion.gd").paint(self,"rain",Rect2(center-Vector2.ONE*side/2,Vector2.ONE*side))
+ if shown > 0: draw_arc(center,side*0.445,-PI/2,-PI/2+TAU*clampf(shown/200,0,1),64,Palette.ACCENT,2,true)

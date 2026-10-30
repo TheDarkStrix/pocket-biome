@@ -5,7 +5,7 @@ This is a signed development preview, not a store-ready or commercially certifie
 ## Completed engineering in this pass
 
 - Four cardinal isometric views with rotation buttons and a two-finger twist; continuous 3D orbit remains unimplemented (docs/CAMERA_ORBIT_PLAN.md).
-- Ongoing foliage deformation with fixed terrain/trunk seam, water-surface ripples, furnace/vent smoke and embers, windmill work dust and helper/totem/shrine activity lights. Cosmetic state cannot alter rewards or saved occupancy. Paused automation has no work effects. Reduced motion freezes idle activity; photos keep still framing. World redraw is bounded to 30 Hz; app rendering is capped at 60 FPS.
+- Ongoing foliage deformation with fixed terrain/trunk seam, water-surface ripples, furnace/vent smoke and embers, a registered rotating Windmill rotor with work dust, and helper/totem/shrine activity lights. Cosmetic state cannot alter rewards or saved occupancy. Paused automation has no work effects. Reduced motion freezes idle activity; photos keep still framing. World redraw is bounded to 30 Hz; app rendering is capped at 60 FPS.
 - Preserved placement, crossfade/evolution, fusion, three World Pulse effects and responsive HUD/menu animations.
 - Fixed environment/automation timing drift caused by slightly late frames; preserve scheduled cadence and skip stalled slots without bursts.
 - In-app privacy/data disclosure and local diagnostic deletion. Opt-out cancels pending diagnostic delivery. Native crash capture follows the diagnostics opt-in, including avoiding historical exits from opt-out periods. Ad measurement initialization is delayed in the manifest. Native Google UMP privacy choices are reachable from Settings when required; consent can retry after connection failure, and ad loading/showing checks release consent.
@@ -31,3 +31,5 @@ Exit 2 is expected for the current preview. It must not be called a successful s
 | Store listing | No submission performed | Content rating, listing assets, localization, SDK disclosures and final release review |
 
 Google's artifact repositories were reachable; the AdMob deprecation documentation page was proxy-blocked. Final SDK support/policy checks must be reviewed before submission. No production credentials, publisher identity or account configuration have been invented.
+
+0.20 fixes reported terrain channels and reference-tool/header/Workshop mismatches, adds full-revolution motor bounds/picking, and replaces the exponential late price tail with exact legacy-quote compatibility. Current automatic checks total1,087. Store review materials do not satisfy missing publisher/device/provider/creative gates. Continuous true3D orbit is an open engineering phase.

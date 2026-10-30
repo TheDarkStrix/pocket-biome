@@ -1,0 +1,167 @@
+{
+  "new_total": 6025,
+  "note": "Authored price budget, not a human retention result. Existing pending quotes keep revision1.",
+  "old_total": 48754,
+  "quotes": [
+    {
+      "new": 12,
+      "occupied_before": 4,
+      "old": 12
+    },
+    {
+      "new": 15,
+      "occupied_before": 5,
+      "old": 15
+    },
+    {
+      "new": 18,
+      "occupied_before": 6,
+      "old": 18
+    },
+    {
+      "new": 23,
+      "occupied_before": 7,
+      "old": 23
+    },
+    {
+      "new": 28,
+      "occupied_before": 8,
+      "old": 28
+    },
+    {
+      "new": 35,
+      "occupied_before": 9,
+      "old": 35
+    },
+    {
+      "new": 44,
+      "occupied_before": 10,
+      "old": 44
+    },
+    {
+      "new": 54,
+      "occupied_before": 11,
+      "old": 54
+    },
+    {
+      "new": 67,
+      "occupied_before": 12,
+      "old": 67
+    },
+    {
+      "new": 83,
+      "occupied_before": 13,
+      "old": 83
+    },
+    {
+      "new": 103,
+      "occupied_before": 14,
+      "old": 103
+    },
+    {
+      "new": 128,
+      "occupied_before": 15,
+      "old": 128
+    },
+    {
+      "new": 159,
+      "occupied_before": 16,
+      "old": 159
+    },
+    {
+      "new": 171,
+      "occupied_before": 17,
+      "old": 197
+    },
+    {
+      "new": 183,
+      "occupied_before": 18,
+      "old": 244
+    },
+    {
+      "new": 195,
+      "occupied_before": 19,
+      "old": 302
+    },
+    {
+      "new": 207,
+      "occupied_before": 20,
+      "old": 375
+    },
+    {
+      "new": 219,
+      "occupied_before": 21,
+      "old": 465
+    },
+    {
+      "new": 231,
+      "occupied_before": 22,
+      "old": 576
+    },
+    {
+      "new": 243,
+      "occupied_before": 23,
+      "old": 715
+    },
+    {
+      "new": 255,
+      "occupied_before": 24,
+      "old": 886
+    },
+    {
+      "new": 267,
+      "occupied_before": 25,
+      "old": 1099
+    },
+    {
+      "new": 279,
+      "occupied_before": 26,
+      "old": 1363
+    },
+    {
+      "new": 291,
+      "occupied_before": 27,
+      "old": 1690
+    },
+    {
+      "new": 303,
+      "occupied_before": 28,
+      "old": 2096
+    },
+    {
+      "new": 315,
+      "occupied_before": 29,
+      "old": 2599
+    },
+    {
+      "new": 327,
+      "occupied_before": 30,
+      "old": 3222
+    },
+    {
+      "new": 339,
+      "occupied_before": 31,
+      "old": 3995
+    },
+    {
+      "new": 351,
+      "occupied_before": 32,
+      "old": 4954
+    },
+    {
+      "new": 360,
+      "occupied_before": 33,
+      "old": 6143
+    },
+    {
+      "new": 360,
+      "occupied_before": 34,
+      "old": 7618
+    },
+    {
+      "new": 360,
+      "occupied_before": 35,
+      "old": 9446
+    }
+  ]
+}

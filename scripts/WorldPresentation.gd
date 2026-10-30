@@ -7,6 +7,7 @@ var initialized := false
 var cues: Array[String] = []
 var weather := []
 var harvests := []
+var motor_times := {}
 func sync(tiles: Dictionary) -> void:
  cues.clear()
  var next := {}
@@ -67,3 +68,12 @@ func pulse(power: String, key: String, targets: Array = []) -> void:
 func harvest(key: String, text: String, resource: String = "") -> void:
  if harvests.size() >= 12: harvests.pop_front()
  harvests.append({"key":key,"text":text,"resource":resource,"elapsed":0.0})
+
+func advance_motors(tiles: Dictionary, delta: float, frozen: bool = false) -> void:
+ for key in motor_times.keys():
+  if not tiles.has(key) or tiles[key].get("type","") != "windmill": motor_times.erase(key)
+ for key in tiles:
+  var tile: Dictionary = tiles[key]
+  if tile.get("type","") != "windmill": continue
+  if not motor_times.has(key): motor_times[key] = 0.0
+  if not frozen and tile.get("enabled",true): motor_times[key] = fposmod(motor_times[key]+clampf(delta,0,0.1),TAU/0.55)

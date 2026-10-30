@@ -32,6 +32,12 @@ Reference: the original four-panel board [cohesive-ui-concept.png](cohesive-ui-c
 
 Actual screenshots60–64 are constructed Godot art fixtures, not earned progression or generated mockups. Native evidence is scoped separately in TEST_REPORT.md. The generated medallion is an independent blank tool socket; its icon, text, energy, hit target and response remain live. No reference-game screenshot or flattened board is used as executable UI.
 
-# # Still requires acceptance
+## Still requires acceptance
 
 The concept's illustrated props, individual flower arrangements, hand-shaped terrain contours and surface coloration are not identical to the current atlas artwork. Windmill blade layering/rotation remains unfinished; mist/canopy/water effects do not stand in for that missing animation. Human creative review, actual mid-range device performance/audio and provider/store qualification remain open. This pass implements the four panels' navigation/composition and transactions; it is not certification of production readiness or final visual approval.
+
+## 0.20 correction after user rejection
+
+The0.19 composition did not make its gritty stone hammer, noisy tiny resources and oversized gold corners match the reference. Those are replaced by a tan pack, simple wood mallet, clear blue totem, clean log/faceted stone/coin and thin slate/bronze/green materials. The resource rail is one grouped surface; Build has a framed caption. Workshop structures no longer sit on raised soil blocks or concentric halo rings.
+
+The old cap UVs sampled soil near the source atlas's edges, making channels between plots. An opaque shared grass carpet and soft skirt bands now join occupied land. Empty cells remain empty. Windmill rotor layers now animate, with freeze/bounds/alpha tests. Actual captures70–75 and installed evidence document this revision. Exact hand-shaped prop contours, continuous3D orbit and human/device/provider release qualification remain open.

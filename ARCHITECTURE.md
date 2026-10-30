@@ -2,7 +2,7 @@
 
 The original repository was empty with no working functionality or commits to preserve. Godot 4.6.3 stable official is the pinned engine. The supplied specification is docs/MASTER_PRD_v4.md. Android uses OpenGL Compatibility explicitly, minimum API24, target36, ARM64 and x86_64 debug validation.
 
-# # Runtime composition
+## Runtime composition
 
 `scenes/Main.tscn` instantiates Main, the presentation/input/UI coordinator. It delegates authoritative transactions to WorldModel and CampaignSystem. All game definitions live in data/game.json; provider configuration lives in data/services.json.
 
@@ -26,7 +26,7 @@ The original repository was empty with no working functionality or commits to pr
 | ServiceHub / Telemetry | Optional provider bridge, durable reward ledger/caps, purchase entitlement handling, opt-in diagnostics/HTTPS delivery |
 | PocketServices.kt | Native test Ads/UMP, Billing, rewarded receipts, Android crash diagnostics and user-initiated photo content-URI sharing |
 
-# # State and invariants
+## State and invariants
 
 Coordinates are stable `x,y` keys independent of projection. Maximum gameplay occupancy is 36 cells; storage validates up to 64. Fused entities have one origin and three reservations; all cooldown, DNA, influence and picking queries resolve that origin. Fusion commits atomically before animation and never grants duplicate discovery rewards.
 
@@ -36,13 +36,13 @@ Expansion stores target, frozen three offers and quoted cost; payment occurs onl
 
 Schema 3 includes world, IDs, inventory, timers, pulse modifiers, discoveries, pending draft, chapters/rewards, crafting, blueprints, event state, cosmetics/entitlements, rewarded requests/receipts, accessibility and audio settings. Nested validation precedes load/write. Unknown schemas are rejected. Writes use a temporary file and validated backup before rename; copy/rename failures preserve committed state. This is not a physical power-loss durability guarantee.
 
-# # Native build and isolation
+## Native build and isolation
 
 `tools/prepare_native.py` generates ignored android/build from the pinned Godot template and copies maintained Kotlin/resources. It adds Google Ads 23.6.0, UMP 3.1.0 and Play Billing 8.0.0. `tools/build_android.sh` imports, runs checks, exports a staging APK, verifies its signature and promotes it only on success. APKs/toolchains/caches are not source-controlled.
 
 Tests instantiate the model without a scene tree; scene suites exercise real UI callbacks with isolated save paths. Graphical captures use Xorg/Mesa through tools/visual_review.sh. Native emulator evidence and remaining release gates are tracked separately from model coverage.
 
-# # Builder interface revision
+## Builder interface revision
 
 The latest user instruction selects Terra Nil as a reference and supersedes both earlier navy/green and parchment assumptions. Compact HUD and a four-icon dock leave more room for the island. A single Pulse control opens the real power selector; the World hub retains center/fusion/photo actions. Global DNA detail lives in the inspector, production uses illustrated ingredient counts, and a transient notice layer does not resize the world. GameTheme centralizes interface colors/fonts. Modal close controls and a scrim handle dismissal; launch-menu spacing responds to viewport height. See docs/UI_RESEARCH.md for actually reviewed sources and access limitations.
 
@@ -85,3 +85,11 @@ Pack consolidates the prior five-tool navigation into three physical tools witho
 BuildTray uses Main's existing modal/scroll lifecycle but a lower safe-area layout with maximum57% height. The modal input boundary is retained. Main stores/restores the prior gameplay zoom/pan when switching or closing Build, as it does for Draft. Tabs and horizontal shelf preserve recipe selection; a selected object is revealed on reopening. Current jobs/stock/blueprints/prerequisites refresh the selected quote; completion changes Build to Place. Normal CampaignSystem craft/deploy, atomic saves and cancel behavior are unchanged. Pending land drafts and absent eligible Meadows disable placement with actionable explanations. The preview chooses only an unreserved Grass plot outside Dusk targets, owns no occupancy and does not change saved data. Valid placement plots receive a gold surface outline.
 
 TileArtwork.joined_mesh clips atlas soil skirts against two front-facing shared-ground half-planes and derives source UVs from the original pivots/normalization. Original PNGs remain untouched. Main/WorldAmbience use the clipped base in gameplay, including previous/fused animation parts; canopy deformation retains its original upper mesh. Static World miniatures use the same clipping. Cards/standalone item thumbnails retain their isolated tile bases. Alpha picking excludes the removed skirt before the existing grid fallback; photo/title bounds conservatively include the original sprite envelope. Foundation topology, fusion aliases and four quarter-turn projections remain authoritative for attached scenery.
+
+## 0.20 terrain joins, tool materials, motors and pricing
+
+IslandEnvironment uses an opaque world-aligned grass carpet across occupied caps, with tiny edge overlap for raster seams. TileArtwork partitions clipped sprites into an opaque interior and two linear front-alpha bands. This removes baked soil channels while preserving props/canopies; unoccupied coordinates stay empty. ToolMedallion paints complete reference-matched objects; the Pulse child adds live energy. A single framed resource rail uses ResourceCell separators and dedicated icons. Build structures use clipped ground without circular backplates.
+
+Registered Windmill body/rotor regions share previews, alpha picking and complete-revolution bounds. WorldPresentation retains a bounded clock per machine, advances only enabled motors and freezes for photo/reduced/background. Building/ground geometry stays fixed.
+
+ExpansionPricing revision2 preserves counters0–12, then uses a12-Coin linear tail capped360. New drafts store pricing_revision2. Missing revision means1 and validates against the original exact formula. SaveStore canonicalizes the optional field without repricing old drafts. Moving/confirming retains the saved quote; only future purchases use the new policy. Schema3/owned land remain unchanged.

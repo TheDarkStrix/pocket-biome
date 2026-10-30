@@ -728,6 +728,7 @@ func constrain_camera() -> void:
 func _process(delta: float) -> void:
  game_hud.update_selection(self,delta)
  if not suspended and not photo_mode and not model.state.settings.reduced_motion:
+  presentation.advance_motors(model.state.tiles,minf(delta,0.1))
   ambient_time += minf(delta,0.1)
   cosmetic_clock += delta
   if cosmetic_clock >= 1.0/30.0:
@@ -863,7 +864,7 @@ func _draw() -> void:
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
    preload("res://scripts/TileArtwork.gd").draw_joined(self,pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
   var still: bool = model.state.settings.reduced_motion or photo_mode
-  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,true)
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,true,presentation.motor_times.get(k,0.0))
   preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
   if ghost.get("key","") == k:
    preload("res://scripts/TileArtwork.gd").draw_joined(self,ghost.type,p,132.0/418.0*s,Color(1,1,1,0.74))
@@ -1034,7 +1035,7 @@ func apply_settings() -> void:
   audio_feedback.ambience.volume_db = -80 if music <= 0 else -20+linear_to_db(music)
   audio_feedback.ambience.stream_paused = music <= 0
  if ui_root != null: update_fonts(ui_root)
- if is_instance_valid(inventory): inventory.add_theme_font_size_override("normal_font_size",scaled_font(16))
+ if is_instance_valid(inventory): inventory.add_theme_font_size_override("normal_font_size",scaled_font(18))
  update_stacked_buttons()
  update_pulse_width()
  call_deferred("apply_layout")
@@ -1084,8 +1085,8 @@ func world_art_bounds(include_frontier: bool) -> Rect2:
   var footprint: float = 2.0 if tile.size == 4 else 1.0
   var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if footprint == 2 else Vector2.ZERO)
   var spec: Dictionary = preload("res://scripts/TileArtwork.gd").appearance(tile.type,tile.evolution)
-  var scale: float = 132.0/418.0*spec.normalization*footprint
-  var visual := Rect2(project(at)-spec.pivot*scale,spec.region.size*scale)
+  var local_bounds: Rect2 = preload("res://scripts/TileArtwork.gd").visual_bounds(spec,132.0/418.0*footprint)
+  var visual := Rect2(project(at)+local_bounds.position,local_bounds.size)
   if first: bounds = visual; first = false
   else: bounds = bounds.merge(visual)
  if include_frontier:
@@ -1272,7 +1273,7 @@ func pick(position: Vector2) -> String:
   var tile: Dictionary = model.state.tiles[key]
   var size := 2.0 if tile.size == 4 else 1.0
   var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if size == 2 else Vector2.ZERO)
-  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,true): return key
+  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,true,presentation.motor_times.get(key,0.0)*0.55): return key
  var selected_key: String = model.origin(selected)
  if selected_key != "":
   var selected_tile: Dictionary = model.state.tiles[selected_key]
@@ -1356,7 +1357,7 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  var primary: bool = target.get_meta("primary_dock",false)
  var medallion := preload("res://scripts/ToolMedallion.gd").new()
  medallion.symbol = id; medallion.primary = primary
- medallion.custom_minimum_size = Vector2.ONE*(112 if primary else 96)*minf(1.25,logical_per_dp())
+ medallion.custom_minimum_size = Vector2.ONE*(124 if primary else 108)*minf(1.25,logical_per_dp())
  medallion.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  content.add_child(medallion)
  var icon := TextureRect.new()
@@ -1364,8 +1365,18 @@ func button_icon(target: Button, id: String, stacked: bool = false) -> void:
  icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
  icon.hide()
  medallion.add_child(icon)
- var caption: Label = label(text,12,content)
- MaterialUI.lettering(caption,true)
+ var caption_parent: Node = content
+ if primary:
+  var plaque := PanelContainer.new(); plaque.mouse_filter = Control.MOUSE_FILTER_IGNORE
+  plaque.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+  plaque.custom_minimum_size = Vector2(72,28)
+  plaque.add_theme_stylebox_override("panel",MaterialUI.frame(Color.WHITE,4))
+  content.add_child(plaque); caption_parent = plaque
+ var caption: Label = label(text,12,caption_parent)
+ caption.uppercase = true
+ MaterialUI.lettering(caption,false)
+ caption.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+
  caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
  caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  caption.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -1380,7 +1391,7 @@ func hud_ink() -> Color:
 func update_stacked_buttons() -> void:
  for action in stacked_buttons:
   if not is_instance_valid(action): continue
-  action.custom_minimum_size.y = maxf(touch_height(),maxf(152.0,126*logical_per_dp())*model.state.text_scale)
+  action.custom_minimum_size.y = maxf(touch_height(),maxf(164.0,126*logical_per_dp())*model.state.text_scale)
   action.get_meta("icon_caption").modulate = ThemeKit.MUTED if action.disabled else Color.WHITE
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
 

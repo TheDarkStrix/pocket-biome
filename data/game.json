@@ -793,7 +793,10 @@
     "expansion_growth": 1.24,
     "harvest_coins": 2,
     "max_cells": 36,
-    "inventory_limit": 9999
+    "inventory_limit": 9999,
+    "expansion_linear_after": 12,
+    "expansion_linear_step": 12,
+    "expansion_price_cap": 360
   },
   "effects": {
     "water": {

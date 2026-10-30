@@ -1,9 +1,9 @@
 {
-  "utc": "2026-10-29T21:09:09.214746+00:00",
-  "source_sha256": "c330f85c1bf183bd887776f22514f128618d3c97e64b95514cb06dcb81e2d901",
+  "utc": "2026-10-30T03:46:19.745322+00:00",
+  "source_sha256": "489a4b3d13763da89de63350992befc1ab879dc2ad87079298c0f58d6acf0116",
   "source_unchanged_during_run": true,
   "passed": true,
-  "assertions": 1053,
+  "assertions": 1087,
   "results": [
     {
       "suite": "run",
@@ -51,7 +51,7 @@
       "suite": "presentation",
       "passed": true,
       "exit_code": 0,
-      "assertions": 29
+      "assertions": 39
     },
     {
       "suite": "gameplay_pacing",
@@ -112,6 +112,12 @@
       "passed": true,
       "exit_code": 0,
       "assertions": 77
+    },
+    {
+      "suite": "expansion_pricing",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 24
     },
     {
       "suite": "automation_pacing",

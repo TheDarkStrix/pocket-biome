@@ -8,7 +8,7 @@ The user requested no blocking questions. Record unresolved external requirement
 - **Telemetry:** opt-in JSONL and HTTPS delivery code exists; data/services.json deliberately leaves telemetry_url empty. Choose a receiver/privacy retention policy before publishing. Do not pretend events reach a backend.
 - **Devices:** cloud software emulator validates installation and functional behavior only. At least one physical mid-range Android device plus cutout/tablet coverage is required for FPS, thermal, battery, touch comfort, audio and lifecycle qualification.
 - **Product validation:** PRD player comprehension/retention targets require real playtests. Automated progression does not establish enjoyment or commercial viability.
-- **Creative review:** generated assets and original synthesized audio are integrated. Use the current original graphite/pearl/violet palette and Terra Nil-inspired information hierarchy, with original assets. The user rejected a fixed navy/green direction and the earlier playful skin; final visual/listening review remains open.
+- **Creative review:** generated assets and original synthesized audio are integrated. Use the selected Pocket Biome concept, clean slate/bronze framing, simple painted tools, named resource rail and connected painted island, with original assets. The user rejected a fixed navy/green direction and the earlier playful skin; final visual/listening review remains open.
 - **Store submission:** privacy policy/data safety, content rating, listing art and screenshots, localized descriptions, SDK disclosures and final QA must precede publication. No automatic store publication is authorized or performed.
 
 Runtime: OpenGL Compatibility is selected for both regular and mobile rendering, Android minimum API24/target36. Vulkan can be explored separately after device profiling; exported apps follow the configured renderer.
@@ -16,3 +16,5 @@ Runtime: OpenGL Compatibility is selected for both regular and mobile rendering,
 Current engineering/checklist: docs/PRODUCTION_READINESS.md. Current animation coverage and remaining authored rotor/body rigs: docs/ANIMATION_STATUS.md. SDK artifact pins are current as verified from official repositories; current store/regional policy and provider flows still need final review. The production audit intentionally fails for development signing/test IDs and missing external acceptance evidence.
 
 Camera extension:four 90° views are implemented; continuous free-angle orbit requires a 3D renderer and directional assets. It is not marked complete. See docs/CAMERA_ORBIT_PLAN.md.
+
+Store review materials are prepared in store/LISTING.md and store/PRIVACY_DRAFT.md, with staged current-game captures and a documentation-only feature-graphic renderer. Final publisher/audience/contact/hosted-policy and store approvals remain external. These drafts are not public store submissions.

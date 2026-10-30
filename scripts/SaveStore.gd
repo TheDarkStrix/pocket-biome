@@ -117,7 +117,7 @@ func valid(s: Variant) -> bool:
    if not card is String or not model.config.tiles.has(card): return false
   model.state = s
   if not model.frontier().has(s.pending.at) or s.coins < s.pending.cost: return false
-  if s.pending.cost != model.cost(): return false
+  if not preload("res://scripts/ExpansionPricing.gd").valid_quote(model.config.economy,int(s.expansions),s.pending): return false
  if s.version >= 2 and not CampaignSchema.validate(self,s,model.config): return false
  return true
 
@@ -184,7 +184,9 @@ func canonicalize(s: Dictionary) -> Dictionary:
  for key in s.event.applied: s.event.applied[key] = int(s.event.applied[key])
  for i in range(s.objectives.size()): s.objectives[i] = int(s.objectives[i])
  for resource in s.inventory: s.inventory[resource] = int(s.inventory[resource])
- if not s.pending.is_empty(): s.pending.cost = int(s.pending.cost)
+ if not s.pending.is_empty():
+  s.pending.cost = int(s.pending.cost)
+  if s.pending.has("pricing_revision"): s.pending.pricing_revision = int(s.pending.pricing_revision)
  for k in s.tiles:
   var tile: Dictionary = s.tiles[k]
   if tile.has("owner"): continue

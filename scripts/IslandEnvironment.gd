@@ -11,6 +11,7 @@ var flow: ShaderMaterial
 var frame_signature := ""
 func _ready() -> void:
  show_behind_parent = true
+ texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
  flow = ShaderMaterial.new(); flow.shader = preload("res://assets/shaders/island-waterfall.gdshader")
  geometry_signature = ""
 func sync(tiles: Dictionary, rotation: int) -> void:
@@ -60,14 +61,18 @@ func _draw() -> void:
    draw_colored_polygon(shape,Color(0.86,0.93,0.91,0.012*float(5-band)))
  paint_caps(self,project,grade())
 func paint_caps(canvas: CanvasItem, mapper: Callable, tint: Color) -> void:
- # Sample the painted grass surface only, underneath the terrain artwork.
- var texture: Texture2D = Art.SOURCE
- var region: Rect2 = Art.REGIONS.grass[0]
- var uvs := PackedVector2Array()
- for point in [Vector2(209,151),Vector2(390,235),Vector2(209,318),Vector2(27,235)]: uvs.append((region.position+point)/Vector2(texture.get_size()))
+ # One opaque world-aligned grass carpet; source tile skirts no longer create
+ # brown channels or semi-transparent cracks between neighboring land cells.
+ var texture: Texture2D = preload("res://assets/terrain/continuous-grass.png")
  for cap in geometry.caps:
-  var points := PackedVector2Array()
-  for point in cap: points.append(mapper.call(point))
+  var center := Vector2.ZERO
+  for point in cap: center += point
+  center /= cap.size()
+  var points := PackedVector2Array(); var uvs := PackedVector2Array()
+  for point in cap:
+   var seam: Vector2 = center+(point-center)*1.01
+   points.append(mapper.call(seam))
+   uvs.append(Vector2(seam.x/396.0,seam.y/198.0))
   canvas.draw_polygon(points,PackedColorArray([tint]),uvs,texture)
 func paint_static(canvas: CanvasItem, offset: Vector2, scale: float) -> void:
  var mapper: Callable = func(point: Vector2) -> Vector2: return offset+point*scale

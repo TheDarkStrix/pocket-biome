@@ -40,19 +40,21 @@ func build(h, root: Control) -> void:
  h.hud = VBoxContainer.new()
  h.hud.add_theme_constant_override("separation",4)
  root.add_child(h.hud)
+ var rail := PanelContainer.new(); rail.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,6)); h.hud.add_child(rail)
  var resources := HBoxContainer.new()
  resources.add_theme_constant_override("separation",0)
- h.hud.add_child(resources)
+ rail.add_child(resources)
  h.chapter_dial = preload("res://scripts/ChapterDial.gd").new()
  resources.add_child(h.chapter_dial); h.chapter_dial.hide()
  for id in ["wood","stone","coins"]:
-  var cell := PanelContainer.new(); cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  var cell := preload("res://scripts/ResourceCell.gd").new(); cell.divider = id != "wood"; cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
   cell.size_flags_stretch_ratio = 1; cell.custom_minimum_size.x = 0
-  cell.add_theme_stylebox_override("panel",SurfaceKit.frame(Color.WHITE,10)); resources.add_child(cell)
-  var group := HBoxContainer.new(); group.add_theme_constant_override("separation",4); cell.add_child(group)
-  icon(id,44,group)
+  cell.add_theme_stylebox_override("panel",StyleBoxEmpty.new()); resources.add_child(cell)
+  var inset := MarginContainer.new(); inset.add_theme_constant_override("margin_left",6); inset.add_theme_constant_override("margin_right",6); cell.add_child(inset)
+  var group := HBoxContainer.new(); group.add_theme_constant_override("separation",4); inset.add_child(group)
+  icon(id,56,group)
   var numbers := VBoxContainer.new(); numbers.add_theme_constant_override("separation",0); numbers.size_flags_horizontal = Control.SIZE_EXPAND_FILL; group.add_child(numbers)
-  var name: Label = h.label(id.to_upper(),11,numbers); name.autowrap_mode = TextServer.AUTOWRAP_OFF; SurfaceKit.lettering(name)
+  var name: Label = h.label(id.to_upper(),10,numbers); name.autowrap_mode = TextServer.AUTOWRAP_OFF; SurfaceKit.lettering(name)
   resource_names[id] = name
   if id == "coins":
    h.inventory = RichTextLabel.new(); h.inventory.fit_content = true; h.inventory.scroll_active = false
@@ -60,7 +62,7 @@ func build(h, root: Control) -> void:
    h.inventory.mouse_filter = Control.MOUSE_FILTER_IGNORE; h.inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
    h.inventory.add_theme_color_override("default_color",SurfaceKit.CREAM); numbers.add_child(h.inventory)
   else:
-   var amount: Label = h.label("0",16,numbers); SurfaceKit.lettering(amount)
+   var amount: Label = h.label("0",18,numbers); SurfaceKit.lettering(amount)
    amount.autowrap_mode = TextServer.AUTOWRAP_OFF; resource_values[id] = amount
  land = h.label("",14,h.hud); land.hide()
  chapter_caption = h.label("",11,h.hud); chapter_caption.hide()
@@ -146,7 +148,7 @@ func build(h, root: Control) -> void:
    old_icon.get_parent().symbol = ""
    old_icon.get_parent().add_child(pulse_ring)
    pulse_ring.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-   pulse_ring.custom_minimum_size = Vector2.ONE*96*minf(1.25,h.logical_per_dp())
+   pulse_ring.custom_minimum_size = Vector2.ONE*108*minf(1.25,h.logical_per_dp())
    pulse_amount = h.label("",12,item); pulse_amount.hide()
  h.pulse_bar = meter(Palette.ACCENT,h.bottom); h.pulse_bar.max_value = 200; h.pulse_bar.hide()
  h.hud.minimum_size_changed.connect(func(): h.call_deferred("apply_layout"))
@@ -209,7 +211,7 @@ func display(h) -> void:
  h.objective.add_theme_color_override("font_color",ink)
  quest_progress.add_theme_color_override("font_color",ink)
  for value in resource_values.values(): value.add_theme_color_override("font_color",ink)
- h.inventory.add_theme_font_size_override("normal_font_size",h.scaled_font(16))
+ h.inventory.add_theme_font_size_override("normal_font_size",h.scaled_font(18))
  h.inventory.clear()
  h.inventory.add_text(h.compact_amount(h.model.state.coins))
  h.inventory.tooltip_text = "%d Coins" % h.model.state.coins

@@ -1,4 +1,5 @@
 extends RefCounted
+const REFERENCE_RESOURCES = preload("res://assets/ui/material/reference-resources.png")
 const COMMON = preload("res://assets/ui/icons.png")
 const TOOLS = preload("res://assets/ui/material/tool-icons.png")
 const PAINTED = {"pack":Vector2i(0,0),"craft":Vector2i(1,0),"rain":Vector2i(2,0),"codex":Vector2i(3,0),"settings":Vector2i(0,1),"world":Vector2i(1,1),"ecology":Vector2i(2,1),"coins":Vector2i(3,1)}
@@ -28,6 +29,13 @@ const LINE = {
 static var textures := {}
 static func texture(id: String) -> Texture2D:
  if textures.has(id): return textures[id]
+ if id in ["wood","stone","coins"]:
+  var atlas := AtlasTexture.new(); atlas.atlas = REFERENCE_RESOURCES
+  var cell: int = ["wood","stone","coins"].find(id)
+  var factor := Vector2(REFERENCE_RESOURCES.get_size())/Vector2(2172,724)
+  atlas.region = Rect2(Vector2(cell*724+50,55)*factor,Vector2(624,614)*factor)
+  atlas.filter_clip = true; textures[id] = atlas
+  return atlas
  if PAINTED.has(id):
   var result := AtlasTexture.new(); result.atlas = TOOLS
   var span := Vector2(TOOLS.get_size())/Vector2(4,2)

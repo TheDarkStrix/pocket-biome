@@ -1,0 +1,21 @@
+{
+  "world_changed_pixels": 1400,
+  "world_bounding_box": [
+    166,
+    399,
+    225,
+    453
+  ],
+  "world_roi": [
+    0,
+    170,
+    540,
+    700
+  ],
+  "other_changed_pixels": 119,
+  "frames": [
+    "70-connected-reference-play.png",
+    "75-windmill-rotation.png"
+  ],
+  "note": "Actual OpenGL fixed-world fixture; motor clock deliberately advances. ROI excludes a still-settling resource-highlight tween in the first capture. Not a device FPS or earned progression result."
+}

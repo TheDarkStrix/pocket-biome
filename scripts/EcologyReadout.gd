@@ -14,7 +14,7 @@ func _ready() -> void:
  style.content_margin_top = 12; style.content_margin_bottom = 12
  add_theme_stylebox_override("panel",style)
  var icon := TextureRect.new()
- icon.texture = preload("res://scripts/UIIcons.gd").texture("settings" if settings_mode else "ecology")
+ icon.texture = preload("res://assets/ui/line/gear.svg") if settings_mode else preload("res://scripts/UIIcons.gd").texture("ecology")
  icon.custom_minimum_size = Vector2(24,24)
  icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

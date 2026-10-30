@@ -80,5 +80,51 @@ func _init() -> void:
  for key in model.state.tiles:
   if not model.state.tiles[key].has("owner"): living.activity(model.state.tiles[key])
  check(JSON.stringify(model.state) == untouched,"ambient classification cannot change production or saves")
+ var mill = Model.new(); mill.add_tile(Vector2i(1,1),"windmill"); mill.state.tiles["1,1"].enabled = true
+ var clockwork = Presentation.new()
+ var pristine := JSON.stringify(mill.state)
+ for frame in range(20): clockwork.advance_motors(mill.state.tiles,0.1)
+ var phase: float = clockwork.motor_times["1,1"]
+ var rotor_a: Dictionary = art.rotor_mesh(132.0/418.0,0)
+ var rotor_b: Dictionary = art.rotor_mesh(132.0/418.0,phase*0.55)
+ check(not rotor_a.points[0].is_equal_approx(rotor_b.points[0]) and rotor_a.hub == rotor_b.hub,"authored windmill sails rotate around a fixed facade axle")
+ var mill_spec: Dictionary = art.appearance("windmill","")
+ var envelope: Rect2 = art.visual_bounds(mill_spec,132.0/418.0)
+ var fits := true
+ for step in range(32):
+  var mesh: Dictionary = art.rotor_mesh(132.0/418.0,TAU*step/32.0)
+  for point in mesh.points: fits = fits and envelope.grow(0.01).has_point(point)
+ check(fits,"windmill visual bounds contain a full revolution, not just the original blade pose")
+ check(art.rotor_hit(rotor_a.hub,132.0/418.0,phase*0.55),"the moving rotor's center is selectable through registered alpha coordinates")
+ mill.state.tiles["1,1"].enabled = false
+ clockwork.advance_motors(mill.state.tiles,0.1)
+ check(is_equal_approx(clockwork.motor_times["1,1"],phase),"pausing automation freezes its existing rotor pose")
+ mill.state.tiles["1,1"].enabled = true
+ clockwork.advance_motors(mill.state.tiles,0.1,true)
+ check(is_equal_approx(clockwork.motor_times["1,1"],phase),"photo/reduced/background freeze keeps the existing rotor pose")
+ clockwork.advance_motors(mill.state.tiles,0.1)
+ check(clockwork.motor_times["1,1"] > phase,"resuming continues the rotor without resetting it")
+ check(JSON.stringify(mill.state) == pristine,"motor presentation leaves all simulation and saved fields untouched")
+ mill.state.tiles.erase("1,1"); clockwork.advance_motors(mill.state.tiles,0.1)
+ check(clockwork.motor_times.is_empty(),"retired machine visuals release their bounded presentation entry")
+ var specimens := []
+ for type in model.config.tiles: specimens.append([type,""])
+ for recipe in model.config.recipes+model.config.fusions: specimens.append([recipe.types[0],recipe.id])
+ var smooth := true
+ for specimen in specimens:
+  for depleted in [false,true]:
+   var surface: Dictionary = art.appearance(specimen[0],specimen[1],depleted)
+   if surface.is_empty(): continue
+   for part in art.surface_parts(surface,132.0/418.0):
+    smooth = smooth and Geometry2D.triangulate_polygon(part.points).size() > 0
+    for opacity in part.alpha: smooth = smooth and opacity >= 0 and opacity <= 1
+    for uv in part.uvs: smooth = smooth and Rect2(Vector2.ZERO,Vector2.ONE).grow(0.001).has_point(uv)
+ check(smooth,"all terrain and discovery skirt blends triangulate with valid source UVs and bounded edge opacity")
+ var floor_image: Image = preload("res://assets/terrain/continuous-grass.png").get_image()
+ if floor_image.is_compressed(): floor_image.decompress()
+ var opaque := true
+ for y in range(0,floor_image.get_height(),16):
+  for x in range(0,floor_image.get_width(),16): opaque = opaque and floor_image.get_pixel(x,y).a >= 0.999
+ check(opaque,"the connecting island floor is opaque, including its texture edges")
  print("PRESENTATION RESULT: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

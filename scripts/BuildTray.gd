@@ -49,7 +49,9 @@ func configure(h) -> void:
   var body := VBoxContainer.new(); body.mouse_filter = Control.MOUSE_FILTER_IGNORE
   action.add_child(body); body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
   body.offset_left = 8; body.offset_right = -8; body.offset_top = 8; body.offset_bottom = -8
-  if recipe.has("tile"): h.sheets.art(h,body,recipe.tile,"",112)
+  if recipe.has("tile"):
+   var preview_art: Control = h.sheets.art(h,body,recipe.tile,"",112)
+   preview_art.prop_only = h.campaign_ui.build_family == "Structures"
   else: h.sheets.icon(body,recipe.output.keys()[0],84)
   var title: Label = h.label(recipe.get("tile",recipe.id).capitalize(),14,body)
   title.mouse_filter = Control.MOUSE_FILTER_IGNORE; title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

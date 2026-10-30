@@ -73,7 +73,7 @@ func frontier() -> Array[String]:
  return out
 
 func cost() -> int:
- return roundi(config.economy.expansion_base * pow(config.economy.expansion_growth,state.expansions))
+ return preload("res://scripts/ExpansionPricing.gd").price(config.economy,int(state.expansions))
 
 func begin_draft(k: String) -> bool:
  if not state.pending.is_empty():
@@ -88,7 +88,7 @@ func begin_draft(k: String) -> bool:
   return false
  if state.expansions == 0: record_event("first_draft")
  var cards: Array = preload("res://scripts/DraftDealer.gd").deal(config,int(state.seed),int(state.expansions),int(state.chapter))
- state.pending = {"at":k,"cost":cost(),"cards":cards}
+ state.pending = {"at":k,"cost":cost(),"cards":cards,"pricing_revision":preload("res://scripts/ExpansionPricing.gd").CURRENT_REVISION}
  return true
 
 func place(index: int) -> bool:
