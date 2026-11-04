@@ -25,7 +25,7 @@ static func dismantle(m, at: String) -> bool:
 static func movable(m, source: String) -> bool:
  if source == "" or not m.state.tiles.has(source) or PROTECTED.has(source) or not m.state.pending.is_empty(): return false
  var tile: Dictionary = m.state.tiles[source]
- return not tile.has("owner") and tile.size == 1 and m.config.tiles[tile.type].category == "structure" and not m.state.event.targets.has(source) and tile.get("boosts",[]).is_empty()
+ return not tile.has("owner") and tile.size == 1 and (m.config.tiles[tile.type].category == "structure" or m.state.get("habitat_projects",[]).has("living_workshop")) and not m.state.event.targets.has(source) and tile.get("boosts",[]).is_empty()
 static func can_move(m, source: String, target: String) -> bool:
  if not movable(m,source) or source == target or not m.state.tiles.has(target) or PROTECTED.has(target) or m.state.event.targets.has(target): return false
  var tile: Dictionary = m.state.tiles[target]
@@ -35,6 +35,7 @@ static func move(m, source: String, target: String) -> bool:
  var structure: Dictionary = m.state.tiles[source].duplicate(true)
  m.add_tile(m.coord(source),"grass")
  m.state.tiles[target] = structure
- m.message = "Structure moved. Level, production timing and pause state are preserved."
+ preload("res://scripts/RestorationCare.gd").relocate(m,source,target)
+ m.message = "Land moved. Conditions, level, production timing and pause state are preserved."
  m.record_event("structure_moved",{"type":structure.type})
  return true

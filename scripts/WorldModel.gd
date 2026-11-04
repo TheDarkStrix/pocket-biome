@@ -200,6 +200,7 @@ func tick(seconds: float = 1.0) -> void:
    for a in effects: buffer[k][a] += effects[a]*int(state.tiles[n].get("level",1))
   for a in buffer[k]: buffer[k][a] = clampi(buffer[k][a],0,100)
  for k in buffer: state.tiles[k].dna = buffer[k]
+ preload("res://scripts/RestorationCare.gd").apply(self)
  expire_boosts()
  evaluate()
  campaign.tick(self)

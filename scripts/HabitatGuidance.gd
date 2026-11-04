@@ -25,6 +25,14 @@ static func advice(model, id: String) -> Dictionary:
  if model.state.discoveries.is_empty(): return step("First make a discovery at home. Water beside Oak is a useful starting experiment.","ideas","Find a first step")
  var current := Projects.inspect(model,id)
  if current.ready: return step("This layout is suitable. Completed projects keep their reward even if you later change the habitat.","","",current.anchor)
+ if id == "sanctuary_network":
+  for project in Projects.IDS.slice(0,4):
+   if not model.state.get("habitat_projects",[]).has(project) or not Projects.inspect(model,project).ready:
+    return step("Restore "+Projects.NAMES[project]+" and keep its habitat suitable before connecting the sanctuary.","habitats","Review restoration projects")
+  return step("The four habitats need one green route. Replace blocking machines with natural land or move them; empty Meadow also carries the path.","world","Review the green corridor",current.anchor)
+ if id == "thermal_refuge":
+  if current.anchor == "": return supply(model,"forest")
+  return step("Shelter a tree beside Glacier with 60 moisture and at most 35 heat, or beside a Rain Totem with 80 moisture and 35–65 heat. Water channels and shade can help.","inspect","Inspect the climate refuge",current.anchor)
  if current.anchor == "": return supply(model,{"shaded_pond":"water","pollinator_patch":"fiber","living_workshop":"workbench"}[id])
  var plant := ""; var water := false; var mill := false; var paused := ""
  for key in model.neighbors(current.anchor):

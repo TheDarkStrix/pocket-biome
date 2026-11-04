@@ -5,6 +5,8 @@ static func validate(store, s: Dictionary, config: Dictionary) -> bool:
  if s.has("expeditions") and not preload("res://scripts/Expedition.gd").validate(s.expeditions,store): return false
  if s.has("finale_seen") and (not s.finale_seen is bool or (s.finale_seen and (not s.get("chapter_rewards") is Array or not (s.chapter_rewards.has(5) or s.chapter_rewards.has(5.0))))): return false
  if s.has("habitat_projects") and not preload("res://scripts/HabitatProjects.gd").validate(s.habitat_projects): return false
+ if s.has("learning") and not preload("res://scripts/LearningJourney.gd").validate(s.learning): return false
+ if s.has("restoration_care") and not preload("res://scripts/RestorationCare.gd").validate(store,s): return false
  var defaults := Campaign.defaults()
  if not s.get("audio_levels") is Dictionary: return false
  for field in ["music","sfx"]:

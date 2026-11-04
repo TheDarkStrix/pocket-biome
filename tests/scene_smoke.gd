@@ -42,7 +42,7 @@ func run() -> void:
  check(scene.model.state.tiles.get("-1,0",{}).get("type","") == "water","scene places Water")
  await create_timer(4.2).timeout
  check(scene.model.state.discoveries.has("rainforest"),"live scene timer evolves Oak")
- check(scene.objective.text.contains("Create a living habitat"),"compact chapter progress keeps the action instruction, not only its count")
+ check(scene.objective.text.contains("See what changed"),"compact chapter progress keeps the action instruction, not only its count")
  scene.persist()
  var saved = scene.store.load_state()
  check(saved.discoveries.has("rainforest"),"scene persistence")

@@ -2,6 +2,13 @@ extends RefCounted
 # Read-only affordances, not additional chores, payouts or timers.
 static func ideas(model, selected: String) -> Array:
  var result := []
+ if model.state.objectives.size() >= 3:
+  var goals := {2:["shaded_pond"],3:["pollinator_patch"],4:["living_workshop","thermal_refuge"],5:["sanctuary_network"]}
+  for id in goals.get(int(model.state.chapter),[]):
+   if not model.state.get("habitat_projects",[]).has(id):
+    var projects = preload("res://scripts/HabitatProjects.gd")
+    result.append({"title":projects.NAMES[id],"body":projects.RULES[id]+" Unlock: "+projects.UNLOCKS[id],"action":"habitat","button":"Plan the chapter restoration","icon":"ecology"})
+    break
  if model.state.harvests == 0:
   result.append({"title":"Bring your island to life","body":"Collect Wood from the Oak, then choose its first neighbor. Water can help its roots transform.","action":"collect","target":"0,0","button":"Show the Oak","icon":"wood"})
  if not model.state.pending.is_empty():

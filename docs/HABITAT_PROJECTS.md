@@ -1,5 +1,7 @@
 # Home-island habitat projects
 
+Current implementation: [Restoration campaign](RESTORATION_CAMPAIGN.md). The original three saved IDs now have campaign names and reusable tool rewards; two additional projects provide climate shelter and habitat connection. Later chapters require specific restorations, and projects offer alternative designs. The remaining sections describe earlier checkpoints.
+
 Pack → Habitat projects and World → Habitat projects provide three optional layout objectives after the first discovery. Ready projects also appear in next-action suggestions. These use the actual home island, not a separate constructed board.
 
 | Project | Requirements | Once-only reward | Visitor |

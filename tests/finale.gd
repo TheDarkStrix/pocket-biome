@@ -14,6 +14,7 @@ func completed_world():
  m.state.expansions = m.state.tiles.size()-4
  for recipe in m.config.recipes+m.config.fusions: m.state.discoveries.append(recipe.id)
  m.state.objectives = [0,1,2]; m.state.chapter = 5; m.state.chapter_rewards = [1,2,3,4]
+ m.state["habitat_projects"] = ["sanctuary_network"]
  m.state.settings.tutorial_seen = true
  m.campaign.evaluate(m)
  return m

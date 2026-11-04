@@ -22,6 +22,8 @@ var expedition_ui = preload("res://scripts/ExpeditionUI.gd").new()
 var finale_ui = preload("res://scripts/FinaleUI.gd").new()
 var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
 var habitat_visitors: Array = []
+var care_ui = preload("res://scripts/RestorationCareUI.gd").new()
+var wildlife_initialized := false
 var layout_ui = preload("res://scripts/LayoutUI.gd").new()
 var services = preload("res://scripts/ServiceHub.gd").new()
 var placement_blueprint := ""
@@ -379,6 +381,7 @@ func inspect_card(index: int) -> void:
  if model.state.pending.is_empty() or index < 0 or index > 2: return
  var type: String = model.state.pending.cards[index]
  var definition: Dictionary = model.config.tiles[type]
+ if type == "water": preload("res://scripts/LearningJourney.gd").mark(model,"compared"); persist()
  var box := modal_content(type.capitalize()+" · "+definition.rarity.capitalize())
  modal_screen = "draft_info"
  sheets.art(self,box,type,"",188)
@@ -416,14 +419,9 @@ func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
 func open_ideas(all_choices: bool = false) -> void:
  if launch_menu or photo_mode: return
  var suggestions: Array = preload("res://scripts/GameplayAdvisor.gd").ideas(model,selected)
- var learning: bool = model.state.objectives.size() < 3 and not all_choices
- if learning:
-  if not model.state.objectives.has(0):
-   suggestions = suggestions.filter(func(idea): return idea.action == "collect")
-  elif not model.state.objectives.has(1):
-   suggestions = suggestions.filter(func(idea): return idea.action == ("draft" if not model.state.pending.is_empty() else "expand"))
-  else:
-   suggestions = [{"title":"Watch your neighbors change the island","body":"Water shares moisture with edge-sharing land as time passes. Inspect the Oak’s live conditions and watch it grow. Rain is another way to add moisture.","action":"inspect","target":"0,0","button":"Inspect the Oak","icon":"water"}]
+ var lesson := preload("res://scripts/LearningJourney.gd").current(model)
+ var learning: bool = not lesson.is_empty() and not all_choices
+ if learning: suggestions = [lesson]
  var box := modal_content("Your next step" if learning else "What would you like to try?")
  modal_screen = "ideas"
  label("Try this on your island. You can explore other ideas whenever you like." if learning else "Choose a direction. Your chapter goal can wait while you experiment.",16,box)
@@ -445,7 +443,9 @@ func open_ideas(all_choices: bool = false) -> void:
   title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
   label(suggestion.body,16,content)
   button(suggestion.button,func(): choose_idea(suggestion),content)
- if learning: button("Explore other ideas",func(): open_ideas(true),box)
+ if learning:
+  button("Explore other ideas",func(): open_ideas(true),box)
+  button("I know the basics · finish guidance",func(): preload("res://scripts/LearningJourney.gd").mark(model,"dismissed"); persist(); refresh(); modal.hide(),box)
  button("Back to my island",func(): modal.hide(),box)
 
 func choose_idea(idea: Dictionary) -> void:
@@ -469,6 +469,10 @@ func choose_idea(idea: Dictionary) -> void:
   "habitat": habitat_ui.show_projects(self)
   "trade": campaign_ui.trade(self)
   "workshop": campaign_ui.workshop(self)
+  "workbench":
+   campaign_ui.build_choice = "workbench"; campaign_ui.build_family = "Structures"; campaign_ui.workshop(self)
+  "projects": campaign_ui.workshop_details(self)
+  "care": care_ui.show_tools(self)
   "world":
    if idea.has("target") and model.origin(idea.target) != "": selected = model.origin(idea.target)
    refresh(); campaign_ui.world(self)
@@ -545,7 +549,15 @@ func refresh() -> void:
   seen_discoveries.append(id)
   for recipe in model.config.recipes+model.config.fusions:
    if recipe.id == id and recipe.rarity in ["rare","legendary"]: reveal_queue.append(id)
- habitat_visitors = preload("res://scripts/HabitatProjects.gd").visitors(model)
+ var visitors_now: Array = preload("res://scripts/HabitatProjects.gd").visitors(model)
+ var old_ids := habitat_visitors.map(func(visitor): return visitor.id)
+ var new_ids := visitors_now.map(func(visitor): return visitor.id)
+ if wildlife_initialized:
+  for id in new_ids:
+   if not old_ids.has(id): model.message = preload("res://scripts/HabitatProjects.gd").ANIMALS[id]+" have arrived. Your habitat is suitable again."
+  for id in old_ids:
+   if not new_ids.has(id): model.message = preload("res://scripts/HabitatProjects.gd").ANIMALS[id]+" are waiting for suitable habitat. Review restoration projects; earned rewards stay yours."
+ habitat_visitors = visitors_now; wildlife_initialized = true
  presentation.sync(model.state.tiles)
  if model.state.settings.reduced_motion: presentation.animations.clear()
  services.model = model
@@ -576,7 +588,8 @@ func refresh() -> void:
   ui_motion.emphasize(inventory,model.state.settings.reduced_motion)
  ledger_signature = signature
  game_hud.display(self)
- game_hud.display_goal(self,model.objective_text())
+ var lesson := preload("res://scripts/LearningJourney.gd").current(model)
+ game_hud.display_goal(self,lesson.title+"\nTap for your next step" if not lesson.is_empty() else model.objective_text())
  if model.message != last_notice:
   last_notice = model.message
   notice.text = model.message
@@ -817,7 +830,7 @@ func _process(delta: float) -> void:
  if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return
  finale_ui.maybe_show(self)
- if layout_ui.source == "" and not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
+ if preload("res://scripts/LearningJourney.gd").current(model).is_empty() and layout_ui.source == "" and not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
   services.prepare_ad_services()
  if discard_resume_delta:
   discard_resume_delta = false
@@ -993,7 +1006,18 @@ func _draw() -> void:
    draw_plot_outline(entity_screen(neighbor),zoom_level,Color("8edbd1"),2.0)
 
  for visitor in habitat_visitors:
-  preload("res://scripts/HabitatProjects.gd").draw_visitor(self,visitor.id,entity_screen(visitor.key),zoom_level,ambient_time,model.state.settings.reduced_motion or photo_mode or suspended)
+  for index in range(visitor.get("count",1)):
+   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,visitor.id,entity_screen(visitor.key)+Vector2(index*12,-index*4)*zoom_level,zoom_level,ambient_time+index,model.state.settings.reduced_motion or photo_mode or suspended)
+ draw_restoration_care()
+ var lesson := preload("res://scripts/LearningJourney.gd").current(model)
+ if not photo_mode and not launch_menu and not modal.visible and not lesson.is_empty() and lesson.get("target","") == "0,0":
+  draw_plot_outline(entity_screen("0,0"),zoom_level,Color("ead7a0"),2.0)
+  for neighbor in model.neighbors("0,0"):
+   if model.state.tiles[neighbor].type != "water": continue
+   var start := entity_screen(neighbor); var finish := entity_screen("0,0")
+   draw_line(start,finish,Color(0.5,0.8,0.9,0.45),2*zoom_level,true)
+   var progress := 0.5 if model.state.settings.reduced_motion else fposmod(ambient_time*0.45,1.0)
+   draw_circle(start.lerp(finish,progress),3*zoom_level,Color("8dd5e3"))
 
  if layout_ui.source != "":
   for key in available_meadows():
@@ -1001,7 +1025,7 @@ func _draw() -> void:
   if model.state.tiles.has(layout_ui.source):
    draw_plot_outline(entity_screen(layout_ui.source),zoom_level,Color("ffe1a0"),3.0)
    if layout_ui.destination != "":
-    draw_land_art(model.state.tiles[layout_ui.source].type,screen(model.coord(layout_ui.destination)),132.0/418.0*zoom_level,Color(1,1,1,0.5))
+    draw_land_art(model.state.tiles[layout_ui.source].type,screen(model.coord(layout_ui.destination)),132.0/418.0*zoom_level,Color(1,1,1,0.5),model.state.tiles[layout_ui.source].evolution)
 
  # Draw expansion controls above the art they operate, matching their input priority.
  for key in visible_frontier:
@@ -1055,6 +1079,8 @@ func inspect(pos: Vector2) -> void:
 func open_inspector(key: String) -> void:
  if key == "" or not model.state.tiles.has(key): return
  selected = key
+ if key == "0,0" and not model.state.discoveries.is_empty():
+  preload("res://scripts/LearningJourney.gd").mark(model,"inspected"); persist()
  var tile: Dictionary = model.state.tiles[key]
  var box := modal_content(tile_title(tile))
  inspection_mode = true
@@ -1088,6 +1114,7 @@ func open_inspector(key: String) -> void:
   var source_text: Label = label(text,14,source_row); source_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
   count += 1
  if count == 0: label("No environmental sources nearby.",14,box)
+ if not model.state.get("habitat_projects",[]).is_empty(): button("Care for this habitat",func(): care_ui.show_tools(self),box)
  label("Discovery opportunities",19,box)
  for recipe in model.config.recipes:
   if not tile.type in recipe.types: continue
@@ -1345,6 +1372,7 @@ func start_play() -> void:
  refresh()
 
 func check_transition_ad() -> void:
+ if not preload("res://scripts/LearningJourney.gd").current(model).is_empty(): return
  if layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
  services.maybe_interstitial()
 
@@ -1592,3 +1620,20 @@ func draw_land_art(type:String, at:Vector2, scale:float, tint:Color, evolution:S
  var art=preload("res://scripts/TileArtwork.gd")
  if connected_land:art.draw_joined(self,type,at,scale,tint,evolution)
  else:art.draw_tile(self,type,at,scale,tint,evolution)
+
+func draw_restoration_care() -> void:
+ var care = preload("res://scripts/RestorationCare.gd")
+ for mode in care.MODES:
+  for cell in care.targets(model,mode):
+   var at: String = model.origin(cell)
+   if at == "": continue
+   var point := entity_screen(at)
+   var color := Color("83c7df") if mode == "channel" else Color("90b68d") if mode == "shade" else Color("e6b76f")
+   draw_plot_outline(point,zoom_level,color,2.0)
+   if mode == "channel":
+    var source: String = care.water_source(model,at)
+    if source != "": draw_line(entity_screen(source),point,color.darkened(0.2),2*zoom_level,true)
+   elif mode == "shade":
+    draw_arc(point+Vector2(0,-35)*zoom_level,17*zoom_level,PI,TAU,16,color,3*zoom_level,true)
+   else:
+    draw_circle(point+Vector2(0,-30)*zoom_level,4*zoom_level,color)

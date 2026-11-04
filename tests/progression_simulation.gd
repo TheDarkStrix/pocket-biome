@@ -13,8 +13,8 @@ func fail(message: String) -> void:
 func second() -> void:
  m.tick(1)
  # Earn the restoration milestone through its normal condition/claim authority.
- if preload("res://scripts/HabitatProjects.gd").claim(m,"shaded_pond"):
-  mark("habitat_project_completed",{"id":"shaded_pond"})
+ for id in preload("res://scripts/HabitatProjects.gd").IDS:
+  if preload("res://scripts/HabitatProjects.gd").claim(m,id): mark("habitat_project_completed",{"id":id})
  elapsed += 1
  for key in m.state.tiles:
   var tile: Dictionary = m.state.tiles[key]
@@ -93,7 +93,7 @@ func _init() -> void:
  for at in ["2,1","2,2","3,2","4,2","2,3","3,3","4,3","3,4"]: buy(at)
  set_plot("2,1","windmill")
  buy("1,-1"); set_plot("1,-1","golem")
- for at in ["4,1","5,1","6,1"]: buy(at); set_plot(at,"windmill")
+ for at in ["4,1","5,1"]: buy(at); set_plot(at,"windmill")
  var sources := {"rainforest":["water"],"ember":["vent","crystal"],"lake":["crystal"],"steam":["water","vent"],"frozen":["glacier","water"],"meadow":["forest","water"],"mossrock":["forest","water"],"reedwater":["forest"],"sunstone":["vent","crystal"],"mistforest":["water","glacier"],"crystalforest":["crystal","stone"],"oasis":["water","vent"],"ironwood":["vent","stone"],"moonflower":["crystal","glacier"],"obsidian":["vent","crystal"],"celestial":["water","forest","stone","crystal"]}
  var around := ["2,3","4,3","3,2","3,4"]
  for recipe in m.config.recipes:
@@ -105,6 +105,14 @@ func _init() -> void:
    if m.state.discoveries.has(recipe.id): break
    second()
   if not m.state.discoveries.has(recipe.id): fail("recipe unreachable through ordinary play: "+recipe.id); return
+ # Arrange the authored restoration habitats through paid crafting/deployment.
+ # Two extra plots replace one optional Windmill plot, keeping the final world within 36 cells.
+ buy("-1,1"); set_plot("-1,1","water")
+ buy("1,2"); set_plot("1,2","forest")
+ buy("0,2"); set_plot("0,2","water")
+ set_plot("2,2","glacier")
+ for i in range(30): second()
+ if not m.state.get("habitat_projects",[]).has("sanctuary_network"): fail("connected restoration campaign unreachable: "+str(m.state.get("habitat_projects",[]))); return
  for y in range(4):
   for x in [-1,-2,-3,-4]: buy("%d,%d" % [x,y])
  var origins := [Vector2i(-2,0),Vector2i(-4,0),Vector2i(-2,2),Vector2i(-4,2)]

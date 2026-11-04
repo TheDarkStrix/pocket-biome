@@ -248,6 +248,8 @@ func world(h) -> void:
   var tile: Dictionary = h.model.state.tiles[at]
   if tile.size == 4:
    h.button("Dismantle sanctuary…",func(): h.layout_ui.dismantle_prompt(h,at),box)
+  if h.model.config.tiles[tile.type].category != "structure" and h.model.state.get("habitat_projects",[]).has("living_workshop") and tile.size == 1 and at not in ["0,0","1,0","0,1"]:
+   h.button("Move selected landscape…",func(): h.layout_ui.begin(h,at),box)
   if h.model.config.tiles[tile.type].category == "structure":
    h.button("Move selected structure…",func(): h.layout_ui.begin(h,at),box)
    var level: int = tile.get("level",1)
@@ -268,6 +270,7 @@ func world(h) -> void:
      h.modal.hide(); h.persist(); h.refresh(),confirm)
     close_button(h,confirm),box)
  h.button("Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
+ h.button("Earned care tools · water, shade & warmth",func(): h.care_ui.show_tools(h),box)
  h.button("World Pulse abilities",func(): h.pulse_selector(),box)
  var event: Dictionary = h.model.state.event
  if event.until > 0:
@@ -344,7 +347,7 @@ func welcome(h) -> void:
  h.sheets.art(h,box,"oak","",192)
  h.label("Every world begins with a seed",22,box)
  h.sheets.caption(h,h.model.campaign.PURPOSE,box)
- h.sheets.caption(h,"Tap the Oak to collect Wood and Coins. Then open a cloud beside it and choose Water.",box)
+ h.sheets.caption(h,"Your Oak is thirsty. Gather Wood, compare Water beside its roots, then watch the island respond. Your goal shows one useful action at a time through your first building and wildlife habitat.",box)
  var examples := HBoxContainer.new(); box.add_child(examples)
  for type in ["oak","water","forest"]:
   var group := VBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL; examples.add_child(group)

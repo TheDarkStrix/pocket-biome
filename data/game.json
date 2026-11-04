@@ -1179,10 +1179,10 @@
     },
     {
       "id": 2,
-      "name": "Living Neighbors",
-      "hint": "Restore a living habitat, grow to eight tiles, find three discoveries, and use a World Pulse.",
+      "name": "The Returning Spring",
+      "hint": "Create a living habitat to welcome frogs and earn your Water channel. Expand and experiment with neighbors.",
       "checks": {
-        "habitats": 1,
+        "restored_spring": 1,
         "cells": 8,
         "discoveries": 3,
         "pulses": 1
@@ -1191,9 +1191,10 @@
     },
     {
       "id": 3,
-      "name": "Strange Transformations",
-      "hint": "Make a fusion, fire a brick, and discover six biomes.",
+      "name": "Wings over the Garden",
+      "hint": "Restore a pollinator garden, fuse a sanctuary and learn to craft bricks.",
       "checks": {
+        "restored_garden": 1,
         "fusions": 1,
         "crafted_brick": 1,
         "discoveries": 6
@@ -1202,9 +1203,11 @@
     },
     {
       "id": 4,
-      "name": "The Tiny Civilization",
-      "hint": "Build a golem and windmill; earn 30 automated coins and craft five bricks.",
+      "name": "Shelter from the Weather",
+      "hint": "Shelter a working workshop and create a climate refuge. Your helpers sustain a living island.",
       "checks": {
+        "restored_workshop": 1,
+        "restored_climate": 1,
         "built_golem": 1,
         "built_windmill": 1,
         "automation_coins": 30,
@@ -1214,9 +1217,10 @@
     },
     {
       "id": 5,
-      "name": "Celestial Biomes",
-      "hint": "Collect all twenty discoveries and create a world of at least 25 cells.",
+      "name": "The Living Sanctuary",
+      "hint": "Connect your four suitable restorations through living land, then complete your discovery collection.",
       "checks": {
+        "restored_network": 1,
         "discoveries": 20,
         "cells": 25
       },

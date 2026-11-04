@@ -2,7 +2,21 @@
 
 Original audit snapshot: gameplay branch at `1a5940c` (guidance checkpoint). The findings below describe that snapshot. The follow-up status here records subsequent implementation; earlier chronological review notes remain historical.
 
-## Follow-up implementation
+## Current restoration implementation
+
+The five subsequent gameplay priorities are now implemented. See [Restoration campaign](RESTORATION_CAMPAIGN.md) for the exact rules and player journey:
+
+1. Distinct chapter restorations: spring, pollinator garden, working woodland workshop, climate refuge and connected sanctuary.
+2. Earned capabilities: water channels, shade, warmth, landscape movement and expanded care capacity.
+3. Alternative viable layouts for spring, garden, workshop and climate shelter; compact and extended sanctuary connections.
+4. Live wildlife preferences, larger visitor groups for selected designs, and arrival/departure feedback.
+5. Playable guidance through comparison, observation, crafting, placement and the first habitat; dismissible and durably completed, with automatic provider/consent preparation and interstitials deferred during guidance.
+
+The project screen prioritizes the next unfinished chapter restoration and exposes layout alternatives and useful unlocks. Old saves and earned chapters remain accepted. The existing completion recovery, expeditions and painted presentation remain.
+
+Validation: eight Python audit tests, 1,573 assertions across 31 Godot suites, two full campaign probes and startup passed. Both campaign probes finish all 20 discoveries and five chapters within 36 cells, taking 1,116/1,142 simulated active seconds using known solutions. Android preview and ARM64 package checks pass for source `80f6f5fc202b9175b22620508e8cef303f0a8ff5560b670ac6ac5f74368d70fc`. Full evidence is recorded in [Restoration validation](RESTORATION_VALIDATION.json). Enjoyment, novice understanding, retention, physical-device performance and commercial income remain unverified. The bounded visitor-preference implementation does not claim animal breeding or a simulated food chain. No public app release was performed.
+
+## Previous follow-up implementation
 
 - **Completion trap fixed:** confirmed sanctuary dismantling recovers the four plots, preserves discoveries and restores protected resource nodes. The exact 36-cell adverse layout is now a regression test.
 - **Structure movement implemented:** legal destination outlines, preview, confirmation and cancel; identity, upgrades and production timing retained; failed saves roll back. See [Layout recovery](LAYOUT_RECOVERY.md).
@@ -10,7 +24,7 @@ Original audit snapshot: gameplay branch at `1a5940c` (guidance checkpoint). The
 - **Fourth expedition and replay implemented:** River Link adds a continuous cardinal water route between fixed endpoints. Independent replay attempts preserve original restoration records and cannot repeat completion ad milestones. See [Expeditions](EXPEDITIONS.md).
 - **Opening goal helper narrowed:** harvest, expand and inspect now appear one relevant action at a time, with broader ideas available. A full interactive teaching sequence through crafting and a novice observation study remain outstanding.
 
-Current validation: eight Python audit tests, 1,488 assertions across 30 Godot suites, two successful full-campaign solver probes and startup. Both probes complete all 20 discoveries and five chapters in 1,067/1,087 simulated active seconds; these are known-solution probes, not human completion estimates. Android preview and ARM64 signature/alignment/content checks pass for source digest `f94467f7d372ca194c38fff432db15c94feb51c5d1d6a758876ef8edff007fc6`. Scripted OpenGL captures cover the new recovery and river screens, including 320×640 enlarged text.
+Previous checkpoint validation: eight Python audit tests, 1,488 assertions across 30 Godot suites, two successful full-campaign solver probes and startup. Both probes complete all 20 discoveries and five chapters in 1,067/1,087 simulated active seconds; these are known-solution probes, not human completion estimates. Android preview and ARM64 signature/alignment/content checks pass for source digest `f94467f7d372ca194c38fff432db15c94feb51c5d1d6a758876ef8edff007fc6`. Scripted OpenGL captures cover the new recovery and river screens, including 320×640 enlarged text.
 
 The broader presentation pass, richer wildlife decisions, full campaign narrative, physical-device qualification, production publisher configuration and player enjoyment/revenue evidence remain unfinished. No public app release or live advertising qualification was performed.
 

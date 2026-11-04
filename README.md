@@ -4,7 +4,7 @@ Godot **4.6.3**, portrait Android-first, offline environmental discovery game. T
 
 ## Android test download
 
-[Download the latest signed ARM64 test APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk). Android 7.0+; debug preview, not a store release. Install over the existing build to retain its world; do not uninstall. Source and checksums are listed on the download branch. Build the phone package with `python3 tools/package_phone_apk.py` after a successful universal debug build.
+[Previously published ARM64 test APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk). Android 7.0+; debug preview, not a store release. Install over the existing build to retain its world; do not uninstall. Source and checksums are listed on the download branch; that package can predate current gameplay changes. The current cloud test package is generated at `builds/PocketBiome-Android-test.apk`. Build the phone package with `python3 tools/package_phone_apk.py` after a successful universal debug build.
 
 ## Develop
 
@@ -19,11 +19,11 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 
 ## Play
 
-**Pack → Habitat projects** offers Shaded Pond, Pollinator Patch and Living Workshop: home-island layout goals with one-time rewards and wildlife that visits suitable habitats. See [Habitat projects](docs/HABITAT_PROJECTS.md).
+**Pack → Habitat projects** offers five restorations: a returning spring, pollinator garden, sheltered workshop, climate refuge and connected sanctuary. Restore them to earn reusable water channels, shade, warmth control, landscape movement and increased care capacity. Wildlife responds to current habitat suitability. Each project explains alternative designs. See [Restoration campaign](docs/RESTORATION_CAMPAIGN.md).
 
-Chapter 2 now asks you to complete a living habitat. During the opening, tap the objective for one relevant next action: harvest, expand, then inspect how neighbors change the Oak. Broader ideas remain available.
+The five chapters now connect discovery and building to distinct restoration accomplishments. During the opening, tap the objective for one relevant action: harvest, compare Water, observe growth, craft and place a Workbench, then welcome wildlife. Guidance can be dismissed; automatic ad/consent preparation and interstitials wait while it is active.
 
-Select a structure, then open **World → Move selected structure** to preview an empty Meadow and confirm a free move that keeps upgrades and production timing. Select a sanctuary for **World → Dismantle sanctuary** to recover its four plots while keeping discoveries. See [Layout recovery](docs/LAYOUT_RECOVERY.md).
+Select a structure, then open **World → Move selected structure** to preview an empty Meadow and confirm a free move that keeps upgrades and production timing. Restoring the Sheltered Workshop also unlocks movement of unprotected single-cell natural tiles. Select a sanctuary for **World → Dismantle sanctuary** to recover its four plots while keeping discoveries. See [Layout recovery](docs/LAYOUT_RECOVERY.md).
 
 After your first harvest, use **Gather ready** to collect available resources together. Cooldowns, storage limits and per-node rewards still apply; individual tile harvesting remains available.
 

@@ -14,18 +14,18 @@ func begin(h, at: String) -> void:
  source = at; source_id = h.model.state.tiles[at].id; destination = ""
  h.placement_blueprint = ""; h.targeting = ""; h.fusion_preview.clear()
  h.modal.hide(); h.frame_world()
- h.model.message = "Choose empty Grass for this structure. You will confirm before it moves."
+ h.model.message = "Choose empty Meadow for this tile. You will confirm before it moves."
  h.refresh()
 func choose(h, at: String) -> void:
  if not Tools.can_move(h.model,source,at):
-  h.model.message = "Choose empty Grass outside active effects. Your structure stays in place."; h.refresh(); return
+  h.model.message = "Choose empty Grass outside active effects. Your tile stays in place."; h.refresh(); return
  destination = at
  opening_confirmation = true
- var box: VBoxContainer = h.modal_content("Move this structure?")
+ var box: VBoxContainer = h.modal_content("Move this tile?")
  opening_confirmation = false
  h.modal_screen = "move_confirm"
- h.sheets.art(h,box,h.model.state.tiles[source].type,"",140)
- h.label("Level, cooldowns, production schedule and pause state stay unchanged. The original plot becomes Meadow. No materials or Coins are charged.",16,box)
+ h.sheets.art(h,box,h.model.state.tiles[source].type,h.model.state.tiles[source].evolution,140)
+ h.label("Conditions, level, cooldowns, production schedule and pause state stay unchanged. The original plot becomes Meadow. No materials or Coins are charged.",16,box)
  h.sheets.caption(h,"Nearby production and habitats will follow the new location.",box)
  h.sheets.primary(h,"Confirm move",func(): confirm(h),box)
  h.button("Choose another plot",func(): h.modal.hide(),box)

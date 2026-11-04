@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated 2026-10-30. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
+Updated 2026-11-04. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
 
 | Phase | Implemented | Remaining acceptance work |
 |---|---|---|
@@ -11,7 +11,11 @@ Updated 2026-10-30. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 | 4 — presentation | Distinct generated artwork for 20 discoveries, terrain/nodes/structures, depleted states, resource/UI icons, illustrated cards, DNA bars, reveals, crossfades/fusion/weather feedback, original synthesized cues/ambient loop, photo/share, accessibility/audio controls | Further graphical/device review; listening and human polish review; texture-edge refinement where needed |
 | 5 — Android release | Toolchain and native plugin compile; signed debug APK built and installed on API29 emulator | Current OpenGL debug APK installed/resumed/rendered; remaining: device matrix/performance, live sandbox ad/purchase/restore, release signing/AAB/store policy review |
 
-## Current verified milestone — original painted land restored
+## Restoration gameplay checkpoint
+
+The campaign now requires distinct spring, garden, workshop, climate-refuge and connected-sanctuary restorations. Earned water/shade/warmth tools, landscape movement, alternative habitat layouts, live visitor preferences and guidance through the first useful building are implemented. See [Restoration campaign](docs/RESTORATION_CAMPAIGN.md) for rules, compatibility and validation limits. Current test/APK evidence is recorded in the latest [game audit](docs/CURRENT_GAME_AUDIT.md). The historical paused-session note below predates resumed development.
+
+## Historical checkpoint — original painted land restored
 
 **Session paused at the user’s request.** Read SESSION_HANDOFF.md before resuming. Runtime sourcefa96a28;0.21.1-preview/code15; tested source digest `e7813bf2a0989e8a521e2238cd5f7044d674cd6eea24b2afb2986113fdce2de2`. Android export/phone packaging and replacement installation pass; the save stayed byte-identical. Native UI/interaction/photo checks for the restored build remain pending. The rejected3D package is superseded by the restored painted build on the download branch.
 

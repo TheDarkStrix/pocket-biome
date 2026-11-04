@@ -1,6 +1,8 @@
 # Pocket Biome: implementation and release plan
 
-Latest implementation checkpoint: [Current game audit](CURRENT_GAME_AUDIT.md). The legal full-island fusion trap now has safe dismantling; single-cell structures can move with upgrades/timing preserved. Chapter 2 requires a living habitat, River Link adds a connectivity objective, completed expeditions offer independent replays, and the opening goal helper focuses on one action. This delivers core recovery and progression improvements. The full teaching sequence, broader presentation/creative work and release qualification below remain active requirements.
+Restoration delivery: the five proposed gameplay priorities now have an integrated implementation. See [Restoration campaign](RESTORATION_CAMPAIGN.md) for chapter requirements, capability rewards, alternatives, wildlife preferences and first-building teaching. This completes that feature scope; player observation, broader creative polish and native/commercial qualification remain required.
+
+Previous implementation checkpoint: [Current game audit](CURRENT_GAME_AUDIT.md). The legal full-island fusion trap now has safe dismantling; single-cell structures can move with upgrades/timing preserved. Chapter 2 requires a living habitat, River Link adds a connectivity objective, completed expeditions offer independent replays, and the opening goal helper focuses on one action. This delivers core recovery and progression improvements. The full teaching sequence, broader presentation/creative work and release qualification below remain active requirements.
 
 ## Release objective
 
