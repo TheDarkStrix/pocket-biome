@@ -6,6 +6,17 @@ static func ideas(model, selected: String) -> Array:
   result.append({"title":"Bring your island to life","body":"Collect Wood from the Oak, then choose its first neighbor. Water can help its roots transform.","action":"collect","target":"0,0","button":"Show the Oak","icon":"wood"})
  if not model.state.pending.is_empty():
   result.append({"title":"Your next plot is waiting","body":"Compare the three cards, or move the same offers to another cloud. Coins are spent only when you place one.","action":"draft","button":"Review my cards","icon":"world"})
+ if not model.state.discoveries.is_empty():
+  var projects = preload("res://scripts/HabitatProjects.gd")
+  for id in projects.IDS:
+   if not model.state.get("habitat_projects",[]).has(id) and projects.inspect(model,id).ready:
+    result.append({"title":projects.NAMES[id]+" is ready","body":"Your neighboring plots support a habitat project. Review it to welcome wildlife and claim its one-time reward.","action":"habitat","button":"Review habitat projects","icon":"ecology"})
+    break
+ var expeditions = preload("res://scripts/Expedition.gd")
+ for id in expeditions.ISLANDS:
+  if expeditions.unlocked(model,id) and not model.state.get("expeditions",{}).get(id,{}).get("completed",false):
+   result.append({"title":"Restore "+expeditions.NAMES[id],"body":"A new environmental puzzle awaits beyond home. Review its rules on the expedition map; rearrangement is free and home supplies stay safe.","action":"expedition","button":"Explore expedition islands","icon":"world"})
+   break
  var empty := ""
  for key in model.state.tiles:
   var tile: Dictionary = model.state.tiles[key]
@@ -74,3 +85,28 @@ static func placement(model, type: String, at: String) -> String:
  for attribute in effects: parts.append("%+d %s" % [effects[attribute],attribute])
  var seconds: int = model.config.tiles[type].get("effect_interval",1)
  return "Here: shares %s with %d neighboring biome%s every %ds. Other nearby sources can strengthen or oppose the effect." % [", ".join(parts),neighbors.size(),"" if neighbors.size() == 1 else "s",seconds]
+
+# Read-only preview: direct neighbors and configured influences, never secret recipes.
+static func placement_neighbors(model, at: String) -> Array[String]:
+ var result: Array[String] = []
+ for direction in model.DIRS:
+  var target: String = model.origin(model.key(model.coord(at)+direction))
+  if target != "" and not result.has(target): result.append(target)
+ result.sort()
+ return result
+
+static func placement_summary(model, type: String, at: String) -> String:
+ var neighbors := placement_neighbors(model,at)
+ if neighbors.is_empty(): return "No neighbors here yet. Expand next to living land to connect habitats."
+ var names := PackedStringArray()
+ for key in neighbors:
+  var name: String = str(model.state.tiles[key].type).capitalize()
+  if not names.has(name): names.append(name)
+ var effects: Dictionary = model.config.effects.get(type,{})
+ var descriptions := PackedStringArray()
+ var words := {"moisture":"adds moisture", "heat":"adds warmth", "fertility":"enriches soil", "stability":"adds stability", "magic":"shares magic"}
+ for attribute in effects:
+  if effects[attribute] > 0: descriptions.append(words.get(attribute,attribute))
+  elif effects[attribute] < 0: descriptions.append("cools the land" if attribute == "heat" else "reduces "+attribute)
+ var action := ", ".join(descriptions) if not descriptions.is_empty() else "receives conditions from nearby sources"
+ return "%s %s near %s. Changes happen over time." % [type.capitalize(),action,", ".join(names)]

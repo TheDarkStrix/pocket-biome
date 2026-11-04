@@ -28,7 +28,7 @@ func configure(h) -> void:
  close.tooltip_text = "Close Build"
  catalog_scroll = ScrollContainer.new(); catalog_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
  catalog_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
- catalog_scroll.custom_minimum_size.y = 184+maxf(0,h.scaled_font(14)-14)*3
+ catalog_scroll.custom_minimum_size.y = 156+maxf(0,h.scaled_font(14)-14)*3
  add_child(catalog_scroll)
  shelf = HBoxContainer.new(); shelf.add_theme_constant_override("separation",8); catalog_scroll.add_child(shelf)
  var recipes := []
@@ -97,18 +97,27 @@ func update_selection() -> void:
  for resource in recipe.cost: cost[resource] = recipe.cost[resource]*quantity
  var missing := reasons(recipe,cost)
  var ready: int = host.model.state.blueprints.get(recipe.get("tile",""),0)
+ var benefits := {"workbench":"Unlocks recipes for terrain and useful structures.","windmill":"Earns 1 Coin every %ds without tapping." % host.model.config.tiles.windmill.interval,"golem":"Collects nearby ready Stone and Iron for you.","furnace":"Turns spare Wood and Stone into Brick.","totem":"Shares moisture and speeds nearby harvesting.","compost":"Enriches neighboring plants.","shrine":"Shares fertility and magic with nearby land.","lantern":"A decorative light for your island."}
+ var benefit: Label = host.label(benefits.get(recipe.get("tile",""),"Shape your island with crafted terrain." if recipe.has("tile") else "Materials for your next construction project."),12,selection)
+ benefit.set_meta("building_benefit",true)
  var line := HBoxContainer.new(); line.add_theme_constant_override("separation",8); selection.add_child(line)
  var price: VBoxContainer = host.sheets.card(line); price.get_parent().size_flags_stretch_ratio = 1.1
  if ready > 0: host.sheets.caption(host,"%d ready to place" % ready,price)
  else:
-  host.sheets.chips(host,price,cost)
+  var amounts := PackedStringArray()
+  for resource in cost:
+   var owned: int = host.model.state.coins if resource == "coins" else host.model.state.inventory.get(resource,0)
+   amounts.append("%s %d/%d" % [resource.capitalize(),owned,cost[resource]])
+  var ingredients: Label = host.label(" · ".join(amounts),11,price)
+  ingredients.tooltip_text = "Owned / required. Materials are charged only when crafting starts."
+  ingredients.set_meta("owned_required",true)
   price.get_parent().tooltip_text = "Required materials · "+host.campaign_ui.cost_text(cost)
  var seconds: int = ceili(host.model.campaign.crafting_seconds(host.model,recipe)*quantity)
  var place_block := ""
  if ready > 0:
   if not host.model.state.pending.is_empty(): place_block = "Finish your saved land draft before placing"
   elif host.available_meadows().is_empty(): place_block = "Restore a plot to Meadow in Pack → World"
- var action: Button = host.sheets.primary(host,"PLACE" if ready > 0 else "BUILD" if recipe.has("tile") else "CRAFT",func():
+ var action: Button = host.sheets.primary(host,"PLACE" if ready > 0 else "CRAFT",func():
   if ready > 0:
    host.placement_blueprint = recipe.tile
    host.model.message = "Tap an empty Grass tile to place "+recipe.tile.capitalize()+"."
@@ -118,7 +127,7 @@ func update_selection() -> void:
  action.set_meta("build_confirm",recipe.id)
  action.disabled = (ready < 1 and not missing.is_empty()) or place_block != ""
  action.tooltip_text = (place_block if place_block != "" else "Place "+recipe.get("tile","")) if ready > 0 else (", ".join(missing) if not missing.is_empty() else "%d × %s · %ds" % [quantity,recipe.name,seconds])
- var detail: Label = host.label((place_block if place_block != "" else "Tap an empty Grass plot on your island") if ready > 0 else (", ".join(missing) if not missing.is_empty() else "%d project%s · %ds" % [quantity,"s" if quantity > 1 else "",seconds]),12,selection)
+ var detail: Label = host.label((place_block if place_block != "" else "Tap an empty Grass plot on your island") if ready > 0 else (", ".join(missing) if not missing.is_empty() else "Craft %s · %ds, then place on Meadow" % [recipe.get("tile",recipe.id).capitalize(),seconds] if recipe.has("tile") else "Craft %s · %ds" % [recipe.name,seconds]),12,selection)
  detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  # Stat changes refresh the selected item's quote, never its saved recipe choice.
  signature = stock_signature()

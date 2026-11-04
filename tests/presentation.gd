@@ -126,5 +126,18 @@ func _init() -> void:
  for y in range(0,floor_image.get_height(),16):
   for x in range(0,floor_image.get_width(),16): opaque = opaque and floor_image.get_pixel(x,y).a >= 0.999
  check(opaque,"the connecting island floor is opaque, including its texture edges")
+ var blade_a := living.meadow_blade(0.0,4,2)
+ var blade_b := living.meadow_blade(0.8,4,2)
+ check(blade_a[0] == blade_b[0] and blade_a[2] != blade_b[2],"meadow tips move while roots remain anchored")
+ var gust := living.foliage_mesh(spec,0.32,1.1,3,false,1.0)
+ check(absf(gust.shift) <= 9*0.32 and gust.points[2] == a.points[2],"harvest impulse preserves trunk seam and camera bounds")
+ var response = Presentation.new()
+ response.harvest("0,0","+1 Wood","wood")
+ response.advance(0.06)
+ check(absf(response.harvest_impulse("0,0")) > 0.1 and response.harvest_impulse("1,0") == 0,"harvest response stays local to the touched tile")
+ response.advance(0.8)
+ check(response.harvest_impulse("0,0") == 0,"harvest motion expires without persistent simulation state")
+ response.animations["0,0"] = {"kind":"evolve","elapsed":0.4,"duration":1.4,"previous":{},"parts":[]}
+ check(response.pose("0,0").scale == 1.0 and response.pose("0,0").rise == 0.0,"evolution crossfades without bouncing the ground")
  print("PRESENTATION RESULT: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

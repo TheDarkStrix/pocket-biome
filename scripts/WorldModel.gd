@@ -130,6 +130,35 @@ func harvest(k: String, automatic: bool = false) -> bool:
  objectives()
  return true
 
+# Plan a bounded collection without touching timers or saved state.
+func ready_harvests() -> Array[String]:
+ var result: Array[String] = []
+ var stock: Dictionary = state.inventory.duplicate()
+ var keys: Array = state.tiles.keys(); keys.sort()
+ for key in keys:
+  var tile: Dictionary = state.tiles[key]
+  if tile.has("owner") or tile.ready > state.time: continue
+  var output := production(tile)
+  if output.resource == "" or stock[output.resource]+output.amount > config.economy.inventory_limit: continue
+  result.append(key); stock[output.resource] += output.amount
+ return result
+
+func harvest_ready() -> Dictionary:
+ var result := {"nodes":[],"resources":{},"coins":0}
+ var coins_before: int = state.coins
+ for key in ready_harvests():
+  var output := production(state.tiles[key])
+  if harvest(key):
+   result.nodes.append(key)
+   result.resources[output.resource] = int(result.resources.get(output.resource,0))+output.amount
+ result.coins = state.coins-coins_before
+ if result.nodes.is_empty(): message = "No resources can be gathered yet. Let nodes recover, or make room in storage."
+ else:
+  var parts := PackedStringArray()
+  for resource in result.resources: parts.append("+%d %s" % [result.resources[resource],str(resource).replace("_"," ").capitalize()])
+  message = "Gathered %d nodes · %s · +%d Coins" % [result.nodes.size(),", ".join(parts),result.coins]
+ return result
+
 func objectives() -> void:
  var checks = [state.harvests >= 1,state.expansions >= 1,state.discoveries.size() >= 1]
  for i in range(checks.size()):
@@ -141,17 +170,10 @@ func objectives() -> void:
    state.energy = mini(200,state.energy+100)
 
 func objective_text() -> String:
- if not state.objectives.has(0): return "FIRST SEED · Tap Oak to gather Wood (+10 coins)"
- if not state.objectives.has(1): return "NEW HORIZONS · Tap a cloud; choose Water beside Oak"
- if not state.objectives.has(2): return "LIVING ROOTS · Raise Oak moisture to 70 (Water or Rain)"
- var chapter: Dictionary = campaign.chapter_definition(self)
- if state.chapter_rewards.has(5): return "YOUR LIVING WORLD · All chapters complete. Keep creating."
- for id in chapter.checks:
-  var current: int = campaign.metric(self,id)
-  if current < chapter.checks[id]:
-   var names := {"cells":"Expand your island","discoveries":"Discover new biomes","pulses":"Use World Pulse","fusions":"Create a sanctuary fusion","crafted_brick":"Craft Bricks","built_golem":"Build a Stone Golem","built_windmill":"Build a Windmill","automation_coins":"Earn automated Coins"}
-   return "%s · %d / %d" % [names.get(id,id),current,chapter.checks[id]]
- return "Chapter complete · "+chapter.name
+ if not state.objectives.has(0): return "Tap the Oak to gather your first Wood\nFirst step · gather materials"
+ if not state.objectives.has(1): return "Place Water beside your Oak\nWater adds moisture"
+ if not state.objectives.has(2): return "Help your Oak grow into a new biome\nWater and Rain help it grow"
+ return campaign.next_goal(self)
 
 func advance_time(seconds: float) -> void:
  if is_finite(seconds) and seconds > 0: state.time += seconds

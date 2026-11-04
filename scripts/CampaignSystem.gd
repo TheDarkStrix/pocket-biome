@@ -12,11 +12,30 @@ func metric(m, id: String) -> int:
  if id in ["harvests","expansions"]: return int(m.state[id])
  return int(m.state.stats.get(id,0))
 
+const PURPOSE = "Grow a tiny island into a self-sustaining sanctuary."
+const ACTIONS = {
+ "harvests":"Gather your first materials", "expansions":"Give your Oak a Water neighbor",
+ "cells":"Expand your island", "discoveries":"Try new biome neighbors",
+ "pulses":"Use Rain, Heat or Frost", "fusions":"Fuse a sanctuary",
+ "crafted_brick":"Craft bricks for construction", "built_golem":"Build a Stone Golem",
+ "built_windmill":"Build a Windmill to earn Coins", "automation_coins":"Let your Windmill earn Coins"}
+const METRICS = {"harvests":"Harvests", "expansions":"New plots", "cells":"Land", "discoveries":"Discoveries", "pulses":"World Pulses", "fusions":"Sanctuaries", "crafted_brick":"Bricks crafted", "built_golem":"Golems built", "built_windmill":"Windmills built", "automation_coins":"Coins earned by automation"}
+
+func next_goal(m) -> String:
+ if m.state.chapter_rewards.has(5): return "Your sanctuary is thriving. Keep shaping it your way."
+ var definition := chapter_definition(m)
+ for id in definition.checks:
+  var current := metric(m,id)
+  if current < definition.checks[id]:
+   return "%s\n%s · %d / %d" % [ACTIONS.get(id,"Explore your island"),METRICS.get(id,id),current,definition.checks[id]]
+ return "Celebrate your progress · "+definition.name
+
 func chapter_progress(m) -> String:
  var definition := chapter_definition(m)
- var text: String = definition.hint+"\n"
- for id in definition.checks: text += "%s %d/%d   " % [id.replace("_"," "),mini(metric(m,id),definition.checks[id]),definition.checks[id]]
- return text
+ var parts := PackedStringArray()
+ for id in definition.checks:
+  parts.append("%s %d/%d" % [METRICS.get(id,id),mini(metric(m,id),definition.checks[id]),definition.checks[id]])
+ return definition.hint+"\n"+" · ".join(parts)
 
 func evaluate(m) -> void:
  var definition := chapter_definition(m)

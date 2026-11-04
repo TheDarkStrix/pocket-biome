@@ -76,10 +76,8 @@ func update_selection() -> void:
  for index in range(cards.size()): cards[index].chosen = index == selection
  var type: String = host.model.state.pending.cards[selection]
  place.text = tr("Place ")+tr(type.capitalize())
- # Keep this concise; full neighbor effects and DNA remain reachable through Info.
- var short_hints := {"forest":"Enriches nearby plants","water":"Brings moisture to neighbors","crystal":"Shares magic with neighbors","vent":"Warms the surrounding land","glacier":"Cools the surrounding land"}
- var definition: Dictionary = host.model.config.tiles[type]
- selection_hint = tr(short_hints.get(type,"Gather "+definition.resource.capitalize() if definition.resource != "" else "A new home for nature"))
+ selection_hint = preload("res://scripts/GameplayAdvisor.gd").placement_summary(host.model,type,host.model.state.pending.at)
+ host.queue_redraw()
  update_quote()
 
 func update_quote() -> void:

@@ -105,6 +105,16 @@ func run() -> void:
    rendered = Rect2(h.entity_screen("0,0")-art.pivot*sprite_scale,art.region.size*sprite_scale)
    var hero := Rect2(Vector2(20,h.get_viewport_rect().size.y*0.20),Vector2(h.get_viewport_rect().size.x-40,h.get_viewport_rect().size.y*0.42))
    check(hero.grow(1).encloses(rendered),"title hero fits actual sanctuary art rather than grid cells at "+context)
+   h.conditions_help()
+   await process_frame
+   await process_frame
+   var headings_fit := true
+   var heading_count := 0
+   for caption in h.modal_box.find_children("*","Label",true,false):
+    if caption.text in ["Moisture","Heat"]:
+     heading_count += 1
+     headings_fit = headings_fit and caption.get_line_count() == 1 and h.modal.get_global_rect().encloses(caption.get_global_rect())
+   check(heading_count == 2 and headings_fit,"conditions headings remain readable without letter-by-letter wrapping at "+context)
    h.queue_free()
    await process_frame
  print("MOBILE LAYOUT RESULT: %d checks, %d failures" % [checks,failures])

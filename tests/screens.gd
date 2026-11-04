@@ -113,6 +113,13 @@ func run() -> void:
  sliders[0].value = 0.35; sliders[1].value = 0.65; sliders[2].value = 1.15
  check(is_equal_approx(h.model.state.audio_levels.music,0.35) and is_equal_approx(h.model.state.audio_levels.sfx,0.65),"volume sliders update independent channels")
  check(is_equal_approx(h.store.load_state().text_scale,1.15),"accessibility scale persists through real settings callback")
+ h.start_screen()
+ h.campaign_ui.settings(h)
+ await process_frame
+ check(not h.launch_screen.visible and h.modal.visible,"title logo and Start cannot cover Settings")
+ h.modal.hide()
+ await process_frame
+ check(h.launch_screen.visible,"closing title Settings restores the title controls")
  h.queue_free()
  await process_frame
  await create_timer(0.15).timeout

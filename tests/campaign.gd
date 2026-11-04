@@ -107,5 +107,21 @@ func _init() -> void:
  check(upgrades.state.coins == 75 and upgrades.state.inventory.wood == 5,"upgrade cost exact")
  upgrades.tick(5)
  check(upgrades.state.stats.automation_coins == 2,"upgraded windmill produces the configured benefit")
+ var guide_model = Model.new()
+ var guide = preload("res://scripts/GameplayAdvisor.gd")
+ var saved_state := JSON.stringify(guide_model.state)
+ var insight: String = guide.placement_summary(guide_model,"water","-1,0")
+ check(insight.contains("Oak") and insight.contains("moisture"),"Water preview explains the existing Oak relationship")
+ check(not insight.contains("Rainforest") and not insight.contains("70"),"placement insight preserves undiscovered recipes")
+ check(JSON.stringify(guide_model.state) == saved_state,"reading a placement preview cannot change saved quotes or simulation")
+ check(guide.placement_neighbors(guide_model,"-1,0") == ["0,0"],"preview highlights direct existing neighbors only")
+ check(guide.placement_summary(guide_model,"water","-8,0").begins_with("No neighbors"),"isolated placement explains why no existing habitat is affected")
+ guide_model.state.objectives = [0,1,2]
+ for chapter in range(1,6):
+  guide_model.state.chapter = chapter
+  var objective: String = guide_model.objective_text()
+  check(objective.contains("\n") and not objective.contains("automation_coins"),"chapter %d separates a plain-language action from its progress" % chapter)
+ guide_model.state.chapter_rewards = [1,2,3,4,5]
+ check(guide_model.objective_text().contains("Keep shaping"),"completed campaign invites continued creative play")
  print("CAMPAIGN RESULT: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

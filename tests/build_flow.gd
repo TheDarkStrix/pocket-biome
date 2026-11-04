@@ -68,6 +68,12 @@ func run() -> void:
  var old := {"wood":h.model.state.inventory.wood,"stone":h.model.state.inventory.stone,"coins":h.model.state.coins}
  var action: Button = confirm(tray)
  check(not action.disabled,"the selected workbench is buildable with exact required stock")
+ var benefit_found := false
+ var stock_found := false
+ for caption in tray.selection.find_children("*","Label",true,false):
+  if caption.has_meta("building_benefit"): benefit_found = caption.text.contains("Unlocks recipes")
+  if caption.has_meta("owned_required"): stock_found = caption.text.contains("Wood 20/4") and caption.text.contains("Stone 10/2")
+ check(benefit_found and stock_found,"construction explains the benefit and owned/required materials before payment")
  check(not tray.projects.visible,"the idle tray avoids an empty queue row while Projects stays in Pack")
  await click(action); await settle(h)
  check(h.model.state.jobs.size() == 1 and h.model.state.jobs[0].recipe == "workbench" and h.model.state.inventory.wood == old.wood-4 and h.model.state.inventory.stone == old.stone-2,"one Build touch starts the displayed recipe and spends its quote once")

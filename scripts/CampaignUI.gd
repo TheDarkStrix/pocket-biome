@@ -20,7 +20,9 @@ func journal(h) -> void:
  var chapter: Dictionary = h.model.campaign.chapter_definition(h.model)
  h.label("CHAPTER %d · %s" % [h.model.state.chapter,chapter.name],17,box)
  h.label(h.model.campaign.chapter_progress(h.model).split("\n")[-1],15,box)
- h.label("Shape the land. Discover its secrets.",14,box)
+ h.label(h.model.campaign.PURPOSE,15,box)
+ if h.model.state.chapter_rewards.has(5): h.sheets.primary(h,"Celebrate your sanctuary",func(): h.finale_ui.show(h),box)
+ h.label(h.model.campaign.next_goal(h.model).split("\n")[0],16,box)
  var tabs := ScrollContainer.new()
  tabs.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
  tabs.custom_minimum_size.y = h.touch_height()+6
@@ -96,7 +98,10 @@ func workshop(h) -> void:
 func pack(h) -> void:
  var box: VBoxContainer = h.modal_content("Your Pack")
  h.modal_screen = "pack"
- pack_signature = JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints])
+ var gather: Button = h.sheets.primary(h,"Gather ready resources · %d" % h.model.ready_harvests().size(),func(): h.gather_ready(); pack(h),box)
+ gather.disabled = h.model.state.harvests == 0 or h.model.ready_harvests().is_empty()
+ gather.tooltip_text = "Collect ready nodes once; cooldowns and storage limits still apply."
+ pack_signature = JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints,h.model.ready_harvests().size(),h.model.state.harvests])
  var stock := GridContainer.new(); stock.columns = 4; stock.add_theme_constant_override("h_separation",6); stock.add_theme_constant_override("v_separation",6); box.add_child(stock)
  for id in ["wood","stone","fiber","clay","iron","brick","star_dew","coins"]:
   var item: VBoxContainer = h.sheets.card(stock)
@@ -107,6 +112,8 @@ func pack(h) -> void:
  var tools := GridContainer.new(); tools.columns = 2; tools.add_theme_constant_override("h_separation",8); tools.add_theme_constant_override("v_separation",8); box.add_child(tools)
  for entry in [{"title":"Journal","icon":"codex","detail":"Discoveries & free clues","run":func(): journal(h)}, {"title":"World","icon":"world","detail":"Fusion, rotate & photo","run":func(): world(h)}, {"title":"Projects","icon":"craft","detail":"Queues & blueprints","run":func(): workshop_details(h)}, {"title":"Trade","icon":"coins","detail":"Materials into Coins","run":func(): trade(h)}]:
   h.sheets.tool_card(h,entry.title,entry.detail,entry.icon,entry.run,tools)
+ h.sheets.primary(h,"Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
+ h.sheets.primary(h,"Expeditions · restore another island",func(): h.expedition_ui.overview(h),box)
  close_button(h,box)
 
 func workshop_details(h) -> void:
@@ -196,7 +203,7 @@ func update_live(h) -> void:
  if h.modal_screen == "build" and is_instance_valid(build_tray):
   build_tray.update_live(); return
  if h.modal_screen == "pack":
-  if pack_signature != JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints]):
+  if pack_signature != JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints,h.model.ready_harvests().size(),h.model.state.harvests]):
    var offset: int = h.modal_scroll.scroll_vertical
    pack(h); h.modal_scroll.set_deferred("scroll_vertical",offset)
   return
@@ -224,6 +231,7 @@ func world(h) -> void:
  var box: VBoxContainer = h.modal_content("Your Living World")
  h.label("%d land tiles · Next plot %d coins" % [h.model.state.tiles.size(),h.model.cost()],17,box)
  h.button("Find something to try",func(): h.open_ideas(),box)
+ h.button("Expeditions · beyond your island",func(): h.expedition_ui.overview(h),box)
  var actions := GridContainer.new(); actions.columns = 2
  box.add_child(actions)
  var selected: Dictionary = h.model.state.tiles[h.model.origin(h.selected)]
@@ -234,7 +242,7 @@ func world(h) -> void:
  var turns := HBoxContainer.new(); box.add_child(turns)
  h.button("Rotate left",func(): h.modal.hide(); h.rotate_camera(-1),turns)
  h.button("Rotate right",func(): h.modal.hide(); h.rotate_camera(1),turns)
- h.label("Drag the compass to orbit and tilt. Twist two fingers to orbit continuously; pinch to zoom.",14,box)
+ h.label("Drag to pan and pinch to zoom. Use Rotate left/right for quarter-turn views.",14,box)
  var at: String = h.model.origin(h.selected)
  if at != "":
   var tile: Dictionary = h.model.state.tiles[at]
@@ -256,6 +264,7 @@ func world(h) -> void:
      h.model.campaign.retire(h.model,at)
      h.modal.hide(); h.persist(); h.refresh(),confirm)
     close_button(h,confirm),box)
+ h.button("Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
  h.button("World Pulse abilities",func(): h.pulse_selector(),box)
  var event: Dictionary = h.model.state.event
  if event.until > 0:
@@ -319,7 +328,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, twist to orbit, or drag the compass to orbit and tilt. Pack → World offers rotation and photo controls. Core play is offline and saves automatically."}]:
+ for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, use World → Rotate for quarter-turn views. Pack → World offers rotation and photo controls. Core play is offline and saves automatically."}]:
   var content: VBoxContainer = h.sheets.card(box)
   var row := HBoxContainer.new(); content.add_child(row)
   var image = h.sheets.art(h,row,step.tile,"",84); image.custom_minimum_size.x = 90
@@ -331,6 +340,7 @@ func welcome(h) -> void:
  var box: VBoxContainer = h.modal_content("Your first tiny world")
  h.sheets.art(h,box,"oak","",192)
  h.label("Every world begins with a seed",22,box)
+ h.sheets.caption(h,h.model.campaign.PURPOSE,box)
  h.sheets.caption(h,"Tap the Oak to collect Wood and Coins. Then open a cloud beside it and choose Water.",box)
  var examples := HBoxContainer.new(); box.add_child(examples)
  for type in ["oak","water","forest"]:
@@ -349,7 +359,7 @@ func privacy(h) -> void:
  h.label("Your island saves on this device. Core play needs no account or internet connection. Uninstalling may remove your world.",17,box)
  h.label("Diagnostics are off by default. If enabled, the game keeps a limited log of app events and errors. The game does not add payment details, purchase tokens or advertising identifiers to these logs.",17,box)
  h.label("Diagnostics stay on this device in this build." if h.services.telemetry.endpoint == "" else "When diagnostics are enabled, the game can send them securely to the developer's configured service.",17,box)
- h.label("Optional ads and purchases connect to Google when you choose to connect store services. Google handles payments. Connecting also enables occasional ads at chapter breaks. Ad privacy choices appear in Settings when Google's consent system requires them.",17,box)
+ h.label("After your first discovery, the game prepares Google ad services during a quiet moment. Where required, consent controls whether ads can be requested. Occasional ads can appear at chapter or expedition breaks; rewarded ads and purchases remain optional. Google handles payments. Ad privacy choices appear in Settings when Google's consent system requires them.",17,box)
  h.label("Sharing a photo opens Android's chooser. You decide whether and where to send it.",17,box)
  h.button("Delete local diagnostics",func():
   h.services.delete_diagnostics()

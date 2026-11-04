@@ -19,6 +19,14 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 
 ## Play
 
+**Pack → Habitat projects** offers Shaded Pond, Pollinator Patch and Living Workshop: home-island layout goals with one-time rewards and wildlife that visits suitable habitats. See [Habitat projects](docs/HABITAT_PROJECTS.md).
+
+After your first harvest, use **Gather ready** to collect available resources together. Cooldowns, storage limits and per-node rewards still apply; individual tile harvesting remains available.
+
+Completing all five chapters now celebrates your living sanctuary with an island recap and routes to continued building, photo mode and expeditions. Replay it from the Journal after completion.
+
+After your first discovery, open **Pack → Expeditions** to visit **Dry Springs**. Restore a separate wetland by placing water beside thirsty trees, advancing seasons and creating flowering habitats. Terrain can be rearranged for free, progress saves with your home, and completing the expedition records the restored island. Restoring Dry Springs unlocks Frost Hollow, followed by Ember Shore: heat-placement and volcanic-cooling challenges with independently saved progress. See [Expeditions](docs/EXPEDITIONS.md).
+
 Harvest the Oak, tap an adjacent cloud and choose Water to discover the first evolution. Inspect a draft card before confirming it. Hold tiles to inspect their conditions. Tap the current objective for relevant things to try. Later drafts vary their choices and explain the selected plot’s effects; Workshop → Trade offers five- or twenty-material batches. Automatic Furnaces preserve construction stock; manual crafting can spend it. Original painted land is restored. Drag to pan, pinch/wheel to zoom, and use two-finger twist or World → Rotate left/right for90° views. The rejected procedural3D view is disabled. For sanctuary fusion, use the Chapter 3 shortcut or World → Fuse sanctuary. The chooser detects matching 2×2 groups, offers a footprint preview and explains blockers. Closing a draft keeps its offers; tapping another cloud moves those same offers without charging. Use the Journal for free discovery clues; Craft and World expose progression, automation, upgrades and photo mode. Purchases and ads are optional and use development configurations.
 
 See ARCHITECTURE.md, ART_ASSET_MANIFEST.md, BALANCING.md, TEST_REPORT.md and docs/RELEASE_DEPENDENCIES.md. The authoritative specification is docs/MASTER_PRD_v4.md. The shared visual reference is preserved under docs/references/.

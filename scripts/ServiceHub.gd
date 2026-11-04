@@ -8,9 +8,12 @@ var last_interstitial := -1000.0
 var interstitial_count := 0
 var interstitial_ready := false
 var last_ad_chapter := 0
+var restoration_break := false
+var online_requested := false
+var expedition_breaks: Array[String] = []
 var bridge: Object
 var ad_ready := false
-var status := "Optional online services are unavailable on this platform. Core play stays offline."
+var status := "Ad and store services are unavailable on this platform. Core play stays offline."
 var products := []
 var log_path := "user://diagnostics.jsonl"
 const PRODUCTS = {"pocket_biome_remove_ads_test":"remove_ads","pocket_biome_moon_theme_test":"moon","pocket_biome_founders_test":"founders"}
@@ -26,7 +29,7 @@ func _ready() -> void:
   bridge.connect("purchase_failed",func(reason): event("purchase_failed",{"reason":reason.left(160)}))
   bridge.connect("service_error",_service_error)
   bridge.connect("products_updated",_products_updated)
-  status = "Sandbox store and test advertisements. Connect only if you want optional services."
+  status = "Sandbox store and test advertisements. Rewarded extras and purchases are optional."
 func event(name: String, data: Dictionary = {}) -> void:
  telemetry.model = model
  telemetry.path = log_path
@@ -51,24 +54,38 @@ func flush_telemetry() -> void:
  telemetry.model = model
  telemetry.flush()
 
+func register_expedition_completion(id: String) -> void:
+ if id not in preload("res://scripts/Expedition.gd").ISLANDS or expedition_breaks.has(id) or model == null: return
+ if not model.state.get("expeditions",{}).get(id,{}).get("completed",false): return
+ expedition_breaks.append(id)
+ restoration_break = true
+
 func maybe_interstitial() -> bool:
  if bridge == null or not interstitial_ready or model == null: return false
  if not JSON.parse_string(FileAccess.get_file_as_string("res://data/services.json")).interstitials_enabled: return false
  if model.state.entitlements.has("remove_ads") or model.state.event.until > 0 or not model.state.pending.is_empty(): return false
  if model.state.time-session_start < 480 or model.state.time-last_interstitial < 600 or interstitial_count >= 2: return false
- if model.state.chapter_rewards.size() <= last_ad_chapter: return false
+ if model.state.chapter_rewards.size() <= last_ad_chapter and not restoration_break: return false
  interstitial_count += 1
  last_interstitial = model.state.time
  last_ad_chapter = model.state.chapter_rewards.size()
+ restoration_break = false
  interstitial_ready = false
  bridge.showInterstitial()
  event("interstitial_shown")
  return true
 
+func prepare_ad_services() -> void:
+ # Called only at a quiet gameplay moment after the first discovery.
+ # Native release builds still require UMP permission before requesting ads.
+ if online_requested or bridge == null or model == null or model.state.discoveries.is_empty(): return
+ initialize_online()
+
 func initialize_online() -> void:
  if bridge == null: return
+ online_requested = true
  bridge.initializeServices()
- status = "Connecting to optional sandbox services…"
+ status = "Connecting to sandbox ad and store services…"
  changed.emit()
 func request_reward(kind: String, details: Dictionary = {}) -> bool:
  if bridge == null or not ad_ready or kind not in ["coins","pulse","reroll","hint"]: return false

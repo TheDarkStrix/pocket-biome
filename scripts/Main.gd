@@ -18,6 +18,10 @@ var ledger_signature := ""
 var presentation = preload("res://scripts/WorldPresentation.gd").new()
 var audio_feedback = preload("res://scripts/AudioFeedback.gd").new()
 var campaign_ui = preload("res://scripts/CampaignUI.gd").new()
+var expedition_ui = preload("res://scripts/ExpeditionUI.gd").new()
+var finale_ui = preload("res://scripts/FinaleUI.gd").new()
+var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
+var habitat_visitors: Array = []
 var services = preload("res://scripts/ServiceHub.gd").new()
 var placement_blueprint := ""
 var show_menu_on_launch := true
@@ -60,6 +64,7 @@ var menu_spacer: Control
 var ecology_monitor: PanelContainer
 var chapter_dial: Control
 var draft_button: Button
+var gather_button: Button
 var inventory: RichTextLabel
 var draft_cards: Array[Button] = []
 var draft_hand: Control
@@ -242,6 +247,7 @@ func build_ui() -> void:
  root.add_child(modal)
  modal.visibility_changed.connect(func():
   modal_scrim.visible = modal.visible
+  if launch_menu and is_instance_valid(launch_screen): launch_screen.visible = not modal.visible
   if modal_screen in ["draft","build"] and not launch_menu and not photo_mode:
    bottom.visible = not modal.visible
    if not modal.visible:
@@ -271,7 +277,9 @@ func conditions_help() -> void:
  for detail in [{"icon":"rain","title":"Moisture","text":"Nearby Water and Rain Pulse make the ground wetter."},{"icon":"heat","title":"Heat","text":"Heat Pulse warms the ground. Frost cools it."}]:
   var content: VBoxContainer = sheets.card(box)
   var row := HBoxContainer.new(); content.add_child(row); sheets.icon(row,detail.icon,30)
-  label(detail.title,19,row)
+  var heading: Label = label(detail.title,19,row)
+  heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  heading.autowrap_mode = TextServer.AUTOWRAP_OFF
   sheets.caption(self,detail.text,content)
  sheets.caption(self,"Scores run from 0–100; Heat is not °C. Higher is not always better. The inspector shows every condition and transformation requirement.",box)
  sheets.primary(self,"Inspect selected tile",func():
@@ -443,6 +451,8 @@ func choose_idea(idea: Dictionary) -> void:
    refresh()
   "draft": draft()
   "fusion": fusion_dialog()
+  "expedition": expedition_ui.overview(self)
+  "habitat": habitat_ui.show_projects(self)
   "trade": campaign_ui.trade(self)
   "workshop": campaign_ui.workshop(self)
   "world":
@@ -493,6 +503,17 @@ func fusion_dialog() -> void:
   fusion_controls.append({"origin":origin,"action":confirm,"reason":reason})
  button("Back to island",func(): modal.hide(),box)
 
+func gather_ready() -> void:
+ if launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen != "pack"): return
+ var result: Dictionary = model.harvest_ready()
+ for key in result.nodes:
+  var output: Dictionary = model.production(model.state.tiles[key])
+  presentation.harvest(key,"+%d %s" % [output.amount,str(output.resource).capitalize()],output.resource)
+ if not result.nodes.is_empty():
+  haptic(18); audio_feedback.play("harvest")
+ persist(); refresh()
+
+
 func queue_save() -> void:
  if not save_dirty: dirty_elapsed = 0.0
  save_dirty = true
@@ -510,6 +531,7 @@ func refresh() -> void:
   seen_discoveries.append(id)
   for recipe in model.config.recipes+model.config.fusions:
    if recipe.id == id and recipe.rarity in ["rare","legendary"]: reveal_queue.append(id)
+ habitat_visitors = preload("res://scripts/HabitatProjects.gd").visitors(model)
  presentation.sync(model.state.tiles)
  if model.state.settings.reduced_motion: presentation.animations.clear()
  services.model = model
@@ -529,18 +551,18 @@ func refresh() -> void:
   draft_button.text = "Find a sanctuary fusion"
   draft_button.disabled = false
  draft_button.visible = not draft_button.disabled
+ gather_button.visible = model.state.harvests > 0 and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
+ var gather_count := model.ready_harvests().size()
+ gather_button.text = "Gather ready · %d" % gather_count
+ gather_button.disabled = gather_count == 0
+ gather_button.tooltip_text = "Collect ready nodes once. Cooldowns and storage limits still apply."
  chapter_dial.display(model)
  var signature := str([model.state.coins,model.state.inventory,model.state.tiles.size()])
  if ledger_signature != "" and ledger_signature != signature:
   ui_motion.emphasize(inventory,model.state.settings.reduced_motion)
  ledger_signature = signature
  game_hud.display(self)
- var goal: String = model.objective_text()
- var parts: PackedStringArray = goal.split(" · ",true,1)
- if parts[0] in ["FIRST SEED","NEW HORIZONS","LIVING ROOTS","YOUR LIVING WORLD"]:
-  goal = parts[-1].replace(" (+10 coins)","")
- else: goal = goal.replace(" · ","\n")
- game_hud.display_goal(self,goal)
+ game_hud.display_goal(self,model.objective_text())
  if model.message != last_notice:
   last_notice = model.message
   notice.text = model.message
@@ -555,6 +577,7 @@ func refresh() -> void:
 
  update_inspection()
  campaign_ui.update_live(self)
+ habitat_ui.update_live(self)
  if modal.visible and modal_screen == "draft" and is_instance_valid(draft_hand): draft_hand.update_quote()
  if modal.visible and modal_screen == "fusion":
   var current: Array = preload("res://scripts/FusionGuide.gd").options(model,selected)
@@ -669,6 +692,10 @@ func apply_layout() -> void:
  hud.size = layout.top.size
  bottom.position = layout.bottom.position
  bottom.size = layout.bottom.size
+ if is_instance_valid(gather_button):
+  gather_button.visible = model.state.harvests > 0 and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
+  gather_button.size = Vector2(minf(208,safe.size.x-40),maxf(touch_height(),gather_button.get_combined_minimum_size().y))
+  gather_button.position = Vector2(safe.end.x-gather_button.size.x-20,layout.world.end.y-gather_button.size.y-8)
  modal.position = layout.modal.position
  modal.size = Vector2(layout.modal.size.x,minf(layout.modal.size.y,maxf(220,modal_box.get_combined_minimum_size().y+24))) if is_instance_valid(modal_box) else layout.modal.size
  if launch_menu and is_instance_valid(launch_screen) and is_instance_valid(menu_spacer):
@@ -773,6 +800,9 @@ func _process(delta: float) -> void:
  if not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
  if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return
+ finale_ui.maybe_show(self)
+ if not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
+  services.prepare_ad_services()
  if discard_resume_delta:
   discard_resume_delta = false
   return
@@ -901,9 +931,15 @@ func _draw() -> void:
     draw_land_art(part.type,location,132.0/418.0*zoom_level*(1.0-pull*0.8),Color(1,1,1,1.0-pull),part.evolution)
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
    draw_land_art(pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
-  var still: bool = model.state.settings.reduced_motion or photo_mode
-  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0))
+  var still: bool = model.state.settings.reduced_motion or photo_mode or suspended
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0),presentation.harvest_impulse(k))
   preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
+  if pose.burst > 0 and not still:
+   # Local settling clouds reveal new land; evolution stays anchored in place.
+   for puff in range(5):
+    var angle: float = TAU*puff/5.0
+    var cloud_offset := Vector2(cos(angle)*45,sin(angle)*16+12)*zoom_level
+    draw_circle(p+cloud_offset*(0.6+pose.progress), (5+pose.progress*5)*zoom_level,Color(0.94,0.96,1,pose.burst*(1-pose.progress)*0.55))
   if ghost.get("key","") == k:
    draw_land_art(ghost.type,p,132.0/418.0*s,Color(1,1,1,0.74))
    draw_plot_outline(p,s,Color("ffe1a0"),2.0)
@@ -932,6 +968,16 @@ func _draw() -> void:
     draw_line(glow-Vector2(4,0)*s,glow+Vector2(4,0)*s,Color(1,0.85,0.5,opacity),s)
   if not photo_mode and not launch_menu and not modal.visible and (selected == k or affected(k)): draw_arc(p,38*s*size,0,TAU,32,ThemeKit.ACCENT,2*s)
 
+ # Keep the destination and direct neighbors readable while comparing saved offers.
+ if modal.visible and modal_screen == "draft" and not model.state.pending.is_empty():
+  var target: String = model.state.pending.at
+  draw_plot_outline(screen(model.coord(target)),zoom_level,Color("fff0a3"),3.0)
+  for neighbor in preload("res://scripts/GameplayAdvisor.gd").placement_neighbors(model,target):
+   draw_plot_outline(entity_screen(neighbor),zoom_level,Color("8edbd1"),2.0)
+
+ for visitor in habitat_visitors:
+  preload("res://scripts/HabitatProjects.gd").draw_visitor(self,visitor.id,entity_screen(visitor.key),zoom_level,ambient_time,model.state.settings.reduced_motion or photo_mode or suspended)
+
  # Draw expansion controls above the art they operate, matching their input priority.
  for key in visible_frontier:
   var at := screen(model.coord(key))
@@ -946,11 +992,17 @@ func _draw() -> void:
   draw_polyline(diamond,ThemeKit.ACCENT,2.5,true)
  draw_weather()
  for effect in presentation.harvests:
-  var at := entity_screen(effect.key)+Vector2(-24,-55-effect.elapsed*30)*zoom_level
+  var quiet: bool = model.state.settings.reduced_motion
+  var at := entity_screen(effect.key)+Vector2(-24,-55-(0.0 if quiet else effect.elapsed*30))*zoom_level
   var flight: float = clampf(effect.elapsed/0.4,0,1)
   var destination: Control = inventory if effect.resource == "coins" else game_hud.resource_values.get(effect.resource,game_hud.build_action)
   var icon_at: Vector2 = entity_screen(effect.key).lerp(destination.get_global_rect().get_center(),1-pow(1-flight,2))
-  if flight < 1: preload("res://scripts/UIIcons.gd").draw(self,effect.resource,icon_at,32,Color(1,1,1,1-flight*0.6))
+  if not quiet and effect.resource in ["wood","fiber"]:
+   for leaf in range(5):
+    var origin := entity_screen(effect.key)+Vector2(0,-45)*zoom_level
+    var drift := Vector2(sin(leaf*2.1+effect.elapsed*5)*(8+effect.elapsed*24),effect.elapsed*35-leaf*3)*zoom_level
+    draw_line(origin+drift,origin+drift+Vector2(3,2)*zoom_level,Color(0.7,0.84,0.3,(1-effect.elapsed/0.8)*0.8),2*zoom_level,true)
+  if flight < 1 and not quiet: preload("res://scripts/UIIcons.gd").draw(self,effect.resource,icon_at,32,Color(1,1,1,1-flight*0.6))
   draw_string_outline(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,3,Color(0.09,0.2,0.23,1-effect.elapsed/0.8))
   draw_string(ThemeDB.fallback_font,at,effect.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color(0.95,0.83,0.56,1-effect.elapsed/0.8))
  if photo_mode:
@@ -1093,7 +1145,7 @@ func services_ui() -> void:
  label("Your world plays offline",21,box)
  sheets.caption(self,"Optional extras. Core progression needs no purchase. Development test services only.",box)
  sheets.caption(self,services.status,box)
- sheets.primary(self,"Connect optional services",func(): services.initialize_online(),box).disabled = services.bridge == null
+ sheets.primary(self,"Retry ad & store connection" if services.online_requested else "Connect ad & store services",func(): services.initialize_online(),box).disabled = services.bridge == null
  var rewards := GridContainer.new(); rewards.columns = 2; rewards.add_theme_constant_override("h_separation",10); box.add_child(rewards)
  for offer in [{"kind":"coins","icon":"coins","amount":25,"title":"25 Coins"},{"kind":"pulse","icon":"rain","amount":100,"title":"100 Pulse energy"}]:
   var content: VBoxContainer = sheets.card(rewards)

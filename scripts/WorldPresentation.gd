@@ -59,8 +59,8 @@ func pose(key: String) -> Dictionary:
  var animation: Dictionary = animations[key]
  var t: float = clampf(animation.elapsed/animation.duration,0,1)
  var eased := 1.0-pow(1.0-t,3)
- var amount := 0.25 if animation.kind == "place" else 0.12
- return {"scale":1.0-amount*(1-eased)+sin(t*PI)*0.08,"rise":-28.0*(1-eased),"burst":sin(t*PI),"mix":eased if animation.kind == "evolve" else (clampf((t-0.25)/0.55,0,1) if animation.kind == "fusion" else 1.0),"previous":animation.previous,"parts":animation.parts,"progress":t}
+ var amount := 0.25 if animation.kind == "place" else 0.0
+ return {"scale":1.0-amount*(1-eased)+(sin(t*PI)*0.08 if animation.kind == "place" else 0.0),"rise":-28.0*(1-eased) if animation.kind == "place" else 0.0,"burst":sin(t*PI),"mix":eased if animation.kind == "evolve" else (clampf((t-0.25)/0.55,0,1) if animation.kind == "fusion" else 1.0),"previous":animation.previous,"parts":animation.parts,"progress":t}
 
 func pulse(power: String, key: String, targets: Array = []) -> void:
  if weather.size() >= 2: weather.pop_front()
@@ -77,3 +77,11 @@ func advance_motors(tiles: Dictionary, delta: float, frozen: bool = false) -> vo
   if tile.get("type","") != "windmill": continue
   if not motor_times.has(key): motor_times[key] = 0.0
   if not frozen and tile.get("enabled",true): motor_times[key] = fposmod(motor_times[key]+clampf(delta,0,0.1),TAU/0.55)
+
+func harvest_impulse(key: String) -> float:
+ var value := 0.0
+ for effect in harvests:
+  if effect.key == key:
+   var t: float = clampf(effect.elapsed/0.5,0,1)
+   value += sin(t*TAU*2)*(1-t)
+ return clampf(value,-1,1)

@@ -130,6 +130,12 @@ func build(h, root: Control) -> void:
  h.draft_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  h.draft_button.add_theme_stylebox_override("normal",SurfaceKit.frame())
  h.button_icon(h.draft_button,"world")
+ h.gather_button = h.button("Gather ready",h.gather_ready,root)
+ h.gather_button.set_meta("base_font",13)
+ h.gather_button.add_theme_font_size_override("font_size",h.scaled_font(13))
+ h.gather_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+ h.gather_button.add_theme_stylebox_override("normal",SurfaceKit.frame())
+ h.gather_button.hide()
  var navigation := HBoxContainer.new(); navigation.add_theme_constant_override("separation",4); h.bottom.add_child(navigation)
  for action in [{"name":"Pack","icon":"pack","run":func(): h.campaign_ui.pack(h)}, {"name":"Build","icon":"craft","run":func(): h.campaign_ui.workshop(h)}, {"name":"Pulse","icon":"rain","run":h.pulse_selector}]:
   var item: Button = h.button(action.name,action.run,navigation)
