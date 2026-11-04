@@ -246,7 +246,10 @@ func world(h) -> void:
  var at: String = h.model.origin(h.selected)
  if at != "":
   var tile: Dictionary = h.model.state.tiles[at]
+  if tile.size == 4:
+   h.button("Dismantle sanctuary…",func(): h.layout_ui.dismantle_prompt(h,at),box)
   if h.model.config.tiles[tile.type].category == "structure":
+   h.button("Move selected structure…",func(): h.layout_ui.begin(h,at),box)
    var level: int = tile.get("level",1)
    if level < 3 and h.model.config.tiles[tile.type].get("upgradeable",true):
     h.button("Upgrade to level %d · %s" % [level+1,cost_text(h.model.config.upgrades[str(level)])],func():

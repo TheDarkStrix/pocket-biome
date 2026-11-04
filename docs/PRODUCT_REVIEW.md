@@ -1,5 +1,7 @@
 # Gameplay, comprehension and monetization review
 
+Latest audit and applied fixes: [Current game audit](CURRENT_GAME_AUDIT.md). Sanctuary recovery, upgrade-preserving structure movement, Chapter 2 habitat integration, a fourth river-connectivity expedition, independent replays and focused opening suggestions are implemented. The notes below retain earlier checkpoint history. Broad visual hierarchy, deeper wildlife decisions, native device/provider qualification and player enjoyment remain open.
+
 Forward delivery and release gates: [Release implementation plan](RELEASE_IMPLEMENTATION_PLAN.md). This covers the full screen inventory, work packages, dependencies and acceptance evidence.
 
 ## Scope and evidence

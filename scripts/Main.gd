@@ -22,6 +22,7 @@ var expedition_ui = preload("res://scripts/ExpeditionUI.gd").new()
 var finale_ui = preload("res://scripts/FinaleUI.gd").new()
 var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
 var habitat_visitors: Array = []
+var layout_ui = preload("res://scripts/LayoutUI.gd").new()
 var services = preload("res://scripts/ServiceHub.gd").new()
 var placement_blueprint := ""
 var show_menu_on_launch := true
@@ -306,6 +307,8 @@ func target(power: String) -> void:
  refresh()
 
 func modal_content(title: String) -> VBoxContainer:
+ if layout_ui.source != "" and not layout_ui.opening_confirmation:
+  layout_ui.source = ""; layout_ui.destination = ""; layout_ui.source_id = -1
  if modal_screen == "build" and not launch_menu and not photo_mode:
   bottom.show(); restore_build_view()
  if modal_screen == "draft" and not launch_menu and not photo_mode:
@@ -410,12 +413,20 @@ func dna_bar(parent: Node, attribute: String, value: float) -> Dictionary:
  parent.add_child(bar)
  return {"caption":caption,"bar":bar}
 
-func open_ideas() -> void:
+func open_ideas(all_choices: bool = false) -> void:
  if launch_menu or photo_mode: return
  var suggestions: Array = preload("res://scripts/GameplayAdvisor.gd").ideas(model,selected)
- var box := modal_content("What would you like to try?")
+ var learning: bool = model.state.objectives.size() < 3 and not all_choices
+ if learning:
+  if not model.state.objectives.has(0):
+   suggestions = suggestions.filter(func(idea): return idea.action == "collect")
+  elif not model.state.objectives.has(1):
+   suggestions = suggestions.filter(func(idea): return idea.action == ("draft" if not model.state.pending.is_empty() else "expand"))
+  else:
+   suggestions = [{"title":"Watch your neighbors change the island","body":"Water shares moisture with edge-sharing land as time passes. Inspect the Oak’s live conditions and watch it grow. Rain is another way to add moisture.","action":"inspect","target":"0,0","button":"Inspect the Oak","icon":"water"}]
+ var box := modal_content("Your next step" if learning else "What would you like to try?")
  modal_screen = "ideas"
- label("Choose a direction. Your chapter goal can wait while you experiment.",16,box)
+ label("Try this on your island. You can explore other ideas whenever you like." if learning else "Choose a direction. Your chapter goal can wait while you experiment.",16,box)
  for suggestion in suggestions:
   var panel := PanelContainer.new()
   panel.add_theme_stylebox_override("panel",ThemeKit.sheet_panel())
@@ -434,11 +445,14 @@ func open_ideas() -> void:
   title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
   label(suggestion.body,16,content)
   button(suggestion.button,func(): choose_idea(suggestion),content)
+ if learning: button("Explore other ideas",func(): open_ideas(true),box)
  button("Back to my island",func(): modal.hide(),box)
 
 func choose_idea(idea: Dictionary) -> void:
  targeting = ""; preview = ""; placement_blueprint = ""
  match idea.action:
+  "inspect":
+   if model.origin(idea.target) != "": open_inspector(model.origin(idea.target))
   "collect":
    var at: String = model.origin(idea.target)
    if at != "": selected = at
@@ -504,7 +518,7 @@ func fusion_dialog() -> void:
  button("Back to island",func(): modal.hide(),box)
 
 func gather_ready() -> void:
- if launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen != "pack"): return
+ if layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen != "pack"): return
  var result: Dictionary = model.harvest_ready()
  for key in result.nodes:
   var output: Dictionary = model.production(model.state.tiles[key])
@@ -545,9 +559,9 @@ func refresh() -> void:
  if is_instance_valid(heat_button): heat_button.disabled = model.state.energy < 100
  pulse_button.text = ""
  update_pulse_width()
- draft_button.text = "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
- draft_button.disabled = targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
- if model.state.chapter == 3 and model.state.stats.fusions == 0 and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty():
+ draft_button.text = "Cancel move" if layout_ui.source != "" else "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
+ draft_button.disabled = layout_ui.source == "" and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
+ if layout_ui.source == "" and model.state.chapter == 3 and model.state.stats.fusions == 0 and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty():
   draft_button.text = "Find a sanctuary fusion"
   draft_button.disabled = false
  draft_button.visible = not draft_button.disabled
@@ -629,7 +643,9 @@ func tap(pos: Vector2) -> void:
  var harvest_path := false
  var k := pick(pos)
  fusion_preview.clear()
- if placement_blueprint != "":
+ if layout_ui.source != "":
+  layout_ui.choose(self,hit(pos))
+ elif placement_blueprint != "":
   if model.deploy(placement_blueprint,k):
    placement_blueprint = ""
    services.event("structure_placed")
@@ -801,7 +817,7 @@ func _process(delta: float) -> void:
  if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return
  finale_ui.maybe_show(self)
- if not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
+ if layout_ui.source == "" and not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
   services.prepare_ad_services()
  if discard_resume_delta:
   discard_resume_delta = false
@@ -836,6 +852,7 @@ func _notification(what: int) -> void:
  if what == NOTIFICATION_WM_GO_BACK_REQUEST:
   if modal.visible: modal.hide()
   elif photo_mode: end_photo()
+  elif layout_ui.source != "": layout_ui.cancel(self)
   elif targeting != "": cancel_target()
   elif launch_menu:
    services.event("session_ended")
@@ -889,7 +906,7 @@ func _draw() -> void:
  if orbit_enabled:
   draw_orbit_feedback()
   return
- var visible_frontier: Array = [] if photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
+ var visible_frontier: Array = [] if layout_ui.source != "" or photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
  for key in visible_frontier:
   var point := screen(model.coord(key))
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",point,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
@@ -977,6 +994,14 @@ func _draw() -> void:
 
  for visitor in habitat_visitors:
   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,visitor.id,entity_screen(visitor.key),zoom_level,ambient_time,model.state.settings.reduced_motion or photo_mode or suspended)
+
+ if layout_ui.source != "":
+  for key in available_meadows():
+   if preload("res://scripts/LayoutTools.gd").can_move(model,layout_ui.source,key): draw_plot_outline(screen(model.coord(key)),zoom_level,Color("8ed7bc"),2.0)
+  if model.state.tiles.has(layout_ui.source):
+   draw_plot_outline(entity_screen(layout_ui.source),zoom_level,Color("ffe1a0"),3.0)
+   if layout_ui.destination != "":
+    draw_land_art(model.state.tiles[layout_ui.source].type,screen(model.coord(layout_ui.destination)),132.0/418.0*zoom_level,Color(1,1,1,0.5))
 
  # Draw expansion controls above the art they operate, matching their input priority.
  for key in visible_frontier:
@@ -1320,7 +1345,7 @@ func start_play() -> void:
  refresh()
 
 func check_transition_ad() -> void:
- if launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
+ if layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
  services.maybe_interstitial()
 
 func logical_per_dp() -> float:

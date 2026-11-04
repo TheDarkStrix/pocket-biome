@@ -1,0 +1,13 @@
+# Layout recovery and safe movement
+
+Select a sanctuary and open **World → Dismantle sanctuary…**. The confirmation explains that its four cells become Meadow, except original protected Oak, Stone and Fiber nodes, which are restored as those resources. Discoveries, earned rewards, land count and expansion prices stay intact. No materials are refunded. New terrain can then be crafted and deployed on the recovered cells.
+
+This fixes the audit's legal 36-cell layout with eight Forest sanctuaries and no space to create the other sanctuary types. `tests/layout_recovery.gd` reconstructs that layout, dismantles one sanctuary, deploys ordinary terrain, makes another fusion and checks save/load validity. Raising the land limit is unnecessary.
+
+Select a single-cell structure and open **World → Move selected structure…**. Valid empty Meadow cells are outlined. Choose one to see a destination preview, then confirm, choose another plot or cancel. Movement costs nothing and copies the existing entity, including its identity, level, cooldowns, production schedule, pause state and DNA. The source becomes Meadow. Nearby production and habitat suitability follow the new position. Retiring a structure remains a separate operation.
+
+Both actions reject saved land drafts, affected event plots and active boosts on the changed entity or destination. Protected starting resource cells cannot be moved or used as destinations. Dismantling preserves harvest cooldowns, preventing a fresh resource payout. Moving does not repeat construction counters or reset production. No general terrain move or undo history is introduced.
+
+UI commits revalidate the selected entity, save the complete new state, and restore the previous state if saving fails. Opening another task cancels an uncommitted movement preview. Ads and the finale wait while movement is active. The move command's nearby-habitat warning matters: a new position can change whether wildlife visits, although earned habitat rewards remain recorded.
+
+The 29 recovery checks include adverse-layout recovery, protected resources, cooldowns, structure identity and upgrades, scheduled production, invalid-target rejection, draft exclusion, cancel, save-failure rollback and persistence. OpenGL captures under `/workspace/runtime/recovery-review` cover targeting, confirmation, result, dismantling and recovered plots. These checks do not replace Android touch/lifecycle qualification.

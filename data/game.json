@@ -1180,8 +1180,9 @@
     {
       "id": 2,
       "name": "Living Neighbors",
-      "hint": "Grow to eight tiles, find three discoveries, and use a World Pulse.",
+      "hint": "Restore a living habitat, grow to eight tiles, find three discoveries, and use a World Pulse.",
       "checks": {
+        "habitats": 1,
         "cells": 8,
         "discoveries": 3,
         "pulses": 1

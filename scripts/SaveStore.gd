@@ -170,8 +170,9 @@ func canonicalize(s: Dictionary) -> Dictionary:
  # JSON parses all numbers as floats. Restore integer identity before Array.has
  # and reward deduplication; validation has already rejected fractional values.
  for field in ["version","seed","coins","expansions","energy","harvests","next_id"]: s[field] = int(s[field])
- if s.has("expeditions"):
-  for expedition in s.expeditions.values():
+ for group in ["expeditions","expedition_attempts"]:
+  if not s.has(group): continue
+  for expedition in s[group].values():
    expedition.seasons = int(expedition.seasons)
    if expedition.has("heat"):
     for index in range(expedition.heat.size()): expedition.heat[index] = int(expedition.heat[index])

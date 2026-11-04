@@ -1,12 +1,13 @@
 # Expedition islands
 
-The expedition map now contains a three-island restoration route. Each is a separate reversible 3×3 puzzle with its own saved layout, environmental state and completion record.
+The expedition map contains a four-island restoration route. Each is a separate reversible 3×3 puzzle with its own saved layout, environmental state and completion record. Completed islands offer independently saved replay attempts.
 
 | Island | Environmental problem | Supplies and success |
 |---|---|---|
 | Dry Springs | Thirsty Oaks | Three Water tiles; two moist groves and two flowering habitats |
 | Frost Hollow | Frozen Oaks at different positions | One movable Vent, two Water tiles; two groves at 60–85 heat, plus flowering habitats |
 | Ember Shore | Hot air and a fixed volcanic rock | Three Water tiles; balance 35–65 heat and at least 70 moisture, then support two flowering habitats |
+| River Link | Separated spring and outlet | Connect the fixed Water endpoints with a continuous edge-sharing route using five Water tiles total, then restore two groves and two flowering habitats |
 
 Discover a home biome to unlock Dry Springs. Restoring each island unlocks the next. Completed islands can be revisited. Required completion and unlocking never require an ad or purchase.
 
@@ -20,7 +21,17 @@ After the first home-island discovery, open Pack → Expeditions (also available
 3. Place two flower patches, each touching both Water and a grove.
 4. Complete restoration to record the island and welcome frogs. Return home or revisit the restored layout.
 
-Multiple layouts work. There is no irreversible failure: change Water to Meadow to reclaim it, move supplies and try another season. The completion record is the reward for this first expedition; it does not award home currency or claim a new home discovery. The two thermal islands extend this restoration loop with different heat rules. These are three short authored challenges, not a large expedition campaign.
+Multiple layouts work. There is no irreversible failure: change Water to Meadow to reclaim it, move supplies and try another season. The completion record is the reward for this first expedition; it does not award home currency or claim a new home discovery. The two thermal islands extend this restoration loop with different heat rules, and River Link adds a connectivity constraint. These are four short authored challenges, not a large expedition campaign.
+
+## River Link and replay
+
+Restore Ember Shore to unlock River Link. Its fixed spring and outlet are at internal indices 2 and 6; the Oaks are at 0 and 8. Diagonal contact does not connect water. Two legal routes add Water at 1/4/7 or 5/4/3, with flowers in the remaining two cells. Both support the surrounding habitats after three seasons. Endpoint outlines and the staged objective show the extra connection requirement. The water supply counts the two fixed endpoints.
+
+On a restored island's map card, **Replay challenge…** confirms replacement of the previous replay attempt. **Continue replay** resumes an unfinished attempt; completed replay cards show its season count. Original restorations remain read-only and retain their own layouts. Replays use the same rules, award no home resources and register no new completion ad milestone. This is free retry/practice with a last-result record, not a ranked or procedural mode.
+
+Optional `expedition_attempts` records use the same strict validation as original `expeditions`; both canonicalize JSON moisture, heat and season numbers. River records add island identity but no heat array. Legacy Dry Springs and thermal records remain accepted.
+
+Current follow-up validation: all eight Python audit tests, 1,488 assertions across 30 Godot suites, two full campaign completion probes and startup pass. The 16 new replay checks verify independent records, no repeat completion milestone, endpoint protection, route topology, alternate solutions and validation. Android preview and ARM64 package checks pass. Later sections retain historical validation counts from their original checkpoints.
 
 ## Implementation and compatibility
 

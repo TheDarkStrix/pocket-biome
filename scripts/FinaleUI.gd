@@ -3,7 +3,7 @@ extends RefCounted
 var presented_this_session := false
 func maybe_show(h) -> bool:
  if presented_this_session or h.model.state.get("finale_seen",false) or not h.model.state.chapter_rewards.has(5): return false
- if h.launch_menu or h.photo_mode or h.modal.visible or h.targeting != "" or h.placement_blueprint != "" or not h.model.state.pending.is_empty() or not h.reveal_queue.is_empty() or not h.presentation.animations.is_empty(): return false
+ if h.layout_ui.source != "" or h.launch_menu or h.photo_mode or h.modal.visible or h.targeting != "" or h.placement_blueprint != "" or not h.model.state.pending.is_empty() or not h.reveal_queue.is_empty() or not h.presentation.animations.is_empty(): return false
  show(h)
  return true
 func show(h) -> void:

@@ -12,6 +12,9 @@ func fail(message: String) -> void:
  quit(1)
 func second() -> void:
  m.tick(1)
+ # Earn the restoration milestone through its normal condition/claim authority.
+ if preload("res://scripts/HabitatProjects.gd").claim(m,"shaded_pond"):
+  mark("habitat_project_completed",{"id":"shaded_pond"})
  elapsed += 1
  for key in m.state.tiles:
   var tile: Dictionary = m.state.tiles[key]

@@ -121,7 +121,8 @@ func build(h, root: Control) -> void:
  inspect_action.hide()
  h.bottom = VBoxContainer.new(); h.bottom.add_theme_constant_override("separation",4); root.add_child(h.bottom)
  h.draft_button = h.button("Resume draft",func():
-  if h.placement_blueprint != "":
+  if h.layout_ui.source != "": h.layout_ui.cancel(h)
+  elif h.placement_blueprint != "":
    h.placement_blueprint = ""; h.model.message = "Placement canceled. Blueprint kept."; h.refresh()
   elif h.targeting != "": h.cancel_target()
   elif h.model.state.chapter == 3 and h.model.state.stats.fusions == 0: h.fusion_dialog()

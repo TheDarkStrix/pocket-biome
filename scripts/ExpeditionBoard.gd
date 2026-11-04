@@ -59,6 +59,11 @@ func _draw() -> void:
     for side in [-1,1]:
      draw_circle(at+Vector2(side*2,-3)*u,2*u,Color("b5d47a"))
      draw_circle(at+Vector2(side*2,-3)*u,0.8*u,Color("213729"))
+ if Quest.island(state) == "river_link":
+  for endpoint in [2,6]:
+   var ring := PackedVector2Array()
+   for point in [Vector2(0,-24),Vector2(49,0),Vector2(0,24),Vector2(-49,0),Vector2(0,-24)]: ring.append(center(endpoint)+point*u)
+   draw_polyline(ring,Color("8cd8ff"),3,true)
  var outline := PackedVector2Array()
  for point in [Vector2(0,-24),Vector2(49,0),Vector2(0,24),Vector2(-49,0),Vector2(0,-24)]: outline.append(center(selected)+point*u)
  draw_polyline(outline,Color("fff0a3"),2,true)

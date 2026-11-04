@@ -1,5 +1,7 @@
 # Pocket Biome: implementation and release plan
 
+Latest implementation checkpoint: [Current game audit](CURRENT_GAME_AUDIT.md). The legal full-island fusion trap now has safe dismantling; single-cell structures can move with upgrades/timing preserved. Chapter 2 requires a living habitat, River Link adds a connectivity objective, completed expeditions offer independent replays, and the opening goal helper focuses on one action. This delivers core recovery and progression improvements. The full teaching sequence, broader presentation/creative work and release qualification below remain active requirements.
+
 ## Release objective
 
 Ship an understandable, enjoyable Android discovery/building game that can earn through optional rewarded ads and restrained chapter-break interstitials. Treat playability, enjoyment, retention, ad reliability and commercial performance as separate claims requiring separate evidence. A successful build is not a release decision.

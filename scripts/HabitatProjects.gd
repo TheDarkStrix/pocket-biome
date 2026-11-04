@@ -36,6 +36,7 @@ static func claim(model, id: String) -> bool:
  if not model.state.has("habitat_projects"): model.state.habitat_projects = []
  model.state.habitat_projects.append(id)
  model.state.coins += REWARDS[id]
+ model.campaign.evaluate(model)
  return true
 static func validate(value: Variant) -> bool:
  if not value is Array or value.size() > IDS.size(): return false

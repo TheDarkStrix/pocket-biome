@@ -19,6 +19,8 @@ func run() -> void:
    h.model.state.coins = 999999
    h.model.state.energy = 200
    h.model.state.chapter = 2; h.model.state.objectives = [0,1,2]
+   # Expansion layout after the initial habitat milestone was already earned.
+   h.model.state["habitat_projects"] = ["shaded_pond"]
    for resource in ["wood","stone","fiber"]: h.model.state.inventory[resource] = 999999
    h.apply_settings(); h.refresh(); h.start_play(); h.modal.hide()
    await process_frame

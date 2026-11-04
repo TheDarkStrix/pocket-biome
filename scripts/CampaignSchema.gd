@@ -1,6 +1,7 @@
 extends RefCounted
 const Campaign = preload("res://scripts/CampaignSystem.gd")
 static func validate(store, s: Dictionary, config: Dictionary) -> bool:
+ if s.has("expedition_attempts") and not preload("res://scripts/Expedition.gd").validate(s.expedition_attempts,store): return false
  if s.has("expeditions") and not preload("res://scripts/Expedition.gd").validate(s.expeditions,store): return false
  if s.has("finale_seen") and (not s.finale_seen is bool or (s.finale_seen and (not s.get("chapter_rewards") is Array or not (s.chapter_rewards.has(5) or s.chapter_rewards.has(5.0))))): return false
  if s.has("habitat_projects") and not preload("res://scripts/HabitatProjects.gd").validate(s.habitat_projects): return false

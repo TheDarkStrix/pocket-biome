@@ -7,6 +7,7 @@ func chapter_definition(m) -> Dictionary:
  return m.config.chapters[clampi(int(m.state.chapter)-1,0,4)]
 
 func metric(m, id: String) -> int:
+ if id == "habitats": return m.state.get("habitat_projects",[]).size()
  if id == "cells": return m.state.tiles.size()
  if id == "discoveries": return m.state.discoveries.size()
  if id in ["harvests","expansions"]: return int(m.state[id])
@@ -14,12 +15,12 @@ func metric(m, id: String) -> int:
 
 const PURPOSE = "Grow a tiny island into a self-sustaining sanctuary."
 const ACTIONS = {
- "harvests":"Gather your first materials", "expansions":"Give your Oak a Water neighbor",
+ "habitats":"Create a living habitat", "harvests":"Gather your first materials", "expansions":"Give your Oak a Water neighbor",
  "cells":"Expand your island", "discoveries":"Try new biome neighbors",
  "pulses":"Use Rain, Heat or Frost", "fusions":"Fuse a sanctuary",
  "crafted_brick":"Craft bricks for construction", "built_golem":"Build a Stone Golem",
  "built_windmill":"Build a Windmill to earn Coins", "automation_coins":"Let your Windmill earn Coins"}
-const METRICS = {"harvests":"Harvests", "expansions":"New plots", "cells":"Land", "discoveries":"Discoveries", "pulses":"World Pulses", "fusions":"Sanctuaries", "crafted_brick":"Bricks crafted", "built_golem":"Golems built", "built_windmill":"Windmills built", "automation_coins":"Coins earned by automation"}
+const METRICS = {"habitats":"Habitats","harvests":"Harvests", "expansions":"New plots", "cells":"Land", "discoveries":"Discoveries", "pulses":"World Pulses", "fusions":"Sanctuaries", "crafted_brick":"Bricks crafted", "built_golem":"Golems built", "built_windmill":"Windmills built", "automation_coins":"Coins earned by automation"}
 
 func next_goal(m) -> String:
  if m.state.chapter_rewards.has(5): return "Your sanctuary is thriving. Keep shaping it your way."

@@ -2,11 +2,12 @@ extends RefCounted
 # A bounded, reversible ecology puzzle. Home inventory, timers and rewards are untouched.
 const ID = "dry_springs"
 const TREES = [0,8]
-const ISLANDS = ["dry_springs","frost_hollow","ember_shore"]
-const NAMES = {"dry_springs":"Dry Springs","frost_hollow":"Frost Hollow","ember_shore":"Ember Shore"}
+const ISLANDS = ["dry_springs","frost_hollow","ember_shore","river_link"]
+const NAMES = {"dry_springs":"Dry Springs","frost_hollow":"Frost Hollow","ember_shore":"Ember Shore","river_link":"River Link"}
 static func island(s: Dictionary) -> String: return s.get("island",ID)
 static func trees(s: Dictionary) -> Array: return [0,2] if island(s) == "frost_hollow" else TREES
 static func budget(s: Dictionary, kind: String) -> int:
+ if kind == "water" and island(s) == "river_link": return 5
  if kind == "vent": return 1 if island(s) == "frost_hollow" else 0
  return 2 if island(s) == "frost_hollow" else 3
 static func unlocked(model, id: String) -> bool:
@@ -22,6 +23,7 @@ static func instructions(s: Dictionary) -> String:
  var common := "Tap a plot, then choose terrain. Changes are free; only edge-sharing neighbors count. "
  if island(s) == "frost_hollow": return common+"One Vent adds 15 warmth per season to each adjacent Oak. Water beside a tree removes 10 warmth. Groves need 60–85 warmth; moisture stays at 80. Flowers need Water and a healthy grove."
  if island(s) == "ember_shore": return common+"The volcanic air adds 5 heat each season. Each neighboring Water removes 20 heat and adds 15 moisture. Groves need 35–65 heat and 70 moisture. The volcanic rock is fixed. Flowers need Water and a healthy grove."
+ if island(s) == "river_link": return common+"Connect the fixed blue spring and outlet with a continuous Water route. Five Water tiles total includes the two endpoints. Keep both trees moist, then add flowering habitats. Seasons add 15 moisture per adjacent Water. Groves need 70 moisture."
  return common+"Each season adds 15 moisture per neighboring Water; a dry tree loses 10. Groves need 70 moisture. Flowers need Water and a living grove."
 static func fresh(id: String = ID) -> Dictionary:
  if id not in ISLANDS: return {}
@@ -35,6 +37,8 @@ static func fresh(id: String = ID) -> Dictionary:
   elif id == "ember_shore":
    result.plots[2] = "vent"
    for tree in TREES: result.heat[tree] = 95
+ if id == "river_link":
+  result.erase("heat"); result.plots[2] = "water"; result.plots[6] = "water"
  return result
 static func neighbors(index: int) -> Array[int]:
  var result: Array[int] = []
@@ -56,6 +60,14 @@ static func habitat(s: Dictionary, index: int) -> bool:
  for other in neighbors(index):
   if other in trees(s) and healthy(s,other): return true
  return false
+static func river_connected(s: Dictionary) -> bool:
+ if island(s) != "river_link": return true
+ var reached := [2]; var cursor := 0
+ while cursor < reached.size():
+  for index in neighbors(reached[cursor]):
+   if s.plots[index] == "water" and not reached.has(index): reached.append(index)
+  cursor += 1
+ return reached.has(6)
 static func progress(s: Dictionary) -> Dictionary:
  var connected := 0
  for tree in trees(s):
@@ -63,10 +75,11 @@ static func progress(s: Dictionary) -> Dictionary:
  var habitats := 0
  for index in range(9):
   if habitat(s,index): habitats += 1
- return {"connected":connected,"groves":groves(s),"habitats":habitats,"ready":connected == 2 and groves(s) == 2 and habitats >= 2}
+ return {"connected":connected,"groves":groves(s),"habitats":habitats,"linked":river_connected(s),"ready":river_connected(s) and connected == 2 and groves(s) == 2 and habitats >= 2}
 static func goal(s: Dictionary) -> String:
  if s.completed: return "%s is restored. Wildlife has returned to its flowering habitats." % NAMES[island(s)]
  var p := progress(s)
+ if not p.linked: return "1 · Connect the blue spring and outlet with Water. Diagonals do not connect."
  if p.connected < 2:
   return ("1 · Place your Vent to warm both Oaks (%d / 2)." if island(s) == "frost_hollow" else "1 · Bring water beside both thirsty Oaks (%d / 2).") % p.connected
  if p.groves < 2:
@@ -76,7 +89,7 @@ static func goal(s: Dictionary) -> String:
  if p.habitats < 2: return "3 · Plant two flower patches beside water AND a grove (%d / 2)." % p.habitats
  return "The habitats are alive. Complete your expedition!"
 static func place(s: Dictionary, index: int, kind: String) -> bool:
- if s.completed or index < 0 or index >= 9 or index in trees(s) or (island(s) == "ember_shore" and index == 2) or kind not in ["water","meadow","flowers","vent"]: return false
+ if s.completed or index < 0 or index >= 9 or index in trees(s) or (island(s) == "ember_shore" and index == 2) or (island(s) == "river_link" and index in [2,6]) or kind not in ["water","meadow","flowers","vent"]: return false
  if kind in ["water","vent"] and s.plots[index] != kind and s.plots.count(kind)-(1 if island(s) == "ember_shore" and kind == "vent" else 0) >= budget(s,kind): return false
  s.plots[index] = kind
  return true
@@ -91,13 +104,15 @@ static func advance(s: Dictionary) -> bool:
  s.seasons = mini(10000,int(s.seasons)+1)
  return true
 static func validate(value: Variant, store) -> bool:
- if not value is Dictionary or value.size() > 3: return false
+ if not value is Dictionary or value.size() > ISLANDS.size(): return false
  for id in value:
   if id not in ISLANDS or not value[id] is Dictionary: return false
   var s: Dictionary = value[id]
-  var thermal: bool = id != ID
-  if s.size() != (6 if thermal else 4) or not s.get("plots") is Array or s.plots.size() != 9 or not s.get("moisture") is Array or s.moisture.size() != 9: return false
-  if thermal and (s.get("island") != id or not s.get("heat") is Array or s.heat.size() != 9): return false
+  var thermal: bool = id in ["frost_hollow","ember_shore"]
+  if s.size() != (6 if thermal else 5 if id != ID else 4) or not s.get("plots") is Array or s.plots.size() != 9 or not s.get("moisture") is Array or s.moisture.size() != 9: return false
+  if id != ID and s.get("island") != id: return false
+  if thermal and (not s.get("heat") is Array or s.heat.size() != 9): return false
+  if id == "river_link" and (s.plots[2] != "water" or s.plots[6] != "water"): return false
   if not store.integer(s.get("seasons"),0,10000) or not s.get("completed") is bool: return false
   for index in range(9):
    if not s.plots[index] is String or s.plots[index] not in ["oak","meadow","water","flowers","vent"]: return false

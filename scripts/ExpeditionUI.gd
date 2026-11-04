@@ -3,6 +3,7 @@ const Quest = preload("res://scripts/Expedition.gd")
 const Board = preload("res://scripts/ExpeditionBoard.gd")
 var selected := 4
 var active_id := Quest.ID
+var replaying := false
 var status := ""
 var board: Control
 var detail: Label
@@ -10,8 +11,8 @@ var actions: Array[Button] = []
 func overview(h) -> void:
  var box: VBoxContainer = h.modal_content("Beyond your island")
  h.modal_screen = "expedition_map"
- h.sheets.caption(h,"Restore three islands with different environmental problems. Your home supplies stay safe; terrain changes are free and progress saves independently for each island.",box)
- var descriptions := {"dry_springs":"Reconnect thirsty trees to water and create shaded wetlands.","frost_hollow":"Use one heat source to warm two frozen Oaks. Too much warmth can spoil a grove.","ember_shore":"Cool overheated trees with water while volcanic air keeps warming them. Balance heat and moisture."}
+ h.sheets.caption(h,"Restore islands with different environmental problems, then replay them with fresh attempts. Your home supplies stay safe; terrain changes are free and progress saves independently for each island.",box)
+ var descriptions := {"dry_springs":"Reconnect thirsty trees to water and create shaded wetlands.","frost_hollow":"Use one heat source to warm two frozen Oaks. Too much warmth can spoil a grove.","ember_shore":"Cool overheated trees with water while volcanic air keeps warming them. Balance heat and moisture.","river_link":"Connect a spring to an outlet with a continuous river, then restore the surrounding habitats."}
  for id in Quest.ISLANDS:
   var card: VBoxContainer = h.sheets.card(box)
   h.label(Quest.NAMES[id],21,card)
@@ -22,17 +23,32 @@ func overview(h) -> void:
   sail.disabled = not Quest.unlocked(h.model,id)
   if sail.disabled:
    h.sheets.caption(h,"Discover your first home biome to unlock." if id == Quest.ID else "Restore %s to unlock." % Quest.NAMES[Quest.ISLANDS[Quest.ISLANDS.find(id)-1]],card)
-  if saved.get("completed",false): h.sheets.caption(h,"RESTORED · Wildlife has returned",card)
+  if saved.get("completed",false):
+   h.sheets.caption(h,"RESTORED · Wildlife has returned",card)
+   h.button("Replay challenge…",func(): replay_prompt(h,id),card)
+   var attempt: Dictionary = h.model.state.get("expedition_attempts",{}).get(id,{})
+   if not attempt.is_empty():
+    h.sheets.caption(h,"Last replay completed in %d seasons" % attempt.seasons if attempt.completed else "A replay attempt is in progress.",card)
+    if not attempt.completed: h.button("Continue replay",func(): begin(h,id,true),card)
  h.campaign_ui.close_button(h,box)
-func begin(h, id: String = Quest.ID) -> void:
+func record(h) -> Dictionary:
+ return h.model.state["expedition_attempts" if replaying else "expeditions"][active_id]
+func replay_prompt(h, id: String) -> void:
+ var box: VBoxContainer = h.modal_content("Start a fresh replay?")
+ h.sheets.caption(h,"Your original restoration record stays safe. This replaces any previous replay attempt for this island. Replays give no additional completion rewards or ad milestones.",box)
+ h.sheets.primary(h,"Start replay",func(): begin(h,id,true,true),box)
+ h.button("Keep current progress",func(): overview(h),box)
+func begin(h, id: String = Quest.ID, replay: bool = false, reset: bool = false) -> void:
  if not Quest.unlocked(h.model,id): return
- active_id = id; selected = 4
- if not h.model.state.has("expeditions"): h.model.state.expeditions = {}
- if not h.model.state.expeditions.has(active_id): h.model.state.expeditions[active_id] = Quest.fresh(active_id)
+ if replay and not h.model.state.get("expeditions",{}).get(id,{}).get("completed",false): return
+ active_id = id; selected = 4; replaying = replay
+ var field := "expedition_attempts" if replaying else "expeditions"
+ if not h.model.state.has(field): h.model.state[field] = {}
+ if reset or not h.model.state[field].has(active_id): h.model.state[field][active_id] = Quest.fresh(active_id)
  status = ""; save_progress(h); show_board(h)
 func show_board(h) -> void:
- var s: Dictionary = h.model.state.expeditions[active_id]
- var box: VBoxContainer = h.modal_content("Expedition · "+Quest.NAMES[active_id])
+ var s: Dictionary = record(h)
+ var box: VBoxContainer = h.modal_content(("Replay · " if replaying else "Expedition · ")+Quest.NAMES[active_id])
  h.modal_screen = "expedition"
  h.label(Quest.goal(s),18,box)
  var p := Quest.progress(s)
@@ -60,7 +76,7 @@ func show_board(h) -> void:
  if not s.completed: h.button("Save & return home",func(): leave(h),box)
  update_selection(h)
 func update_selection(h) -> void:
- var s: Dictionary = h.model.state.expeditions[active_id]
+ var s: Dictionary = record(h)
  if selected in Quest.trees(s):
   detail.text = "Oak · %d / 100 moisture · %d neighboring Water. %s" % [s.moisture[selected],Quest.count_near(s,selected,"water"),"A living grove." if Quest.healthy(s,selected) else "Bring water nearby, then advance seasons."]
  else:
@@ -68,21 +84,21 @@ func update_selection(h) -> void:
  if s.has("heat") and selected in Quest.trees(s):
   detail.text = "Oak · Moisture %d / 100 · Heat %d / 100. " % [s.moisture[selected],s.heat[selected]]
   detail.text += "A healthy grove." if Quest.healthy(s,selected) else "Needs 60–85 heat. Place a Vent nearby; Water can cool it." if active_id == "frost_hollow" else "Needs 35–65 heat and 70 moisture. Water cools and moistens; volcanic air warms each season."
- for action in actions: action.disabled = selected in Quest.trees(s) or (active_id == "ember_shore" and selected == 2)
+ for action in actions: action.disabled = selected in Quest.trees(s) or (active_id == "ember_shore" and selected == 2) or (active_id == "river_link" and selected in [2,6])
  board.selected = selected; board.queue_redraw()
 func change(h, kind: String) -> void:
- var s: Dictionary = h.model.state.expeditions[active_id]
+ var s: Dictionary = record(h)
  if not Quest.place(s,selected,kind): status = "Terrain limit reached or plot protected. Change an existing supply to Meadow to reuse it elsewhere."
  else: status = "Layout changed. Advance a season when you want to see the trees respond."
  save_progress(h); show_board(h)
 func complete(h) -> void:
- var s: Dictionary = h.model.state.expeditions[active_id]
+ var s: Dictionary = record(h)
  if s.completed or not Quest.progress(s).ready: return
  s.completed = true
  if not h.store.save_state(h.model.state):
   s.completed = false; status = "Could not save restoration. Your layout is kept; try completing again."; show_board(h); return
- h.services.register_expedition_completion(active_id)
- h.services.event("expedition_completed",{"id":active_id,"seasons":s.seasons})
+ if not replaying: h.services.register_expedition_completion(active_id)
+ h.services.event("expedition_replay_completed" if replaying else "expedition_completed",{"id":active_id,"seasons":s.seasons})
  status = Quest.NAMES[active_id]+" is alive again!"
  show_board(h)
 func save_progress(h) -> bool:
