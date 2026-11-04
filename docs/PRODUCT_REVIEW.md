@@ -94,3 +94,7 @@ A read-only ready-node preview and player-triggered batch gathering now reduce r
 ## Home habitat projects
 
 Three optional projects now connect home tile layout and conditions to explicit goals: Shaded Pond, Pollinator Patch and Living Workshop. Players can review requirements, highlight a candidate layout and claim a once-only Coin reward. Frogs, butterflies and a bird visit suitable completed habitats; visitors leave/return with live suitability while earned rewards remain. See [Habitat projects](HABITAT_PROJECTS.md). This implements additional home goals; player enjoyment and economic pacing effects still need observation.
+
+## Guided habitat completion
+
+Habitat project cards now connect missing requirements to specific, read-only next actions. Players can inspect a thirsty/overheated tree, review paused automation, open prerequisite or terrain recipes, use an existing blueprint, review a queue or resolve a saved draft. The shortcuts retain the existing transaction/confirmation authorities. This improves task discoverability; independent player comprehension remains unmeasured.

@@ -25,3 +25,11 @@ Wildlife is cosmetic and bounded to three visitor groups. A completed project's 
 This adds layout goals, one-time rewards and visible ecological feedback to the home loop. It does not establish improved retention, human enjoyment or live revenue. First-time player observation and phone qualification remain outstanding.
 
 Final private build: eight Python audit tests, 1,410 assertions across 26 Godot suites, both original campaign completion routes and startup passed. Universal preview and ARM64 package signatures/alignment/content checks passed. No public distribution was performed.
+
+## Actionable guidance
+
+Unfinished or currently unsuitable projects now show a context-specific next step. Guidance follows Workbench prerequisites, existing queues, ready blueprints, lack of empty Grass, saved drafts, paused Windmills, insufficient moisture, excess heat and low fertility. Shortcuts open the selected Build recipe, current queue, saved hand, inspector or World tools; blueprint guidance enters the normal placement preview. No shortcut pays for crafting, places land, restores a plot, changes conditions, resumes automation or spends Pulse energy.
+
+Advice is recalculated at activation, so changed conditions or a finished project cannot execute a stale suggestion. The project screen's live signature includes the advice, allowing timer/condition changes to update the explanation. 18 focused tests cover read-only behavior, prerequisite routing, ready/queued work, saved quotes, thermal/moisture deficits, paused automation, real UI navigation, no-cost placement preview and stale-action safety. Rendered standard/small-screen examples are retained under `/workspace/runtime/habitat-guidance-review`.
+
+Guidance follow-up private build: all eight Python audit tests, 1,428 assertions across 27 Godot suites, both campaign completion probes and startup passed. Universal preview and ARM64 package checks passed.

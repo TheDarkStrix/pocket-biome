@@ -1,5 +1,6 @@
 extends RefCounted
 const Projects = preload("res://scripts/HabitatProjects.gd")
+const Guidance = preload("res://scripts/HabitatGuidance.gd")
 var status := ""
 var signature := ""
 func show_projects(h) -> void:
@@ -16,6 +17,10 @@ func show_projects(h) -> void:
   h.sheets.caption(h,Projects.RULES[id],card)
   h.sheets.caption(h,"Completed · visitors present" if done and current.ready else "Completed · rebuild a suitable habitat to welcome visitors back" if done else "Ready to complete" if current.ready else "%d / %d relationships satisfied" % [current.matched,current.total],card)
   h.sheets.caption(h,"One-time reward · %d Coins" % Projects.REWARDS[id],card)
+  var next_step := Guidance.advice(h.model,id)
+  if not current.ready and not next_step.is_empty():
+   h.sheets.caption(h,next_step.text,card)
+   if next_step.action != "": h.button(next_step.label,func(): follow(h,id),card)
   if current.anchor != "":
    h.button("Show habitat on island",func():
     h.fusion_preview.clear()
@@ -44,10 +49,38 @@ func claim(h, id: String) -> void:
 
 func current_signature(h) -> String:
  var parts := []
- for id in Projects.IDS: parts.append(Projects.inspect(h.model,id))
+ for id in Projects.IDS: parts.append([Projects.inspect(h.model,id),Guidance.advice(h.model,id)])
  return JSON.stringify([parts,h.model.state.get("habitat_projects",[]),h.model.state.discoveries.size()])
 func update_live(h) -> void:
  if not h.modal.visible or h.modal_screen != "habitat_projects" or signature == current_signature(h): return
  var offset: int = h.modal_scroll.scroll_vertical
  show_projects(h)
  h.modal_scroll.set_deferred("scroll_vertical",offset)
+
+func follow(h, id: String) -> void:
+ # Recompute at activation so a changed island or finished queue cannot use stale advice.
+ var next := Guidance.advice(h.model,id)
+ if next.is_empty(): return
+ match next.action:
+  "ideas": h.open_ideas()
+  "draft": h.draft()
+  "projects": h.campaign_ui.workshop_details(h)
+  "build":
+   h.campaign_ui.build_choice = next.target
+   h.campaign_ui.build_family = "Structures" if h.model.config.tiles[next.target].category == "structure" else "Land"
+   h.campaign_ui.workshop(h)
+  "blueprint":
+   h.placement_blueprint = next.target
+   h.targeting = ""; h.modal.hide()
+   h.model.message = "Choose empty Grass beside your planned habitat. Blueprint kept until you place it."
+   h.refresh()
+  "world":
+   if h.model.origin(next.target) != "": h.selected = h.model.origin(next.target)
+   h.campaign_ui.world(h)
+  "inspect":
+   if h.model.origin(next.target) != "": h.open_inspector(h.model.origin(next.target))
+  "expand":
+   h.modal.hide(); h.frame_world()
+   h.model.message = "Choose a cloud to compare land offers. Selection and inspection cost nothing."
+   h.refresh()
+  _: show_projects(h)
