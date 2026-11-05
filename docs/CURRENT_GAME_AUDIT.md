@@ -2,7 +2,11 @@
 
 Original audit snapshot: gameplay branch at `1a5940c` (guidance checkpoint). The findings below describe that snapshot. The follow-up status here records subsequent implementation; earlier chronological review notes remain historical.
 
-## Current restoration implementation
+## Current director delivery
+
+Three subsequent build/audit passes are recorded in [Audit scorecard](DIRECTOR_ITERATIONS.md), with the full feature/status mapping in [Director delivery](DIRECTOR_DELIVERY.md) and source-bound [validation](DIRECTOR_VALIDATION.json). Those documents supersede the feature status and final-goal assumptions in the older snapshots below.
+
+## Previous restoration implementation
 
 The five subsequent gameplay priorities are now implemented. See [Restoration campaign](RESTORATION_CAMPAIGN.md) for the exact rules and player journey:
 

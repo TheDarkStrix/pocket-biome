@@ -1,5 +1,7 @@
 # Expedition islands
 
+Latest additions: first restorations now grant derived home capabilities, and every island offers two authored mastery challenges with independent personal bests. See [Director delivery](DIRECTOR_DELIVERY.md). The relaxed replay rules and original restoration records below remain supported.
+
 The expedition map contains a four-island restoration route. Each is a separate reversible 3×3 puzzle with its own saved layout, environmental state and completion record. Completed islands offer independently saved replay attempts.
 
 | Island | Environmental problem | Supplies and success |

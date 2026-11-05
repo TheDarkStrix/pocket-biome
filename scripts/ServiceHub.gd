@@ -1,6 +1,7 @@
 extends Node
 signal changed
 var model
+var ad_metrics = preload("res://scripts/AdMetrics.gd").new()
 var telemetry = preload("res://scripts/Telemetry.gd").new()
 var save_path := "user://biome.json"
 var session_start := 0.0
@@ -21,6 +22,7 @@ func _ready() -> void:
  add_child(telemetry)
  if Engine.has_singleton("PocketServices"):
   bridge = Engine.get_singleton("PocketServices")
+  if bridge.has_signal("ad_lifecycle"): bridge.connect("ad_lifecycle",_ad_lifecycle)
   bridge.connect("ad_ready",_ad_ready)
   bridge.connect("interstitial_ready",func(available): interstitial_ready = available)
   bridge.connect("ad_rewarded",_ad_rewarded)
@@ -72,7 +74,7 @@ func maybe_interstitial() -> bool:
  restoration_break = false
  interstitial_ready = false
  bridge.showInterstitial()
- event("interstitial_shown")
+ event("interstitial_dispatch")
  return true
 
 func prepare_ad_services() -> void:
@@ -208,3 +210,8 @@ func delete_diagnostics() -> bool:
  status = "Local diagnostics deleted." if removed else "Could not delete every diagnostic file. Try again."
  changed.emit()
  return removed
+
+func _ad_lifecycle(payload: String) -> void:
+ var safe: Dictionary = ad_metrics.ingest(payload)
+ if safe.is_empty(): return
+ event("ad_"+safe.event,safe)

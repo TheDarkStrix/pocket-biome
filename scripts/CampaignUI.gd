@@ -270,6 +270,9 @@ func world(h) -> void:
      h.modal.hide(); h.persist(); h.refresh(),confirm)
     close_button(h,confirm),box)
  h.button("Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
+ h.button("Visitors & field notes",func(): h.sanctuary_life.show_notes(h),box)
+ h.button("Personalize my island",func(): h.identity_ui.show(h),box)
+ h.button("Optional visitor requests",func(): h.visitor_requests.show_requests(h),box)
  h.button("Earned care tools · water, shade & warmth",func(): h.care_ui.show_tools(h),box)
  h.button("World Pulse abilities",func(): h.pulse_selector(),box)
  var event: Dictionary = h.model.state.event
@@ -311,6 +314,8 @@ func settings(h) -> void:
  if h.services.privacy_options_available():
   h.button("Ad privacy choices",func(): h.services.show_privacy_options(),box)
  h.button("Tile conditions",h.conditions_help,box)
+ h.button("Climate growth rules",func(): h.island_actions.climate_settings(h),box)
+ h.button("Private playtest report",func(): h.playtest.show_report(h),box)
  h.button("How to play",func(): tutorial(h),box)
  h.button("About Pocket Biome",func(): about(h),box)
  h.button("New world…",h.new_world_dialog,box)

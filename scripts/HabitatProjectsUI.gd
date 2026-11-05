@@ -70,7 +70,8 @@ func claim(h, id: String) -> void:
    if not h.fusion_preview.has(cell): h.fusion_preview.append(cell)
  h.selected = Projects.inspect(h.model,id).anchor
  h.services.event("habitat_project_completed",{"id":id})
- h.refresh(); show_projects(h)
+ h.playtest.record("restoration_saved",{"id":id})
+ h.refresh(); h.restoration_moment.show(h,id)
 
 func current_signature(h) -> String:
  var parts := []

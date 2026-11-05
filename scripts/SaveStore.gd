@@ -72,6 +72,7 @@ func valid(s: Variant) -> bool:
    if not t.last_pulse is String or not model.config.powers.has(t.last_pulse) or not number(t.get("last_pulse_until"),0,s.time+12): return false
   if t.has("level") and not integer(t.level,1,3): return false
   if t.has("enabled") and not t.enabled is bool: return false
+  if t.has("cultivated") and (not t.cultivated is bool or t.size != 1 or t.evolution == ""): return false
   if not number(t.ready,0,s.time+120) or not number(t.last_tap,-1,s.time): return false
   if not t.dna is Dictionary: return false
   for attribute in model.config.attributes:
@@ -177,6 +178,14 @@ func canonicalize(s: Dictionary) -> Dictionary:
    if expedition.has("heat"):
     for index in range(expedition.heat.size()): expedition.heat[index] = int(expedition.heat[index])
    for index in range(expedition.moisture.size()): expedition.moisture[index] = int(expedition.moisture[index])
+ if s.has("expedition_trials"):
+  for trial in s.expedition_trials.values():
+   trial.moves = int(trial.moves); trial.board.seasons = int(trial.board.seasons)
+   for index in range(9):
+    trial.board.moisture[index] = int(trial.board.moisture[index])
+    if trial.board.has("heat"): trial.board.heat[index] = int(trial.board.heat[index])
+ if s.has("expedition_bests"):
+  for best in s.expedition_bests.values(): best.moves = int(best.moves); best.seasons = int(best.seasons)
  for field in ["chapter","next_job"]: s[field] = int(s[field])
  for id in s.hints: s.hints[id] = int(s.hints[id])
  for id in s.stats: s.stats[id] = int(s.stats[id])

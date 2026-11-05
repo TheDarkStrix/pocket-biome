@@ -7,6 +7,7 @@ func chapter_definition(m) -> Dictionary:
  return m.config.chapters[clampi(int(m.state.chapter)-1,0,4)]
 
 func metric(m, id: String) -> int:
+ if id == "thriving_network": return 1 if m.state.get("habitat_projects",[]).has("sanctuary_network") and preload("res://scripts/HabitatProjects.gd").network(m).ready else 0
  if id.begins_with("restored_"):
   var project: String = {"restored_spring":"shaded_pond","restored_garden":"pollinator_patch","restored_workshop":"living_workshop","restored_climate":"thermal_refuge","restored_network":"sanctuary_network"}.get(id,"")
   return 1 if m.state.get("habitat_projects",[]).has(project) else 0
@@ -17,14 +18,14 @@ func metric(m, id: String) -> int:
  return int(m.state.stats.get(id,0))
 
 const PURPOSE = "Grow a tiny island into a self-sustaining sanctuary."
-const ACTIONS = {
+const ACTIONS = {"thriving_network":"Bring your connected sanctuary to life",
  "restored_garden":"Welcome pollinators", "restored_workshop":"Shelter your working workshop", "restored_climate":"Restore a climate refuge", "restored_network":"Connect your living sanctuary", "restored_spring":"Create a living habitat",
  "habitats":"Create a living habitat", "harvests":"Gather your first materials", "expansions":"Give your Oak a Water neighbor",
  "cells":"Expand your island", "discoveries":"Try new biome neighbors",
  "pulses":"Use Rain, Heat or Frost", "fusions":"Fuse a sanctuary",
  "crafted_brick":"Craft bricks for construction", "built_golem":"Build a Stone Golem",
  "built_windmill":"Build a Windmill to earn Coins", "automation_coins":"Let your Windmill earn Coins"}
-const METRICS = {"restored_spring":"Spring restored","restored_garden":"Garden restored","restored_workshop":"Workshop sheltered","restored_climate":"Climate refuge restored","restored_network":"Sanctuary connected","habitats":"Habitats","harvests":"Harvests", "expansions":"New plots", "cells":"Land", "discoveries":"Discoveries", "pulses":"World Pulses", "fusions":"Sanctuaries", "crafted_brick":"Bricks crafted", "built_golem":"Golems built", "built_windmill":"Windmills built", "automation_coins":"Coins earned by automation"}
+const METRICS = {"thriving_network":"Thriving sanctuary","restored_spring":"Spring restored","restored_garden":"Garden restored","restored_workshop":"Workshop sheltered","restored_climate":"Climate refuge restored","restored_network":"Sanctuary connected","habitats":"Habitats","harvests":"Harvests", "expansions":"New plots", "cells":"Land", "discoveries":"Discoveries", "pulses":"World Pulses", "fusions":"Sanctuaries", "crafted_brick":"Bricks crafted", "built_golem":"Golems built", "built_windmill":"Windmills built", "automation_coins":"Coins earned by automation"}
 
 func next_goal(m) -> String:
  if m.state.chapter_rewards.has(5): return "Your sanctuary is thriving. Keep shaping it your way."

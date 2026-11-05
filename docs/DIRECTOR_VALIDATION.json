@@ -1,0 +1,489 @@
+{
+  "utc": "2026-11-05T18:37:37.560408+00:00",
+  "source_sha256": "6fadfaa316a2e7b8b81455ef80a3692fe061d3e337466592282e3b6a9daebab1",
+  "automated_tests": {
+    "utc": "2026-11-05T18:37:37.560408+00:00",
+    "source_sha256": "6fadfaa316a2e7b8b81455ef80a3692fe061d3e337466592282e3b6a9daebab1",
+    "source_unchanged_during_run": true,
+    "passed": true,
+    "assertions": 1729,
+    "results": [
+      {
+        "suite": "run",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 65
+      },
+      {
+        "suite": "save_validation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 319
+      },
+      {
+        "suite": "save_io_failures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "fusion_edges",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 10
+      },
+      {
+        "suite": "input_gestures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "presentation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "gameplay_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "services",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "screens",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 87
+      },
+      {
+        "suite": "scene_smoke",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "touch_ui",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 47
+      },
+      {
+        "suite": "mobile_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 156
+      },
+      {
+        "suite": "sheet_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "draft_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 22
+      },
+      {
+        "suite": "island_environment",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "build_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 78
+      },
+      {
+        "suite": "expansion_pricing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "orbit_world",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 140
+      },
+      {
+        "suite": "painted_art",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 12
+      },
+      {
+        "suite": "expedition",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 49
+      },
+      {
+        "suite": "finale",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "thermal_expeditions",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "gather",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "habitat_projects",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 27
+      },
+      {
+        "suite": "habitat_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 18
+      },
+      {
+        "suite": "layout_recovery",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "expedition_replay",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 16
+      },
+      {
+        "suite": "restoration_chapter",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "restoration_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 85
+      },
+      {
+        "suite": "director_clarity",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 37
+      },
+      {
+        "suite": "director_depth",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "director_ownership",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "director_explorers",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "automation_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "progression_simulation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "balanced_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "primary_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "startup",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      }
+    ]
+  },
+  "python_audit_tests": {
+    "count": 8,
+    "passed": true
+  },
+  "campaign_routes": {
+    "pacing-simulation.json": {
+      "active_seconds": 1177,
+      "tracked_progression_operations": 128,
+      "living_climate": false,
+      "primary_route": false,
+      "discoveries": 20,
+      "note": "Omniscient accelerated simulation; not a human session or enjoyment/retention result."
+    },
+    "pacing-automation.json": {
+      "active_seconds": 1151,
+      "tracked_progression_operations": 128,
+      "living_climate": false,
+      "primary_route": false,
+      "discoveries": 20,
+      "note": "Omniscient accelerated simulation; not a human session or enjoyment/retention result."
+    },
+    "pacing-balanced.json": {
+      "active_seconds": 1244,
+      "tracked_progression_operations": 146,
+      "living_climate": true,
+      "primary_route": false,
+      "discoveries": 20,
+      "note": "Omniscient accelerated simulation; not a human session or enjoyment/retention result."
+    },
+    "pacing-primary.json": {
+      "active_seconds": 630,
+      "tracked_progression_operations": 59,
+      "living_climate": true,
+      "primary_route": true,
+      "discoveries": 7,
+      "note": "Omniscient accelerated simulation; not a human session or enjoyment/retention result."
+    }
+  },
+  "opening_explorers": [
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 0
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 1
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 2
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 3
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 4
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 5
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 6
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 7
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 8
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 9
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 10
+    },
+    {
+      "coins": 206,
+      "completed_active_seconds": 22.0,
+      "first_discovery_active_seconds": 3,
+      "note": "Affordance-driven simulated route; not a human understanding or enjoyment result.",
+      "seed": 11
+    }
+  ],
+  "rendered_screen_touch_opening": {
+    "active_seconds": 23.0127740000001,
+    "climate": "balanced",
+    "harvests": 8,
+    "input_actions": 27,
+    "inventory": {
+      "brick": 0,
+      "clay": 0,
+      "fiber": 3,
+      "iron": 0,
+      "star_dew": 5,
+      "stone": 0,
+      "wood": 1
+    },
+    "passed": true,
+    "projects": [
+      "shaded_pond"
+    ],
+    "save_valid": true,
+    "scope": "Scripted screen-touch opening in the actual rendered game with ordinary clock/resources; not an unfamiliar-person study or physical-device run."
+  },
+  "logic_profile": {
+    "cells": 36,
+    "max_refresh_ms": 19.507,
+    "median_refresh_ms": 14.96,
+    "p95_refresh_ms": 19.488,
+    "samples": 30,
+    "scope": "Desktop Godot headless cached scene under shared workspace load; not phone FPS, GPU, battery or thermal qualification.",
+    "visitor_groups": 5
+  },
+  "audio_waveform_checks": {
+    "visitor": {
+      "seconds": 0.44997732426303855,
+      "peak": 0.202362060546875,
+      "rms": 0.061459471942940755
+    },
+    "restoration": {
+      "seconds": 1.2,
+      "peak": 0.175323486328125,
+      "rms": 0.05364881866463233
+    }
+  },
+  "phone_apk": {
+    "source_sha256": "6fadfaa316a2e7b8b81455ef80a3692fe061d3e337466592282e3b6a9daebab1",
+    "assertions": 1729,
+    "apk_sha256": "43bb13b5f677e410554d148100bad65f8bfaebbb77461ea8fdc0edd9277a8e78",
+    "bytes": 102360305,
+    "abi": "arm64-v8a",
+    "retained_files_verified": 629,
+    "signature_and_alignment_verified": true,
+    "physical_device_tested": false,
+    "note": "Debug test build; identical retained game/native files to universal APK. Not store certification."
+  },
+  "universal_apk_checks": {
+    "matching_passing_tests": true,
+    "package_identity": true,
+    "min_sdk_24": true,
+    "target_sdk_36": true,
+    "portrait": true,
+    "no_sensitive_capture_permissions": true,
+    "signature_verified": true,
+    "zip_16k_alignment": true,
+    "embedded_source_matches_tests": true,
+    "arm64_present": true,
+    "qa_files_excluded": true,
+    "elf_16k_load_alignment": true
+  },
+  "native_callbacks_present_in_dex": {
+    "ad_lifecycle": true,
+    "value_micros": true,
+    "onAdImpression": true,
+    "show_requested": true
+  },
+  "preview_checks_passed": true,
+  "store_release_ready": false,
+  "production_blockers": [
+    "APK is debuggable",
+    "APK uses a development signing certificate",
+    "Application version is marked preview/test",
+    "Services still use sandbox mode",
+    "Native providers still contain test advertising/product IDs",
+    "privacy_policy_url is not configured with an HTTPS URL",
+    "support_url is not configured with an HTTPS URL",
+    "physical_device_report has no passing evidence for the current source",
+    "play_sandbox_report has no passing evidence for the current source",
+    "creative_review_report has no passing evidence for the current source"
+  ],
+  "visual_review": {
+    "renderer": "Godot OpenGL/Mesa",
+    "fixtures": "/workspace/runtime/director-review/final-*.png",
+    "standard_size": [
+      540,
+      960
+    ],
+    "small_size": [
+      320,
+      640
+    ],
+    "enlarged_text_scale": 1.2,
+    "scope": "Constructed fixtures and scripted touch walkthroughs; no unfamiliar-person or physical-device study."
+  },
+  "device_access": {
+    "adb_devices": [],
+    "physical_device_tested": false,
+    "emulator_tested": false
+  },
+  "limits": [
+    "Enjoyment and novice comprehension unmeasured",
+    "No current physical Android performance/lifecycle acceptance",
+    "No live advertising/billing or publisher revenue validation",
+    "No public application release"
+  ]
+}

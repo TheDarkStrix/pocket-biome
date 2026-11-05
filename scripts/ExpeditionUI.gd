@@ -1,5 +1,8 @@
 extends RefCounted
 const Quest = preload("res://scripts/Expedition.gd")
+const Mastery = preload("res://scripts/ExpeditionMastery.gd")
+const Rewards = preload("res://scripts/ExpeditionRewards.gd")
+var variant := "relaxed"
 const Board = preload("res://scripts/ExpeditionBoard.gd")
 var selected := 4
 var active_id := Quest.ID
@@ -17,6 +20,7 @@ func overview(h) -> void:
   var card: VBoxContainer = h.sheets.card(box)
   h.label(Quest.NAMES[id],21,card)
   h.sheets.caption(h,descriptions[id],card)
+  h.sheets.caption(h,("Earned home reward · " if Rewards.done(h.model,id) else "First restoration reward · ")+Rewards.DESCRIPTIONS[id],card)
   var saved: Dictionary = h.model.state.get("expeditions",{}).get(id,{})
   var title := "Revisit restored island" if saved.get("completed",false) else "Continue expedition" if not saved.is_empty() else "Begin expedition"
   var sail: Button = h.sheets.primary(h,title,func(): begin(h,id),card)
@@ -26,22 +30,42 @@ func overview(h) -> void:
   if saved.get("completed",false):
    h.sheets.caption(h,"RESTORED · Wildlife has returned",card)
    h.button("Replay challenge…",func(): replay_prompt(h,id),card)
+   for challenge in Mastery.VARIANTS:
+    var best: Dictionary = h.model.state.get("expedition_bests",{}).get(Mastery.key(id,challenge),{})
+    h.button(Mastery.NAMES[challenge],func(): trial_prompt(h,id,challenge),card)
+    if not best.is_empty(): h.sheets.caption(h,"Personal best · %d seasons · %d placements" % [best.seasons,best.moves],card)
+    var trial: Dictionary = h.model.state.get("expedition_trials",{}).get(Mastery.key(id,challenge),{})
+    if not trial.is_empty() and not trial.board.completed: h.button("Continue "+Mastery.NAMES[challenge],func(): begin(h,id,true,false,challenge),card)
    var attempt: Dictionary = h.model.state.get("expedition_attempts",{}).get(id,{})
    if not attempt.is_empty():
     h.sheets.caption(h,"Last replay completed in %d seasons" % attempt.seasons if attempt.completed else "A replay attempt is in progress.",card)
     if not attempt.completed: h.button("Continue replay",func(): begin(h,id,true),card)
  h.campaign_ui.close_button(h,box)
 func record(h) -> Dictionary:
+ if variant != "relaxed": return h.model.state.expedition_trials[Mastery.key(active_id,variant)].board
  return h.model.state["expedition_attempts" if replaying else "expeditions"][active_id]
 func replay_prompt(h, id: String) -> void:
  var box: VBoxContainer = h.modal_content("Start a fresh replay?")
  h.sheets.caption(h,"Your original restoration record stays safe. This replaces any previous replay attempt for this island. Replays give no additional completion rewards or ad milestones.",box)
  h.sheets.primary(h,"Start replay",func(): begin(h,id,true,true),box)
  h.button("Keep current progress",func(): overview(h),box)
-func begin(h, id: String = Quest.ID, replay: bool = false, reset: bool = false) -> void:
+func trial_prompt(h, id: String, challenge: String) -> void:
+ var box: VBoxContainer = h.modal_content(Mastery.NAMES[challenge])
+ h.label(Mastery.RULES[challenge],17,box)
+ h.sheets.caption(h,"Starting replaces this challenge's current attempt. Original restoration, other trials and personal bests stay safe. No extra home reward or ad milestone is granted.",box)
+ h.sheets.primary(h,"Start fresh challenge",func(): begin(h,id,true,true,challenge),box)
+ h.button("Keep current attempt",func(): overview(h),box)
+
+func begin(h, id: String = Quest.ID, replay: bool = false, reset: bool = false, challenge: String = "relaxed") -> void:
  if not Quest.unlocked(h.model,id): return
  if replay and not h.model.state.get("expeditions",{}).get(id,{}).get("completed",false): return
- active_id = id; selected = 4; replaying = replay
+ if challenge != "relaxed" and (challenge not in Mastery.VARIANTS or not replay): return
+ active_id = id; selected = 4; replaying = replay; variant = challenge
+ if variant != "relaxed":
+  if not h.model.state.has("expedition_trials"): h.model.state.expedition_trials = {}
+  var entry := Mastery.key(id,variant)
+  if reset or not h.model.state.expedition_trials.has(entry): h.model.state.expedition_trials[entry] = Mastery.fresh(id,variant)
+  status = ""; save_progress(h); show_board(h); return
  var field := "expedition_attempts" if replaying else "expeditions"
  if not h.model.state.has(field): h.model.state[field] = {}
  if reset or not h.model.state[field].has(active_id): h.model.state[field][active_id] = Quest.fresh(active_id)
@@ -50,6 +74,7 @@ func show_board(h) -> void:
  var s: Dictionary = record(h)
  var box: VBoxContainer = h.modal_content(("Replay · " if replaying else "Expedition · ")+Quest.NAMES[active_id])
  h.modal_screen = "expedition"
+ if variant != "relaxed": h.sheets.caption(h,Mastery.NAMES[variant]+" · "+Mastery.RULES[variant],box)
  h.label(Quest.goal(s),18,box)
  var p := Quest.progress(s)
  h.sheets.caption(h,"Water %d / %d · Groves %d / 2 · Habitats %d / 2 · Season %d" % [s.plots.count("water"),Quest.budget(s,"water"),p.groves,p.habitats,s.seasons],box)
@@ -88,18 +113,27 @@ func update_selection(h) -> void:
  board.selected = selected; board.queue_redraw()
 func change(h, kind: String) -> void:
  var s: Dictionary = record(h)
- if not Quest.place(s,selected,kind): status = "Terrain limit reached or plot protected. Change an existing supply to Meadow to reuse it elsewhere."
+ var changed: bool = Quest.place(s,selected,kind) if variant == "relaxed" else Mastery.place(h.model.state.expedition_trials[Mastery.key(active_id,variant)],selected,kind)
+ if not changed: status = "Terrain limit reached or plot protected. Change an existing supply to Meadow to reuse it elsewhere."
  else: status = "Layout changed. Advance a season when you want to see the trees respond."
  save_progress(h); show_board(h)
 func complete(h) -> void:
  var s: Dictionary = record(h)
  if s.completed or not Quest.progress(s).ready: return
+ if variant != "relaxed":
+  var before: Dictionary = h.model.state.duplicate(true)
+  var trial: Dictionary = h.model.state.expedition_trials[Mastery.key(active_id,variant)]
+  var qualified: bool = Mastery.qualified(trial)
+  if not Mastery.finish(h.model,active_id,variant): return
+  if not h.store.save_state(h.model.state): h.model.state = before; status = "Save failed. Your attempt and best were kept."; show_board(h); return
+  status = "Personal best recorded when improved." if qualified else "Restored as practice. Try again within four seasons for the challenge."
+  show_board(h); return
  s.completed = true
  if not h.store.save_state(h.model.state):
   s.completed = false; status = "Could not save restoration. Your layout is kept; try completing again."; show_board(h); return
  if not replaying: h.services.register_expedition_completion(active_id)
  h.services.event("expedition_replay_completed" if replaying else "expedition_completed",{"id":active_id,"seasons":s.seasons})
- status = Quest.NAMES[active_id]+" is alive again!"
+ status = Quest.NAMES[active_id]+" is alive again!"+(" Home reward earned: "+Rewards.DESCRIPTIONS[active_id] if not replaying else "")
  show_board(h)
 func save_progress(h) -> bool:
  h.persist()

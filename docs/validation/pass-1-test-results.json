@@ -1,0 +1,219 @@
+{
+  "utc": "2026-11-05T18:03:09.311765+00:00",
+  "source_sha256": "57edde30b16cead140ff5d4dfe66b5670528ad06493e8c9e4f96509369290d4f",
+  "source_unchanged_during_run": true,
+  "passed": true,
+  "assertions": 1607,
+  "results": [
+    {
+      "suite": "run",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 44
+    },
+    {
+      "suite": "campaign",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 65
+    },
+    {
+      "suite": "save_validation",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 319
+    },
+    {
+      "suite": "save_io_failures",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 11
+    },
+    {
+      "suite": "fusion_edges",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 10
+    },
+    {
+      "suite": "input_gestures",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 11
+    },
+    {
+      "suite": "layout",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 17
+    },
+    {
+      "suite": "presentation",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 44
+    },
+    {
+      "suite": "gameplay_pacing",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 28
+    },
+    {
+      "suite": "services",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 29
+    },
+    {
+      "suite": "screens",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 87
+    },
+    {
+      "suite": "scene_smoke",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 42
+    },
+    {
+      "suite": "touch_ui",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 47
+    },
+    {
+      "suite": "mobile_layout",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 156
+    },
+    {
+      "suite": "sheet_layout",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 36
+    },
+    {
+      "suite": "draft_flow",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 22
+    },
+    {
+      "suite": "island_environment",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 42
+    },
+    {
+      "suite": "build_flow",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 78
+    },
+    {
+      "suite": "expansion_pricing",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 26
+    },
+    {
+      "suite": "orbit_world",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 140
+    },
+    {
+      "suite": "painted_art",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 12
+    },
+    {
+      "suite": "expedition",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 49
+    },
+    {
+      "suite": "finale",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 17
+    },
+    {
+      "suite": "thermal_expeditions",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 25
+    },
+    {
+      "suite": "gather",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 26
+    },
+    {
+      "suite": "habitat_projects",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 27
+    },
+    {
+      "suite": "habitat_guidance",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 18
+    },
+    {
+      "suite": "layout_recovery",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 29
+    },
+    {
+      "suite": "expedition_replay",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 16
+    },
+    {
+      "suite": "restoration_chapter",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 15
+    },
+    {
+      "suite": "restoration_campaign",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 85
+    },
+    {
+      "suite": "director_clarity",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": 34
+    },
+    {
+      "suite": "automation_pacing",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": null
+    },
+    {
+      "suite": "progression_simulation",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": null
+    },
+    {
+      "suite": "startup",
+      "passed": true,
+      "exit_code": 0,
+      "assertions": null
+    }
+  ]
+}

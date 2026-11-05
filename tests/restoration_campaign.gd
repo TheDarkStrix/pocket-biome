@@ -144,7 +144,7 @@ func run() -> void:
  learner.harvest("0,0")
  check(Learn.current(learner).action == "expand","harvesting leads to spatial choice")
  learner.begin_draft("-1,0")
- check(Learn.current(learner).body.contains("Inspect card"),"the draft step teaches comparing actual cards")
+ check(Learn.current(learner).body.contains("Info"),"the draft step teaches comparing actual cards")
  learner.place(1)
  check(Learn.current(learner).action == "inspect","placement leads to observing live conditions")
  for second in range(4): learner.tick(1)

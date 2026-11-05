@@ -27,6 +27,7 @@ func choose(h, at: String) -> void:
  h.sheets.art(h,box,h.model.state.tiles[source].type,h.model.state.tiles[source].evolution,140)
  h.label("Conditions, level, cooldowns, production schedule and pause state stay unchanged. The original plot becomes Meadow. No materials or Coins are charged.",16,box)
  h.sheets.caption(h,"Nearby production and habitats will follow the new location.",box)
+ h.label(preload("res://scripts/EcologyDirector.gd").consequences(h.model,"",at,source),15,box)
  h.sheets.primary(h,"Confirm move",func(): confirm(h),box)
  h.button("Choose another plot",func(): h.modal.hide(),box)
  h.button("Cancel move",func(): h.modal.hide(); cancel(h),box)

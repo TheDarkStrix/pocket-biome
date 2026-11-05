@@ -13,7 +13,7 @@ func completed_world():
    if not m.state.tiles.has(m.key(Vector2i(x,y))): m.add_tile(Vector2i(x,y),"grass")
  m.state.expansions = m.state.tiles.size()-4
  for recipe in m.config.recipes+m.config.fusions: m.state.discoveries.append(recipe.id)
- m.state.objectives = [0,1,2]; m.state.chapter = 5; m.state.chapter_rewards = [1,2,3,4]
+ m.state.objectives = [0,1,2]; m.state.chapter = 5; m.state.chapter_rewards = [1,2,3,4,5]
  m.state["habitat_projects"] = ["sanctuary_network"]
  m.state.settings.tutorial_seen = true
  m.campaign.evaluate(m)

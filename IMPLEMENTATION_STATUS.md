@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated 2026-11-04. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
+Updated 2026-11-05. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
 
 | Phase | Implemented | Remaining acceptance work |
 |---|---|---|
@@ -11,7 +11,11 @@ Updated 2026-11-04. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md
 | 4 — presentation | Distinct generated artwork for 20 discoveries, terrain/nodes/structures, depleted states, resource/UI icons, illustrated cards, DNA bars, reveals, crossfades/fusion/weather feedback, original synthesized cues/ambient loop, photo/share, accessibility/audio controls | Further graphical/device review; listening and human polish review; texture-edge refinement where needed |
 | 5 — Android release | Toolchain and native plugin compile; signed debug APK built and installed on API29 emulator | Current OpenGL debug APK installed/resumed/rendered; remaining: device matrix/performance, live sandbox ad/purchase/restore, release signing/AAB/store policy review |
 
-## Restoration gameplay checkpoint
+## Current director delivery
+
+Three development/audit passes implement the revised living climate, direct controls/previews, live sanctuary ending, expedition rewards/mastery, wildlife routes, identity/decorations/portraits, optional visitor requests, return flow, local playtest reporting and native ad-delivery measurement. See [delivery and remaining release requirements](docs/DIRECTOR_DELIVERY.md) and [audit scorecard](docs/DIRECTOR_ITERATIONS.md). Real-player enjoyment and physical-device/live-provider acceptance remain unverified.
+
+## Previous restoration gameplay checkpoint
 
 The campaign now requires distinct spring, garden, workshop, climate-refuge and connected-sanctuary restorations. Earned water/shade/warmth tools, landscape movement, alternative habitat layouts, live visitor preferences and guidance through the first useful building are implemented. See [Restoration campaign](docs/RESTORATION_CAMPAIGN.md) for rules, compatibility and validation limits. Current test/APK evidence is recorded in the latest [game audit](docs/CURRENT_GAME_AUDIT.md). The historical paused-session note below predates resumed development.
 

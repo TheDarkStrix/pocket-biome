@@ -7,6 +7,8 @@ var operations := 0
 var manual_collections := 0
 var milestones := []
 var automation_first := false
+var primary_route := false
+var living_climate := false
 func fail(message: String) -> void:
  printerr("PROGRESSION FAIL: "+message)
  quit(1)
@@ -74,6 +76,9 @@ func mark(name: String, details: Dictionary = {}) -> void:
 func _init() -> void:
  # Fix only the starting seed. Earned progression uses public transactions; waiting is accelerated.
  automation_first = OS.get_cmdline_user_args().has("--automation-first")
+ primary_route = OS.get_cmdline_user_args().has("--primary-route")
+ living_climate = OS.get_cmdline_user_args().has("--living-climate")
+ if living_climate: m.state.ecology_rules = "balanced"
  m.state.seed = 90210
  m.occurred.connect(func(name: String, data: Dictionary):
   if name in ["tile_placed","biome_discovered","fusion_completed","chapter_completed","world_pulse_used","structure_upgraded"]: mark(name,data))
@@ -97,6 +102,7 @@ func _init() -> void:
  var sources := {"rainforest":["water"],"ember":["vent","crystal"],"lake":["crystal"],"steam":["water","vent"],"frozen":["glacier","water"],"meadow":["forest","water"],"mossrock":["forest","water"],"reedwater":["forest"],"sunstone":["vent","crystal"],"mistforest":["water","glacier"],"crystalforest":["crystal","stone"],"oasis":["water","vent"],"ironwood":["vent","stone"],"moonflower":["crystal","glacier"],"obsidian":["vent","crystal"],"celestial":["water","forest","stone","crystal"]}
  var around := ["2,3","4,3","3,2","3,4"]
  for recipe in m.config.recipes:
+  if primary_route and m.state.discoveries.size() >= 6: break
   if m.state.discoveries.has(recipe.id): continue
   for key in around: set_plot(key,"grass")
   for i in range(sources[recipe.id].size()): set_plot(around[i],sources[recipe.id][i])
@@ -113,22 +119,29 @@ func _init() -> void:
  set_plot("2,2","glacier")
  for i in range(30): second()
  if not m.state.get("habitat_projects",[]).has("sanctuary_network"): fail("connected restoration campaign unreachable: "+str(m.state.get("habitat_projects",[]))); return
+ if primary_route:
+  buy("-2,0"); buy("-2,1")
  for y in range(4):
-  for x in [-1,-2,-3,-4]: buy("%d,%d" % [x,y])
+  for x in [-1,-2,-3,-4]:
+   if primary_route and m.state.tiles.size() >= 25: break
+   buy("%d,%d" % [x,y])
  var origins := [Vector2i(-2,0),Vector2i(-4,0),Vector2i(-2,2),Vector2i(-4,2)]
- for i in range(m.config.fusions.size()):
+ for i in range(1 if primary_route else m.config.fusions.size()):
   var recipe: Dictionary = m.config.fusions[i]
   var origin: Vector2i = origins[i]
   for offset in [Vector2i.ZERO,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.ONE]: set_plot(m.key(origin+offset),recipe.type)
   if not m.fuse(m.key(origin)): fail("fusion rejected "+recipe.id); return
- for i in range(5): second()
- if m.state.discoveries.size() != 20: fail("catalog incomplete"); return
+ # Reopen the spring after sanctuary fusion replaced its old Water footprint.
+ if not preload("res://scripts/LayoutTools.gd").dismantle(m,"-2,0"): fail("cannot recover the original spring footprint"); return
+ set_plot("-1,0","water"); set_plot("-1,1","water")
+ for i in range(30): second()
+ if not primary_route and m.state.discoveries.size() != 20: fail("catalog incomplete"); return
  if m.state.chapter_rewards.size() != 5: fail("chapter goals incomplete "+str(m.state.stats)); return
  var store = preload("res://scripts/SaveStore.gd").new()
  store.path = "user://complete-progression-test.json"
  if not store.save_state(m.state): fail("final world failed save validation: "+store.error); return
  var restored: Dictionary = store.load_state()
- if restored.discoveries.size() != 20 or restored.chapter_rewards.size() != 5: fail("final progression not restored"); return
+ if (not primary_route and restored.discoveries.size() != 20) or restored.chapter_rewards.size() != 5: fail("final progression not restored"); return
  var max_gap := 0.0
  var prior := 0.0
  var first_fifteen := []
@@ -136,7 +149,10 @@ func _init() -> void:
   max_gap = maxf(max_gap,milestone.active_seconds-prior); prior = milestone.active_seconds
   if milestone.active_seconds <= 900: first_fifteen.append(milestone)
  var evidence := {"seed":90210,"policy":"Collect ready resources, prefer Wood when offered, craft/restore through public transactions; trade surplus above 200.","automation_first":automation_first,"active_seconds":elapsed,"manual_collections":manual_collections,"total_harvests_including_automation":m.state.harvests,"tracked_progression_operations":operations,"max_gap_between_progress_events_seconds":max_gap,"first_fifteen_minutes":first_fifteen,"note":"Omniscient accelerated simulation; not a human session or enjoyment/retention result."}
- var evidence_file := FileAccess.open("res://artifacts/pacing-automation.json" if automation_first else "res://artifacts/pacing-simulation.json",FileAccess.WRITE)
+ evidence["living_climate"] = living_climate; evidence["primary_route"] = primary_route; evidence["discoveries"] = m.state.discoveries.size()
+ var evidence_file := FileAccess.open("res://artifacts/pacing-primary.json" if primary_route else "res://artifacts/pacing-balanced.json" if living_climate else "res://artifacts/pacing-automation.json" if automation_first else "res://artifacts/pacing-simulation.json",FileAccess.WRITE)
  evidence_file.store_string(JSON.stringify(evidence,"  ")); evidence_file.close()
+ if primary_route:
+  print("PRIMARY ROUTE RESULT: all 5 chapters, %d discoveries, %d active seconds" % [m.state.discoveries.size(),elapsed]); quit(0); return
  print("PROGRESSION RESULT: all 20 discoveries, all 5 chapters, %d cells, %d gameplay transactions, %d active seconds, coins %d" % [m.state.tiles.size(),operations,elapsed,m.state.coins])
  quit(0)

@@ -57,6 +57,7 @@ func run() -> void:
  check(h.store.load_state().habitat_projects.has("shaded_pond") and h.model.state.coins == initial+40,"successful claim commits reward and receipt together")
  h.habitat_ui.claim(h,"shaded_pond")
  check(h.model.state.coins == initial+40,"repeated real UI callback cannot duplicate a committed reward")
+ h.habitat_ui.show_projects(h)
  h.model.state.tiles["0,0"].dna.moisture = 0; h.refresh()
  check(h.habitat_visitors.is_empty(),"rendered visitor cache follows current habitat conditions")
  check(button(h.modal_box,"Complete project · 60 Coins").disabled,"an open project screen updates when an environmental condition becomes unsuitable")

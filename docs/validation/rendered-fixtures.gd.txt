@@ -1,0 +1,53 @@
+extends SceneTree
+const Model=preload("res://scripts/WorldModel.gd")
+const Identity=preload("res://scripts/SanctuaryIdentity.gd")
+const Projects=preload("res://scripts/HabitatProjects.gd")
+const Mastery=preload("res://scripts/ExpeditionMastery.gd")
+const Quest=preload("res://scripts/Expedition.gd")
+var h
+func _init() -> void: call_deferred("run")
+func shot(name: String) -> void:
+ for frame in range(8): await process_frame
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/director-review/final-"+name+".png")
+func solve(trial: Dictionary,id: String) -> void:
+ if id=="frost_hollow":
+  Mastery.place(trial,1,"vent")
+  for index in [6,8]:Mastery.place(trial,index,"water")
+  for index in [3,5]:Mastery.place(trial,index,"flowers")
+ else:
+  for index in ([1,4,7] if id=="river_link" else [3,4,5]):Mastery.place(trial,index,"water")
+  for index in ([3,5] if id=="river_link" else [1,7]):Mastery.place(trial,index,"flowers")
+ for season in range(3):Quest.advance(trial.board)
+func run() -> void:
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://director-final-capture.json"
+ root.add_child(h);await process_frame;h.set_process(false)
+ h.model=Model.new();h.model.state.ecology_rules="balanced";Identity.remember_start(h.model);Identity.rename(h.model,"Clover Hollow")
+ for entry in [[Vector2i(-1,0),"water"],[Vector2i(-1,1),"water"],[Vector2i(1,1),"workbench"],[Vector2i(2,1),"windmill"],[Vector2i(1,2),"forest"],[Vector2i(0,2),"forest"],[Vector2i(-1,2),"water"],[Vector2i(1,3),"water"],[Vector2i(2,2),"glacier"],[Vector2i(2,3),"grass"]]:h.model.add_tile(entry[0],entry[1])
+ for at in ["0,0","0,1","0,2","1,2"]:h.model.state.tiles[at].dna.moisture=75;h.model.state.tiles[at].dna.fertility=80
+ h.model.state.discoveries=["rainforest"];h.model.state.objectives=[0,1,2];h.model.state.settings.tutorial_seen=true;h.model.state.chapter=4;h.model.state.chapter_rewards=[1,2,3]
+ h.model.state.expansions=h.model.state.tiles.size()-4;h.services.model=h.model
+ for id in Projects.IDS:Projects.claim(h.model,id)
+ h.model.state.visitor_requests=["woodland_visit","sheltered_visit","evening_walk"]
+ for entry in [["0,0","sign"],["1,1","bench"],["-1,0","reeds"],["0,1","flowers"],["1,2","firefly"],["2,3","path"]]:Identity.decorate(h.model,entry[0],entry[1])
+ h.refresh();h.start_play();h.modal.hide();h.presentation.advance(10);h.reveal_queue.clear();h.frame_world();h.game_hud.show_selection();h.island_actions.update(h)
+ await shot("island")
+ h.ambient_time=8;h.queue_redraw();await shot("visitors-moving")
+ h.identity_ui.show(h);await shot("personalize")
+ h.identity_ui.portraits(h);await shot("portraits")
+ for cell in [Vector2i(3,0),Vector2i(4,0),Vector2i(3,1),Vector2i(4,1)]:h.model.add_tile(cell,"forest")
+ h.model.state.expansions=h.model.state.tiles.size()-4;h.model.fuse("3,0");h.refresh();h.presentation.advance(10);h.identity_ui.portraits(h);await shot("fused-portraits")
+ h.visitor_requests.show_requests(h);await shot("visitor-requests")
+ h.sanctuary_life.show_notes(h);await shot("field-notes")
+ h.model.state.expeditions={}
+ for id in Quest.ISLANDS:
+  var trial=Mastery.fresh(id,"swift");solve(trial,id);trial.board.completed=true;h.model.state.expeditions[id]=trial.board
+ h.expedition_ui.overview(h);await shot("expedition-rewards")
+ h.expedition_ui.begin(h,"dry_springs",true,true,"careful");await shot("mastery")
+ h.expedition_ui.variant="relaxed";h.return_summary.show(h);await shot("return")
+ h.modal.hide();h.placement_blueprint="water";h.model.state.blueprints["water"]=1;h.island_actions.deploy_prompt(h,"water","2,3");await shot("blueprint-preview")
+ root.size=Vector2i(320,640);h.model.state.text_scale=1.2;h.apply_settings();h.identity_ui.portraits(h);h.apply_layout();await shot("small-portraits")
+ h.identity_ui.show(h);h.apply_layout();await shot("small-personalize")
+ h.expedition_ui.begin(h,"river_link",true,true,"swift");h.apply_layout();await shot("small-mastery")
+ h.queue_free();h=null;await process_frame;await create_timer(0.2).timeout;quit()

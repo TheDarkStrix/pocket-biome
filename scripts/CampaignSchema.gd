@@ -7,6 +7,11 @@ static func validate(store, s: Dictionary, config: Dictionary) -> bool:
  if s.has("habitat_projects") and not preload("res://scripts/HabitatProjects.gd").validate(s.habitat_projects): return false
  if s.has("learning") and not preload("res://scripts/LearningJourney.gd").validate(s.learning): return false
  if s.has("restoration_care") and not preload("res://scripts/RestorationCare.gd").validate(store,s): return false
+ if s.has("ecology_rules") and s.ecology_rules not in ["classic","balanced"]: return false
+ if s.has("private_playtest") and not s.private_playtest is bool: return false
+ if not preload("res://scripts/ExpeditionMastery.gd").validate(store,s): return false
+ if not preload("res://scripts/SanctuaryIdentity.gd").validate(store,s,config): return false
+ if s.has("visitor_requests") and not preload("res://scripts/VisitorRequests.gd").validate(s.visitor_requests): return false
  var defaults := Campaign.defaults()
  if not s.get("audio_levels") is Dictionary: return false
  for field in ["music","sfx"]:

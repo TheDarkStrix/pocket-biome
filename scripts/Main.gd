@@ -24,6 +24,15 @@ var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
 var habitat_visitors: Array = []
 var care_ui = preload("res://scripts/RestorationCareUI.gd").new()
 var wildlife_initialized := false
+var identity_ui = preload("res://scripts/PersonalizeUI.gd").new()
+var visitor_requests = preload("res://scripts/VisitorRequests.gd").new()
+var return_summary = preload("res://scripts/ReturnSummary.gd").new()
+var resume_seed := -1
+var sanctuary_life = preload("res://scripts/SanctuaryLife.gd").new()
+var life_routes: Array = []
+var island_actions = preload("res://scripts/IslandActions.gd").new()
+var restoration_moment = preload("res://scripts/RestorationMoment.gd").new()
+var playtest = preload("res://scripts/PlaytestReport.gd").new()
 var layout_ui = preload("res://scripts/LayoutUI.gd").new()
 var services = preload("res://scripts/ServiceHub.gd").new()
 var placement_blueprint := ""
@@ -100,6 +109,8 @@ var mouse_orbit_drag := false
 
 func _ready() -> void:
  add_child(audio_feedback)
+ add_child(playtest)
+ playtest.attach(model)
  services.model = model
  add_child(services)
  services.changed.connect(func():
@@ -108,8 +119,12 @@ func _ready() -> void:
   elif modal.visible and modal_screen in ["draft","draft_info"]: draft()
   elif modal.visible and modal_screen == "codex_detail": campaign_ui.detail(self,campaign_ui.focus_id))
  var loaded = store.load_state()
+ if loaded.is_empty():
+  model.state.ecology_rules = "balanced"
+  preload("res://scripts/SanctuaryIdentity.gd").remember_start(model)
  if not loaded.is_empty():
   model.state = loaded
+  if model.state.time >= 10: resume_seed = int(model.state.seed)
   if store.error != "": model.message = store.error
  services.model = model
  services.save_path = store.path
@@ -208,6 +223,7 @@ func build_ui() -> void:
  root.theme = ThemeKit.theme()
  layer.add_child(root)
  game_hud.build(self,root)
+ island_actions.build(self)
  if orbit_enabled:
   orbit_pad=preload("res://scripts/OrbitPad.gd").new();orbit_pad.host=self;root.add_child(orbit_pad)
  notice_toast = PanelContainer.new()
@@ -309,6 +325,8 @@ func target(power: String) -> void:
  refresh()
 
 func modal_content(title: String) -> VBoxContainer:
+ playtest.attach(model)
+ playtest.record("screen_opened",{"screen":title})
  if layout_ui.source != "" and not layout_ui.opening_confirmation:
   layout_ui.source = ""; layout_ui.destination = ""; layout_ui.source_id = -1
  if modal_screen == "build" and not launch_menu and not photo_mode:
@@ -387,6 +405,7 @@ func inspect_card(index: int) -> void:
  sheets.art(self,box,type,"",188)
  label(card_hint(type),18,box)
  label(preload("res://scripts/GameplayAdvisor.gd").placement(model,type,model.state.pending.at),16,box)
+ sheets.caption(self,preload("res://scripts/EcologyDirector.gd").consequences(model,type,model.state.pending.at),box)
  if definition.resource != "": label("Produces 1 %s every %ds" % [definition.resource.capitalize(),definition.cooldown],16,box)
  var attributes := GridContainer.new(); attributes.columns = 2; attributes.add_theme_constant_override("h_separation",16); box.add_child(attributes)
  for i in range(5):
@@ -537,13 +556,16 @@ func queue_save() -> void:
  save_dirty = true
 
 func persist() -> void:
+ playtest.attach(model)
  dirty_elapsed = 0.0
  save_dirty = not store.save_state(model.state)
  if save_dirty:
   model.message = "Save failed: " + store.error
   services.event("save_failed",{"reason":store.error})
+  playtest.record("save_failed",{"reason":store.error})
 
 func refresh() -> void:
+ playtest.attach(model)
  for id in model.state.discoveries:
   if seen_discoveries.has(id): continue
   seen_discoveries.append(id)
@@ -558,6 +580,7 @@ func refresh() -> void:
   for id in old_ids:
    if not new_ids.has(id): model.message = preload("res://scripts/HabitatProjects.gd").ANIMALS[id]+" are waiting for suitable habitat. Review restoration projects; earned rewards stay yours."
  habitat_visitors = visitors_now; wildlife_initialized = true
+ life_routes = preload("res://scripts/SanctuaryLife.gd").routes(model)
  presentation.sync(model.state.tiles)
  if model.state.settings.reduced_motion: presentation.animations.clear()
  services.model = model
@@ -659,10 +682,7 @@ func tap(pos: Vector2) -> void:
  if layout_ui.source != "":
   layout_ui.choose(self,hit(pos))
  elif placement_blueprint != "":
-  if model.deploy(placement_blueprint,k):
-   placement_blueprint = ""
-   services.event("structure_placed")
-  else: model.message = "Choose an empty Grass tile. Blueprint kept."
+  island_actions.deploy_prompt(self,placement_blueprint,k)
  elif targeting != "":
   if model.origin(k) != "" and preview != model.origin(k):
    preview = model.origin(k)
@@ -817,6 +837,7 @@ func constrain_camera() -> void:
 
 func _process(delta: float) -> void:
  game_hud.update_selection(self,delta)
+ island_actions.update(self)
  if not suspended and not photo_mode and not model.state.settings.reduced_motion:
   presentation.advance_motors(model.state.tiles,minf(delta,0.1))
   ambient_time += minf(delta,0.1)
@@ -1005,10 +1026,14 @@ func _draw() -> void:
   for neighbor in preload("res://scripts/GameplayAdvisor.gd").placement_neighbors(model,target):
    draw_plot_outline(entity_screen(neighbor),zoom_level,Color("8edbd1"),2.0)
 
- for visitor in habitat_visitors:
-  for index in range(visitor.get("count",1)):
-   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,visitor.id,entity_screen(visitor.key)+Vector2(index*12,-index*4)*zoom_level,zoom_level,ambient_time+index,model.state.settings.reduced_motion or photo_mode or suspended)
+ for route in life_routes:
+  var still: bool = model.state.settings.reduced_motion or photo_mode or suspended
+  var location: Vector2 = preload("res://scripts/SanctuaryLife.gd").position(route,self,ambient_time,still)
+  for index in range(route.count):
+   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,route.id,location+Vector2(index*12,-index*4)*zoom_level,zoom_level,ambient_time+index,still)
  draw_restoration_care()
+ island_actions.draw(self)
+ preload("res://scripts/SanctuaryIdentity.gd").draw(self)
  var lesson := preload("res://scripts/LearningJourney.gd").current(model)
  if not photo_mode and not launch_menu and not modal.visible and not lesson.is_empty() and lesson.get("target","") == "0,0":
   draw_plot_outline(entity_screen("0,0"),zoom_level,Color("ead7a0"),2.0)
@@ -1094,6 +1119,7 @@ func open_inspector(key: String) -> void:
   var held := PackedStringArray()
   for resource in reserve: held.append("%d %s" % [reserve[resource],resource.capitalize()])
   label("Automatic production keeps "+", ".join(held)+" for construction. Manual crafting can use this reserve.",15,box)
+ island_actions.inspect_tools(self,key,box)
  var readings := GridContainer.new(); readings.columns = 2; readings.add_theme_constant_override("h_separation",16); readings.add_theme_constant_override("v_separation",10); box.add_child(readings)
  for attribute in model.config.attributes:
   var group := VBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL; readings.add_child(group)
@@ -1139,6 +1165,7 @@ func update_inspection() -> void:
  var at: String = model.origin(inspection_view.key)
  if at == "": dismiss_inspection(); return
  var tile: Dictionary = model.state.tiles[at]
+ if inspection_view.has("outlook"): inspection_view.outlook.text = preload("res://scripts/EcologyDirector.gd").outlook(model,at)
  inspection_view.title.text = tile_title(tile)
  inspection_view.image.evolution = tile.evolution
  inspection_view.image.queue_redraw()
@@ -1309,7 +1336,7 @@ func start_screen() -> void:
  menu_spacer = Control.new()
  menu_spacer.custom_minimum_size.y = get_viewport_rect().size.y*0.36
  launch_screen.add_child(menu_spacer)
- var play := button("Continue your world" if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
+ var play := button("Continue "+preload("res://scripts/SanctuaryIdentity.gd").name_of(model) if model.state.harvests > 0 else "Start exploring",start_play,launch_screen)
  play.custom_minimum_size = Vector2(360,60*logical_per_dp())
  play.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
  play.add_theme_stylebox_override("normal",MaterialUI.primary())
@@ -1340,6 +1367,7 @@ func new_world_dialog() -> void:
  label("Your current world will be archived in app storage. This starts a fresh island; permanent purchase entitlements remain.",17,box)
  button("Archive and start fresh",func():
   persist()
+  if save_dirty: return
   var from := ProjectSettings.globalize_path(store.path)
   var to := ProjectSettings.globalize_path("user://world_archive_%d.json" % int(Time.get_unix_time_from_system()))
   if FileAccess.file_exists(from) and DirAccess.copy_absolute(from,to) != OK:
@@ -1347,6 +1375,9 @@ func new_world_dialog() -> void:
    return
   var entitlements: Array = model.state.entitlements.duplicate()
   model = Model.new()
+  model.state.ecology_rules = "balanced"
+  preload("res://scripts/SanctuaryIdentity.gd").remember_start(model)
+  resume_seed = -1; return_summary.shown = false
   model.occurred.connect(services.event)
   model.state.entitlements = entitlements
   if entitlements.has("founders"): model.state.blueprints["lantern"] = 1
@@ -1369,6 +1400,7 @@ func start_play() -> void:
   persist()
   campaign_ui.welcome(self)
  elif not model.state.pending.is_empty(): draft()
+ elif resume_seed == int(model.state.seed): return_summary.show(self)
  refresh()
 
 func check_transition_ad() -> void:

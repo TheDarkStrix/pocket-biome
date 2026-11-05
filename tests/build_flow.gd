@@ -97,6 +97,9 @@ func run() -> void:
  h.campaign_ui.workshop(h); await settle(h)
  await click(confirm(h.campaign_ui.build_tray)); await settle(h)
  touch(h.screen(Vector2.ONE),true); await process_frame; touch(h.screen(Vector2.ONE),false); await process_frame
+ for placement_action in h.modal_box.find_children("*","Button",true,false):
+  if placement_action.text == "Confirm blueprint placement": await click(placement_action); break
+ await settle(h)
  check(h.model.state.tiles["1,1"].type == "workbench" and h.model.state.blueprints.workbench == 0,"touching an empty Grass plot deploys one real blueprint from the new tray")
  check(h.store.load_state().tiles["1,1"].type == "workbench","the complete Build-to-island touch flow survives save restoration")
  h.campaign_ui.workshop(h); await settle(h)

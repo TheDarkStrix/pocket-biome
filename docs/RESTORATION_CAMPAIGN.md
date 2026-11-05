@@ -1,5 +1,7 @@
 # Restoration campaign and player journey
 
+Latest changes: [Director delivery](DIRECTOR_DELIVERY.md). The final goal now requires a currently thriving connected network and 25 cells; exhaustive collection is optional. New islands use local climate balance and deliberate cultivation. Existing saves retain their rules unless switched in Settings. Later sections retain the earlier implementation checkpoint.
+
 Implemented 2026-11-04. This connects the existing discovery/building game to authored home-island restoration goals. Four expedition puzzles remain complementary activities. The painted art direction, saved discoveries, ordinary gathering and existing commercial caps are retained.
 
 ## What a player does

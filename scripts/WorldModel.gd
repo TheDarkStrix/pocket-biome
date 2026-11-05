@@ -194,6 +194,9 @@ func tick(seconds: float = 1.0) -> void:
  for k in keys:
   var t: Dictionary = state.tiles[k]
   if t.has("owner"): continue
+  if preload("res://scripts/EcologyDirector.gd").balanced(self):
+   buffer[k] = preload("res://scripts/EcologyDirector.gd").next_values(self,k)
+   continue
   buffer[k] = t.dna.duplicate()
   for n in neighbors(k):
    var effects: Dictionary = emissions.get(n,{})
@@ -216,11 +219,14 @@ func evaluate_once() -> bool:
  keys.sort()
  for k in keys:
   var t: Dictionary = state.tiles[k]
-  if t.has("owner") or t.size == 4: continue
+  if t.has("owner") or t.size == 4 or t.get("cultivated",false): continue
   var current_tier := 0
   for known in config.recipes:
    if known.id == t.evolution: current_tier = known.tier
-  for r in config.recipes:
+  var candidates: Array = config.recipes.duplicate()
+  if preload("res://scripts/EcologyDirector.gd").balanced(self):
+   candidates.sort_custom(func(a,b): return a.tier < b.tier if a.tier != b.tier else a.max.size() > b.max.size())
+  for r in candidates:
    if not t.type in r.types or r.tier <= current_tier: continue
    var ok := true
    for structure in r.structures:
@@ -311,6 +317,8 @@ func fuse(k: String) -> bool:
  for cell in cells: shared_ready = maxf(shared_ready,state.tiles[cell].ready)
  var first: Dictionary = state.tiles[k]
  first.ready = shared_ready
+ first.erase("cultivated")
+ preload("res://scripts/RestorationCare.gd").fuse_cells(self,cells,k)
  first.dna = dna
  first.size = 4
  first.evolution = recipe.id

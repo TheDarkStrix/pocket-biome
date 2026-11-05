@@ -28,6 +28,7 @@ import java.io.File
 class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListener {
     override fun getPluginName() = "PocketServices"
     override fun getPluginSignals(): Set<SignalInfo> = setOf(
+        SignalInfo("ad_lifecycle", String::class.java),
         SignalInfo("ad_ready", java.lang.Boolean::class.java),
         SignalInfo("interstitial_ready", java.lang.Boolean::class.java),
         SignalInfo("ad_rewarded", String::class.java),
@@ -37,6 +38,15 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         SignalInfo("products_updated", String::class.java),
         SignalInfo("service_error", String::class.java)
     )
+    private var adSequence = 0L
+    private var rewardedPlacement = ""
+    private var interstitialPlacement = ""
+    private fun nextPlacement(kind: String): String { adSequence += 1; return "$kind:$adSequence" }
+    private fun adLifecycle(event: String, kind: String, placement: String, value: AdValue? = null) {
+        val data = JSONObject().put("event",event).put("kind",kind).put("placement",placement)
+        if (value != null) data.put("value_micros",value.valueMicros).put("currency",value.currencyCode).put("precision",value.precisionType)
+        emitSignal("ad_lifecycle",data.toString())
+    }
     private var rewarded: RewardedAd? = null
     private var interstitial: InterstitialAd? = null
     private var billing: BillingClient? = null
@@ -155,9 +165,15 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         val host = activity ?: return
         host.runOnUiThread {
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) return@runOnUiThread
+            val placement = nextPlacement("rewarded")
+            adLifecycle("request","rewarded",placement)
             RewardedAd.load(host, "ca-app-pub-3940256099942544/5224354917", AdRequest.Builder().build(), object: RewardedAdLoadCallback() {
-                override fun onAdLoaded(ad: RewardedAd) { rewarded = ad; emitSignal("ad_ready", true) }
-                override fun onAdFailedToLoad(error: LoadAdError) { rewarded = null; emitSignal("ad_ready", false) }
+                override fun onAdLoaded(ad: RewardedAd) {
+                    rewarded = ad; rewardedPlacement = placement
+                    ad.setOnPaidEventListener { value -> adLifecycle("paid","rewarded",placement,value) }
+                    adLifecycle("loaded","rewarded",placement); emitSignal("ad_ready", true)
+                }
+                override fun onAdFailedToLoad(error: LoadAdError) { rewarded = null; adLifecycle(if (error.code == AdRequest.ERROR_CODE_NO_FILL) "no_fill" else "load_failed","rewarded",placement); emitSignal("ad_ready", false) }
             })
         }
     }
@@ -173,13 +189,17 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
                 emitSignal("ad_failed", requestId, "Ad privacy permission is unavailable")
                 return@runOnUiThread
             }
+            val placement = rewardedPlacement
+            adLifecycle("show_requested","rewarded",placement)
             var earned = false
             ad.fullScreenContentCallback = object: FullScreenContentCallback() {
+                override fun onAdImpression() { adLifecycle("impression","rewarded",placement) }
                 override fun onAdDismissedFullScreenContent() {
+                    adLifecycle("dismissed","rewarded",placement)
                     if (!earned) emitSignal("ad_failed", requestId, "The optional ad was closed before its reward")
                     loadRewarded()
                 }
-                override fun onAdFailedToShowFullScreenContent(error: AdError) { emitSignal("ad_failed", requestId, error.message); loadRewarded() }
+                override fun onAdFailedToShowFullScreenContent(error: AdError) { adLifecycle("show_failed","rewarded",placement); emitSignal("ad_failed", requestId, error.message); loadRewarded() }
             }
             ad.show(host) {
                 earned = true
@@ -197,9 +217,15 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         val host = activity ?: return
         host.runOnUiThread {
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) return@runOnUiThread
+            val placement = nextPlacement("interstitial")
+            adLifecycle("request","interstitial",placement)
             InterstitialAd.load(host,"ca-app-pub-3940256099942544/1033173712",AdRequest.Builder().build(),object: InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) { interstitial = ad; emitSignal("interstitial_ready",true) }
-                override fun onAdFailedToLoad(error: LoadAdError) { interstitial = null; emitSignal("interstitial_ready",false) }
+                override fun onAdLoaded(ad: InterstitialAd) {
+                    interstitial = ad; interstitialPlacement = placement
+                    ad.setOnPaidEventListener { value -> adLifecycle("paid","interstitial",placement,value) }
+                    adLifecycle("loaded","interstitial",placement); emitSignal("interstitial_ready",true)
+                }
+                override fun onAdFailedToLoad(error: LoadAdError) { interstitial = null; adLifecycle(if (error.code == AdRequest.ERROR_CODE_NO_FILL) "no_fill" else "load_failed","interstitial",placement); emitSignal("interstitial_ready",false) }
             })
         }
     }
@@ -223,9 +249,12 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             val ad = interstitial ?: return@runOnUiThread
             interstitial = null
             emitSignal("interstitial_ready",false)
+            val placement = interstitialPlacement
+            adLifecycle("show_requested","interstitial",placement)
             ad.fullScreenContentCallback = object: FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() { loadInterstitial() }
-                override fun onAdFailedToShowFullScreenContent(error: AdError) { loadInterstitial() }
+                override fun onAdImpression() { adLifecycle("impression","interstitial",placement) }
+                override fun onAdDismissedFullScreenContent() { adLifecycle("dismissed","interstitial",placement); loadInterstitial() }
+                override fun onAdFailedToShowFullScreenContent(error: AdError) { adLifecycle("show_failed","interstitial",placement); loadInterstitial() }
             }
             ad.show(host)
         }

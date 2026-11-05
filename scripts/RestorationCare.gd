@@ -7,18 +7,19 @@ const EFFECTS = {"channel":{"moisture":12},"shade":{"heat":-12},"warmth":{"heat"
 const HELP = {"channel":"Adds 12 moisture every four active seconds while Water is within two edge-sharing steps through natural land.","shade":"Removes 12 heat every four active seconds. Use it to shelter a hot habitat; colder is not always better.","warmth":"Adds 12 heat every four active seconds. Move or remove it when a habitat needs cooler conditions."}
 static func unlocked(m, mode: String) -> bool:
  return mode in MODES and m.state.get("habitat_projects",[]).has(REQUIRED[mode])
-static func capacity(m) -> int: return 2 if m.state.get("habitat_projects",[]).has("sanctuary_network") else 1
+static func capacity(m, mode: String = "") -> int: return preload("res://scripts/ExpeditionRewards.gd").slots(m.state,mode)
 static func natural(m, at: String) -> bool:
  return m.state.tiles.has(at) and m.config.tiles[m.state.tiles[m.origin(at)].type].category == "natural"
 static func water_source(m, at: String) -> String:
  if not natural(m,at): return ""
  var reached := [m.origin(at)]
  var frontier := reached.duplicate()
- for distance in range(3):
+ var reach: int = preload("res://scripts/ExpeditionRewards.gd").water_reach(m)
+ for distance in range(reach+1):
   var next := []
   for key in frontier:
    if m.state.tiles[key].type == "water": return key
-   if distance == 2: continue
+   if distance == reach: continue
    for other in m.neighbors(key):
     if natural(m,other) and not reached.has(other): reached.append(other); next.append(other)
   frontier = next
@@ -31,7 +32,7 @@ static func can_assign(m, mode: String, at: String) -> bool:
  return mode != "channel" or water_source(m,at) != ""
 static func assign(m, mode: String, at: String, slot: int = 0) -> bool:
  at = m.origin(at)
- if not can_assign(m,mode,at) or slot < 0 or slot >= capacity(m): return false
+ if not can_assign(m,mode,at) or slot < 0 or slot >= capacity(m,mode): return false
  var chosen: Array = targets(m,mode).duplicate()
  if chosen.has(at): return false
  if slot > chosen.size(): return false
@@ -40,16 +41,17 @@ static func assign(m, mode: String, at: String, slot: int = 0) -> bool:
  if not m.state.has("restoration_care"):
   m.state.restoration_care = {"channel":[],"shade":[],"warmth":[],"next_at":m.state.time+4}
  m.state.restoration_care[mode] = chosen
- m.message = NAMES[mode]+" placed. "+HELP[mode]
+ m.message = NAMES[mode]+" placed. "+description(m,mode)
  return true
 static func remove(m, mode: String, at: String) -> bool:
  if mode not in MODES or not targets(m,mode).has(at): return false
  m.state.restoration_care[mode].erase(at)
- m.message = NAMES[mode]+" removed. Its past effects recover through ordinary environmental influences."
+ m.message = NAMES[mode]+" removed. Future effects stop; existing conditions change through the island’s ordinary influences."
  return true
 static func apply(m) -> void:
  if not m.state.has("restoration_care") or m.state.time < m.state.restoration_care.next_at: return
  m.state.restoration_care.next_at = m.next_cycle(m.state.restoration_care.next_at,4,m.state.time)
+ if m.state.get("ecology_rules","classic") == "balanced": return
  for mode in MODES:
   if not unlocked(m,mode): continue
   var applied := []
@@ -69,8 +71,8 @@ static func relocate(m, source: String, destination: String) -> void:
 static func validate(store, s: Dictionary) -> bool:
  var care = s.get("restoration_care")
  if not care is Dictionary or care.size() != 4 or not store.number(care.get("next_at"),0,s.time+4): return false
- var limit := 2 if s.get("habitat_projects",[]).has("sanctuary_network") else 1
  for mode in MODES:
+  var limit: int = preload("res://scripts/ExpeditionRewards.gd").slots(s,mode)
   if not care.get(mode) is Array or care[mode].size() > limit: return false
   if not care[mode].is_empty() and not s.get("habitat_projects",[]).has(REQUIRED[mode]): return false
   var seen := []
@@ -78,3 +80,17 @@ static func validate(store, s: Dictionary) -> bool:
    if not store.coordinate(at) or not s.tiles.has(at) or seen.has(at): return false
    seen.append(at)
  return true
+
+static func description(m, mode: String) -> String:
+ if m.state.get("ecology_rules","classic") == "balanced":
+  return {"channel":"Raises the local moisture balance by 36 while connected to Water within %d natural-land steps." % preload("res://scripts/ExpeditionRewards.gd").water_reach(m),"shade":"Lowers the local heat balance by 36. Conditions approach it over active time.","warmth":"Raises the local heat balance by 36. Conditions approach it over active time."}.get(mode,"")
+ return HELP[mode].replace("two edge-sharing steps", "%d edge-sharing steps" % preload("res://scripts/ExpeditionRewards.gd").water_reach(m))
+
+static func fuse_cells(m, cells: Array, anchor: String) -> void:
+ if not m.state.has("restoration_care"): return
+ for mode in MODES:
+  var merged := []
+  for cell in targets(m,mode):
+   var at: String = anchor if cells.has(cell) else cell
+   if not merged.has(at): merged.append(at)
+  m.state.restoration_care[mode] = merged

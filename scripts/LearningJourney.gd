@@ -6,7 +6,7 @@ static func current(m) -> Dictionary:
  if m.state.harvests == 0: return step("Gather your first Wood","Tap the highlighted Oak. Ready resources also earn Coins.","collect","Show the Oak","0,0")
  if m.state.expansions == 0:
   if not m.state.pending.is_empty():
-   return step("Compare Water before placing it","Select Water, then use Inspect card. Its moisture reaches edge-sharing neighbors; place it beside the Oak.","draft","Compare the Water card")
+   return step("Compare Water before placing it","Select Water, then tap Info. Its moisture reaches edge-sharing neighbors; place it beside the Oak.","draft","Compare the Water card")
   return step("Give the Oak a Water neighbor","Open a cloud touching the Oak. Inspect Water before confirming your land choice.","expand","Explore the cloud plots","0,0")
  var watered := false
  for at in m.neighbors("0,0"):

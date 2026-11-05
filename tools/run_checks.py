@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITES = ['run', 'campaign', 'save_validation', 'save_io_failures', 'fusion_edges',
-          'input_gestures', 'layout', 'presentation', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout', 'sheet_layout', 'draft_flow', 'island_environment', 'build_flow', 'expansion_pricing', 'orbit_world', 'painted_art', 'expedition', 'finale', 'thermal_expeditions', 'gather', 'habitat_projects', 'habitat_guidance', 'layout_recovery', 'expedition_replay', 'restoration_chapter', 'restoration_campaign']
+          'input_gestures', 'layout', 'presentation', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout', 'sheet_layout', 'draft_flow', 'island_environment', 'build_flow', 'expansion_pricing', 'orbit_world', 'painted_art', 'expedition', 'finale', 'thermal_expeditions', 'gather', 'habitat_projects', 'habitat_guidance', 'layout_recovery', 'expedition_replay', 'restoration_chapter', 'restoration_campaign', 'director_clarity', 'director_depth', 'director_ownership', 'director_explorers']
 
 def source_digest():
     digest = hashlib.sha256()
@@ -32,6 +32,8 @@ def main():
     targets = [(s, ['--script', f'tests/{s}.gd'], 30) for s in SUITES]
     targets += [('automation_pacing', ['--script', 'tests/progression_simulation.gd', '--', '--automation-first'], 120),
                 ('progression_simulation', ['--script', 'tests/progression_simulation.gd'], 120),
+                ('balanced_campaign', ['--script', 'tests/progression_simulation.gd', '--', '--living-climate'], 120),
+                ('primary_campaign', ['--script', 'tests/progression_simulation.gd', '--', '--primary-route', '--living-climate'], 120),
                 ('startup', ['--quit-after', '120'], 30)]
     for name, args, deadline in targets:
         try:
@@ -51,8 +53,10 @@ def main():
         ok = code == 0 and not errors
         if name in SUITES:
             ok = ok and match is not None and int(match[1]) > 0 and int(match[2]) == 0
-        elif name == 'progression_simulation':
+        elif name in ['progression_simulation', 'automation_pacing', 'balanced_campaign']:
             ok = ok and 'PROGRESSION RESULT: all 20 discoveries, all 5 chapters' in output
+        elif name == 'primary_campaign':
+            ok = ok and 'PRIMARY ROUTE RESULT: all 5 chapters' in output
         results.append({'suite': name, 'passed': ok, 'exit_code': code,
                         'assertions': int(match[1]) if match else None})
         if not ok:
