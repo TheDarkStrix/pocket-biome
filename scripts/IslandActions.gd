@@ -6,7 +6,7 @@ var overlay := "off"
 func build(h) -> void:
  strip = HBoxContainer.new(); strip.add_theme_constant_override("separation",4); h.ui_root.add_child(strip)
  h.button("Inspect",func(): h.open_inspector(h.model.origin(h.selected)),strip)
- h.button("Tend",func(): h.care_ui.show_tools(h),strip)
+ h.button("Tend",func(): tend(h),strip)
  move_button = h.button("Move",func(): h.layout_ui.begin(h,h.model.origin(h.selected)),strip)
  h.button("Goal",func(): show_goal(h),strip)
  for action in strip.get_children():
@@ -15,7 +15,7 @@ func build(h) -> void:
  strip.hide()
 func update(h) -> void:
  if not is_instance_valid(strip): return
- strip.visible = h.game_hud.selection_time > 0 and not h.launch_menu and not h.photo_mode and not h.modal.visible and h.targeting == "" and h.placement_blueprint == "" and h.layout_ui.source == ""
+ strip.visible = not h.corridor_ui.showing() and h.game_hud.selection_time > 0 and not h.launch_menu and not h.photo_mode and not h.modal.visible and h.targeting == "" and h.placement_blueprint == "" and h.layout_ui.source == ""
  strip.size = Vector2(h.layout.world.size.x-16,h.touch_height())
  strip.position = Vector2(h.layout.world.position.x+8,h.layout.world.end.y-strip.size.y-70)
  move_button.disabled = not preload("res://scripts/LayoutTools.gd").movable(h.model,h.model.origin(h.selected))
@@ -23,6 +23,8 @@ func show_goal(h) -> void:
  var box: VBoxContainer = h.modal_content("Your next restoration")
  h.modal_screen = "island_goal"
  h.label(h.model.campaign.next_goal(h.model),19,box)
+ if h.model.state.chapter == 3 and not preload("res://scripts/LivingCorridors.gd").earned(h.model):
+  h.sheets.primary(h,"Plan the Living River",func(): h.corridor_ui.show(h),box)
  var ids: Array = {2:["shaded_pond"],3:["pollinator_patch"],4:["living_workshop","thermal_refuge"],5:["sanctuary_network"]}.get(int(h.model.state.chapter),["shaded_pond"])
  for id in ids:
   if h.model.state.get("habitat_projects",[]).has(id): continue
@@ -115,3 +117,9 @@ func deploy_prompt(h, blueprint: String, at: String) -> void:
    h.label(h.model.message,15,box); h.refresh(); return
   h.placement_blueprint = ""; h.services.event("structure_placed"); h.playtest.record("blueprint_placed",{"type":blueprint}); h.modal.hide(); h.refresh(),box)
  h.button("Choose another plot",func(): h.modal.hide(); h.refresh(),box)
+
+func tend(h) -> void:
+ var box: VBoxContainer = h.modal_content("Tend your living island")
+ h.sheets.primary(h,"Living Corridors · route spring water",func(): h.corridor_ui.show(h),box)
+ h.button("Care tools · channel, shade & warmth",func(): h.care_ui.show_tools(h),box)
+ h.campaign_ui.close_button(h,box)

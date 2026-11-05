@@ -1,0 +1,21 @@
+extends SceneTree
+func _init() -> void:call_deferred("run")
+func run() -> void:
+ var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://director-performance.json";root.add_child(h);await process_frame;h.set_process(false)
+ var m=preload("res://scripts/WorldModel.gd").new();m.state.ecology_rules="balanced"
+ for x in range(-1,5):
+  for y in range(6):
+   if not m.state.tiles.has(m.key(Vector2i(x,y))):m.add_tile(Vector2i(x,y),"grass")
+ for entry in [[Vector2i(-1,0),"water"],[Vector2i(-1,1),"water"],[Vector2i(0,2),"water"],[Vector2i(1,2),"forest"],[Vector2i(2,2),"workbench"],[Vector2i(3,2),"windmill"],[Vector2i(1,3),"glacier"]]:m.add_tile(entry[0],entry[1])
+ m.state.expansions=32;m.state.habitat_projects=preload("res://scripts/HabitatProjects.gd").IDS.duplicate()
+ var river=preload("res://scripts/LivingCorridors.gd");river.choose_branch(m,"wetland");river.set_source(m,"-1,0");river.set_route(m,"grove",["-1,0","-1,1","-1,2","0,2","1,2"]);river.set_route(m,"garden",["-1,0","-1,1","-1,2","0,2","1,2","1,1"]);river.allocate(m,"grove",2);river.allocate(m,"garden",1)
+ for second in range(30):m.tick(1)
+ m.state.chapter=5;m.state.chapter_rewards=[1,2,3,4]
+ h.model=m;h.services.model=m;h.modal.hide();h.refresh();h.presentation.advance(10)
+ var times:=[]
+ for sample in range(30):
+  var begin:=Time.get_ticks_usec();h.refresh();times.append((Time.get_ticks_usec()-begin)/1000.0)
+ times.sort()
+ var result={"cells":m.state.tiles.size(),"visitor_groups":h.habitat_visitors.size(),"samples":times.size(),"route_count":river.record(m).routes.size(),"delivered":river.delivered(m),"median_refresh_ms":times[15],"p95_refresh_ms":times[28],"max_refresh_ms":times[29],"scope":"Desktop Godot headless cached scene under shared workspace load; not phone FPS, GPU, battery or thermal qualification."}
+ var f=FileAccess.open("/workspace/runtime/river-review/logic-profile.json",FileAccess.WRITE);f.store_string(JSON.stringify(result,"  "));f.close();print(JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.2).timeout;quit()

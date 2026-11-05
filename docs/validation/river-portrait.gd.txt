@@ -1,0 +1,20 @@
+extends SceneTree
+func _init() -> void: call_deferred("run")
+func run() -> void:
+ root.size=Vector2i(540,960)
+ var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://river-portrait-probe.json";root.add_child(h);await process_frame;h.set_process(false)
+ h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model;h.model.state.settings.tutorial_seen=true;h.presentation.initialized=false;h.refresh()
+ h.start_play();h.modal.hide();h.model.add_tile(Vector2i(2,1),"grass");h.model.state.expansions=1;h.refresh();h.apply_layout();h.frame_world()
+ await create_timer(0.3).timeout
+ var progress: Dictionary=h.model.state.duplicate(true)
+ var poses: Dictionary=h.presentation.animations.duplicate(true)
+ var has_transition: bool=not poses.is_empty()
+ h.presentation.animations.clear();h.begin_photo();h.photo_controls.hide()
+ await process_frame;await RenderingServer.frame_post_draw
+ var expected: Image=root.get_texture().get_image();expected.resize(360,640,Image.INTERPOLATE_LANCZOS);expected.convert(Image.FORMAT_RGBA8)
+ h.end_photo();h.presentation.animations=poses.duplicate(true)
+ var captured: bool=await h.river_story.capture(h)
+ var actual: Image=Image.load_from_file(h.river_story.frame_path(h,0));actual.convert(Image.FORMAT_RGBA8)
+ var result={"passed":captured and has_transition and actual.get_data()==expected.get_data() and h.presentation.animations==poses and h.model.state==progress,"had_unfinished_transition":has_transition,"matches_settled_render":actual.get_data()==expected.get_data(),"transition_restored":h.presentation.animations==poses,"model_unchanged":h.model.state==progress,"scope":"Rendered regression: photo exactly matches a settled reference frame while the in-progress placement animation and model state are preserved."}
+ var f=FileAccess.open("/workspace/runtime/river-review/portrait-probe.json",FileAccess.WRITE);f.store_string(JSON.stringify(result,"  "));f.close();print("PORTRAIT PROBE RESULT: "+JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.3).timeout;quit(0 if result.passed else 1)

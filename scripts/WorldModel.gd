@@ -6,6 +6,8 @@ var campaign = Campaign.new()
 const DIRS = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/game.json"))
 var state: Dictionary
+var corridor_tick_active := false
+var corridor_effects := {}
 var message := "Harvest the Oak, then open a cloud plot beside it."
 
 func _init() -> void:
@@ -191,6 +193,8 @@ func tick(seconds: float = 1.0) -> void:
   if state.time >= source.get("next_effect",0.0):
    emissions[k] = config.effects.get(source.type,{})
    source.next_effect = next_cycle(source.get("next_effect",state.time),interval,state.time)
+ corridor_effects = preload("res://scripts/LivingCorridors.gd").effects(self)
+ corridor_tick_active = true
  for k in keys:
   var t: Dictionary = state.tiles[k]
   if t.has("owner"): continue
@@ -202,8 +206,10 @@ func tick(seconds: float = 1.0) -> void:
    var effects: Dictionary = emissions.get(n,{})
    for a in effects: buffer[k][a] += effects[a]*int(state.tiles[n].get("level",1))
   for a in buffer[k]: buffer[k][a] = clampi(buffer[k][a],0,100)
+ corridor_tick_active = false
  for k in buffer: state.tiles[k].dna = buffer[k]
  preload("res://scripts/RestorationCare.gd").apply(self)
+ preload("res://scripts/LivingCorridors.gd").apply_classic(self)
  expire_boosts()
  evaluate()
  campaign.tick(self)

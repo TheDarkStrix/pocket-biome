@@ -24,6 +24,8 @@ var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
 var habitat_visitors: Array = []
 var care_ui = preload("res://scripts/RestorationCareUI.gd").new()
 var wildlife_initialized := false
+var corridor_ui = preload("res://scripts/CorridorUI.gd").new()
+var river_story = preload("res://scripts/RiverStory.gd").new()
 var identity_ui = preload("res://scripts/PersonalizeUI.gd").new()
 var visitor_requests = preload("res://scripts/VisitorRequests.gd").new()
 var return_summary = preload("res://scripts/ReturnSummary.gd").new()
@@ -224,6 +226,7 @@ func build_ui() -> void:
  layer.add_child(root)
  game_hud.build(self,root)
  island_actions.build(self)
+ corridor_ui.build(self)
  if orbit_enabled:
   orbit_pad=preload("res://scripts/OrbitPad.gd").new();orbit_pad.host=self;root.add_child(orbit_pad)
  notice_toast = PanelContainer.new()
@@ -267,7 +270,7 @@ func build_ui() -> void:
  modal.visibility_changed.connect(func():
   modal_scrim.visible = modal.visible
   if launch_menu and is_instance_valid(launch_screen): launch_screen.visible = not modal.visible
-  if modal_screen in ["draft","build"] and not launch_menu and not photo_mode:
+  if modal_screen in ["draft","build","corridors","corridor_confirm","river_story"] and not launch_menu and not photo_mode:
    bottom.visible = not modal.visible
    if not modal.visible:
     restore_draft_view(); restore_build_view()
@@ -327,6 +330,7 @@ func target(power: String) -> void:
 func modal_content(title: String) -> VBoxContainer:
  playtest.attach(model)
  playtest.record("screen_opened",{"screen":title})
+ if corridor_ui.showing() and not corridor_ui.opening_confirmation: corridor_ui.cancel(self,false)
  if layout_ui.source != "" and not layout_ui.opening_confirmation:
   layout_ui.source = ""; layout_ui.destination = ""; layout_ui.source_id = -1
  if modal_screen == "build" and not launch_menu and not photo_mode:
@@ -492,6 +496,7 @@ func choose_idea(idea: Dictionary) -> void:
    campaign_ui.build_choice = "workbench"; campaign_ui.build_family = "Structures"; campaign_ui.workshop(self)
   "projects": campaign_ui.workshop_details(self)
   "care": care_ui.show_tools(self)
+  "corridors": corridor_ui.show(self)
   "world":
    if idea.has("target") and model.origin(idea.target) != "": selected = model.origin(idea.target)
    refresh(); campaign_ui.world(self)
@@ -541,7 +546,7 @@ func fusion_dialog() -> void:
  button("Back to island",func(): modal.hide(),box)
 
 func gather_ready() -> void:
- if layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen != "pack"): return
+ if corridor_ui.active() or layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen != "pack"): return
  var result: Dictionary = model.harvest_ready()
  for key in result.nodes:
   var output: Dictionary = model.production(model.state.tiles[key])
@@ -594,9 +599,9 @@ func refresh() -> void:
  if is_instance_valid(heat_button): heat_button.disabled = model.state.energy < 100
  pulse_button.text = ""
  update_pulse_width()
- draft_button.text = "Cancel move" if layout_ui.source != "" else "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
- draft_button.disabled = layout_ui.source == "" and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
- if layout_ui.source == "" and model.state.chapter == 3 and model.state.stats.fusions == 0 and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty():
+ draft_button.text = "Cancel river plan" if corridor_ui.active() else "Cancel move" if layout_ui.source != "" else "Cancel placement" if placement_blueprint != "" else ("Cancel pulse" if targeting != "" else "Resume draft")
+ draft_button.disabled = not corridor_ui.active() and layout_ui.source == "" and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty()
+ if not corridor_ui.active() and layout_ui.source == "" and model.state.chapter == 3 and preload("res://scripts/LivingCorridors.gd").earned(model) and model.state.stats.fusions == 0 and targeting == "" and placement_blueprint == "" and model.state.pending.is_empty():
   draft_button.text = "Find a sanctuary fusion"
   draft_button.disabled = false
  draft_button.visible = not draft_button.disabled
@@ -628,6 +633,7 @@ func refresh() -> void:
  update_inspection()
  campaign_ui.update_live(self)
  habitat_ui.update_live(self)
+ corridor_ui.update_live(self)
  if modal.visible and modal_screen == "draft" and is_instance_valid(draft_hand): draft_hand.update_quote()
  if modal.visible and modal_screen == "fusion":
   var current: Array = preload("res://scripts/FusionGuide.gd").options(model,selected)
@@ -679,7 +685,9 @@ func tap(pos: Vector2) -> void:
  var harvest_path := false
  var k := pick(pos)
  fusion_preview.clear()
- if layout_ui.source != "":
+ if corridor_ui.active():
+  corridor_ui.append_cell(self,hit(pos))
+ elif layout_ui.source != "":
   layout_ui.choose(self,hit(pos))
  elif placement_blueprint != "":
   island_actions.deploy_prompt(self,placement_blueprint,k)
@@ -712,6 +720,8 @@ func tap(pos: Vector2) -> void:
  refresh()
 
 func _unhandled_input(event: InputEvent) -> void:
+ if river_story.capturing:
+  input_controller.reset(); return
  if orbit_enabled and not launch_menu and not modal.visible:
   if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
    mouse_orbit_drag=event.pressed and world_rect().has_point(event.position)
@@ -719,11 +729,13 @@ func _unhandled_input(event: InputEvent) -> void:
   if event is InputEventMouseMotion and mouse_orbit_drag:
    orbit_world.orbit(-event.relative.x*0.01,event.relative.y*0.006);queue_redraw();get_viewport().set_input_as_handled();return
  if mixed_touch_sequence:
+  corridor_ui.cancel_pointer()
   input_controller.reset()
   return
  if modal.visible:
   input_controller.reset()
   return
+ if corridor_ui.feed(self,event): get_viewport().set_input_as_handled(); return
  input_controller.feed(event,world_rect(),Time.get_ticks_msec()/1000.0)
 
 func apply_layout() -> void:
@@ -760,10 +772,13 @@ func apply_layout() -> void:
  ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,hud.position.y+game_hud.quest_slot.position.y)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
- if modal_screen in ["draft","build"] and not launch_menu and is_instance_valid(modal_box):
+ if modal_screen in ["draft","build","corridors","corridor_confirm","river_story"] and not launch_menu and is_instance_valid(modal_box):
   var max_height: float = safe.size.y*0.57 if modal_screen == "build" else safe.size.y-100
   var content_height: float = modal_box.get_combined_minimum_size().y+(24 if modal_screen == "build" else 0)
   modal.size.y = minf(max_height,content_height)
+  modal.position.y = safe.end.y-modal.size.y-16
+ if modal_screen in ["corridors","corridor_confirm","river_story"] and not launch_menu:
+  modal.size.y = minf(layout.modal.size.y,maxf(240,safe.size.y*0.50))
   modal.position.y = safe.end.y-modal.size.y-16
  if inspection_mode:
   modal.position.y = maxf(layout.modal.position.y,get_viewport_rect().size.y*0.44)
@@ -775,7 +790,7 @@ func apply_layout() -> void:
  photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
  if launch_menu: frame_title_island(safe)
- elif modal.visible and modal_screen in ["draft","build"]:
+ elif modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","river_story"]:
   if orbit_enabled:
    orbit_world.fit(world_rect().grow(-8));queue_redraw();return
   var bounds := world_art_bounds(false)
@@ -810,7 +825,7 @@ func restore_build_view() -> void:
  queue_redraw()
 
 func world_rect() -> Rect2:
- if is_instance_valid(modal) and modal.visible and modal_screen in ["draft","build"]:
+ if is_instance_valid(modal) and modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","river_story"]:
   var start: float = layout.get("top",Rect2(20,20,500,90)).end.y+12
   return Rect2(20,start,get_viewport_rect().size.x-40,maxf(100,modal.position.y-start+(0 if modal_screen == "build" else 100)))
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
@@ -837,6 +852,7 @@ func constrain_camera() -> void:
 
 func _process(delta: float) -> void:
  game_hud.update_selection(self,delta)
+ corridor_ui.layout(self)
  island_actions.update(self)
  if not suspended and not photo_mode and not model.state.settings.reduced_motion:
   presentation.advance_motors(model.state.tiles,minf(delta,0.1))
@@ -847,11 +863,11 @@ func _process(delta: float) -> void:
    queue_redraw()
  notice_time = maxf(0,notice_time-delta)
  notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible
- if not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
+ if not corridor_ui.showing() and not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
  if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return
  finale_ui.maybe_show(self)
- if preload("res://scripts/LearningJourney.gd").current(model).is_empty() and layout_ui.source == "" and not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
+ if not corridor_ui.showing() and preload("res://scripts/LearningJourney.gd").current(model).is_empty() and layout_ui.source == "" and not modal.visible and not photo_mode and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty():
   services.prepare_ad_services()
  if discard_resume_delta:
   discard_resume_delta = false
@@ -886,6 +902,7 @@ func _notification(what: int) -> void:
  if what == NOTIFICATION_WM_GO_BACK_REQUEST:
   if modal.visible: modal.hide()
   elif photo_mode: end_photo()
+  elif corridor_ui.showing(): corridor_ui.cancel(self)
   elif layout_ui.source != "": layout_ui.cancel(self)
   elif targeting != "": cancel_target()
   elif launch_menu:
@@ -893,6 +910,7 @@ func _notification(what: int) -> void:
    get_tree().quit()
   else: start_screen()
  if what == NOTIFICATION_APPLICATION_PAUSED:
+  corridor_ui.cancel_pointer(); input_controller.reset(); all_touches.clear(); mixed_touch_sequence = false
   if audio_feedback.ambience != null: audio_feedback.ambience.stream_paused = true
   services.event("session_backgrounded")
   suspended = true
@@ -1031,6 +1049,7 @@ func _draw() -> void:
   var location: Vector2 = preload("res://scripts/SanctuaryLife.gd").position(route,self,ambient_time,still)
   for index in range(route.count):
    preload("res://scripts/HabitatProjects.gd").draw_visitor(self,route.id,location+Vector2(index*12,-index*4)*zoom_level,zoom_level,ambient_time+index,still)
+ preload("res://scripts/CorridorArtwork.gd").draw(self)
  draw_restoration_care()
  island_actions.draw(self)
  preload("res://scripts/SanctuaryIdentity.gd").draw(self)
@@ -1284,6 +1303,7 @@ func begin_photo() -> void:
  photo_lighting = model.state.cosmetic
  photo_mode = true
  hud.hide(); bottom.hide(); photo_controls.show()
+ gather_button.hide(); game_hud.inspect_action.hide(); island_actions.strip.hide(); corridor_ui.bar.hide(); notice_toast.hide()
  frame_world()
 
 func end_photo() -> void:
@@ -1295,6 +1315,7 @@ func end_photo() -> void:
    orbit_world.yaw=photo_saved_view.yaw;orbit_world.pitch=photo_saved_view.pitch
   photo_saved_view.clear()
  hud.show(); bottom.show(); photo_controls.hide()
+ refresh()
  call_deferred("apply_layout")
  queue_redraw()
 
@@ -1405,7 +1426,7 @@ func start_play() -> void:
 
 func check_transition_ad() -> void:
  if not preload("res://scripts/LearningJourney.gd").current(model).is_empty(): return
- if layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
+ if corridor_ui.showing() or layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
  services.maybe_interstitial()
 
 func logical_per_dp() -> float:
@@ -1669,3 +1690,6 @@ func draw_restoration_care() -> void:
     draw_arc(point+Vector2(0,-35)*zoom_level,17*zoom_level,PI,TAU,16,color,3*zoom_level,true)
    else:
     draw_circle(point+Vector2(0,-30)*zoom_level,4*zoom_level,color)
+
+func capture_river_moment() -> void:
+ await river_story.capture(self)

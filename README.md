@@ -19,7 +19,9 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 
 ## Play
 
-Latest gameplay delivery: [Three director passes](docs/DIRECTOR_DELIVERY.md) and [audit scorecard](docs/DIRECTOR_ITERATIONS.md). New islands use Living climate; existing saves can switch in Settings → Climate growth rules. Select land for direct Inspect/Tend/Move/Goal actions. The ending requires a currently thriving connected sanctuary; collecting all twenty discoveries is optional mastery. Earn decorations, welcome optional visitor requests, compare your starting/current portraits and try eight expedition mastery challenges with personal bests.
+Latest gameplay delivery: [The Living River](docs/LIVING_CORRIDORS.md) and [its repeated audit](docs/CORRIDOR_AUDIT.md). After the first spring, route limited Water to a remote grove, guide pollinators to a garden and restore a dormant corner. Choose wetland or woodland, preview/confirm routes on the island, respond to a dry spell and earn the Living Heart. Optional local portraits export as a PNG strip or animated GIF.
+
+Earlier foundation: [Three director passes](docs/DIRECTOR_DELIVERY.md) and [audit scorecard](docs/DIRECTOR_ITERATIONS.md). New islands use Living climate; existing saves can switch in Settings → Climate growth rules. Select land for direct Inspect/Tend/Move/Goal actions. The ending requires a currently thriving connected sanctuary; collecting all twenty discoveries is optional mastery. Earn decorations, welcome optional visitor requests, compare your starting/current portraits and try eight expedition mastery challenges with personal bests.
 
 **Pack → Habitat projects** offers five restorations: a returning spring, pollinator garden, sheltered workshop, climate refuge and connected sanctuary. Restore them to earn reusable water channels, shade, warmth control, landscape movement and increased care capacity. Wildlife responds to current habitat suitability. Each project explains alternative designs. See [Restoration campaign](docs/RESTORATION_CAMPAIGN.md).
 

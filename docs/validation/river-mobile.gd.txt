@@ -1,0 +1,25 @@
+extends SceneTree
+var h
+func _init() -> void:call_deferred("run")
+func settle() -> void:
+ for frame in range(8):await process_frame
+ h.presentation.advance(2.0)
+ h.apply_layout();h.corridor_ui.layout(h);h.queue_redraw();await process_frame
+func snap(name: String) -> void:
+ await settle();await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/river-review/"+name+".png")
+func run() -> void:
+ root.size=Vector2i(320,640)
+ h=preload("res://tests/fixtures/MobileMain.gd").new();h.display_dp=1.6875;h.show_menu_on_launch=false;h.store.path="user://river-visual-mobile.json"
+ root.add_child(h);await process_frame;h.set_process(false)
+ h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model;h.model.state.settings.tutorial_seen=true;h.model.state.habitat_projects=["shaded_pond"];h.model.state.discoveries=["rainforest"]
+ for entry in [[Vector2i(2,1),"water"],[Vector2i(3,1),"grass"],[Vector2i(4,1),"forest"],[Vector2i(4,2),"fiber"],[Vector2i(5,2),"water"],[Vector2i(5,3),"grass"]]:h.model.add_tile(entry[0],entry[1])
+ h.model.state.expansions=h.model.state.tiles.size()-4;h.model.state.text_scale=1.2;h.apply_settings();h.start_play();h.modal.hide();h.corridor_ui.show(h);await snap("mobile-approaches")
+ var river=preload("res://scripts/LivingCorridors.gd");river.choose_branch(h.model,"woodland");river.set_source(h.model,"2,1")
+ h.model.add_tile(Vector2i(3,1),"forest");h.model.add_tile(Vector2i(3,2),"forest");h.model.state.expansions=h.model.state.tiles.size()-4
+ for at in ["3,1","3,2","4,1","4,2"]:h.model.state.tiles[at].dna.moisture=75;h.model.state.tiles[at].dna.fertility=80
+ river.set_route(h.model,"grove",["2,1","3,1","4,1"]);river.set_route(h.model,"garden",["2,1","3,1","3,2","4,2"]);river.allocate(h.model,"grove",2);river.allocate(h.model,"garden",1)
+ h.corridor_ui.show(h);await snap("mobile-flow");h.modal.hide();h.corridor_ui.begin(h,"garden");h.corridor_ui.append_cell(h,"3,1");h.corridor_ui.append_cell(h,"4,1");h.corridor_ui.append_cell(h,"4,2");await snap("mobile-planning")
+ h.corridor_ui.cancel(h);h.modal.hide();h.frame_world();h.refresh();await create_timer(0.5).timeout;h.ambient_time=0.0;await snap("animation-a");h._process(0.1);h._process(0.1);await snap("animation-b")
+ h.model.state.settings.reduced_motion=true;h.refresh();await create_timer(0.5).timeout;await snap("reduced-a");h._process(0.1);h._process(0.1);await snap("reduced-b")
+ h.queue_free();h=null;await process_frame;await create_timer(0.3).timeout;print("MOBILE RIVER VISUAL RESULT: complete");quit()

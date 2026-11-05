@@ -1191,9 +1191,10 @@
     },
     {
       "id": 3,
-      "name": "Wings over the Garden",
-      "hint": "Restore a pollinator garden, fuse a sanctuary and learn to craft bricks.",
+      "name": "The Living River",
+      "hint": "Route a limited spring through a grove and flower habitat, then wake a dormant corner. Restore the pollinator garden, craft a brick and fuse a sanctuary.",
       "checks": {
+        "living_river": 1,
         "restored_garden": 1,
         "fusions": 1,
         "crafted_brick": 1,

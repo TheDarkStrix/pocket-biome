@@ -270,6 +270,7 @@ func world(h) -> void:
      h.modal.hide(); h.persist(); h.refresh(),confirm)
     close_button(h,confirm),box)
  h.button("Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
+ h.button("Living Corridors · the river chapter",func(): h.corridor_ui.show(h),box)
  h.button("Visitors & field notes",func(): h.sanctuary_life.show_notes(h),box)
  h.button("Personalize my island",func(): h.identity_ui.show(h),box)
  h.button("Optional visitor requests",func(): h.visitor_requests.show_requests(h),box)

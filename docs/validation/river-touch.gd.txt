@@ -1,0 +1,83 @@
+extends SceneTree
+const River = preload("res://scripts/LivingCorridors.gd")
+var h
+var actions := 0
+var failed := false
+var captures := []
+func _init() -> void: call_deferred("run")
+func fail(why: String) -> void:
+ failed = true; printerr("RIVER TOUCH FAIL: "+why); quit(1)
+func settle() -> void:
+ for frame in range(8): await process_frame
+ h.presentation.advance(2.0)
+ h.apply_layout(); h.corridor_ui.layout(h); h.queue_redraw()
+ await process_frame
+func snap(name: String) -> void:
+ await settle(); await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/river-review/"+name+".png"); captures.append(name)
+func button(text: String) -> Button:
+ for action in h.ui_root.find_children("*","Button",true,false):
+  if action.text == text and action.is_visible_in_tree(): return action
+ return null
+func touch(at: Vector2, down: bool) -> void:
+ var e := InputEventScreenTouch.new(); e.index=0; e.position=at; e.pressed=down
+ Input.parse_input_event(e); Input.flush_buffered_events()
+func click_at(at: Vector2) -> void:
+ touch(at,true); await process_frame; touch(at,false); await process_frame; actions+=1
+func click(action: Control) -> void:
+ if action == null: fail("missing control");return
+ if h.modal.visible and h.modal_scroll.is_ancestor_of(action): h.modal_scroll.ensure_control_visible(action)
+ await settle(); await click_at(action.get_global_rect().get_center()); await settle()
+func route(role: String, cells: Array) -> void:
+ await click(button("Trace "+("flower" if role == "garden" else role)+" route"))
+ await settle(); h.frame_world(); await settle()
+ touch(h.screen(h.model.coord(cells[0])),true); await process_frame
+ for cell in cells.slice(1):
+  var e := InputEventScreenDrag.new();e.index=0;e.position=h.screen(h.model.coord(cell));Input.parse_input_event(e);Input.flush_buffered_events();await process_frame
+ touch(h.screen(h.model.coord(cells[-1])),false);await process_frame;actions+=1
+ if h.corridor_ui.draft != cells: fail("route drag mismatch "+str(h.corridor_ui.draft));return
+ await snap("draft-"+role)
+ await click(button("Preview"));await snap("confirm-"+role)
+ await click(button("Save this route"))
+func plus(role: String) -> void:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.text != "+": continue
+  var row: Node = action.get_parent()
+  for child in row.get_children():
+   if child is Label and child.text.begins_with(role.capitalize()+" ·"):
+    await click(action); return
+ fail("missing allocation "+role)
+func run() -> void:
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://river-rendered-%d.json" % Time.get_ticks_usec()
+ root.add_child(h);await process_frame;h.set_process(false)
+ h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model
+ h.model.state.ecology_rules="balanced";h.model.state.settings.tutorial_seen=true;h.model.state.habitat_projects=["shaded_pond"];h.model.state.discoveries=["rainforest"];h.model.state.objectives=[0,1,2];h.model.state.chapter=3;h.model.state.chapter_rewards=[1,2]
+ for entry in [[Vector2i(2,1),"water"],[Vector2i(3,1),"grass"],[Vector2i(4,1),"forest"],[Vector2i(4,2),"fiber"],[Vector2i(5,2),"water"],[Vector2i(5,3),"grass"],[Vector2i(4,3),"grass"],[Vector2i(2,2),"grass"]]: h.model.add_tile(entry[0],entry[1])
+ h.model.state.expansions=h.model.state.tiles.size()-4
+ for at in ["4,1","4,2"]: h.model.state.tiles[at].dna.moisture=75;h.model.state.tiles[at].dna.fertility=80
+ h.start_play();h.modal.hide();await settle();h.corridor_ui.show(h);await snap("approaches")
+ await click(button("Choose Clover's wetland"));await click(button("Choose spring"));h.frame_world();await settle()
+ await click_at(h.screen(Vector2(2,1)));await settle();await click(button("Confirm selection"))
+ await route("grove",["2,1","3,1","4,1"]);if failed:return
+ await plus("grove");await plus("grove")
+ await route("garden",["2,1","3,1","4,1","4,2"]);if failed:return
+ await plus("garden");await click(button("Choose seedbed"));h.frame_world();await settle()
+ await click_at(h.screen(Vector2(5,3)));await settle();await click(button("Confirm selection"));await snap("allocations")
+ await click(button("Return to my island"));await h.river_story.capture(h);h.corridor_ui.show(h)
+ var stages := []
+ for season in range(10):
+  var next: Button=button("Observe next season") if h.modal.visible else button("Observe season")
+  await click(next)
+  var stage: int=River.record(h.model).stage
+  if not stages.has(stage):
+   stages.append(stage);await snap("season-stage-"+str(stage));await h.river_story.capture(h)
+  if River.earned(h.model):break
+ if not River.earned(h.model) or h.model.state.tiles["5,3"].evolution!="meadow":fail("real chapter did not finish with restored Meadow");return
+ if not h.store.valid(h.model.state):fail("completed chapter is not saveable");return
+ h.corridor_ui.show(h);await snap("chapter-complete");await click(button("River story & portraits"));await snap("story")
+ h.river_story.share(h,true)
+ var gif: String=ProjectSettings.globalize_path("user://river-story-%d.gif" % int(h.model.state.seed))
+ var result={"passed":true,"input_actions":actions,"seasons":River.record(h.model).season,"stages":River.record(h.model).ledger,"seedbed_evolution":h.model.state.tiles["5,3"].evolution,"save_valid":h.store.valid(h.model.state),"gif_path":gif,"captures":captures,"scope":"Rendered screen-touch completion of a constructed home-island fixture. Chapter progress comes from ordinary UI/rules. Not a fresh campaign, physical device or human enjoyment result."}
+ var file=FileAccess.open("/workspace/runtime/river-review/rendered-touch.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("RIVER TOUCH RESULT: "+JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.3).timeout;quit()

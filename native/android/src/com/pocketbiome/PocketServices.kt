@@ -324,10 +324,17 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             try {
                 val source = File(path).canonicalFile
                 if (!source.path.startsWith(host.filesDir.canonicalPath+File.separator)) throw SecurityException("Not an app photo")
+                val extension = source.extension.lowercase()
+                if (extension !in listOf("png","gif") || source.length() > 16L*1024*1024) throw SecurityException("Unsupported app image")
+                val header = ByteArray(8)
+                source.inputStream().use { if (it.read(header) != 8) throw SecurityException("Invalid image") }
+                val gif = extension == "gif"
+                if (gif && String(header.copyOfRange(0,6),Charsets.US_ASCII) !in listOf("GIF87a","GIF89a")) throw SecurityException("Invalid GIF")
+                if (!gif && !header.contentEquals(byteArrayOf(137.toByte(),80,78,71,13,10,26,10))) throw SecurityException("Invalid PNG")
                 val dir = File(host.cacheDir,"shares").apply { mkdirs() }
-                val copy = source.copyTo(File(dir,"pocket-biome.png"),true)
+                val copy = source.copyTo(File(dir,"pocket-biome.$extension"),true)
                 val uri = FileProvider.getUriForFile(host,host.packageName+".pocket.share",copy)
-                val intent = Intent(Intent.ACTION_SEND).setType("image/png").putExtra(Intent.EXTRA_STREAM,uri).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                val intent = Intent(Intent.ACTION_SEND).setType(if (gif) "image/gif" else "image/png").putExtra(Intent.EXTRA_STREAM,uri).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 host.startActivity(Intent.createChooser(intent,"Share your Pocket Biome"))
             } catch (error: Exception) { emitSignal("service_error","Photo sharing unavailable: ${error.message}") }
         }

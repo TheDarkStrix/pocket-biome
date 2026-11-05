@@ -24,6 +24,9 @@ static func notes(m) -> Array:
  var result := [{"title":"A thirsty beginning","body":"A small Oak waits among the clouds. Every restored place can become a home."}]
  for id in m.state.get("habitat_projects",[]):
   result.append({"title":NAMES[id],"body":preload("res://scripts/RestorationMoment.gd").STORIES[id]+(" Your habitat is suitable now." if Projects.inspect(m,id).ready else " The visitor will return when its habitat is suitable again.")})
+ var river = preload("res://scripts/LivingCorridors.gd")
+ for stage in river.record(m).get("ledger",[]):
+  result.append({"title":{"grove":"The river reaches the roots","wings":"Sola finds a way through","bloom":"The Living Heart"}[stage],"body":{"grove":"You carried a limited spring to a remote grove. Living shelter changed how the Water could be shared.","wings":"Sola reached the flowers through your mature grove. Your choice of wetland or woodland shaped this route.","bloom":"A dormant corner bloomed through the habitats you connected. Your Living Heart remembers; new seedbeds can still be restored."}[stage]})
  return result
 func show_notes(h) -> void:
  var box: VBoxContainer = h.modal_content("Visitors & field notes")

@@ -1,0 +1,884 @@
+{
+  "active_seconds": 1174,
+  "automation_first": false,
+  "discoveries": 20,
+  "first_fifteen_minutes": [
+    {
+      "active_seconds": 0.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 3.0,
+      "details": {
+        "id": "rainforest"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 3.0,
+      "details": {
+        "chapter": 1
+      },
+      "event": "chapter_completed"
+    },
+    {
+      "active_seconds": 3.0,
+      "details": {
+        "id": "shaded_pond"
+      },
+      "event": "habitat_project_completed"
+    },
+    {
+      "active_seconds": 5.0,
+      "details": {
+        "id": "mistforest"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 5.0,
+      "details": {
+        "power": "rain"
+      },
+      "event": "world_pulse_used"
+    },
+    {
+      "active_seconds": 7.0,
+      "details": {
+        "id": "reedwater"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 7.0,
+      "details": {
+        "id": "meadow"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 13.0,
+      "details": {
+        "type": "workbench"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 17.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 49.0,
+      "details": {
+        "type": "clay"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 53.0,
+      "details": {
+        "type": "clay"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 53.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 121.0,
+      "details": {
+        "type": "furnace"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 126.0,
+      "details": {
+        "type": "furnace"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 126.0,
+      "details": {
+        "type": "fiber"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 127.0,
+      "details": {
+        "chapter": 2
+      },
+      "event": "chapter_completed"
+    },
+    {
+      "active_seconds": 181.0,
+      "details": {
+        "type": "iron"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "iron"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "fiber"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 186.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 219.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 219.0,
+      "details": {
+        "type": "windmill"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 224.0,
+      "details": {
+        "type": "windmill"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 276.0,
+      "details": {
+        "type": "fiber"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 295.0,
+      "details": {
+        "type": "golem"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 303.0,
+      "details": {
+        "type": "golem"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 331.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 331.0,
+      "details": {
+        "type": "windmill"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 336.0,
+      "details": {
+        "type": "windmill"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 395.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 395.0,
+      "details": {
+        "type": "windmill"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 400.0,
+      "details": {
+        "type": "windmill"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 400.0,
+      "details": {
+        "type": "vent"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 405.0,
+      "details": {
+        "type": "vent"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 405.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 408.0,
+      "details": {
+        "id": "ironwood"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 410.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 410.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 415.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 420.0,
+      "details": {
+        "id": "ember"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 420.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 425.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 425.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 430.0,
+      "details": {
+        "id": "sunstone"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 430.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 437.0,
+      "details": {
+        "id": "obsidian"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 440.0,
+      "details": {
+        "id": "lake"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 440.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 445.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 481.0,
+      "details": {
+        "type": "vent"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 486.0,
+      "details": {
+        "type": "vent"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 486.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 491.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 495.0,
+      "details": {
+        "id": "steam"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 505.0,
+      "details": {
+        "type": "glacier"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 510.0,
+      "details": {
+        "type": "glacier"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 513.0,
+      "details": {
+        "id": "thermal_refuge"
+      },
+      "event": "habitat_project_completed"
+    },
+    {
+      "active_seconds": 529.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 534.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 534.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 539.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 540.0,
+      "details": {
+        "id": "frozen"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 540.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 545.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 553.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 558.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 558.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 563.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 571.0,
+      "details": {
+        "id": "mossrock"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 588.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 593.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 593.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 598.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 598.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 603.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 615.0,
+      "details": {
+        "id": "crystalforest"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 615.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 620.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 620.0,
+      "details": {
+        "type": "vent"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 625.0,
+      "details": {
+        "type": "vent"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 631.0,
+      "details": {
+        "id": "oasis"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 673.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 678.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 697.0,
+      "details": {
+        "type": "glacier"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 702.0,
+      "details": {
+        "type": "glacier"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 715.0,
+      "details": {
+        "id": "moonflower"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 721.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 726.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 726.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 731.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 731.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 736.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 757.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 762.0,
+      "details": {
+        "type": "crystal"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 762.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 767.0,
+      "details": {
+        "id": "celestial"
+      },
+      "event": "biome_discovered"
+    },
+    {
+      "active_seconds": 767.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 767.0,
+      "details": {
+        "type": "fiber"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 769.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 774.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 774.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 774.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 775.0,
+      "details": {
+        "id": "pollinator_patch"
+      },
+      "event": "habitat_project_completed"
+    },
+    {
+      "active_seconds": 775.0,
+      "details": {
+        "id": "living_workshop"
+      },
+      "event": "habitat_project_completed"
+    },
+    {
+      "active_seconds": 775.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 780.0,
+      "details": {
+        "type": "water"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 785.0,
+      "details": {
+        "type": "glacier"
+      },
+      "event": "craft_started"
+    },
+    {
+      "active_seconds": 790.0,
+      "details": {
+        "type": "glacier"
+      },
+      "event": "blueprint_placed"
+    },
+    {
+      "active_seconds": 791.0,
+      "details": {
+        "id": "sanctuary_network"
+      },
+      "event": "habitat_project_completed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "fiber"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "stone"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 820.0,
+      "details": {
+        "type": "fiber"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 827.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    },
+    {
+      "active_seconds": 875.0,
+      "details": {
+        "type": "forest"
+      },
+      "event": "tile_placed"
+    }
+  ],
+  "living_climate": false,
+  "manual_collections": 1710,
+  "max_gap_between_progress_events_seconds": 68.0,
+  "note": "Omniscient accelerated simulation; not a human session or enjoyment/retention result.",
+  "policy": "Collect ready resources, prefer Wood when offered, craft/restore through public transactions; trade surplus above 200.",
+  "primary_route": false,
+  "seed": 90210,
+  "total_harvests_including_automation": 1710,
+  "tracked_progression_operations": 128
+}

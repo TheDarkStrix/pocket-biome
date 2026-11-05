@@ -1,3 +1,5 @@
+Latest addition: [Living River gameplay](LIVING_CORRIDORS.md) and [current audit](CORRIDOR_AUDIT.md). The following is the earlier foundation audit.
+
 **Pocket Biome — delivery from the three director passes, 2026-11-05**
 
 Current evidence: [Three audit passes and scorecard](DIRECTOR_ITERATIONS.md) · [Source-bound validation](DIRECTOR_VALIDATION.json).

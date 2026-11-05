@@ -121,11 +121,12 @@ func build(h, root: Control) -> void:
  inspect_action.hide()
  h.bottom = VBoxContainer.new(); h.bottom.add_theme_constant_override("separation",4); root.add_child(h.bottom)
  h.draft_button = h.button("Resume draft",func():
-  if h.layout_ui.source != "": h.layout_ui.cancel(h)
+  if h.corridor_ui.active(): h.corridor_ui.cancel(h)
+  elif h.layout_ui.source != "": h.layout_ui.cancel(h)
   elif h.placement_blueprint != "":
    h.placement_blueprint = ""; h.model.message = "Placement canceled. Blueprint kept."; h.refresh()
   elif h.targeting != "": h.cancel_target()
-  elif h.model.state.chapter == 3 and h.model.state.stats.fusions == 0: h.fusion_dialog()
+  elif h.model.state.chapter == 3 and h.model.state.pending.is_empty() and preload("res://scripts/LivingCorridors.gd").earned(h.model) and h.model.state.stats.fusions == 0: h.fusion_dialog()
   else: h.draft(),h.bottom)
  h.draft_button.custom_minimum_size.x = 240
  h.draft_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER

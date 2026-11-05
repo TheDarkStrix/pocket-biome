@@ -119,6 +119,15 @@ func _init() -> void:
  set_plot("2,2","glacier")
  for i in range(30): second()
  if not m.state.get("habitat_projects",[]).has("sanctuary_network"): fail("connected restoration campaign unreachable: "+str(m.state.get("habitat_projects",[]))); return
+ # Earn the Living River chapter through the same public routing/season authorities as the UI.
+ buy("-2,1"); set_plot("-2,1","grass")
+ var river = preload("res://scripts/LivingCorridors.gd")
+ if not river.choose_branch(m,"wetland") or not river.set_source(m,"-1,1"): fail("cannot choose the river's branch/source"); return
+ if not river.set_route(m,"grove",["-1,1","0,1","0,0"]) or not river.set_route(m,"garden",["-1,1","-1,0","0,0","0,1"]): fail("cannot configure the river routes"); return
+ river.allocate(m,"grove",2); river.allocate(m,"garden",1)
+ if not river.set_seedbed(m,"-2,1"): fail("cannot plan the dormant corner"); return
+ for season in range(10): river.advance(m)
+ if not river.earned(m): fail("Living River did not restore through ordinary actions"); return
  if primary_route:
   buy("-2,0"); buy("-2,1")
  for y in range(4):

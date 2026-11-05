@@ -8,3 +8,6 @@ The final source-bound report is [Director validation](../DIRECTOR_VALIDATION.js
 - `logic-profile.gd.txt` measures cached desktop/headless scene refresh. It cannot qualify phone performance.
 
 The graphical helpers need the documented Xorg/Mesa cloud environment. Physical Android, live publisher/provider behavior and unfamiliar-person observation require those actual resources. The shipped APK excludes QA tools and reports.
+
+
+Living River evidence is in `../CORRIDOR_VALIDATION.json`. The `river-*.gd.txt` files are reproducible external scene harnesses, stored as text so APKs exclude them. Copy a harness to `/workspace/runtime/river-review/` with a `.gd` extension, create that directory first, then run it using `POCKET_VISUAL_TIMEOUT=110 ./tools/visual_review.sh /workspace/runtime/river-review/<name>.gd`. They write their captures/reports there. `river-opening.gd.txt` writes to `/workspace/runtime/director-review/`; create that directory before running. Rendered fixture routes are distinguished from the fresh-start ordinary-clock walkthrough and simulated complete campaigns.

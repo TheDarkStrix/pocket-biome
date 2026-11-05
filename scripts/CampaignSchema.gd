@@ -12,6 +12,7 @@ static func validate(store, s: Dictionary, config: Dictionary) -> bool:
  if not preload("res://scripts/ExpeditionMastery.gd").validate(store,s): return false
  if not preload("res://scripts/SanctuaryIdentity.gd").validate(store,s,config): return false
  if s.has("visitor_requests") and not preload("res://scripts/VisitorRequests.gd").validate(s.visitor_requests): return false
+ if not preload("res://scripts/LivingCorridors.gd").validate(store,s): return false
  var defaults := Campaign.defaults()
  if not s.get("audio_levels") is Dictionary: return false
  for field in ["music","sfx"]:

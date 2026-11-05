@@ -1,3 +1,5 @@
+Latest addition: [Living River gameplay](LIVING_CORRIDORS.md) and [current audit](CORRIDOR_AUDIT.md). The following is the earlier foundation audit.
+
 **Three development and audit passes — 2026-11-05**
 
 The scores below are developer self-assessments against the stated design criteria. They are not player enjoyment scores, market evidence or a release certification. Human enjoyment remains unmeasured.

@@ -186,6 +186,10 @@ func canonicalize(s: Dictionary) -> Dictionary:
     if trial.board.has("heat"): trial.board.heat[index] = int(trial.board.heat[index])
  if s.has("expedition_bests"):
   for best in s.expedition_bests.values(): best.moves = int(best.moves); best.seasons = int(best.seasons)
+ if s.has("living_corridors"):
+  s.living_corridors.stage = int(s.living_corridors.stage); s.living_corridors.season = int(s.living_corridors.season)
+  for role in s.living_corridors.growth: s.living_corridors.growth[role] = int(s.living_corridors.growth[role])
+  for route in s.living_corridors.routes.values(): route.water = int(route.water)
  for field in ["chapter","next_job"]: s[field] = int(s[field])
  for id in s.hints: s.hints[id] = int(s.hints[id])
  for id in s.stats: s.stats[id] = int(s.stats[id])

@@ -20,6 +20,8 @@ static func target(m, at: String) -> Dictionary:
    if m.origin(cell) == at: applied = true
   if not applied or (mode == "channel" and Care.water_source(m,at) == ""): continue
   for attribute in Care.EFFECTS[mode]: result[attribute] = clampi(result[attribute]+Care.EFFECTS[mode][attribute]*3,0,100)
+ var river: Dictionary = m.corridor_effects if m.corridor_tick_active else preload("res://scripts/LivingCorridors.gd").effects(m)
+ for attribute in river.get(at,{}): result[attribute] = clampi(result[attribute]+river[at][attribute],0,100)
  for boost in tile.get("boosts",[]):
   if boost.until <= m.state.time: continue
   for attribute in boost.applied: result[attribute] = clampi(result[attribute]+boost.applied[attribute],0,100)
@@ -83,6 +85,10 @@ static func consequences(m, type: String, target_key: String, source: String = "
   after[id] = projects.inspect(copy,id).ready
   if before[id] and not after[id]: now.append("Breaks "+projects.NAMES[id])
   elif not before[id] and after[id]: now.append("Supports "+projects.NAMES[id])
+ var river = preload("res://scripts/LivingCorridors.gd")
+ var old_flow: Dictionary = river.delivered(m); var new_flow: Dictionary = river.delivered(copy)
+ for role in river.ROLES:
+  if old_flow[role] > 0 and new_flow[role] == 0: now.append("Stops Water on the "+role+" corridor")
  var neighbors: Array = m.neighbors(target_key) if m.state.tiles.has(target_key) else preload("res://scripts/GameplayAdvisor.gd").placement_neighbors(m,target_key)
  var caption := "%d edge-sharing neighbors affected." % neighbors.size()
  if not now.is_empty(): caption += "\n"+"\n".join(now)

@@ -2,6 +2,9 @@ extends RefCounted
 # Read-only affordances, not additional chores, payouts or timers.
 static func ideas(model, selected: String) -> Array:
  var result := []
+ if model.state.chapter == 3 and preload("res://scripts/LivingCorridors.gd").unlocked(model) and not preload("res://scripts/LivingCorridors.gd").earned(model):
+  var river = preload("res://scripts/LivingCorridors.gd")
+  result.append({"title":river.status(model).title,"body":river.status(model).body,"action":"corridors","button":"Plan the Living River","icon":"water"})
  if model.state.objectives.size() >= 3:
   var goals := {2:["shaded_pond"],3:["pollinator_patch"],4:["living_workshop","thermal_refuge"],5:["sanctuary_network"]}
   for id in goals.get(int(model.state.chapter),[]):

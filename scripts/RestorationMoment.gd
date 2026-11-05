@@ -10,6 +10,7 @@ func show(h, id: String) -> void:
  h.label(STORIES[id],18,box)
  h.sheets.caption(h,"You earned · "+Projects.UNLOCKS[id],box)
  h.audio_feedback.play("restoration")
+ if id == "shaded_pond": h.sheets.primary(h,"Plan your Living River",func(): h.corridor_ui.show(h),box)
  if id == "living_workshop":
   h.sheets.primary(h,"Try landscape movement",func(): h.layout_ui.begin(h,h.selected),box)
  else: h.sheets.primary(h,"Try your earned care tools",func(): h.care_ui.show_tools(h),box)
