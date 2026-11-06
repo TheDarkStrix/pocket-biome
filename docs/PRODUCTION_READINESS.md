@@ -4,7 +4,7 @@ This is a signed development preview, not a store-ready or commercially certifie
 
 ## Current visual correction
 
-0.21.1 restores the original painted land from before the added foundation/grass pass. Procedural3D models and their menu portraits are disabled. The default camera is again painted pan/zoom/four-view rotation. Decorative edge falls are suppressed pending real source-connected artwork; individual Golem/workbench animation is still open. Earlier3D evidence below is historical.
+0.21.1 restores the original painted land from before the added foundation/grass pass. Procedural3D models and their menu portraits are disabled. The default camera is again painted pan/zoom/four-view rotation. Decorative edge falls are suppressed pending real source-connected artwork; painted Golem/workbench/totem animation is now integrated in the [current feedback pass](GAME_JUICE_AUDIT.md). Earlier3D evidence below is historical.
 
 ## Earlier engineering evidence
 
@@ -31,7 +31,7 @@ Exit 2 is expected for the current preview. It must not be called a successful s
 | Physical Android qualification | Cloud software emulator only | Real mid-range devices, cutouts/tablets, sustained FPS/thermal/battery/memory/audio, interrupted saves/background/kill restoration |
 | Publisher policy/contact | Not provided | Hosted final privacy policy, support contact, accurate Data Safety/SDK disclosures and policy review |
 | Diagnostics backend | Empty endpoint; own logs local | Receiver/privacy retention policy if network reporting is enabled, or an explicit decision to ship local diagnostics only |
-| Creative/player review | Generated diorama art and synthesized audio integrated | Human visual/audio review, comprehension/economy/retention playtests; resolve any art seams and remaining authored rigs |
+| Creative/player review | Generated diorama art and synthesized audio integrated | Human visual/audio review, comprehension/economy/retention playtests; resolve any art seams and any remaining art refinements |
 | Store listing | No submission performed | Content rating, listing assets, localization, SDK disclosures and final release review |
 
 Google's artifact repositories were reachable; the AdMob deprecation documentation page was proxy-blocked. Final SDK support/policy checks must be reviewed before submission. No production credentials, publisher identity or account configuration have been invented.

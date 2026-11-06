@@ -1,6 +1,6 @@
 # Art and audio asset manifest
 
-Current0.21.1 default:restore the original painted terrain, resources, structures, discoveries and menu/card art. Full tile surfaces/earth edges are rendered; added shared grass/cliff foundations and procedural3D models/portraits are disabled. The user explicitly rejected the3D visual replacement. Keep original source images and do not change the art style to implement animation. Disconnected decorative waterfalls are suppressed until an actual registered pond-to-lip source is supplied. Individual Golem/workbench rigs are still missing.
+Current0.21.1 default:restore the original painted terrain, resources, structures, discoveries and menu/card art. Full tile surfaces/earth edges are rendered; added shared grass/cliff foundations and procedural3D models/portraits are disabled. The user explicitly rejected the3D visual replacement. Keep original source images and do not change the art style to implement animation. Disconnected decorative waterfalls are suppressed until an actual registered pond-to-lip source is supplied. Painted Golem/workbench/totem UV rigs are now integrated; see docs/GAME_JUICE_AUDIT.md.
 
 Generated raster candidates are integrated and rendered in the actual engine. Source sheets are retained unchanged; scripts address atlas regions/pivots, rather than editing pixels. The earlier navy/green layout is superseded by the user's request for a complete game interface; docs/references/user_art_direction.jpg guides materials and proportions.
 
@@ -27,7 +27,7 @@ Generated raster candidates are integrated and rendered in the actual engine. So
 | assets/shaders/diorama-*.gdshader | Spatial surface wind/glow, water displacement/caustics, ivy and falls | Rendered in-engine |
 | Existing grass/cliff/roots/waterfall art | Materials on actual connected3D foundation and edge meshes | Reused without pixel editing |
 
-The catalog above is disabled in the normal game. The original painted atlas entries are the current presentation. Generated foliage is an image material; no external GLB pack or completed artist-approved model collection is claimed. Golem limbs remain unrigged. The reference design board continues to guide visual review; geometric coverage is not final aesthetic acceptance. See docs/ANIMATION_STATUS.md.
+The catalog above is disabled in the normal game. The original painted atlas entries are the current presentation. Generated foliage is an image material; no external GLB pack or completed artist-approved model collection is claimed. The normal painted renderer now animates Golem head/arms with a continuous weighted UV rig; this disabled geometric catalog is unchanged. The reference design board continues to guide visual review; geometric coverage is not final aesthetic acceptance. See docs/ANIMATION_STATUS.md.
 
 ## Historical2D specifications and delivery rules
 
@@ -49,7 +49,7 @@ Current direction is recorded in docs/DESIGN_DIRECTION.md; the parchment/brass p
 
 Player-feedback revision reuses existing sanctuary art for the fusion chooser. Expansion target rings, area highlights, rain streaks/ripples, heat motes and frost flakes are original runtime vector effects rather than missing raster artwork. UI response uses original motion code; no new external art dependency was added.
 
-Current ambient motion uses original procedural canopy deformation and water/structure effects over existing art. It does not supply separated Windmill rotor or Golem body/limb art; exact remaining layered-art specifications are in docs/ANIMATION_STATUS.md. Final human art/audio review remains open.
+Current ambient motion uses original procedural canopy deformation and water/structure effects over existing art. The existing split painted Windmill rotor is integrated. Golem/workbench/totem motion uses continuous UV deformation over the original atlas, without replacement raster art; the inventory is in docs/ANIMATION_STATUS.md. Final human art/audio review remains open.
 
 0.13 interface pass: original procedural Pulse wave emblem/ring and circular navigation medallions reuse the licensed fonts, original line icons and existing resource/terrain illustrations. Floating surfaces and progress gauges are native styled/vector controls. No Play Store reference image is shipped, and no new raster-art delivery is claimed.
 

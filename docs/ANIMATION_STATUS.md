@@ -1,22 +1,23 @@
-# Animation inventory — restored painted game0.21.1
+# Current painted-game animation inventory
 
-The original painted graphics are the default. The rejected procedural3D view is disabled; technical3D animation evidence from0.21 is historical and does not describe the player-facing game.
+Original painted graphics remain the default (`orbit_enabled=false`, `connected_land=false`). The implementation below is integrated and checked; phone and human creative acceptance are separate. Exact source-bound results: [GAME_JUICE_VALIDATION.json](GAME_JUICE_VALIDATION.json).
 
-| Element | Current implementation | Remaining work |
-|---|---|---|
-| Oak/Forest/Fiber/leafy discoveries | Ground-pinned upper-canopy deformation with compound seeded sway, expanded leafy-discovery coverage and bounded local harvest impulse | Separate branch/leaf layers for richer individual motion |
-| Grass/flowers | Five small anchored blade/flower clusters per eligible tile; independently phased tips | Authored plant layers for more varied silhouettes |
-| Water | Three expanding, fading elliptical ripples over original painted pond | Registered animated pond-to-lip outlets |
-| Windmill | Separate painted body and rotating sail layer with retained clock | Further authored work feedback |
-| Furnace/vent | Source smoke, stronger fire glow and rising embers over painted structure | Separate bellows/fire layers |
-| Golem/workbench | Existing rune/activity feedback; original graphics | Independent limbs and tool rigs are not implemented |
-| Harvest/evolution/fusion | Flying resource icons, harvest leaf scatter, depletion/regrowth, settling cloud puffs and grounded evolution crossfades; existing four-part fusion pull | Human motion review |
-| Rain/Heat/Frost | Timed area particles/streaks/ripples over the affected painted tiles | Physical-device comfort/performance review |
-| Island edge | Original painted earth edges | Decorative detached falls removed; no fabricated water source |
-| UI | Press/release, highlights, fades and selection feedback | Human creative review |
+| Element | Integrated feedback |
+|---|---|
+| Oak/Forest/Fiber/leafy discoveries | Seeded canopy sway, local harvest impulse, rooted canopy unfurl on evolution/fusion; trunk seam and ground remain fixed |
+| Grass/flowers | Five anchored blade/flower clusters with independently phased tips |
+| Water | Three expanding/fading surface ripples; actual river-route feedback remains integrated |
+| Windmill | Separate painted body and rotating sail layer, fixed hub and retained enabled clock |
+| Golem | Independent weighted head nod and arm sway/harvest response over the original painting; feet and soil fixed |
+| Workbench | Independently weighted tool rocking, blueprint edge movement and lantern sway; table/soil fixed |
+| Totem | Independent feather movement and existing rune motes |
+| Furnace/vent | Source smoke, fire glow and rising embers |
+| Wildlife | Frog hop/blink/splash, butterfly articulated wings, bird perch/flight, firefly glow; travel follows suitable habitat cells and reacts to local harvesting/Pulse |
+| Harvest/evolution/fusion | Resource flights, leaf scatter, grounded growth particles/crossfades, depletion/regrowth, settling clouds and four-part fusion convergence |
+| Saved milestones | Finite wreath/leaf celebration on chapter/restoration/finale, real-island portrait, immediate existing reward/Continue controls; no duplicate grants |
+| Audio | Four-voice budget, short repeated-cue cooldown, bounded tap pitch variation, milestone priority and ambience duck/recovery respecting selected levels |
+| UI/Pulse | Existing press/release/highlights/fades, timed Rain/Heat/Frost feedback and actual affected-cell illustrations |
 
-Reduced motion and photo/background clocks retain their prior behavior. No rewards or save fields are owned by visual effects. The immediate correction restores the user's earlier land graphics; it does not claim the outstanding individual-object animation request is complete.
+Continuous UV meshes animate the painted objects; no new 3D model or replacement art style is required. Idle loops close seamlessly. Paused machinery keeps its clock. Photo mode draws settled objects and omits temporary harvest/weather effects. Background/fullscreen ads freeze cosmetic clocks and block sound requests. Reduced motion gives static objects/visitors and a settled milestone badge.
 
-## Living-land polish validation
-
-The painted renderer was exercised in a 48-frame OpenGL sequence with tree, forest, grass, fiber, water, windmill and furnace fixtures. Five new presentation assertions cover rooted plant geometry, bounded harvest displacement, local/expiring harvest response and stationary evolution ground. Full checks pass 1,246 assertions, both progression simulations and startup. The pre-existing split windmill asset and resource-to-HUD flight are reused, not newly authored. Reduced motion suppresses new meadow/particle motion and harvest icon flight; placement/evolution motion is cleared by the existing reduced-motion path. No new 3D models or sprite assets were needed. Human review on a physical phone remains outstanding.
+Registered pond-to-cliff waterfall artwork remains a possible art enhancement, not an implemented effect; disconnected decorative falls remain suppressed. Further hand-painted frames or separately layered sprites can improve fidelity, but the listed object rigs are delivered. Phone motion comfort, thermal/battery performance, listening/vibration and unfamiliar-player enjoyment remain unverified.

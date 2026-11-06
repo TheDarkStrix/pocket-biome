@@ -14,6 +14,9 @@ func chapter(h) -> void:
  h.services.offer_break("chapter",str(id))
  var box: VBoxContainer = h.modal_content("Chapter complete · "+definition.name)
  h.modal_screen = "chapter_result"
+ h.audio_feedback.play("restoration")
+ h.haptic(35)
+ preload("res://scripts/MilestoneCelebration.gd").attach(h,box)
  h.label("Your island is growing into a living sanctuary.",20,box)
  h.sheets.caption(h,"Earned · %d Coins · 2 Star Dew · Pulse energy. These rewards are already part of your saved progress." % definition.reward,box)
  h.sheets.art(h,box,"grass","",200,true)

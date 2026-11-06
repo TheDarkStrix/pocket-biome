@@ -1,5 +1,8 @@
 # Implementation status
 
+
+Current visual-feedback pass: painted Golem head/arms, Workbench tools/blueprint and Totem feathers now use ground-fixed UV rigs. Growth unfolds the canopy, visitors hop/perch/flap and react locally, and saved milestones have finite celebrations and audio ducking. The updated test-ID Android preview passes 2,000 assertions, four campaign probes, rendered touch walkthroughs and package audits. [Current audit](docs/GAME_JUICE_AUDIT.md) supersedes the older individual-animation gaps below. Physical-phone and human acceptance remain open.
+
 Updated 2026-11-05. Authoritative scope: [Master PRD v4.0](docs/MASTER_PRD_v4.md). This is an implemented game under validation, not a certified commercial release.
 
 | Phase | Implemented | Remaining acceptance work |

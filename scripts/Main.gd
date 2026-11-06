@@ -879,6 +879,7 @@ func _process(delta: float) -> void:
  game_hud.update_selection(self,delta)
  corridor_ui.layout(self)
  island_actions.update(self)
+ audio_feedback.set_suspended(suspended or services.fullscreen_ad)
  if not suspended and not photo_mode and not services.fullscreen_ad and not model.state.settings.reduced_motion:
   presentation.advance_motors(model.state.tiles,minf(delta,0.1))
   ambient_time += minf(delta,0.1)
@@ -906,8 +907,8 @@ func _process(delta: float) -> void:
   if dirty_elapsed >= 0.35: persist()
  if model.state.settings.reduced_motion:
   presentation.animations.clear()
-  if presentation.advance(delta): queue_redraw()
- elif presentation.advance(delta): queue_redraw()
+  if not photo_mode and presentation.advance(minf(delta,0.1)): queue_redraw()
+ elif not photo_mode and presentation.advance(minf(delta,0.1)): queue_redraw()
  clock += delta
  save_clock += delta
  if clock >= 1.0:
@@ -940,7 +941,7 @@ func _notification(what: int) -> void:
   else: start_screen()
  if what == NOTIFICATION_APPLICATION_PAUSED:
   corridor_ui.cancel_pointer(); input_controller.reset(); all_touches.clear(); mixed_touch_sequence = false
-  if audio_feedback.ambience != null: audio_feedback.ambience.stream_paused = true
+  audio_feedback.set_suspended(true)
   services.event("session_backgrounded")
   suspended = true
   persist()
@@ -1000,7 +1001,7 @@ func _draw() -> void:
   var size: float = 2.0 if t.size == 4 else 1.0
   var offset := Vector2(0.5,0.5) if size == 2 else Vector2.ZERO
   var p := screen(Vector2(model.coord(k))+offset)
-  var pose: Dictionary = presentation.pose(k)
+  var pose: Dictionary = presentation.pose("" if photo_mode else k)
   p.y += pose.rise*zoom_level
   var s := zoom_level
   if pose.burst > 0:
@@ -1030,9 +1031,10 @@ func _draw() -> void:
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
    draw_land_art(pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
   var still: bool = model.state.settings.reduced_motion or photo_mode or suspended
-  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0),presentation.harvest_impulse(k))
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0),presentation.harvest_impulse(k),pose.growth)
   preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
   if pose.burst > 0 and not still:
+   if not pose.previous.is_empty(): preload("res://scripts/WorldAmbience.gd").draw_growth(self,t,p,zoom_level*size,pose.progress)
    # Local settling clouds reveal new land; evolution stays anchored in place.
    for puff in range(5):
     var angle: float = TAU*puff/5.0
@@ -1077,7 +1079,7 @@ func _draw() -> void:
   var still: bool = model.state.settings.reduced_motion or photo_mode or suspended
   var location: Vector2 = preload("res://scripts/SanctuaryLife.gd").position(route,self,ambient_time,still)
   for index in range(route.count):
-   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,route.id,location+Vector2(index*12,-index*4)*zoom_level,zoom_level,ambient_time+index,still)
+   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,route.id,location+Vector2(index*12,-index*4)*zoom_level,zoom_level,ambient_time+index,still,presentation.visitor_reaction(route.stops))
  preload("res://scripts/CorridorArtwork.gd").draw(self)
  draw_restoration_care()
  island_actions.draw(self)
@@ -1113,7 +1115,7 @@ func _draw() -> void:
   draw_colored_polygon(diamond,Color(0.67,0.65,0.83,0.22))
   draw_polyline(diamond,ThemeKit.ACCENT,2.5,true)
  draw_weather()
- for effect in presentation.harvests:
+ for effect in ([] if photo_mode else presentation.harvests):
   var quiet: bool = model.state.settings.reduced_motion
   var at := entity_screen(effect.key)+Vector2(-24,-55-(0.0 if quiet else effect.elapsed*30))*zoom_level
   var flight: float = clampf(effect.elapsed/0.4,0,1)
@@ -1246,11 +1248,8 @@ func apply_settings() -> void:
   services.bridge.setDiagnosticsEnabled(model.state.settings.analytics)
  audio_feedback.process_mode = Node.PROCESS_MODE_INHERIT
  var effects: float = model.state.audio_levels.sfx if model.state.settings.sfx else 0.0
- for player in audio_feedback.players: player.volume_db = -80 if effects <= 0 else -10+linear_to_db(effects)
- if audio_feedback.ambience != null:
-  var music: float = model.state.audio_levels.music if model.state.settings.music else 0.0
-  audio_feedback.ambience.volume_db = -80 if music <= 0 else -20+linear_to_db(music)
-  audio_feedback.ambience.stream_paused = music <= 0
+ var music: float = model.state.audio_levels.music if model.state.settings.music else 0.0
+ audio_feedback.configure(effects,music)
  if ui_root != null: update_fonts(ui_root)
  if is_instance_valid(inventory): inventory.add_theme_font_size_override("normal_font_size",scaled_font(18))
  update_stacked_buttons()
@@ -1642,6 +1641,7 @@ func update_stacked_buttons() -> void:
   action.get_meta("icon_image").modulate.a = 0.5 if action.disabled else 1.0
 
 func draw_weather() -> void:
+ if photo_mode: return
  for effect in presentation.weather:
   if orbit_enabled and not model.state.settings.reduced_motion:
    var alpha:float=clampf((effect.duration-effect.elapsed)/effect.duration,0,1)*0.5

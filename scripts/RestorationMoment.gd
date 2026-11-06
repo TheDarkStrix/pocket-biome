@@ -6,6 +6,7 @@ func show(h, id: String) -> void:
  h.frame_world(); h.refresh()
  var box: VBoxContainer = h.modal_content(Projects.NAMES[id]+" restored")
  h.modal_screen = "restoration_moment"
+ preload("res://scripts/MilestoneCelebration.gd").attach(h,box)
  h.sheets.art(h,box,"grass","",200,true)
  h.label(STORIES[id],18,box)
  h.sheets.caption(h,"You earned · "+Projects.UNLOCKS[id],box)

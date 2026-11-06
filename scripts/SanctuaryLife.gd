@@ -15,10 +15,12 @@ static func position(route: Dictionary, canvas, clock: float, still: bool) -> Ve
  if stops.is_empty(): return Vector2.ZERO
  var at: Vector2 = canvas.entity_screen(stops[0])
  if still or stops.size() == 1: return at
- var phase := fposmod(clock*0.12,stops.size())
+ var hopping: bool = route.id == "shaded_pond"
+ var bird: bool = route.id in ["living_workshop","thermal_refuge"]
+ var phase := fposmod(clock/(6.0 if hopping or bird else 1.0/0.12),stops.size())
  var index := int(phase); var next := (index+1)%stops.size()
  # Ease between actual habitat cells; changed layouts replace the route on refresh.
- var t := smoothstep(0.15,0.85,fmod(phase,1.0))
+ var t := smoothstep(3.8/6.0,4.45/6.0,fmod(phase,1.0)) if hopping else (smoothstep(0.6,0.96,fmod(phase,1.0)) if bird else smoothstep(0.15,0.85,fmod(phase,1.0)))
  return canvas.entity_screen(stops[index]).lerp(canvas.entity_screen(stops[next]),t)
 static func notes(m) -> Array:
  var result := [{"title":"A thirsty beginning","body":"A small Oak waits among the clouds. Every restored place can become a home."}]

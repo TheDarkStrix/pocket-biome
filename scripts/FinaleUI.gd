@@ -19,6 +19,9 @@ func show(h) -> void:
   h.services.chapter_result = 0; h.services.offer_break("chapter","5")
  var box: VBoxContainer = h.modal_content("Your living sanctuary")
  h.modal_screen = "finale"
+ h.audio_feedback.play("restoration")
+ h.haptic(35)
+ preload("res://scripts/MilestoneCelebration.gd").attach(h,box,true)
  h.sheets.art(h,box,"grass","",240,true)
  h.label(preload("res://scripts/SanctuaryIdentity.gd").name_of(h.model),22,box)
  h.sheets.caption(h,"From a tiny seed, a world of your own",box)

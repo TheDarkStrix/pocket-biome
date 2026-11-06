@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITES = ['run', 'campaign', 'save_validation', 'save_io_failures', 'fusion_edges',
-          'input_gestures', 'layout', 'presentation', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout', 'sheet_layout', 'draft_flow', 'island_environment', 'build_flow', 'expansion_pricing', 'orbit_world', 'painted_art', 'expedition', 'finale', 'thermal_expeditions', 'gather', 'habitat_projects', 'habitat_guidance', 'layout_recovery', 'expedition_replay', 'restoration_chapter', 'restoration_campaign', 'director_clarity', 'director_depth', 'director_ownership', 'director_explorers', 'living_corridors', 'corridor_controls', 'journey_guidance', 'ad_breaks', 'ads_integration', 'ad_exposure']
+          'input_gestures', 'layout', 'presentation', 'game_juice', 'gameplay_pacing', 'services', 'screens', 'scene_smoke', 'touch_ui', 'mobile_layout', 'sheet_layout', 'draft_flow', 'island_environment', 'build_flow', 'expansion_pricing', 'orbit_world', 'painted_art', 'expedition', 'finale', 'thermal_expeditions', 'gather', 'habitat_projects', 'habitat_guidance', 'layout_recovery', 'expedition_replay', 'restoration_chapter', 'restoration_campaign', 'director_clarity', 'director_depth', 'director_ownership', 'director_explorers', 'living_corridors', 'corridor_controls', 'journey_guidance', 'ad_breaks', 'ads_integration', 'ad_exposure']
 
 def source_digest():
     digest = hashlib.sha256()

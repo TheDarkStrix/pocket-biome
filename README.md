@@ -19,6 +19,8 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 
 ## Play
 
+Latest visual feedback pass: [animation inventory](docs/ANIMATION_STATUS.md) and [verified polish audit](docs/GAME_JUICE_AUDIT.md). Painted Golem/tool rigs, rooted growth, reactive wildlife, finite milestone celebrations and sound mixing are integrated. The preview keeps Google test ad IDs.
+
 Latest monetization delivery: [Automatic ads and live setup](docs/AD_MONETIZATION.md) and [audit/evidence](docs/MONETIZATION_AUDIT.md). Six saved-result placements include completed replay/mastery attempts, with configurable timing, persistent frequency controls and placement-level SDK measurements. The current preview still uses test units and earns no live revenue.
 
 Gameplay delivery: [Advanced lessons and chapter guidance](docs/PLAYER_JOURNEY.md), [audit/evidence](docs/JOURNEY_AUDIT.md), and [Android acceptance](docs/ANDROID_ACCEPTANCE.md). Tap the goal for a live checklist, learn four advanced systems on your island, and use material help to find the next real action. Lessons can be skipped and revisited from Pack.
@@ -45,6 +47,6 @@ See ARCHITECTURE.md, ART_ASSET_MANIFEST.md, BALANCING.md, TEST_REPORT.md and doc
 
 Current visual direction is world-first: atmospheric sky/clouds, compact resources and goals, small floating tool icons and contextual tile details. This supersedes the user's rejected gray, panel-heavy0.13 HUD. See docs/DESIGN_DIRECTION.md and docs/UI_RESEARCH.md. This revision remains under human review.
 
-Production status and external gates: docs/PRODUCTION_READINESS.md. Ongoing foliage/water/structure effects are implemented; the exact animation inventory and remaining authored rigs are in docs/ANIMATION_STATUS.md. Preview artifact validation is distinct from commercial release certification.
+Production status and external gates: docs/PRODUCTION_READINESS.md. Ongoing foliage/water/structure effects are implemented; the exact animation inventory and device-review scope are in docs/ANIMATION_STATUS.md. Preview artifact validation is distinct from commercial release certification.
 
 Gameplay sheets now use illustrated draft cards, a categorized crafting catalogue and job shelf, current-island World previews, Pulse footprint diagrams and bound setting switches. The gameplay HUD and economy remain unchanged. See fixtures33–39 and current TEST_REPORT.md; human visual approval remains open.

@@ -1,0 +1,78 @@
+extends SceneTree
+class Details extends Node2D:
+ var clock := 0.0
+ var still := false
+ func _draw() -> void:
+  draw_rect(Rect2(0,0,540,960),Color("e7edde"))
+  draw_string(ThemeDB.fallback_font,Vector2(24,35),"POCKET BIOME · LIVING DETAILS",HORIZONTAL_ALIGNMENT_LEFT,-1,20,Color("294c3f"))
+  for entry in [["golem",Vector2(140,280)],["workbench",Vector2(400,280)],["totem",Vector2(140,500)],["oak",Vector2(400,500)]]:
+   preload("res://scripts/WorldAmbience.gd").draw_tile(self,entry[0],entry[1],0.55,Color.WHITE,"",false,clock,3,still,false,clock,0)
+   draw_string(ThemeDB.fallback_font,entry[1]+Vector2(-60,80),str(entry[0]).capitalize(),HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("294c3f"))
+  for i in range(3):
+   var at := Vector2(95+i*175,720)
+   var progress := (i+1)/3.0
+   preload("res://scripts/WorldAmbience.gd").draw_tile(self,"oak",at,0.32,Color.WHITE,"rainforest",false,clock,3,still,false,0,0,progress)
+   draw_string(ThemeDB.fallback_font,at+Vector2(-50,60),["Bud","Unfurl","Canopy"][i],HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("294c3f"))
+  var ids := ["shaded_pond","pollinator_patch","living_workshop","sanctuary_network"]
+  for i in range(4):
+   preload("res://scripts/HabitatProjects.gd").draw_visitor(self,ids[i],Vector2(65+i*130,900),2,clock,still,0.8)
+var h
+var details
+var screenshots := []
+func _init() -> void: call_deferred("run")
+func frames(count: int = 5) -> void:
+ for frame in range(count): await process_frame
+func snap(name: String) -> void:
+ await frames(); await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/polish-review/"+name+".png"); screenshots.append(name)
+func run() -> void:
+ var source_at_start: String = JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ root.size = Vector2i(540,960)
+ details = Details.new(); root.add_child(details); await snap("details-a")
+ details.clock = 1.35; details.queue_redraw(); await snap("details-b")
+ details.still = true; details.queue_redraw(); await snap("details-reduced-a")
+ details.clock = 6.35; details.queue_redraw(); await snap("details-reduced-b")
+ details.queue_free(); await process_frame
+ h = preload("res://scenes/Main.tscn").instantiate(); h.show_menu_on_launch = false; h.store.path = "user://polish-visual-%d.json" % Time.get_ticks_usec(); root.add_child(h); await process_frame; h.set_process(false)
+ var m = preload("res://scripts/WorldModel.gd").new()
+ for x in range(-1,5):
+  for y in range(6):
+   if not m.state.tiles.has(m.key(Vector2i(x,y))): m.add_tile(Vector2i(x,y),"grass")
+ for entry in [[Vector2i(-1,0),"water"],[Vector2i(-1,1),"water"],[Vector2i(0,2),"water"],[Vector2i(1,2),"forest"],[Vector2i(2,2),"workbench"],[Vector2i(3,2),"windmill"],[Vector2i(1,3),"glacier"],[Vector2i(2,3),"golem"],[Vector2i(3,3),"totem"]]: m.add_tile(entry[0],entry[1])
+ m.state.tiles["0,0"].dna.moisture = 80; m.state.tiles["0,0"].dna.heat = 25
+ m.state.tiles["1,2"].dna.moisture = 80; m.state.tiles["1,2"].dna.heat = 25; m.state.tiles["1,2"].dna.fertility = 80
+ m.add_tile(Vector2i(1,3),"glacier"); m.add_tile(Vector2i(1,1),"fiber"); m.add_tile(Vector2i(0,1),"water")
+ m.state.expansions = 32; m.state.habitat_projects = preload("res://scripts/HabitatProjects.gd").IDS.duplicate(); m.state.chapter = 4; m.state.chapter_rewards = [1,2,3]; m.state.settings.tutorial_seen = true; m.state.learning = {"completed":true}
+ h.model = m; h.services.model = m; h.start_play(); h.modal.hide(); h.refresh(); h.presentation.advance(10); h.reveal_queue.clear(); h.frame_world(); h.queue_redraw(); await snap("island-a")
+ var before := JSON.stringify(m.state)
+ var times := []
+ for frame in range(90):
+  var start := Time.get_ticks_usec()
+  h.ambient_time += 1.0/30; h.presentation.advance_motors(m.state.tiles,1.0/30); h.presentation.advance(1.0/30); h.queue_redraw(); await process_frame
+  times.append((Time.get_ticks_usec()-start)/1000.0)
+ await snap("island-b")
+ var unchanged := JSON.stringify(m.state) == before
+ h.presentation.harvest("0,0","+1 Wood","wood")
+ h.presentation.animations["0,0"] = {"kind":"evolve","elapsed":0.4,"duration":1.8,"previous":{},"parts":[]}
+ h.begin_photo(); await snap("photo-with-pending-feedback")
+ h.presentation.harvests.clear(); h.presentation.animations.clear(); h.queue_redraw(); await snap("photo-settled")
+ h.end_photo()
+ h.restoration_moment.show(h,"shaded_pond"); await snap("restoration-start")
+ for frame in range(90): await process_frame
+ await snap("restoration-settled")
+ h.model.state.settings.reduced_motion = true; h.restoration_moment.show(h,"shaded_pond"); await snap("restoration-reduced")
+ h.modal.hide(); h.model.state.settings.reduced_motion = false
+ h.model.state.chapter = 5; h.model.state.chapter_rewards = [1,2,3,4,5]; h.finale_ui.show(h); await snap("finale")
+ var state: Dictionary = h.model.state.duplicate(true)
+ h.queue_free(); h = null; await process_frame
+ root.size = Vector2i(320,640)
+ h = preload("res://tests/fixtures/MobileMain.gd").new(); h.display_dp = 1.6875; h.show_menu_on_launch = false; h.store.path = "user://polish-mobile.json"; root.add_child(h); await process_frame; h.set_process(false); h.model.state = state; h.services.model = h.model; h.model.state.text_scale = 1.2; h.apply_settings(); h.start_play(); h.modal.hide(); h.refresh(); h.presentation.advance(10); h.finale_ui.show(h); await snap("finale-small")
+ var bounds := true
+ for action in h.modal_box.find_children("*","Button",true,false): bounds = bounds and action.get_global_rect().end.x <= h.modal_scroll.get_global_rect().end.x+1 and action.size.y >= h.touch_height()-1
+ times.sort()
+ var result := {"passed":unchanged and bounds,"cosmetic_state_unchanged":unchanged,"cells":m.state.tiles.size(),"visitor_groups":preload("res://scripts/HabitatProjects.gd").visitors(m).size(),"frames":90,"median_frame_ms":times[45],"p95_frame_ms":times[85],"small_screen_buttons_fit":bounds,"screenshots":screenshots,"scope":"Rendered Godot OpenGL on desktop software graphics, constructed island, deterministic animation clocks. Not physical phone performance or human enjoyment acceptance."}
+ result["source_sha256"] = source_at_start
+ result["source_unchanged_during_run"] = source_at_start == JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ result.passed = result.passed and result.source_unchanged_during_run
+ var file := FileAccess.open("/workspace/runtime/polish-review/visual.json",FileAccess.WRITE); file.store_string(JSON.stringify(result,"  ")); file.close(); print("POLISH VISUAL RESULT: "+JSON.stringify(result))
+ h.queue_free(); h = null; await process_frame; await create_timer(0.3).timeout; quit(0 if result.passed else 1)

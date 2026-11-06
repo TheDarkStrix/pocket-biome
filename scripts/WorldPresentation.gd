@@ -8,6 +8,7 @@ var cues: Array[String] = []
 var weather := []
 var harvests := []
 var motor_times := {}
+var reactions := {}
 func sync(tiles: Dictionary) -> void:
  cues.clear()
  var next := {}
@@ -20,7 +21,7 @@ func sync(tiles: Dictionary) -> void:
   next_appearances[key] = {"type":tile.type,"evolution":tile.evolution,"size":tile.size}
   if initialized and known.get(key,"") != signature:
    var kind := "place" if not known.has(key) else ("fusion" if tile.size == 4 else "evolve")
-   animations[key] = {"kind":kind,"elapsed":0.0,"duration":0.55 if kind == "place" else 1.4}
+   animations[key] = {"kind":kind,"elapsed":0.0,"duration":0.55 if kind == "place" else (1.8 if kind == "evolve" else 1.4)}
    animations[key]["previous"] = appearances.get(key,{})
    var parts := []
    if kind == "fusion":
@@ -42,6 +43,10 @@ func sync(tiles: Dictionary) -> void:
   if not next.has(key): animations.erase(key)
 
 func advance(delta: float) -> bool:
+ delta = maxf(delta,0)
+ for key in reactions.keys():
+  reactions[key] -= delta
+  if reactions[key] <= 0: reactions.erase(key)
  var was_animating := not animations.is_empty() or not weather.is_empty() or not harvests.is_empty()
  for effect in weather.duplicate():
   effect.elapsed += delta
@@ -55,28 +60,30 @@ func advance(delta: float) -> bool:
  return was_animating
 
 func pose(key: String) -> Dictionary:
- if not animations.has(key): return {"scale":1.0,"rise":0.0,"burst":0.0,"mix":1.0,"previous":{},"parts":[],"progress":1.0}
+ if not animations.has(key): return {"scale":1.0,"rise":0.0,"burst":0.0,"mix":1.0,"previous":{},"parts":[],"progress":1.0,"growth":1.0}
  var animation: Dictionary = animations[key]
  var t: float = clampf(animation.elapsed/animation.duration,0,1)
  var eased := 1.0-pow(1.0-t,3)
  var amount := 0.25 if animation.kind == "place" else 0.0
- return {"scale":1.0-amount*(1-eased)+(sin(t*PI)*0.08 if animation.kind == "place" else 0.0),"rise":-28.0*(1-eased) if animation.kind == "place" else 0.0,"burst":sin(t*PI),"mix":eased if animation.kind == "evolve" else (clampf((t-0.25)/0.55,0,1) if animation.kind == "fusion" else 1.0),"previous":animation.previous,"parts":animation.parts,"progress":t}
+ return {"scale":1.0-amount*(1-eased)+(sin(t*PI)*0.08 if animation.kind == "place" else 0.0),"rise":-28.0*(1-eased) if animation.kind == "place" else 0.0,"burst":sin(t*PI),"mix":smoothstep(0.12,0.72,t) if animation.kind == "evolve" else (clampf((t-0.25)/0.55,0,1) if animation.kind == "fusion" else 1.0),"previous":animation.previous,"parts":animation.parts,"progress":t,"growth":1.0 if animation.kind == "place" else lerpf(0.45,1.0,smoothstep(0.08,0.78,t))+sin(t*PI)*0.045}
 
 func pulse(power: String, key: String, targets: Array = []) -> void:
+ for target in targets: reactions[target] = 1.6
  if weather.size() >= 2: weather.pop_front()
  weather.append({"power":power,"key":key,"targets":targets.duplicate(),"elapsed":0.0,"duration":3.2})
 func harvest(key: String, text: String, resource: String = "") -> void:
+ reactions[key] = 1.6
  if harvests.size() >= 12: harvests.pop_front()
  harvests.append({"key":key,"text":text,"resource":resource,"elapsed":0.0})
 
 func advance_motors(tiles: Dictionary, delta: float, frozen: bool = false) -> void:
  for key in motor_times.keys():
-  if not tiles.has(key) or tiles[key].get("type","") != "windmill": motor_times.erase(key)
+  if not tiles.has(key) or tiles[key].get("type","") not in ["windmill","golem","workbench","totem"]: motor_times.erase(key)
  for key in tiles:
   var tile: Dictionary = tiles[key]
-  if tile.get("type","") != "windmill": continue
+  if tile.get("type","") not in ["windmill","golem","workbench","totem"]: continue
   if not motor_times.has(key): motor_times[key] = 0.0
-  if not frozen and tile.get("enabled",true): motor_times[key] = fposmod(motor_times[key]+clampf(delta,0,0.1),TAU/0.55)
+  if not frozen and tile.get("enabled",true): motor_times[key] = fposmod(motor_times[key]+clampf(delta,0,0.1),TAU/(0.55 if tile.type == "windmill" else 0.085))
 
 func harvest_impulse(key: String) -> float:
  var value := 0.0
@@ -85,3 +92,9 @@ func harvest_impulse(key: String) -> float:
    var t: float = clampf(effect.elapsed/0.5,0,1)
    value += sin(t*TAU*2)*(1-t)
  return clampf(value,-1,1)
+
+func visitor_reaction(stops: Array) -> float:
+ var result := 0.0
+ for key in stops:
+  result = maxf(result,sin(clampf(reactions.get(key,0.0)/1.6,0,1)*PI))
+ return result

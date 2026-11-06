@@ -1,11 +1,11 @@
 extends RefCounted
 # Deterministic cosmetic motion. Ground, occupancy, production and saves stay fixed.
 const Art = preload("res://scripts/TileArtwork.gd")
-static func foliage_mesh(spec: Dictionary, scale: float, time: float, seed: int, reduced: bool = false, impulse: float = 0.0) -> Dictionary:
+static func foliage_mesh(spec: Dictionary, scale: float, time: float, seed: int, reduced: bool = false, impulse: float = 0.0, growth: float = 1.0) -> Dictionary:
  var cut: float = maxf(1,spec.pivot.y-80)
  var shift: float = 0.0 if reduced else clampf(sin(time*1.35+seed*1.71)*8+sin(time*2.1+seed)*2+impulse*9,-9,9)*scale
  var left: float = -spec.pivot.x*scale
- var top: float = -spec.pivot.y*scale
+ var top: float = (cut-spec.pivot.y-cut*growth)*scale
  var edge: float = (cut-spec.pivot.y)*scale
  var width: float = spec.region.size.x*scale
  var texture_size: Vector2 = spec.texture.get_size()
@@ -17,10 +17,13 @@ static func foliage_mesh(spec: Dictionary, scale: float, time: float, seed: int,
   (source.position+Vector2(0.5,cut))/texture_size])
  return {"points":PackedVector2Array([Vector2(left+shift,top),Vector2(left+width+shift,top),Vector2(left+width,edge),Vector2(left,edge)]),"uvs":uvs,"base":Rect2(left,edge,width,(source.size.y-cut)*scale),"region":Rect2(source.position+Vector2(0,cut),Vector2(source.size.x,source.size.y-cut)),"shift":shift}
 
-static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String, depleted: bool, time: float, seed: int, reduced: bool, joined: bool = false, motor_time: float = 0.0, impulse: float = 0.0) -> void:
+static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String, depleted: bool, time: float, seed: int, reduced: bool, joined: bool = false, motor_time: float = 0.0, impulse: float = 0.0, growth: float = 1.0) -> void:
  if type == "windmill" and evolution == "":
   if joined: Art.draw_joined(canvas,type,position,scale,tint,evolution,depleted,0,motor_time*0.55)
   else: Art.draw_tile(canvas,type,position,scale,tint,evolution,depleted,motor_time*0.55)
+  return
+ if type in ["golem","workbench","totem"] and evolution == "" and not reduced and not joined:
+  preload("res://scripts/ObjectMotion.gd").draw(canvas,type,Art.appearance(type,evolution,depleted),position,scale,tint,motor_time,seed,impulse)
   return
  var stump: bool = depleted and evolution == "" and Art.DEPLETED_CELLS.has(type)
  var foliage: bool = type in ["oak","forest","fiber"] or evolution in ["rainforest","grove","verdant","ironwood","moonflower","mistforest","crystalforest"]
@@ -30,7 +33,7 @@ static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale
   return
  var spec: Dictionary = Art.appearance(type,evolution,depleted)
  if spec.is_empty(): return
- var mesh := foliage_mesh(spec,scale*spec.normalization,time,seed,false,impulse)
+ var mesh := foliage_mesh(spec,scale*spec.normalization,time,seed,false,impulse,growth)
  var points: PackedVector2Array = mesh.points
  for index in range(points.size()): points[index] += position
  canvas.draw_polygon(points,PackedColorArray([tint*spec.tint]),mesh.uvs,spec.texture)
@@ -95,3 +98,15 @@ static func draw_meadow(canvas: CanvasItem, at: Vector2, scale: float, time: flo
   canvas.draw_polyline(blade,Color(0.57,0.7,0.22,0.85),maxf(0.8,scale),true)
   if i%2 == 0:
    canvas.draw_circle(blade[2],1.5*scale,Color(1,0.87,0.49,0.85))
+
+static func draw_growth(canvas: CanvasItem, tile: Dictionary, at: Vector2, scale: float, progress: float) -> void:
+ if tile.type not in ["oak","forest","fiber","grass"]: return
+ var burst := sin(progress*PI)
+ for i in range(9):
+  var phase := clampf((progress-i*0.025)/0.78,0,1)
+  var point := at+Vector2(sin(i*2.4+phase*2)*16*(0.4+phase),-8-phase*(30+i%3*9))*scale
+  var tip := point+Vector2(cos(phase*5+i)*4,-4)*scale
+  canvas.draw_line(point,tip,Color(0.63,0.83,0.35,burst*(1-phase)*0.8),maxf(1.0,2*scale),true)
+ var ring := PackedVector2Array()
+ for i in range(25): ring.append(at+Vector2(cos(i*TAU/24)*37,sin(i*TAU/24)*14)*scale*(0.6+progress*0.5))
+ canvas.draw_polyline(ring,Color(0.76,0.9,0.55,burst*0.5),maxf(1,scale),true)
