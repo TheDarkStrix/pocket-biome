@@ -129,6 +129,9 @@ func update_selection() -> void:
  action.tooltip_text = (place_block if place_block != "" else "Place "+recipe.get("tile","")) if ready > 0 else (", ".join(missing) if not missing.is_empty() else "%d × %s · %ds" % [quantity,recipe.name,seconds])
  var detail: Label = host.label((place_block if place_block != "" else "Tap an empty Grass plot on your island") if ready > 0 else (", ".join(missing) if not missing.is_empty() else "Craft %s · %ds, then place on Meadow" % [recipe.get("tile",recipe.id).capitalize(),seconds] if recipe.has("tile") else "Craft %s · %ds" % [recipe.name,seconds]),12,selection)
  detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ if not missing.is_empty() or ready > 0:
+  var next_step: Dictionary = preload("res://scripts/PacingGuide.gd").recipe(host.model,recipe.id,quantity)
+  host.button("Help · "+next_step.button,func(): host.choose_idea(next_step),selection).set_meta("material_help",true)
  # Stat changes refresh the selected item's quote, never its saved recipe choice.
  signature = stock_signature()
  host.queue_redraw()

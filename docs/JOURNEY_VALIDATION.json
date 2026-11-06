@@ -1,0 +1,754 @@
+{
+  "utc": "2026-11-06T10:32:00.349402+00:00",
+  "source_sha256": "f0d6bab13af3adb94a294c42f36bdf7bd7449673127b72afce5d44fc241408b1",
+  "implementation_checks_passed": true,
+  "release_qualified": false,
+  "automated_tests": {
+    "utc": "2026-11-06T10:29:46.745244+00:00",
+    "source_sha256": "f0d6bab13af3adb94a294c42f36bdf7bd7449673127b72afce5d44fc241408b1",
+    "source_unchanged_during_run": true,
+    "passed": true,
+    "assertions": 1901,
+    "results": [
+      {
+        "suite": "run",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 65
+      },
+      {
+        "suite": "save_validation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 319
+      },
+      {
+        "suite": "save_io_failures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "fusion_edges",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 10
+      },
+      {
+        "suite": "input_gestures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "presentation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "gameplay_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "services",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "screens",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 87
+      },
+      {
+        "suite": "scene_smoke",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "touch_ui",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 47
+      },
+      {
+        "suite": "mobile_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 156
+      },
+      {
+        "suite": "sheet_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "draft_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 22
+      },
+      {
+        "suite": "island_environment",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "build_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 78
+      },
+      {
+        "suite": "expansion_pricing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "orbit_world",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 140
+      },
+      {
+        "suite": "painted_art",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 12
+      },
+      {
+        "suite": "expedition",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 49
+      },
+      {
+        "suite": "finale",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "thermal_expeditions",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "gather",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "habitat_projects",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 27
+      },
+      {
+        "suite": "habitat_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 18
+      },
+      {
+        "suite": "layout_recovery",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "expedition_replay",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 16
+      },
+      {
+        "suite": "restoration_chapter",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "restoration_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 85
+      },
+      {
+        "suite": "director_clarity",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 37
+      },
+      {
+        "suite": "director_depth",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "director_ownership",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "director_explorers",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "living_corridors",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 53
+      },
+      {
+        "suite": "corridor_controls",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 24
+      },
+      {
+        "suite": "journey_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 70
+      },
+      {
+        "suite": "ad_breaks",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "automation_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "progression_simulation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "balanced_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "primary_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "startup",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      }
+    ]
+  },
+  "python_tests": {
+    "tests": 12,
+    "passed": true
+  },
+  "previous_full_audit_before_two_repair_conditions": {
+    "utc": "2026-11-06T10:26:15.290600+00:00",
+    "source_sha256": "42f642aa9bbe29575cce5ca0677c4a2968b06fa75e09eafb39cbc9900f47e842",
+    "source_unchanged_during_run": true,
+    "passed": true,
+    "assertions": 1899,
+    "results": [
+      {
+        "suite": "run",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 65
+      },
+      {
+        "suite": "save_validation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 319
+      },
+      {
+        "suite": "save_io_failures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "fusion_edges",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 10
+      },
+      {
+        "suite": "input_gestures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "presentation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "gameplay_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "services",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "screens",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 87
+      },
+      {
+        "suite": "scene_smoke",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "touch_ui",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 47
+      },
+      {
+        "suite": "mobile_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 156
+      },
+      {
+        "suite": "sheet_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "draft_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 22
+      },
+      {
+        "suite": "island_environment",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "build_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 78
+      },
+      {
+        "suite": "expansion_pricing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "orbit_world",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 140
+      },
+      {
+        "suite": "painted_art",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 12
+      },
+      {
+        "suite": "expedition",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 49
+      },
+      {
+        "suite": "finale",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "thermal_expeditions",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "gather",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "habitat_projects",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 27
+      },
+      {
+        "suite": "habitat_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 18
+      },
+      {
+        "suite": "layout_recovery",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "expedition_replay",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 16
+      },
+      {
+        "suite": "restoration_chapter",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "restoration_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 85
+      },
+      {
+        "suite": "director_clarity",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 37
+      },
+      {
+        "suite": "director_depth",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "director_ownership",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "director_explorers",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "living_corridors",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 53
+      },
+      {
+        "suite": "corridor_controls",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 24
+      },
+      {
+        "suite": "journey_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 68
+      },
+      {
+        "suite": "ad_breaks",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "automation_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "progression_simulation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "balanced_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "primary_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "startup",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      }
+    ]
+  },
+  "rendered_advanced_lesson": {
+    "captures": [
+      "chapter-goals",
+      "river-lesson",
+      "draft-grove",
+      "confirm-grove",
+      "flow-lesson",
+      "draft-garden",
+      "confirm-garden",
+      "seedbed-lesson",
+      "guided-restoration",
+      "next-chapter-actions",
+      "fusion-lesson",
+      "completed-reference",
+      "material-help",
+      "repair-route",
+      "repair-seedbed",
+      "mobile-objectives",
+      "mobile-lesson",
+      "mobile-reference"
+    ],
+    "lesson_receipt": [
+      "river"
+    ],
+    "mobile_touch_bounds": true,
+    "passed": true,
+    "river_earned": true,
+    "save_valid": true,
+    "scope": "Rendered screen-touch completion through the advanced river lesson on a constructed home-island fixture, plus skip/review/material guidance and small-screen checks. Not a fresh campaign, physical phone or human enjoyment study.",
+    "screen_touch_actions": 44,
+    "skip_persisted": true
+  },
+  "rendered_fresh_opening": {
+    "active_seconds": 23.2030496666667,
+    "climate": "balanced",
+    "harvests": 8,
+    "input_actions": 27,
+    "inventory": {
+      "brick": 0,
+      "clay": 0,
+      "fiber": 3,
+      "iron": 0,
+      "star_dew": 5,
+      "stone": 0,
+      "wood": 1
+    },
+    "passed": true,
+    "projects": [
+      "shaded_pond"
+    ],
+    "save_valid": true,
+    "scope": "Scripted screen-touch opening in the actual rendered game with ordinary clock/resources; not an unfamiliar-person study or physical-device run."
+  },
+  "ad_fake_provider_qualification": {
+    "checks": 25,
+    "passed": true,
+    "scope": "Fake-provider dispatch, retry and reward-ledger qualification; not real SDK delivery, consent, billing or revenue proof."
+  },
+  "compiled_native_retry_markers": {
+    "retryAds": true,
+    "rewardedLoading": true,
+    "interstitialLoading": true,
+    "rewardedAttemptAt": true,
+    "interstitialAttemptAt": true
+  },
+  "scene_profile_before_last_two_lesson_conditions": {
+    "cells": 36,
+    "delivered": {
+      "garden": 1,
+      "grove": 2
+    },
+    "max_refresh_ms": 39.165,
+    "median_refresh_ms": 21.892,
+    "p95_refresh_ms": 27.196,
+    "route_count": 2,
+    "samples": 30,
+    "scope": "Desktop Godot headless cached scene under shared workspace load; not phone FPS, GPU, battery or thermal qualification.",
+    "visitor_groups": 5
+  },
+  "pacing_summary": [
+    {
+      "route": "pacing-simulation",
+      "known_solution_active_seconds": 1174,
+      "individual_node_collections": 1710,
+      "progression_operations": 128,
+      "largest_recorded_progress_event_gap_seconds": 68.0
+    },
+    {
+      "route": "pacing-automation",
+      "known_solution_active_seconds": 1146,
+      "individual_node_collections": 1581,
+      "progression_operations": 128,
+      "largest_recorded_progress_event_gap_seconds": 68.0
+    },
+    {
+      "route": "pacing-balanced",
+      "known_solution_active_seconds": 1244,
+      "individual_node_collections": 1701,
+      "progression_operations": 146,
+      "largest_recorded_progress_event_gap_seconds": 68.0
+    },
+    {
+      "route": "pacing-primary",
+      "known_solution_active_seconds": 648,
+      "individual_node_collections": 712,
+      "progression_operations": 61,
+      "largest_recorded_progress_event_gap_seconds": 68.0
+    }
+  ],
+  "pacing_scope": "Accelerated known-solution model authorities. Individual node collections are not input actions; Gather ready can batch them. Not human durations, enjoyment or retention evidence.",
+  "android_package": {
+    "apk": "builds/PocketBiome-debug.new.apk",
+    "apk_sha256": "06b06c8a6e5743a52b4e1151b5c4bbc1854b81005da97ffa617134965decaef9",
+    "source_sha256": "f0d6bab13af3adb94a294c42f36bdf7bd7449673127b72afce5d44fc241408b1",
+    "checks": {
+      "matching_passing_tests": true,
+      "package_identity": true,
+      "min_sdk_24": true,
+      "target_sdk_36": true,
+      "portrait": true,
+      "no_sensitive_capture_permissions": true,
+      "signature_verified": true,
+      "zip_16k_alignment": true,
+      "embedded_source_matches_tests": true,
+      "arm64_present": true,
+      "qa_files_excluded": true,
+      "elf_16k_load_alignment": true
+    },
+    "elf_load_alignments": {
+      "lib/arm64-v8a/libc++_shared.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/arm64-v8a/libgodot_android.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/x86_64/libc++_shared.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/x86_64/libgodot_android.so": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "preview_checks_passed": true,
+    "production_blockers": [
+      "APK is debuggable",
+      "APK uses a development signing certificate",
+      "Application version is marked preview/test",
+      "Services still use sandbox mode",
+      "Native providers still contain test advertising/product IDs",
+      "privacy_policy_url is not configured with an HTTPS URL",
+      "support_url is not configured with an HTTPS URL",
+      "physical_device_report has no passing evidence for the current source",
+      "play_sandbox_report has no passing evidence for the current source",
+      "creative_review_report has no passing evidence for the current source"
+    ],
+    "store_release_ready": false,
+    "note": "Static artifact/configuration audit. Evidence declarations require human review; this is not store approval or a device benchmark."
+  },
+  "phone_apk": {
+    "source_sha256": "f0d6bab13af3adb94a294c42f36bdf7bd7449673127b72afce5d44fc241408b1",
+    "assertions": 1901,
+    "apk_sha256": "513b9632be3bbe6cc45ca3be10692c9e0cd7b36419bb1c4c92c013e9c54b239e",
+    "bytes": 102427268,
+    "abi": "arm64-v8a",
+    "retained_files_verified": 647,
+    "signature_and_alignment_verified": true,
+    "physical_device_tested": false,
+    "note": "Debug test build; identical retained game/native files to universal APK. Not store certification."
+  },
+  "device_qualification": {
+    "utc": "2026-11-06T10:30:53.796298+00:00",
+    "source_sha256": "f0d6bab13af3adb94a294c42f36bdf7bd7449673127b72afce5d44fc241408b1",
+    "passed": false,
+    "startup_smoke_passed": false,
+    "physical_device_qualified": false,
+    "scope": "Startup/log/screenshot smoke only. Full touch, save/resume, performance, audio, consent and provider acceptance require the device playthrough checklist.",
+    "remaining": [
+      "first launch and full tutorial",
+      "all advanced lessons",
+      "complete campaign",
+      "save/background/process-death recovery",
+      "touch/readability/accessibility",
+      "thermal/battery/audio",
+      "no-fill and consent on real SDK",
+      "sandbox purchase/restore and Android sharing"
+    ],
+    "authorized_device_count": 0,
+    "blocked": "No authorized Android device or emulator is attached."
+  },
+  "enjoyment": "Unmeasured; no human study or physical-device run performed."
+}

@@ -20,25 +20,7 @@ func update(h) -> void:
  strip.position = Vector2(h.layout.world.position.x+8,h.layout.world.end.y-strip.size.y-70)
  move_button.disabled = not preload("res://scripts/LayoutTools.gd").movable(h.model,h.model.origin(h.selected))
 func show_goal(h) -> void:
- var box: VBoxContainer = h.modal_content("Your next restoration")
- h.modal_screen = "island_goal"
- h.label(h.model.campaign.next_goal(h.model),19,box)
- if h.model.state.chapter == 3 and not preload("res://scripts/LivingCorridors.gd").earned(h.model):
-  h.sheets.primary(h,"Plan the Living River",func(): h.corridor_ui.show(h),box)
- var ids: Array = {2:["shaded_pond"],3:["pollinator_patch"],4:["living_workshop","thermal_refuge"],5:["sanctuary_network"]}.get(int(h.model.state.chapter),["shaded_pond"])
- for id in ids:
-  if h.model.state.get("habitat_projects",[]).has(id): continue
-  var projects = preload("res://scripts/HabitatProjects.gd")
-  h.sheets.caption(h,projects.RULES[id],box)
-  h.sheets.caption(h,"Earn · "+projects.UNLOCKS[id],box)
-  var advice := preload("res://scripts/HabitatGuidance.gd").advice(h.model,id)
-  if not advice.is_empty():
-   h.label(advice.text,15,box)
-   if advice.action != "": h.sheets.primary(h,advice.label,func(): h.habitat_ui.follow(h,id),box)
-  break
- h.button("All restoration projects",func(): h.habitat_ui.show_projects(h),box)
- h.button("Observe for five seconds",func(): observe(h),box)
- h.campaign_ui.close_button(h,box)
+ h.journey_ui.goal(h)
 func observe(h) -> void:
  h.modal.hide(); h.frame_world(); h.model.message = "Watch the highlighted influences. Harvesting and machines keep their ordinary active-time schedules."
  h.notice_time = 5

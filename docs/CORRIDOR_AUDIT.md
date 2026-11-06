@@ -1,3 +1,5 @@
+Latest follow-up: [Player journey audit](JOURNEY_AUDIT.md). The following records the earlier River delivery.
+
 # Living River audit — 2026-11-05
 
 This extends the [earlier director delivery](DIRECTOR_DELIVERY.md). The new work supplies a signature home-island chapter with limited flow, two approaches, causal restoration and tactile route planning. All scores are developer judgments; enjoyment remains unmeasured.

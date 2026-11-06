@@ -24,6 +24,7 @@ var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
 var habitat_visitors: Array = []
 var care_ui = preload("res://scripts/RestorationCareUI.gd").new()
 var wildlife_initialized := false
+var journey_ui = preload("res://scripts/JourneyUI.gd").new()
 var corridor_ui = preload("res://scripts/CorridorUI.gd").new()
 var river_story = preload("res://scripts/RiverStory.gd").new()
 var identity_ui = preload("res://scripts/PersonalizeUI.gd").new()
@@ -444,6 +445,10 @@ func open_ideas(all_choices: bool = false) -> void:
  var suggestions: Array = preload("res://scripts/GameplayAdvisor.gd").ideas(model,selected)
  var lesson := preload("res://scripts/LearningJourney.gd").current(model)
  var learning: bool = not lesson.is_empty() and not all_choices
+ if lesson.is_empty() and not all_choices:
+  if preload("res://scripts/JourneyLessons.gd").record(model).active != "": journey_ui.lesson(self)
+  else: journey_ui.goal(self)
+  return
  if learning: suggestions = [lesson]
  var box := modal_content("Your next step" if learning else "What would you like to try?")
  modal_screen = "ideas"
@@ -469,11 +474,25 @@ func open_ideas(all_choices: bool = false) -> void:
  if learning:
   button("Explore other ideas",func(): open_ideas(true),box)
   button("I know the basics · finish guidance",func(): preload("res://scripts/LearningJourney.gd").mark(model,"dismissed"); persist(); refresh(); modal.hide(),box)
+ button("Learn & revisit",func(): journey_ui.library(self),box)
  button("Back to my island",func(): modal.hide(),box)
 
 func choose_idea(idea: Dictionary) -> void:
  targeting = ""; preview = ""; placement_blueprint = ""
  match idea.action:
+  "chapter_goal": journey_ui.goal(self)
+  "lessons": journey_ui.library(self)
+  "recipe":
+   campaign_ui.craft_quantity = 1; campaign_ui.build_choice = idea.target
+   for recipe in model.config.crafting:
+    if recipe.id == idea.target: campaign_ui.build_family = "Craft" if not recipe.has("tile") else "Structures" if model.config.tiles[recipe.tile].category == "structure" else "Land"
+   campaign_ui.workshop(self)
+  "project":
+   habitat_ui.expanded = idea.target; habitat_ui.show_projects(self)
+  "river_plan": corridor_ui.begin(self,idea.target)
+  "resource":
+   if model.origin(idea.target) != "": selected = model.origin(idea.target)
+   modal.hide(); frame_world(); game_hud.show_selection(); model.message = idea.body; refresh()
   "inspect":
    if model.origin(idea.target) != "": open_inspector(model.origin(idea.target))
   "collect":
@@ -607,7 +626,8 @@ func refresh() -> void:
  draft_button.visible = not draft_button.disabled
  gather_button.visible = model.state.harvests > 0 and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
  var gather_count := model.ready_harvests().size()
- gather_button.text = "Gather ready · %d" % gather_count
+ var next_resource: int = preload("res://scripts/PacingGuide.gd").next_ready(model)
+ gather_button.text = "Gather ready · %d" % gather_count if gather_count > 0 else "Next resource · %ds" % next_resource if next_resource >= 0 else "Gather unavailable"
  gather_button.disabled = gather_count == 0
  gather_button.tooltip_text = "Collect ready nodes once. Cooldowns and storage limits still apply."
  chapter_dial.display(model)
@@ -615,8 +635,10 @@ func refresh() -> void:
  if ledger_signature != "" and ledger_signature != signature:
   ui_motion.emphasize(inventory,model.state.settings.reduced_motion)
  ledger_signature = signature
+ journey_ui.sync_progress(self)
  game_hud.display(self)
  var lesson := preload("res://scripts/LearningJourney.gd").current(model)
+ if lesson.is_empty(): lesson = preload("res://scripts/JourneyLessons.gd").current(model)
  game_hud.display_goal(self,lesson.title+"\nTap for your next step" if not lesson.is_empty() else model.objective_text())
  if model.message != last_notice:
   last_notice = model.message
@@ -634,6 +656,7 @@ func refresh() -> void:
  campaign_ui.update_live(self)
  habitat_ui.update_live(self)
  corridor_ui.update_live(self)
+ journey_ui.update_live(self)
  if modal.visible and modal_screen == "draft" and is_instance_valid(draft_hand): draft_hand.update_quote()
  if modal.visible and modal_screen == "fusion":
   var current: Array = preload("res://scripts/FusionGuide.gd").options(model,selected)
@@ -720,7 +743,7 @@ func tap(pos: Vector2) -> void:
  refresh()
 
 func _unhandled_input(event: InputEvent) -> void:
- if river_story.capturing:
+ if river_story.capturing or services.fullscreen_ad:
   input_controller.reset(); return
  if orbit_enabled and not launch_menu and not modal.visible:
   if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:

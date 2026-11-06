@@ -19,7 +19,9 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 
 ## Play
 
-Latest gameplay delivery: [The Living River](docs/LIVING_CORRIDORS.md) and [its repeated audit](docs/CORRIDOR_AUDIT.md). After the first spring, route limited Water to a remote grove, guide pollinators to a garden and restore a dormant corner. Choose wetland or woodland, preview/confirm routes on the island, respond to a dry spell and earn the Living Heart. Optional local portraits export as a PNG strip or animated GIF.
+Latest gameplay delivery: [Advanced lessons and chapter guidance](docs/PLAYER_JOURNEY.md), [audit/evidence](docs/JOURNEY_AUDIT.md), and [Android acceptance](docs/ANDROID_ACCEPTANCE.md). Tap the goal for a live checklist, learn four advanced systems on your island, and use material help to find the next real action. Lessons can be skipped and revisited from Pack.
+
+Earlier signature chapter: [The Living River](docs/LIVING_CORRIDORS.md) and [its repeated audit](docs/CORRIDOR_AUDIT.md). After the first spring, route limited Water to a remote grove, guide pollinators to a garden and restore a dormant corner. Choose wetland or woodland, preview/confirm routes on the island, respond to a dry spell and earn the Living Heart. Optional local portraits export as a PNG strip or animated GIF.
 
 Earlier foundation: [Three director passes](docs/DIRECTOR_DELIVERY.md) and [audit scorecard](docs/DIRECTOR_ITERATIONS.md). New islands use Living climate; existing saves can switch in Settings → Climate growth rules. Select land for direct Inspect/Tend/Move/Goal actions. The ending requires a currently thriving connected sanctuary; collecting all twenty discoveries is optional mastery. Earn decorations, welcome optional visitor requests, compare your starting/current portraits and try eight expedition mastery challenges with personal bests.
 

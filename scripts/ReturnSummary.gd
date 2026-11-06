@@ -6,6 +6,7 @@ func show(h) -> void:
  var box: VBoxContainer = h.modal_content("Welcome back to "+preload("res://scripts/SanctuaryIdentity.gd").name_of(h.model))
  h.modal_screen = "return_summary"
  var lesson := preload("res://scripts/LearningJourney.gd").current(h.model)
+ if lesson.is_empty(): lesson = preload("res://scripts/JourneyLessons.gd").current(h.model)
  h.label(lesson.title if not lesson.is_empty() else h.model.campaign.next_goal(h.model),18,box)
  h.sheets.caption(h,"Your island waits safely. Conditions and production advance while you play; returning late never removes earned discoveries or chapter rewards.",box)
  var ready: Array = h.model.ready_harvests()

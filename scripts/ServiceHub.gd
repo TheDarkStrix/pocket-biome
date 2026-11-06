@@ -11,6 +11,8 @@ var interstitial_ready := false
 var last_ad_chapter := 0
 var restoration_break := false
 var online_requested := false
+var next_ad_retry := 0.0
+var fullscreen_ad := false
 var expedition_breaks: Array[String] = []
 var bridge: Object
 var ad_ready := false
@@ -39,6 +41,7 @@ func event(name: String, data: Dictionary = {}) -> void:
 
 func begin_session() -> void:
  session_start = model.state.time
+ last_ad_chapter = model.state.chapter_rewards.size()
  telemetry.model = model
  if bridge != null:
   var crash: String = bridge.pendingCrash()
@@ -63,9 +66,10 @@ func register_expedition_completion(id: String) -> void:
  restoration_break = true
 
 func maybe_interstitial() -> bool:
- if bridge == null or not interstitial_ready or model == null: return false
+ if bridge == null or not interstitial_ready or model == null or fullscreen_ad: return false
+ if not preload("res://scripts/LearningJourney.gd").current(model).is_empty() or preload("res://scripts/JourneyLessons.gd").record(model).active != "": return false
  if not JSON.parse_string(FileAccess.get_file_as_string("res://data/services.json")).interstitials_enabled: return false
- if model.state.entitlements.has("remove_ads") or model.state.event.until > 0 or not model.state.pending.is_empty(): return false
+ if model.state.entitlements.has("remove_ads") or model.state.event.until > 0 or not model.state.pending.is_empty() or not model.state.reward_requests.is_empty(): return false
  if model.state.time-session_start < 480 or model.state.time-last_interstitial < 600 or interstitial_count >= 2: return false
  if model.state.chapter_rewards.size() <= last_ad_chapter and not restoration_break: return false
  interstitial_count += 1
@@ -80,17 +84,22 @@ func maybe_interstitial() -> bool:
 func prepare_ad_services() -> void:
  # Called only at a quiet gameplay moment after the first discovery.
  # Native release builds still require UMP permission before requesting ads.
- if online_requested or bridge == null or model == null or model.state.discoveries.is_empty(): return
- initialize_online()
+ if bridge == null or model == null or model.state.discoveries.is_empty() or fullscreen_ad: return
+ if preload("res://scripts/JourneyLessons.gd").record(model).active != "": return
+ if not online_requested: initialize_online()
+ elif model.state.time >= next_ad_retry and bridge.has_method("retryAds"):
+  next_ad_retry = model.state.time+60
+  bridge.retryAds()
 
 func initialize_online() -> void:
  if bridge == null: return
  online_requested = true
+ next_ad_retry = model.state.time+60
  bridge.initializeServices()
  status = "Connecting to sandbox ad and store services…"
  changed.emit()
 func request_reward(kind: String, details: Dictionary = {}) -> bool:
- if bridge == null or not ad_ready or kind not in ["coins","pulse","reroll","hint"]: return false
+ if bridge == null or not ad_ready or fullscreen_ad or kind not in ["coins","pulse","reroll","hint"]: return false
  if kind == "coins" and model.state.objectives.is_empty(): return false
  if kind == "reroll" and (model.state.pending.is_empty() or model.state.pending.get("ad_rerolled",false)): return false
  if kind == "hint":
@@ -139,10 +148,11 @@ func _ad_rewarded(request_id: String) -> void:
  var context = model.state.reward_requests[request_id]
  var kind: String = context if context is String else context.kind
  model.state.reward_requests.erase(request_id)
- if not reward_available(): return
+ # A durable accepted request must honor an earned SDK callback even if an
+ # event starts while the ad is showing. Caps gate new requests, not receipts.
  var day := int(Time.get_unix_time_from_system()/86400)
  if model.state.reward_limits.day != day: model.state.reward_limits = {"day":day,"count":0}
- model.state.reward_limits.count += 1
+ model.state.reward_limits.count = mini(3,int(model.state.reward_limits.count)+1)
  model.state.transactions.append(transaction)
  if kind == "coins": model.state.coins += 25
  elif kind == "pulse": model.state.energy = mini(200,model.state.energy+100)
@@ -214,4 +224,6 @@ func delete_diagnostics() -> bool:
 func _ad_lifecycle(payload: String) -> void:
  var safe: Dictionary = ad_metrics.ingest(payload)
  if safe.is_empty(): return
+ if safe.event == "show_requested": fullscreen_ad = true
+ elif safe.event in ["dismissed","show_failed"]: fullscreen_ad = false
  event("ad_"+safe.event,safe)

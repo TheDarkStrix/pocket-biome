@@ -101,6 +101,7 @@ func run() -> void:
  h.services.last_ad_chapter = 0; h.services.session_start = 0; h.model.state.time = 100
  check(not h.services.maybe_interstitial() and bridge.shown == 0,"expedition completion cannot bypass the first eight-minute ad guard")
  h.model.state.time = 500
+ h.model.state.learning = {"completed":true} # Eligible break is outside opening guidance.
  check(h.services.maybe_interstitial() and bridge.shown == 1,"eligible restoration break can show one interstitial without a chapter reward")
  h.services.register_expedition_completion(Quest.ID)
  check(not h.services.restoration_break,"same restored island cannot register another break")

@@ -1,0 +1,5 @@
+{
+  "checks": 25,
+  "passed": true,
+  "scope": "Fake-provider dispatch, retry and reward-ledger qualification; not real SDK delivery, consent, billing or revenue proof."
+}

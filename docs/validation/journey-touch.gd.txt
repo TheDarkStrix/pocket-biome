@@ -1,0 +1,103 @@
+extends SceneTree
+const River = preload("res://scripts/LivingCorridors.gd")
+var h
+var actions := 0
+var failed := false
+var captures := []
+func _init() -> void: call_deferred("run")
+func fail(why: String) -> void:
+ failed = true; printerr("JOURNEY TOUCH FAIL: "+why); quit(1)
+func settle() -> void:
+ for frame in range(8): await process_frame
+ h.presentation.advance(2.0)
+ h.apply_layout(); h.corridor_ui.layout(h); h.queue_redraw()
+ await process_frame
+func snap(name: String) -> void:
+ await settle(); await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/journey-review/"+name+".png"); captures.append(name)
+func button(text: String) -> Button:
+ for action in h.ui_root.find_children("*","Button",true,false):
+  if action.text == text and action.is_visible_in_tree(): return action
+ return null
+func touch(at: Vector2, down: bool) -> void:
+ var e := InputEventScreenTouch.new(); e.index=0; e.position=at; e.pressed=down
+ Input.parse_input_event(e); Input.flush_buffered_events()
+func click_at(at: Vector2) -> void:
+ touch(at,true); await process_frame; touch(at,false); await process_frame; actions+=1
+func click(action: Control) -> void:
+ if action == null: fail("missing control");return
+ if h.modal.visible and h.modal_scroll.is_ancestor_of(action): h.modal_scroll.ensure_control_visible(action)
+ await settle(); await click_at(action.get_global_rect().get_center()); await settle()
+func route(role: String, cells: Array) -> void:
+ await click(button("Trace "+("flower" if role == "garden" else role)+" route"))
+ await settle(); h.frame_world(); await settle()
+ touch(h.screen(h.model.coord(cells[0])),true); await process_frame
+ for cell in cells.slice(1):
+  var e := InputEventScreenDrag.new();e.index=0;e.position=h.screen(h.model.coord(cell));Input.parse_input_event(e);Input.flush_buffered_events();await process_frame
+ touch(h.screen(h.model.coord(cells[-1])),false);await process_frame;actions+=1
+ if h.corridor_ui.draft != cells: fail("route drag mismatch "+str(h.corridor_ui.draft));return
+ await snap("draft-"+role)
+ await click(button("Preview"));await snap("confirm-"+role)
+ await click(button("Save this route"))
+func plus(role: String) -> void:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.text != "+": continue
+  var row: Node = action.get_parent()
+  for child in row.get_children():
+   if child is Label and child.text.begins_with(role.capitalize()+" ·"):
+    await click(action); return
+ fail("missing allocation "+role)
+func resume() -> void:
+ h.modal.hide();h.refresh();await settle();await click_at(h.objective.get_global_rect().get_center());await settle()
+func run() -> void:
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://journey-rendered-%d.json" % Time.get_ticks_usec()
+ root.add_child(h);await process_frame;h.set_process(false)
+ h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model
+ h.model.state.ecology_rules="balanced";h.model.state.settings.tutorial_seen=true;h.model.state.learning={"completed":true};h.model.state.habitat_projects=["shaded_pond"];h.model.state.discoveries=["rainforest"];h.model.state.objectives=[0,1,2];h.model.state.chapter=3;h.model.state.chapter_rewards=[1,2]
+ for entry in [[Vector2i(2,1),"water"],[Vector2i(3,1),"grass"],[Vector2i(4,1),"forest"],[Vector2i(4,2),"fiber"],[Vector2i(5,2),"water"],[Vector2i(5,3),"grass"],[Vector2i(4,3),"grass"],[Vector2i(2,2),"grass"]]:h.model.add_tile(entry[0],entry[1])
+ h.model.state.expansions=h.model.state.tiles.size()-4
+ for at in ["4,1","4,2"]:h.model.state.tiles[at].dna.moisture=75;h.model.state.tiles[at].dna.fertility=80
+ var starting_state:Dictionary=h.model.state.duplicate(true)
+ h.start_play();h.modal.hide();await settle();h.journey_ui.goal(h);await snap("chapter-goals")
+ await click(button("Learn · Carry a living river"));await snap("river-lesson");await click(button("Choose my approach"));await click(button("Choose Clover's wetland"))
+ await resume();await click(button("Choose spring"));h.frame_world();await settle();await click_at(h.screen(Vector2(2,1)));await settle();await click(button("Confirm selection"))
+ await resume();await route("grove",["2,1","3,1","4,1"]);if failed:return
+ await plus("grove");await plus("grove");await resume();await snap("flow-lesson");await click(button("Observe the grove"))
+ await click(button("Observe next season"));await click(button("Observe season"));await resume()
+ await route("garden",["2,1","3,1","4,1","4,2"]);if failed:return
+ await plus("garden");await resume();await click(button("Review the flower habitat"));await click(button("Observe next season"));await click(button("Observe season"));await resume()
+ await snap("seedbed-lesson");await click(button("Choose seedbed"));h.frame_world();await settle();await click_at(h.screen(Vector2(5,3)));await settle();await click(button("Confirm selection"));await resume();await click(button("Review seedbed growth"))
+ for season in range(8):
+  await click(button("Observe next season") if h.modal.visible else button("Observe season"))
+  if River.earned(h.model):break
+ if not River.earned(h.model) or not h.model.state.lessons.completed.has("river"):fail("guided river did not complete through the actual rules");return
+ await snap("guided-restoration");await resume();await snap("next-chapter-actions")
+ await click(button("Learn · Shape a sanctuary"));await snap("fusion-lesson");await click(button("Skip this lesson for now"))
+ if h.model.state.lessons.active!="" or not h.model.state.lessons.skipped.has("fusion"):fail("skip did not persist");return
+ await click(button("Learn & revisit"));await click(button("Review Carry a living river"));await click(button("Review all steps"));await snap("completed-reference")
+ h.model.add_tile(Vector2i(1,1),"workbench");h.model.state.expansions=h.model.state.tiles.size()-4;h.choose_idea({"action":"recipe","target":"windmill"});await snap("material-help")
+ var help:Button
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.get_meta("material_help",false):help=action
+ var coins:int=h.model.state.coins;await click(help)
+ if h.modal.visible or h.selected!="0,0" or h.model.state.coins!=coins:fail("material help did not show the real Wood source without spending");return
+ var state:Dictionary=h.model.state.duplicate(true);var store_valid:bool=h.store.valid(h.model.state)
+ h.model.state=starting_state.duplicate(true);h.model.add_tile(Vector2i(3,2),"grass");h.model.state.expansions=h.model.state.tiles.size()-4
+ River.choose_branch(h.model,"wetland");River.set_source(h.model,"2,1");River.set_route(h.model,"grove",["2,1","3,1","4,1"]);River.set_route(h.model,"garden",["2,1","2,2","3,2","4,2"]);River.allocate(h.model,"grove",2);River.allocate(h.model,"garden",1);River.advance(h.model);River.advance(h.model)
+ preload("res://scripts/JourneyLessons.gd").start(h.model,"river");h.refresh();h.journey_ui.lesson(h,"river");await snap("repair-route")
+ if button("Repair flower route")==null:fail("bypassed grove did not receive repair guidance");return
+ River.set_route(h.model,"garden",["2,1","3,1","4,1","4,2"]);River.advance(h.model);River.advance(h.model);h.model.add_tile(Vector2i(-1,0),"grass");h.model.state.expansions=h.model.state.tiles.size()-4;h.model.state.living_corridors.seedbed="-1,0"
+ h.refresh();h.journey_ui.lesson(h,"river");await snap("repair-seedbed")
+ if button("Choose seedbed")==null:fail("out-of-reach seedbed did not receive reselection guidance");return
+ h.queue_free();h=null;await process_frame
+ root.size=Vector2i(320,640)
+ h=preload("res://tests/fixtures/MobileMain.gd").new();h.display_dp=1.6875;h.show_menu_on_launch=false;h.store.path="user://journey-mobile-render.json";root.add_child(h);await process_frame;h.set_process(false)
+ h.model.state=state;h.model.state.text_scale=1.2;h.services.model=h.model;h.apply_settings();h.start_play();h.modal.hide();h.journey_ui.goal(h);await snap("mobile-objectives")
+ var bounds:=true
+ for action in h.modal_box.find_children("*","Button",true,false):
+  bounds=bounds and action.get_global_rect().end.x<=h.modal_scroll.get_global_rect().end.x+1 and action.size.y>=h.touch_height()-1
+ h.journey_ui.lesson(h,"fusion");await snap("mobile-lesson");h.journey_ui.show_reference(h,"river");await snap("mobile-reference")
+ var result={"passed":store_valid and bounds,"screen_touch_actions":actions,"river_earned":River.earned(h.model),"lesson_receipt":h.model.state.lessons.completed,"skip_persisted":h.model.state.lessons.skipped.has("fusion"),"mobile_touch_bounds":bounds,"save_valid":store_valid,"captures":captures,"scope":"Rendered screen-touch completion through the advanced river lesson on a constructed home-island fixture, plus skip/review/material guidance and small-screen checks. Not a fresh campaign, physical phone or human enjoyment study."}
+ var file=FileAccess.open("/workspace/runtime/journey-review/touch.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("JOURNEY TOUCH RESULT: "+JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.3).timeout;quit(0 if result.passed else 1)

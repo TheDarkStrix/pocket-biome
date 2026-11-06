@@ -103,24 +103,38 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             it.getSharedPreferences("pocket_diagnostics",0).edit().putLong("last_exit",pendingCrashTime).apply()
         }
     }
+    private var adsInitialized = false
+    private var rewardedLoading = false
+    private var interstitialLoading = false
+    private var rewardedAttemptAt = -60000L
+    private var interstitialAttemptAt = -60000L
+    @UsedByGodot fun retryAds() {
+        val host = activity ?: return
+        host.runOnUiThread {
+            if (!adsInitialized) return@runOnUiThread
+            val now = android.os.SystemClock.elapsedRealtime()
+            if (rewarded == null && !rewardedLoading && now-rewardedAttemptAt >= 60000L) loadRewarded()
+            if (interstitial == null && !interstitialLoading && now-interstitialAttemptAt >= 60000L) loadInterstitial()
+        }
+    }
     @UsedByGodot fun initializeServices() {
         val host = activity ?: return
         host.runOnUiThread {
             if (!initialized) { initialized = true; initializeBilling(host) }
             else restorePurchases()
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-                MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
+                MobileAds.initialize(host) { adsInitialized = true; loadRewarded(); loadInterstitial() }
                 return@runOnUiThread
             }
             val consent = UserMessagingPlatform.getConsentInformation(host)
             consent.requestConsentInfoUpdate(host, ConsentRequestParameters.Builder().build(), {
                 UserMessagingPlatform.loadAndShowConsentFormIfRequired(host) { error ->
                     if (error != null) emitSignal("service_error", "Consent unavailable: ${error.message}")
-                    if (consent.canRequestAds()) MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
+                    if (consent.canRequestAds()) MobileAds.initialize(host) { adsInitialized = true; loadRewarded(); loadInterstitial() }
                 }
             }, { error ->
                 emitSignal("service_error", "Consent unavailable: ${error.message}. Offline gameplay remains available.")
-                if (consent.canRequestAds()) MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
+                if (consent.canRequestAds()) MobileAds.initialize(host) { adsInitialized = true; loadRewarded(); loadInterstitial() }
             })
         }
     }
@@ -141,7 +155,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             UserMessagingPlatform.showPrivacyOptionsForm(host) { error ->
                 if (error != null) emitSignal("service_error", "Privacy choices unavailable: ${error.message}")
                 if (UserMessagingPlatform.getConsentInformation(host).canRequestAds()) {
-                    MobileAds.initialize(host) { loadRewarded(); loadInterstitial() }
+                    MobileAds.initialize(host) { adsInitialized = true; loadRewarded(); loadInterstitial() }
                 }
             }
         }
@@ -165,15 +179,17 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         val host = activity ?: return
         host.runOnUiThread {
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) return@runOnUiThread
+            if (rewardedLoading || rewarded != null) return@runOnUiThread
+            rewardedLoading = true; rewardedAttemptAt = android.os.SystemClock.elapsedRealtime()
             val placement = nextPlacement("rewarded")
             adLifecycle("request","rewarded",placement)
             RewardedAd.load(host, "ca-app-pub-3940256099942544/5224354917", AdRequest.Builder().build(), object: RewardedAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedAd) {
-                    rewarded = ad; rewardedPlacement = placement
+                    rewardedLoading = false; rewarded = ad; rewardedPlacement = placement
                     ad.setOnPaidEventListener { value -> adLifecycle("paid","rewarded",placement,value) }
                     adLifecycle("loaded","rewarded",placement); emitSignal("ad_ready", true)
                 }
-                override fun onAdFailedToLoad(error: LoadAdError) { rewarded = null; adLifecycle(if (error.code == AdRequest.ERROR_CODE_NO_FILL) "no_fill" else "load_failed","rewarded",placement); emitSignal("ad_ready", false) }
+                override fun onAdFailedToLoad(error: LoadAdError) { rewardedLoading = false; rewarded = null; adLifecycle(if (error.code == AdRequest.ERROR_CODE_NO_FILL) "no_fill" else "load_failed","rewarded",placement); emitSignal("ad_ready", false) }
             })
         }
     }
@@ -217,15 +233,17 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         val host = activity ?: return
         host.runOnUiThread {
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) return@runOnUiThread
+            if (interstitialLoading || interstitial != null) return@runOnUiThread
+            interstitialLoading = true; interstitialAttemptAt = android.os.SystemClock.elapsedRealtime()
             val placement = nextPlacement("interstitial")
             adLifecycle("request","interstitial",placement)
             InterstitialAd.load(host,"ca-app-pub-3940256099942544/1033173712",AdRequest.Builder().build(),object: InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitial = ad; interstitialPlacement = placement
+                    interstitialLoading = false; interstitial = ad; interstitialPlacement = placement
                     ad.setOnPaidEventListener { value -> adLifecycle("paid","interstitial",placement,value) }
                     adLifecycle("loaded","interstitial",placement); emitSignal("interstitial_ready",true)
                 }
-                override fun onAdFailedToLoad(error: LoadAdError) { interstitial = null; adLifecycle(if (error.code == AdRequest.ERROR_CODE_NO_FILL) "no_fill" else "load_failed","interstitial",placement); emitSignal("interstitial_ready",false) }
+                override fun onAdFailedToLoad(error: LoadAdError) { interstitialLoading = false; interstitial = null; adLifecycle(if (error.code == AdRequest.ERROR_CODE_NO_FILL) "no_fill" else "load_failed","interstitial",placement); emitSignal("interstitial_ready",false) }
             })
         }
     }

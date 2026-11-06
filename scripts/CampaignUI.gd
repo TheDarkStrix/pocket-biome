@@ -112,6 +112,8 @@ func pack(h) -> void:
  var tools := GridContainer.new(); tools.columns = 2; tools.add_theme_constant_override("h_separation",8); tools.add_theme_constant_override("v_separation",8); box.add_child(tools)
  for entry in [{"title":"Journal","icon":"codex","detail":"Discoveries & free clues","run":func(): journal(h)}, {"title":"World","icon":"world","detail":"Fusion, rotate & photo","run":func(): world(h)}, {"title":"Projects","icon":"craft","detail":"Queues & blueprints","run":func(): workshop_details(h)}, {"title":"Trade","icon":"coins","detail":"Materials into Coins","run":func(): trade(h)}]:
   h.sheets.tool_card(h,entry.title,entry.detail,entry.icon,entry.run,tools)
+ h.button("My chapter objectives",func(): h.journey_ui.goal(h),box)
+ h.button("Learn & revisit",func(): h.journey_ui.library(h),box)
  h.sheets.primary(h,"Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
  h.sheets.primary(h,"Expeditions · restore another island",func(): h.expedition_ui.overview(h),box)
  close_button(h,box)
