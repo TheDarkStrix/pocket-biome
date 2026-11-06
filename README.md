@@ -1,23 +1,21 @@
-# Pocket Biome — 0.21.3 Android test update
+# Pocket Biome — 0.21.4 painted-land joins
 
 [Download the current APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
 Android 7.0+ / ARM64. About 98 MiB. Development preview with Google test ad IDs.
 
-## Fixed: Water missing while the tutorial asks for it
+## Fixed: neighboring blocks looking separate
 
-Opening Water is guaranteed until the first-discovery guidance no longer needs it. Old saved hands without Water repair automatically when opened, including Resume draft. The quote, wallet, existing pond and two other offers are kept; repair needs no ad or redraw. Placing a new plot still charges its normal saved quote.
+The previous patch corrected harvested artwork height but left sprite gutters in the grid spacing and painted cliff faces between occupied tiles. The renderer now fits the visible cap spacing, hides only internal soil walls and blends narrow shared edges using the existing grass painting. Outer earth edges and original terrain/structure art are retained. The old replacement floor/cliffs and procedural 3D view remain disabled.
 
-The valid Oak-adjacent clouds are highlighted. Water is selected in the hand; remote plots explain that they cannot reach the Oak and offer a route back to the highlighted plots. A Water neighbor immediately advances the objective. The 0.21.2 harvested-land alignment fix and all prior gameplay/animation features remain included.
+Goal/placement outlines, inverse touch mapping, clipped-wall picking, animated foliage/objects and island portraits follow the same layout. Partial fused edges keep their exposed outer wall. No land ownership, progress, inventory or adjacency is changed. Water-offer recovery from 0.21.3 remains included.
 
-Version code increases 16 → 17 with the same package and signing key as the recent gameplay/animation and land-alignment downloads. Install over those recent builds; do not uninstall first. Compatibility is verified statically; physical installation/save-preservation acceptance is still pending.
+Version code increases 17 → 18 with the same package and signing key as the recent builds. Install over those recent downloads; do not uninstall first. Static update compatibility is verified; physical installation/save acceptance remains pending. The much older restored-paint APK used a different key: if Android rejects an update, keep that old app installed if its saved island matters, because uninstalling removes local progress.
 
-The much older restored-paint test APK used a different signing key. If Android rejects an update, keep that old app installed if its saved island matters. Uninstalling removes local progress; safe transfer across that old signing change remains pending.
+Runtime commit: `2a36e090a9c70e5fb177436dd2cf476ffcb3f3a9`.
+Tested source SHA-256: `c243ae1fcdb4b2aebfc1ab459bd4bff60eb65de3f3061f27e148c43c9de58535`.
+APK SHA-256: `14b902adfb816503a798b5b552371c95fe313d0b266575af78dcbbaf6e0d3f9b`.
 
-Runtime commit: `406c364cbca3f7f85a3aab79dbc4b58b9ede7b29`.
-Tested source SHA-256: `aa684487798a5d8bca9745048dd4d0c50848af125d1112fd013dc8b208502c92`.
-APK SHA-256: `646a9cc591cb5057d238dc36bea227f7498a1f604377792ac8d376eff6850775`.
+The unchanged source passes 2,074 assertions in 44 Godot suites, 22 Python checks, startup and four automated campaign routes. Rendered review covers ready/harvested joins in four views, Water recovery and small-screen touch controls, a 36-cell island, photos and result portraits. Package/source/signature/16 KB alignment checks pass; all 663 retained ARM64-package files match the universal export.
 
-The unchanged source passes 2,035 assertions in 43 Godot suites, 22 Python checks, startup and four automated campaign routes. Seven rendered touch actions verify old-hand repair, correct placement, normal price, retained pond, objective advancement, ordinary-clock discovery and small-screen recovery. Package/source/signature/16 KB alignment checks pass; all 659 retained ARM64-package files match the universal export.
-
-Exact reports/screenshots are in the source branch's `docs/OPENING_WATER_AUDIT.md` and `docs/OPENING_WATER_VALIDATION.json`. These are automated/rendered checks, not a physical-phone or unfamiliar-player acceptance study. Test ads earn no live revenue; production/store setup remains open.
+Before/after captures and scoped evidence are in the source branch's `docs/PAINTED_SEAMS_AUDIT.md` and `docs/PAINTED_SEAMS_VALIDATION.json`. Rendered/automated results are not physical-phone or unfamiliar-player acceptance. Test ads do not earn live revenue; production/store setup remains open.
