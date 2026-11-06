@@ -1,0 +1,11 @@
+{
+  "download_url": "https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk",
+  "http_status": 200,
+  "response_host": "raw.githubusercontent.com",
+  "bytes": 102469035,
+  "sha256": "c5336560796648a8acbff7955bd9a68555d5e9b1b19bfcd7f5b79e6d57d2889f",
+  "matches_verified_apk": true,
+  "download_commit": "4c9c929",
+  "source_sha256": "5748bcd27fe04b88d0d3658d30df1053d357cba92ddbd1ec21e9e9fdd7b89560",
+  "older_install_update_compatible": false
+}
