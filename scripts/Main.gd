@@ -685,7 +685,7 @@ func camera_coord(c: Vector2) -> Vector2:
 
 func project(c: Vector2) -> Vector2:
  var rotated := camera_coord(c)
- return Vector2((rotated.x-rotated.y)*66,(rotated.x+rotated.y)*33)
+ return preload("res://scripts/PaintedGrid.gd").project(rotated)
 
 func rotate_camera(steps: int) -> void:
  if launch_menu or photo_mode: return
@@ -703,7 +703,7 @@ func screen(c: Vector2) -> Vector2:
 func hit(pos: Vector2) -> String:
  if orbit_enabled: return orbit_world.cell_at(pos)
  var p := (pos-world_anchor()-pan)/zoom_level
- var c := Vector2(p.x/132+p.y/66,p.y/66-p.x/132)
+ var c := preload("res://scripts/PaintedGrid.gd").unproject(p)
  for step in range(view_turn): c = Vector2(c.y,-c.x)
  return model.key(Vector2i(roundi(c.x),roundi(c.y)))
 
@@ -1000,6 +1000,8 @@ func _draw() -> void:
   var point := screen(model.coord(key))
   draw_plot_outline(point,zoom_level*0.72,Color("ffe1a0"),2.5*zoom_level)
   preload("res://scripts/UIIcons.gd").draw(self,"moisture",point+Vector2(0,24)*zoom_level,18*zoom_level,Color.WHITE)
+ var join_tint:=Color(0.82,0.88,1) if palette=="moon" else Color(1,0.97,0.81) if palette=="celestial" else Color.WHITE
+ preload("res://scripts/PaintedJoins.gd").draw(self,model.state.tiles,screen,zoom_level,join_tint)
  var keys := render_keys()
  var ghost := build_preview()
  var meadows: Array = available_meadows() if placement_blueprint != "" else []
@@ -1039,7 +1041,7 @@ func _draw() -> void:
   if pose.mix < 1.0 and not pose.previous.is_empty() and pose.parts.is_empty():
    draw_land_art(pose.previous.type,p,132.0/418.0*zoom_level*size*pose.scale,Color(1,1,1,1.0-pose.mix),pose.previous.evolution)
   var still: bool = model.state.settings.reduced_motion or photo_mode or suspended
-  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0),presentation.harvest_impulse(k),pose.growth)
+  preload("res://scripts/WorldAmbience.gd").draw_tile(self,t.type,p,132.0/418.0*zoom_level*size*pose.scale,tint,t.evolution,t.ready > model.state.time,ambient_time,t.id,still,connected_land,presentation.motor_times.get(k,0.0),presentation.harvest_impulse(k),pose.growth,preload("res://scripts/PaintedJoins.gd").front_mask(model.state.tiles,k,view_turn))
   preload("res://scripts/WorldAmbience.gd").draw_effects(self,t,p,zoom_level*size,ambient_time,still)
   if pose.burst > 0 and not still:
    if not pose.previous.is_empty(): preload("res://scripts/WorldAmbience.gd").draw_growth(self,t,p,zoom_level*size,pose.progress)
@@ -1119,7 +1121,7 @@ func _draw() -> void:
   draw_line(at-Vector2(0,6),at+Vector2(0,6),ThemeKit.INK,1.7,true)
  for key in fusion_preview:
   var at := screen(model.coord(key))
-  var diamond := PackedVector2Array([at+Vector2(0,-30)*zoom_level,at+Vector2(60,0)*zoom_level,at+Vector2(0,30)*zoom_level,at+Vector2(-60,0)*zoom_level,at+Vector2(0,-30)*zoom_level])
+  var diamond := preload("res://scripts/PaintedGrid.gd").outline(at,zoom_level)
   draw_colored_polygon(diamond,Color(0.67,0.65,0.83,0.22))
   draw_polyline(diamond,ThemeKit.ACCENT,2.5,true)
  draw_weather()
@@ -1141,8 +1143,7 @@ func _draw() -> void:
   draw_string(ThemeDB.fallback_font,Vector2(22,get_viewport_rect().size.y-25),"POCKET BIOME · TINY EXPANSION",HORIZONTAL_ALIGNMENT_LEFT,-1,14,hud_ink())
 
 func draw_plot_outline(at: Vector2, scale: float, color: Color, width: float) -> void:
- var outline := PackedVector2Array()
- for point in [Vector2(0,-31),Vector2(63,0),Vector2(0,31),Vector2(-63,0),Vector2(0,-31)]: outline.append(at+point*scale)
+ var outline := preload("res://scripts/PaintedGrid.gd").outline(at,scale)
  draw_polyline(outline,color,width,true)
 
 func draw_ellipse_shadow(p: Vector2,w: float) -> void:
@@ -1526,11 +1527,11 @@ func pick(position: Vector2) -> String:
   var tile: Dictionary = model.state.tiles[key]
   var size := 2.0 if tile.size == 4 else 1.0
   var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if size == 2 else Vector2.ZERO)
-  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,connected_land,presentation.motor_times.get(key,0.0)*0.55): return key
+  if preload("res://scripts/TileArtwork.gd").hit(tile.type,tile.evolution,position-screen(at),132.0/418.0*zoom_level*size,tile.ready > model.state.time,connected_land,presentation.motor_times.get(key,0.0)*0.55,preload("res://scripts/PaintedJoins.gd").front_mask(model.state.tiles,key,view_turn)): return key
  var selected_key: String = model.origin(selected)
  if selected_key != "":
   var selected_tile: Dictionary = model.state.tiles[selected_key]
-  if selected_tile.ready > model.state.time and preload("res://scripts/TileArtwork.gd").hit(selected_tile.type,selected_tile.evolution,position-screen(model.coord(selected_key)),132.0/418.0*zoom_level,true,connected_land): return selected_key
+  if selected_tile.ready > model.state.time and preload("res://scripts/TileArtwork.gd").hit(selected_tile.type,selected_tile.evolution,position-screen(model.coord(selected_key)),132.0/418.0*zoom_level,true,connected_land,0,preload("res://scripts/PaintedJoins.gd").front_mask(model.state.tiles,selected_key,view_turn)): return selected_key
  return hit(position)
 
 func _input(event: InputEvent) -> void:

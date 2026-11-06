@@ -17,19 +17,19 @@ static func foliage_mesh(spec: Dictionary, scale: float, time: float, seed: int,
   (source.position+Vector2(0.5,cut))/texture_size])
  return {"points":PackedVector2Array([Vector2(left+shift,top),Vector2(left+width+shift,top),Vector2(left+width,edge),Vector2(left,edge)]),"uvs":uvs,"base":Rect2(left,edge,width,(source.size.y-cut)*scale),"region":Rect2(source.position+Vector2(0,cut),Vector2(source.size.x,source.size.y-cut)),"shift":shift}
 
-static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String, depleted: bool, time: float, seed: int, reduced: bool, joined: bool = false, motor_time: float = 0.0, impulse: float = 0.0, growth: float = 1.0) -> void:
+static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String, depleted: bool, time: float, seed: int, reduced: bool, joined: bool = false, motor_time: float = 0.0, impulse: float = 0.0, growth: float = 1.0, front_edges: int = 0) -> void:
  if type == "windmill" and evolution == "":
   if joined: Art.draw_joined(canvas,type,position,scale,tint,evolution,depleted,0,motor_time*0.55)
-  else: Art.draw_tile(canvas,type,position,scale,tint,evolution,depleted,motor_time*0.55)
+  else: Art.draw_tile(canvas,type,position,scale,tint,evolution,depleted,motor_time*0.55,front_edges)
   return
  if type in ["golem","workbench","totem"] and evolution == "" and not reduced and not joined:
-  preload("res://scripts/ObjectMotion.gd").draw(canvas,type,Art.appearance(type,evolution,depleted),position,scale,tint,motor_time,seed,impulse)
+  preload("res://scripts/ObjectMotion.gd").draw(canvas,type,Art.appearance(type,evolution,depleted),position,scale,tint,motor_time,seed,impulse,front_edges)
   return
  var stump: bool = depleted and evolution == "" and Art.DEPLETED_CELLS.has(type)
  var foliage: bool = type in ["oak","forest","fiber"] or evolution in ["rainforest","grove","verdant","ironwood","moonflower","mistforest","crystalforest"]
  if not foliage or stump or reduced:
   if joined: Art.draw_joined(canvas,type,position,scale,tint,evolution,depleted)
-  else: Art.draw_tile(canvas,type,position,scale,tint,evolution,depleted)
+  else: Art.draw_tile(canvas,type,position,scale,tint,evolution,depleted,0,front_edges)
   return
  var spec: Dictionary = Art.appearance(type,evolution,depleted)
  if spec.is_empty(): return
@@ -38,6 +38,7 @@ static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale
  for index in range(points.size()): points[index] += position
  canvas.draw_polygon(points,PackedColorArray([tint*spec.tint]),mesh.uvs,spec.texture)
  if joined: Art.draw_joined(canvas,type,position,scale,tint,evolution,depleted,mesh.region.position.y-spec.region.position.y)
+ elif front_edges!=0:Art.draw_ground(canvas,spec,position,scale,tint,mesh.region.position.y-spec.region.position.y,front_edges)
  else:
   var base: Rect2 = mesh.base; base.position += position
   canvas.draw_texture_rect_region(spec.texture,base,mesh.region,tint*spec.tint)

@@ -24,8 +24,8 @@ static func offset(type: String, point: Vector2, time: float, seed: int, impulse
   result += Vector2(sin(phase)*3,cos(phase)*1.5)*weight(point,Vector2(146,156),Vector2(31,65))
   result += Vector2(sin(phase+1.2)*3,cos(phase+1.2)*1.5)*weight(point,Vector2(250,163),Vector2(33,64))
  return result
-static func grid(spec: Dictionary) -> Dictionary:
- var key := str(spec.region)
+static func grid(spec: Dictionary, cut: float = -1) -> Dictionary:
+ var key := str(spec.region)+":"+str(cut)
  if grids.has(key): return grids[key]
  var source: Rect2 = spec.region
  var points := PackedVector2Array()
@@ -33,7 +33,7 @@ static func grid(spec: Dictionary) -> Dictionary:
  var indices := PackedInt32Array()
  for row in range(ROWS+1):
   for col in range(COLUMNS+1):
-   var point := Vector2(source.size.x*col/COLUMNS,source.size.y*row/ROWS)
+   var point := Vector2(source.size.x*col/COLUMNS,(source.size.y if cut<0 else cut)*row/ROWS)
    points.append(point)
    uvs.append((source.position+point.clamp(Vector2(0.5,0.5),source.size-Vector2(0.5,0.5)))/spec.texture.get_size())
  for row in range(ROWS):
@@ -43,9 +43,11 @@ static func grid(spec: Dictionary) -> Dictionary:
  var value := {"points":points,"uvs":uvs,"indices":indices}
  grids[key] = value
  return value
-static func draw(canvas: CanvasItem, type: String, spec: Dictionary, at: Vector2, scale: float, tint: Color, time: float, seed: int, impulse: float) -> void:
- var geometry := grid(spec)
+static func draw(canvas: CanvasItem, type: String, spec: Dictionary, at: Vector2, scale: float, tint: Color, time: float, seed: int, impulse: float, front_edges: int = 0) -> void:
+ var geometry := grid(spec,spec.pivot.y if front_edges!=0 else -1)
  var points: PackedVector2Array = geometry.points.duplicate()
  for i in range(points.size()):
   points[i] = at+(points[i]+offset(type,points[i],time,seed,impulse)-spec.pivot)*scale*spec.normalization
  RenderingServer.canvas_item_add_triangle_array(canvas.get_canvas_item(),geometry.indices,points,PackedColorArray([tint*spec.tint]),geometry.uvs,PackedInt32Array(),PackedFloat32Array(),spec.texture.get_rid())
+
+ if front_edges!=0:preload("res://scripts/TileArtwork.gd").draw_ground(canvas,spec,at,scale,tint,spec.pivot.y,front_edges)

@@ -67,17 +67,37 @@ static func appearance(type: String, evolution: String, depleted: bool = false) 
   return {"texture":STRUCTURES,"region":Rect2(cell.x*418,row_top[cell.y],418,row_height[cell.y]),"pivot":Vector2(209,ground_y[cell.y]),"normalization":1.0,"tint":tint}
  if not REGIONS.has(type): return {}
  return {"texture":SOURCE,"region":REGIONS[type][0],"pivot":REGIONS[type][1],"normalization":1.0,"tint":tint}
-static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false, rotor_angle: float = 0.0) -> void:
+static func draw_tile(canvas: CanvasItem, type: String, position: Vector2, scale: float, tint: Color, evolution: String = "", depleted: bool = false, rotor_angle: float = 0.0, front_edges: int = 0) -> void:
  var spec := appearance(type,evolution,depleted)
  if spec.is_empty(): return
  var normalized: float = scale*spec.normalization
- canvas.draw_texture_rect_region(spec.texture,Rect2(position-spec.pivot*normalized,spec.region.size*normalized),spec.region,tint*spec.tint)
+ if front_edges==0:canvas.draw_texture_rect_region(spec.texture,Rect2(position-spec.pivot*normalized,spec.region.size*normalized),spec.region,tint*spec.tint)
+ else:draw_ground(canvas,spec,position,scale,tint,0,front_edges)
  if spec.get("rotor",false): paint_rotor(canvas,position,scale,tint*spec.tint,rotor_angle)
-static func hit(type: String, evolution: String, relative_position: Vector2, scale: float, depleted: bool = false, joined: bool = false, rotor_angle: float = 0.0) -> bool:
+static func draw_ground(canvas: CanvasItem, spec: Dictionary, at: Vector2, scale: float, tint: Color, cut: float, front_edges: int) -> void:
+ var normalized: float=scale*spec.normalization
+ var left: float=-spec.pivot.x*normalized
+ var right: float=(spec.region.size.x-spec.pivot.x)*normalized
+ var top: float=(cut-spec.pivot.y)*normalized
+ var bottom: float=(spec.region.size.y-spec.pivot.y)*normalized
+ var points:=PackedVector2Array([Vector2(left,top),Vector2(right,top),Vector2(right,bottom),Vector2(left,bottom)])
+ var edge: float=(preload("res://scripts/PaintedGrid.gd").HALF_HEIGHT+preload("res://scripts/PaintedGrid.gd").SURFACE_Y)*scale/(132.0/418.0)
+ if front_edges&1:points=clipped(points,Vector2(0.5,1),edge)
+ if front_edges&2:points=clipped(points,Vector2(-0.5,1),edge)
+ if points.size()<3:return
+ var uvs:=PackedVector2Array()
+ for point in points:uvs.append((spec.region.position+spec.pivot+point/normalized)/spec.texture.get_size())
+ for i in range(points.size()):points[i]+=at
+ canvas.draw_polygon(points,PackedColorArray([tint*spec.tint]),uvs,spec.texture)
+
+static func hit(type: String, evolution: String, relative_position: Vector2, scale: float, depleted: bool = false, joined: bool = false, rotor_angle: float = 0.0, front_edges: int = 0) -> bool:
  if joined and relative_position.y+0.46*absf(relative_position.x) > 26.0*scale/(132.0/418.0): return false
  var spec := appearance(type,evolution,depleted)
  if spec.is_empty() or scale <= 0: return false
  if spec.get("rotor",false) and rotor_hit(relative_position,scale,rotor_angle): return true
+ var plane: float=(preload("res://scripts/PaintedGrid.gd").HALF_HEIGHT+preload("res://scripts/PaintedGrid.gd").SURFACE_Y)*scale/(132.0/418.0)
+ if front_edges&1 and relative_position.dot(Vector2(0.5,1))>plane:return false
+ if front_edges&2 and relative_position.dot(Vector2(-0.5,1))>plane:return false
  var local: Vector2 = relative_position/(scale*spec.normalization)+spec.pivot
  if not Rect2(Vector2.ZERO,spec.region.size).has_point(local): return false
  var texture: Texture2D = spec.texture

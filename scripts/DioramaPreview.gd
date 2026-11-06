@@ -29,6 +29,9 @@ func _draw() -> void:
   var bounds: Rect2 = host.world_art_bounds(false)
   var scale := minf((size.x-18)/bounds.size.x,(size.y-12)/bounds.size.y)
   if host.connected_land:host.island_environment.paint_static(self,size/2-bounds.get_center()*scale,scale)
+  if not host.connected_land:
+   var mapper: Callable=func(cell: Vector2) -> Vector2:return size/2+(host.project(cell)-bounds.get_center())*scale
+   preload("res://scripts/PaintedJoins.gd").draw(self,host.model.state.tiles,mapper,scale)
   for key in host.render_keys():
    var tile: Dictionary = host.model.state.tiles[key]
    var footprint: float = 2 if tile.size == 4 else 1
@@ -36,7 +39,7 @@ func _draw() -> void:
    var at := size/2+(point-bounds.get_center())*scale
    var art=preload("res://scripts/TileArtwork.gd")
    if host.connected_land:art.draw_joined(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
-   else:art.draw_tile(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution)
+   else:art.draw_tile(self,tile.type,at,132.0/418.0*scale*footprint,Color.WHITE,tile.evolution,false,0,preload("res://scripts/PaintedJoins.gd").front_mask(host.model.state.tiles,key,host.view_turn))
  else:
   var artwork = preload("res://scripts/TileArtwork.gd")
   var spec: Dictionary = artwork.appearance(tile_type,evolution)

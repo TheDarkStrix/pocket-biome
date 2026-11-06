@@ -2,6 +2,8 @@
 
 Original painted graphics remain the default (`orbit_enabled=false`, `connected_land=false`). The implementation below is integrated and checked; phone and human creative acceptance are separate. Exact source-bound results: [GAME_JUICE_VALIDATION.json](GAME_JUICE_VALIDATION.json).
 
+The [0.21.4 painted-join pass](PAINTED_SEAMS_AUDIT.md) fits cap spacing and clips interior soil walls while retaining the source art and original outer earth edges. Object motion and static ground rendering both use these shared edges.
+
 | Element | Integrated feedback |
 |---|---|
 | Oak/Forest/Fiber/leafy discoveries | Seeded canopy sway, local harvest impulse, rooted canopy unfurl on evolution/fusion; trunk seam and ground remain fixed |

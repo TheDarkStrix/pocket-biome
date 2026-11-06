@@ -20,7 +20,7 @@ func run() -> void:
   check(scene.hit(scene.screen(scene.model.coord(k))) == k,"projection roundtrip")
  check(scene.pick(scene.screen(Vector2.ZERO)-Vector2(0,50)) == "0,0","Oak canopy touch resolves to Oak instead of a cloud")
  var state_before_turn: String = JSON.stringify(scene.model.state)
- var expected := [Vector2(66,33),Vector2(-66,33),Vector2(-66,-33),Vector2(66,-33)]
+ var expected := [Vector2(58,29),Vector2(-58,29),Vector2(-58,-29),Vector2(58,-29)]
  for view in range(4):
   check(scene.project(Vector2.RIGHT).is_equal_approx(expected[view]),"camera projects the expected cardinal view %d" % view)
   var cells_match := true

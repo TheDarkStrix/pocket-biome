@@ -2,6 +2,8 @@
 
 Current0.21.1 default:restore the original painted terrain, resources, structures, discoveries and menu/card art. Full tile surfaces/earth edges are rendered; added shared grass/cliff foundations and procedural3D models/portraits are disabled. The user explicitly rejected the3D visual replacement. Keep original source images and do not change the art style to implement animation. Disconnected decorative waterfalls are suppressed until an actual registered pond-to-lip source is supplied. Painted Golem/workbench/totem UV rigs are now integrated; see docs/GAME_JUICE_AUDIT.md.
 
+Current 0.21.4 painted joins: sprite source files remain unchanged. The fitted 116×58 logical cap pitch excludes atlas gutters; hidden interior soil walls are clipped only at occupied neighbors and narrow seams sample the original grass atlas. Original outer earth edges remain. This does not enable the rejected shared-floor/cliff environment or procedural 3D renderer. See docs/PAINTED_SEAMS_AUDIT.md.
+
 Generated raster candidates are integrated and rendered in the actual engine. Source sheets are retained unchanged; scripts address atlas regions/pivots, rather than editing pixels. The earlier navy/green layout is superseded by the user's request for a complete game interface; docs/references/user_art_direction.jpg guides materials and proportions.
 
 | Asset | Size/format | Use | Status |
