@@ -1,0 +1,89 @@
+{
+  "utc": "2026-11-06T18:21:55.254712+00:00",
+  "source_sha256": "d68efd10827253d220f34c6192cf0f1beffdcccc4331afa23631bafab6bcca81",
+  "runtime_changed": false,
+  "existing_download_version": "0.21.5-preview",
+  "existing_download_version_code": 19,
+  "controller_comparison": {
+    "current_0_21_5_opens_actual_lesson_route": true,
+    "fixture_based": true,
+    "old_0_21_4_reproduces_silent_lesson_block": true,
+    "pending_unchanged": true,
+    "physical_device": false
+  },
+  "shipped_bytecode": {
+    "apk_sha256": "a4676b6c4e987ef114c5ffbdba1c3a1cdd0aeecb2e52cc810694443b13795e99",
+    "shipped_compiled_lesson_uses_highlighted_tree_instruction": true,
+    "shipped_compiled_lesson_contains_old_trace_instruction": false
+  },
+  "fresh_touch_playthroughs": {
+    "desktop": {
+      "active_seconds": 33.7690436666666,
+      "captures": [
+        "first-restoration",
+        "choose-approach",
+        "choose-spring",
+        "lesson-missing-grove-before",
+        "lesson-missing-grove-after",
+        "needs-grove",
+        "lesson-reachable-before",
+        "lesson-reachable-after",
+        "reachable-grove",
+        "visible-channel-preview",
+        "confirm-flow",
+        "flowing-river",
+        "grove-restored"
+      ],
+      "delivered_flow": 2,
+      "exact_lesson_button_tested": true,
+      "first_habitat_earned_normally": true,
+      "forest_placed_from_saved_offer_for_normal_quote": true,
+      "fresh_island": true,
+      "grove_matured": true,
+      "lesson_button_handles_both_missing_and_reachable_grove": true,
+      "missing_grove_setup_exercised": true,
+      "passed": true,
+      "real_touch_actions": 56,
+      "save_valid": true,
+      "saved_hand_unchanged_during_planning_and_observation": true,
+      "scope": "Actual rendered screen-touch run from a fresh island through ordinary tutorial, gathering/crafting, first restoration, blocked-setup recovery, spring/path/flow and grove maturity. No injected supplies or completed habitats; not a physical phone or unfamiliar-player study.",
+      "screen_size": "(540, 960)",
+      "source_sha256": "d68efd10827253d220f34c6192cf0f1beffdcccc4331afa23631bafab6bcca81"
+    },
+    "small_screen": {
+      "active_seconds": 32.0213449999998,
+      "captures": [
+        "first-restoration",
+        "choose-approach",
+        "choose-spring",
+        "lesson-missing-grove-before",
+        "lesson-missing-grove-after",
+        "needs-grove",
+        "lesson-reachable-before",
+        "lesson-reachable-after",
+        "reachable-grove",
+        "visible-channel-preview",
+        "confirm-flow",
+        "flowing-river",
+        "grove-restored"
+      ],
+      "delivered_flow": 2,
+      "exact_lesson_button_tested": true,
+      "first_habitat_earned_normally": true,
+      "forest_placed_from_saved_offer_for_normal_quote": true,
+      "fresh_island": true,
+      "grove_matured": true,
+      "lesson_button_handles_both_missing_and_reachable_grove": true,
+      "missing_grove_setup_exercised": true,
+      "passed": true,
+      "real_touch_actions": 56,
+      "save_valid": true,
+      "saved_hand_unchanged_during_planning_and_observation": true,
+      "scope": "Actual rendered screen-touch run from a fresh island through ordinary tutorial, gathering/crafting, first restoration, blocked-setup recovery, spring/path/flow and grove maturity. No injected supplies or completed habitats; not a physical phone or unfamiliar-player study.",
+      "screen_size": "(320, 640)",
+      "source_sha256": "d68efd10827253d220f34c6192cf0f1beffdcccc4331afa23631bafab6bcca81"
+    }
+  },
+  "physical_device_tested": false,
+  "note": "Supplemental exact lesson-screen entry coverage of the already-published APK source; no new APK or runtime change."
+}

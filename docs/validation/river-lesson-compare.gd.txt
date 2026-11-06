@@ -1,0 +1,25 @@
+extends SceneTree
+const Model=preload("res://scripts/WorldModel.gd")
+const River=preload("res://scripts/LivingCorridors.gd")
+func _init() -> void:call_deferred("run")
+func button(h, title: String) -> Button:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.text==title:return action
+ return null
+func run() -> void:
+ var h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://river-lesson-compare-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame;h.set_process(false)
+ var m=Model.new();m.state.chapter=3;m.state.habitat_projects=["shaded_pond"];m.state.discoveries=["rainforest"];m.state.learning={"completed":true}
+ for entry in [[Vector2i(2,1),"water"],[Vector2i(3,1),"grass"],[Vector2i(4,1),"forest"]]:m.add_tile(entry[0],entry[1])
+ m.state.expansions=m.state.tiles.size()-4
+ River.choose_branch(m,"wetland");River.set_source(m,"2,1");m.begin_draft("3,2")
+ var before: Dictionary=m.state.duplicate(true)
+ h.model=m;h.services.model=m;h.start_play();h.modal.hide();h.refresh()
+ var current=h.corridor_ui
+ h.corridor_ui=load("/workspace/runtime/river-lesson-review/old-corridor-ui.gd").new();h.corridor_ui.build(h)
+ h.journey_ui.start(h,"river");button(h,"Trace grove route").pressed.emit();await process_frame
+ var old_blocked: bool=h.modal.visible and h.modal_screen=="journey_lesson" and not h.corridor_ui.active() and h.model.message.contains("finish any saved land draft") and h.model.state.pending==before.pending
+ h.corridor_ui.bar.queue_free();h.corridor_ui=current
+ h.model.state=before.duplicate(true);h.journey_ui.start(h,"river");button(h,"Trace grove route").pressed.emit();await process_frame
+ var fixed: bool=not h.modal.visible and h.corridor_ui.mode=="grove" and h.corridor_ui.options.size()>0 and h.model.state.pending==before.pending
+ var report={"old_0_21_4_reproduces_silent_lesson_block":old_blocked,"current_0_21_5_opens_actual_lesson_route":fixed,"pending_unchanged":h.model.state.pending==before.pending,"fixture_based":true,"physical_device":false}
+ var f=FileAccess.open("/workspace/runtime/river-lesson-review/comparison.json",FileAccess.WRITE);f.store_string(JSON.stringify(report,"  "));f.close();print(JSON.stringify(report));h.queue_free();h=null;await process_frame;quit(0 if old_blocked and fixed else 1)

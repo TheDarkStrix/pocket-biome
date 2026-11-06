@@ -14,6 +14,8 @@ Two rendered OpenGL touch runs start from new saves and earn the opening through
 
 [Exact reports and package identity](RIVER_ENTRY_VALIDATION.json) · [reproducible fresh-save walkthrough](validation/river-entry-fresh.gd.txt)
 
+[Follow-up: exact lesson-screen button reproduction, published APK text and fresh touch runs](RIVER_LESSON_BUTTON_AUDIT.md).
+
 [Blue spring selection](validation/river-entry-mobile-choose-spring.png) · [Actual missing-grove recovery](validation/river-entry-mobile-needs-grove.png) · [Channel preview](validation/river-entry-mobile-visible-channel-preview.png) · [Visible saved river](validation/river-entry-mobile-flowing-river.png) · [Desktop river](validation/river-entry-desktop-flowing-river.png)
 
 These captures are unedited game renders. The fresh walkthrough reaches grove maturity, not the full flowering-corner finale. Later stages are covered by the separate model and control suites. No physical Android phone is attached: installation, actual touch hardware, performance, native provider behavior and unfamiliar-player comprehension/enjoyment remain unqualified. Package/signature/version compatibility is checked against the previous downloadable APK; this is not evidence of a physical installation. Google test ad IDs remain selected.
