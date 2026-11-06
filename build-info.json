@@ -1,0 +1,14 @@
+{
+  "runtime_commit": "d716c8edde5c7c894b19e37e172e505f7fc1a1d5",
+  "source_sha256": "5748bcd27fe04b88d0d3658d30df1053d357cba92ddbd1ec21e9e9fdd7b89560",
+  "apk_sha256": "c5336560796648a8acbff7955bd9a68555d5e9b1b19bfcd7f5b79e6d57d2889f",
+  "bytes": 102469035,
+  "godot_assertions": 2000,
+  "python_tests": 22,
+  "automated_campaign_routes": 4,
+  "test_ad_ids": true,
+  "physical_device_qualified": false,
+  "store_release_ready": false,
+  "upgrade_compatible_with_previous_download": false,
+  "upgrade_note": "Different debug signing certificate from the old published APK. Do not uninstall an existing copy if its saved island must be preserved; safe save transfer is pending."
+}
