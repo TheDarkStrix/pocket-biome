@@ -1,21 +1,23 @@
-# Pocket Biome — current Android test build
+# Pocket Biome — 0.21.2 Android test update
 
 [Download the current APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
-Android 7.0+ / ARM64. About 98 MiB. Development-signed preview with Google test ad IDs; not a store release and not earning live ad revenue.
+Android 7.0+ / ARM64. About 98 MiB. Development preview with Google test ad IDs.
 
-## Existing installations
+## Fixed: land dropping after gathering
 
-This APK uses a different debug signing certificate from the older APK previously hosted here. Android will reject an in-place update from that older version. **Do not uninstall the old app if you need its saved island.** Uninstalling removes local progress. A safe save-transfer path for this signing change is pending. Fresh installations can use the APK normally.
+Harvested Fiber/Oak/Forest/Stone/Clay/Iron now retain their growing artwork's ground contact. The visible tile no longer jumps down or up when its plants/resources change. Original painted art and saved gameplay are retained. Rendered ready/harvested comparisons and all four camera views are checked.
 
-## Included
+Version code increases 15 → 16. **This APK uses the same signing key as the immediately preceding gameplay/animation download. Install over that recent build; do not uninstall first.** Static package/signature/version compatibility is verified; no attached phone was available for an install/save-preservation acceptance run.
 
-Five chapters and twenty discoveries, guided opening and advanced lessons, habitat restoration, Living River choices, crafting/automation, expeditions/mastery and the sanctuary ending. The latest painted-world polish adds Golem/Workbench/Totem rigs, rooted growth, reactive wildlife, finite milestone celebrations and improved sound mixing. Original painted art remains the default.
+The much older restored-paint test APK had a different signing key and cannot update in place. If Android rejects an update, keep that old app installed if its island matters. Uninstalling removes local progress; save transfer across that old signing change is still pending.
 
-Runtime commit: `d716c8edde5c7c894b19e37e172e505f7fc1a1d5`.
-Tested source SHA-256: `5748bcd27fe04b88d0d3658d30df1053d357cba92ddbd1ec21e9e9fdd7b89560`.
-APK SHA-256: `c5336560796648a8acbff7955bd9a68555d5e9b1b19bfcd7f5b79e6d57d2889f`.
+All five chapters, twenty discoveries, tutorials, habitat projects, Living River, crafting/automation, expeditions, wildlife and painted-object motion from the preceding build remain included.
 
-The unchanged source passes 2,000 assertions in 42 Godot suites, 22 Python checks, startup and four automated campaign routes. Rendered touch walkthroughs and Android package/signature/alignment/source checks pass. This is not a physical-phone playthrough or a human enjoyment study. Full results are in the source branch's `docs/GAME_JUICE_VALIDATION.json`; package metadata is also retained in `build-info.json` here.
+Runtime commit: `d26758f6cb8a40350bb1ab450332d477e25d1c62`.
+Tested source SHA-256: `68a4fc0d4a90508d0ce684a54df4cfa36ffc927103fa51e2e28319fa239473dd`.
+APK SHA-256: `9ed02da304cf20b605233a33ccd2c608aa96b695952e9983c5b8f63cd0511a33`.
 
-Phone controls/audio/vibration/performance, save/update acceptance, real SDK consent/ad behaviour, human pacing/retention and production signing/store setup remain pending.
+The unchanged source passes 2,012 assertions in 42 Godot suites, 22 Python checks, startup and four automated campaign routes. Package/source/signature/16 KB alignment checks pass. Details and before/after screenshots are in the source branch's `docs/LAND_ALIGNMENT_AUDIT.md` and `docs/LAND_ALIGNMENT_VALIDATION.json`.
+
+Phone audio/vibration/performance/save acceptance, human comprehension/enjoyment, actual native provider testing and production/store setup remain open. Test ads do not earn live revenue.
