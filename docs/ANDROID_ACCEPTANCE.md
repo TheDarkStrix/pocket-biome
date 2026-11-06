@@ -2,7 +2,7 @@
 
 The current build is a development-signed, ARM64 test preview. No public app release is part of this change. Install/update with the same package/signature to retain a world; the smoke tool uses `adb install -r` and never clears app data. Keep an exported backup before manually starting a new island for first-session testing.
 
-Current download caveat: the current debug APK and the older `android-test-build` APK have different signing certificates. Android cannot update the older installation in place. Do not uninstall it if its saved island matters. Safe save transfer for this signing change is not implemented; see [APK_DOWNLOAD.md](APK_DOWNLOAD.md).
+Current download: `0.21.2-preview` retains the latest gameplay/animation test APK's signing identity and increases version code 15 → 16. The much older restored-paint APK used a different certificate and cannot update in place. Do not uninstall it if its saved island matters; transfer across that old signing change is still pending. See [APK_DOWNLOAD.md](APK_DOWNLOAD.md).
 
 ## Available device smoke tool
 

@@ -1,0 +1,32 @@
+extends SceneTree
+var h
+func _init() -> void: call_deferred("run")
+func capture(name: String) -> void:
+ h.refresh(); h.presentation.advance(10); h.frame_world(); h.queue_redraw()
+ for frame in range(8): await process_frame
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/alignment-review/"+name+".png")
+func run() -> void:
+ var source_at_start: String=JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://alignment-review-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame;h.set_process(false)
+ h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model
+ h.model.state.settings.tutorial_seen=true;h.model.state.harvests=8;h.model.state.coins=77
+ h.model.add_tile(Vector2i(2,1),"water");h.model.state.expansions=1
+ h.start_play();h.modal.hide();h.selected="0,0";h.model.state.settings.reduced_motion=true
+ var tag: String=OS.get_environment("ALIGNMENT_TAG")
+ await capture(tag+"-ready")
+ h.model.state.tiles["0,1"].ready=h.model.state.time+10
+ await capture(tag+"-fiber-harvested")
+ h.model.state.tiles["0,0"].ready=h.model.state.time+10;h.model.state.tiles["1,0"].ready=h.model.state.time+10
+ await capture(tag+"-all-harvested")
+ var picks := true
+ var state_before: String = JSON.stringify(h.model.state)
+ for turn in range(4):
+  for key in h.model.state.tiles: picks = picks and h.pick(h.entity_screen(key)) == key
+  await capture(tag+"-harvested-view-"+str(turn))
+  h.rotate_camera(1)
+ var result := {"source_sha256":source_at_start,"source_unchanged_during_run":source_at_start==JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256,"four_view_picking":picks,"state_unchanged":state_before==JSON.stringify(h.model.state),"scope":"Rendered constructed five-tile opening, ready/harvested artwork and four camera views. Not a physical phone run."}
+ result["passed"] = result.four_view_picking and result.state_unchanged and result.source_unchanged_during_run
+ var file := FileAccess.open("/workspace/runtime/alignment-review/visual.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("ALIGNMENT VISUAL RESULT: "+JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.2).timeout;quit()

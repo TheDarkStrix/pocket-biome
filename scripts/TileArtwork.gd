@@ -2,6 +2,9 @@ extends RefCounted
 # Reviewed candidate atlas regions; source retained unchanged. Not final art approval.
 const WINDMILL = preload("res://assets/structures/windmill-layers.png")
 const DEPLETED = preload("res://assets/nodes/harvest_states.png")
+# Per-art ground registration, measured at the painted soil's front contact edge.
+# A shared row pivot made Oak/Stone/Fiber sink when harvested (up to 32 source px).
+const DEPLETED_GROUND_Y = {"oak":316,"forest":302,"stone":316,"fiber":317,"clay":235,"iron":235}
 const DEPLETED_CELLS = {"oak":Vector2i(0,0),"forest":Vector2i(0,0),"stone":Vector2i(1,0),"fiber":Vector2i(2,0),"clay":Vector2i(0,1),"iron":Vector2i(1,1)}
 const BIOMES_A = preload("res://assets/biomes/biomes_a.png")
 const BIOMES_B = preload("res://assets/biomes/biomes_b.png")
@@ -32,7 +35,7 @@ static func appearance(type: String, evolution: String, depleted: bool = false) 
  if depleted and evolution == "" and DEPLETED_CELLS.has(type):
   var cell: Vector2i = DEPLETED_CELLS[type]
   var top := 0 if cell.y == 0 else 448
-  return {"texture":DEPLETED,"region":Rect2(cell.x*418,top,418,448 if cell.y == 0 else 397),"pivot":Vector2(209,285 if cell.y == 0 else 247),"normalization":1.0,"tint":Color.WHITE}
+  return {"texture":DEPLETED,"region":Rect2(cell.x*418,top,418,448 if cell.y == 0 else 397),"pivot":Vector2(209,DEPLETED_GROUND_Y[type]),"normalization":1.0,"tint":Color.WHITE}
  var art := evolution
  var tint := Color.WHITE
  for recipe in catalog.recipes:
