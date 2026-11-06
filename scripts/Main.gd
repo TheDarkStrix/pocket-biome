@@ -272,7 +272,7 @@ func build_ui() -> void:
  modal.visibility_changed.connect(func():
   modal_scrim.visible = modal.visible
   if launch_menu and is_instance_valid(launch_screen): launch_screen.visible = not modal.visible
-  if modal_screen in ["draft","build","corridors","corridor_confirm","river_story"] and not launch_menu and not photo_mode:
+  if modal_screen in ["draft","build","corridors","corridor_confirm","corridor_setup","river_story"] and not launch_menu and not photo_mode:
    bottom.visible = not modal.visible
    if not modal.visible:
     restore_draft_view(); restore_build_view()
@@ -799,12 +799,12 @@ func apply_layout() -> void:
  ecology_monitor.position = Vector2(safe.end.x-ecology_monitor.size.x-20,hud.position.y+game_hud.quest_slot.position.y)
  notice_toast.size = Vector2(layout.world.size.x-16,0)
  notice_toast.position = Vector2(layout.world.position.x+8,layout.bottom.position.y-notice_toast.get_combined_minimum_size().y-12)
- if modal_screen in ["draft","build","corridors","corridor_confirm","river_story"] and not launch_menu and is_instance_valid(modal_box):
+ if modal_screen in ["draft","build","corridors","corridor_confirm","corridor_setup","river_story"] and not launch_menu and is_instance_valid(modal_box):
   var max_height: float = safe.size.y*0.57 if modal_screen == "build" else safe.size.y-100
   var content_height: float = modal_box.get_combined_minimum_size().y+(24 if modal_screen == "build" else 0)
   modal.size.y = minf(max_height,content_height)
   modal.position.y = safe.end.y-modal.size.y-16
- if modal_screen in ["corridors","corridor_confirm","river_story"] and not launch_menu:
+ if modal_screen in ["corridors","corridor_confirm","corridor_setup","river_story"] and not launch_menu:
   modal.size.y = minf(layout.modal.size.y,maxf(240,safe.size.y*0.50))
   modal.position.y = safe.end.y-modal.size.y-16
  if inspection_mode:
@@ -817,7 +817,7 @@ func apply_layout() -> void:
  photo_controls.position = Vector2(safe.position.x+20,safe.end.y-maxf(touch_height(),photo_controls.get_combined_minimum_size().y)-12)
  photo_controls.size.x = safe.size.x-40
  if launch_menu: frame_title_island(safe)
- elif modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","river_story"]:
+ elif modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","corridor_setup","river_story"]:
   if orbit_enabled:
    orbit_world.fit(world_rect().grow(-8));queue_redraw();return
   var bounds := world_art_bounds(false)
@@ -852,11 +852,13 @@ func restore_build_view() -> void:
  queue_redraw()
 
 func world_rect() -> Rect2:
- if is_instance_valid(modal) and modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","river_story"]:
+ if is_instance_valid(modal) and modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","corridor_setup","river_story"]:
   var start: float = layout.get("top",Rect2(20,20,500,90)).end.y+12
   return Rect2(20,start,get_viewport_rect().size.x-40,maxf(100,modal.position.y-start+(0 if modal_screen == "build" else 100)))
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
- return layout.get("world",Rect2(0,205,540,475))
+ var area: Rect2=layout.get("world",Rect2(0,205,540,475))
+ if corridor_ui.showing() and is_instance_valid(corridor_ui.bar):area.size.y=maxf(100,area.size.y-corridor_ui.bar.get_combined_minimum_size().y-16)
+ return area
 
 func world_anchor() -> Vector2:
  return world_rect().get_center()-Vector2(0,45)
@@ -890,7 +892,7 @@ func _process(delta: float) -> void:
    cosmetic_clock = 0.0
    queue_redraw()
  notice_time = maxf(0,notice_time-delta)
- notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible
+ notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible and not corridor_ui.showing()
  if not corridor_ui.showing() and not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
  if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return
@@ -990,7 +992,7 @@ func _draw() -> void:
  if orbit_enabled:
   draw_orbit_feedback()
   return
- var visible_frontier: Array = [] if layout_ui.source != "" or photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
+ var visible_frontier: Array = [] if corridor_ui.active() or layout_ui.source != "" or photo_mode or launch_menu or modal.visible or targeting != "" or placement_blueprint != "" else model.frontier()
  for key in visible_frontier:
   var point := screen(model.coord(key))
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",point,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
@@ -1328,7 +1330,7 @@ func world_art_bounds(include_frontier: bool) -> Rect2:
 func frame_world() -> void:
  if orbit_enabled:
   orbit_world.fit(world_rect(),not photo_mode);queue_redraw();return
- var bounds := world_art_bounds(not photo_mode)
+ var bounds := world_art_bounds(not photo_mode and not corridor_ui.active())
  var area := world_rect()
  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y),0.04 if photo_mode else 0.5,2.0)
  pan = area.get_center()-world_anchor()-bounds.get_center()*zoom_level

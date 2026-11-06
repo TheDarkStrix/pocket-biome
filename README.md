@@ -6,7 +6,7 @@ Godot **4.6.3**, portrait Android-first, offline environmental discovery game. T
 
 [Download the current ARM64 test APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk). Android 7.0+; about 98 MiB, development preview with Google test ad IDs. [Download details and checksum](https://github.com/TheDarkStrix/pocket-biome/tree/android-test-build).
 
-Current update: **0.21.4-preview** fits the grid to the visible painted caps, removes internal soil walls only where neighboring tiles meet, and blends narrow shared edges using the existing artwork. Selection, touch mapping and island portraits use the fitted layout. Earlier Water-offer recovery and harvest-height fixes remain included. Version code increases to 18 with the current signing key. [Before/after and verification](docs/PAINTED_SEAMS_AUDIT.md).
+Current update: **0.21.5-preview** fixes Living River entry with saved land cards, opens highlighted spring selection after choosing an approach, explains missing groves, previews a visible channel and confirms its starting flow. Fresh rendered touch playthroughs reach a flowing river and mature grove through ordinary gathering, crafting and land purchases. Painted-land joins, Water-offer recovery and harvest-height fixes remain included. Version code increases to 19 with the current signing key. [Evidence and testing limits](docs/RIVER_ENTRY_AUDIT.md).
 
 **Much older installation:** the original restored-paint test APK used a different signing key. If Android rejects an update, keep that old app installed if its saved island matters; uninstalling removes local progress. See [download and update compatibility](docs/APK_DOWNLOAD.md).
 

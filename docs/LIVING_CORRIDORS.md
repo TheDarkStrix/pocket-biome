@@ -5,8 +5,8 @@ This chapter turns the home island into a small restoration puzzle: carry limite
 ## How to play
 
 1. Restore the returning spring. Open **Goal → Restore the Living River**, **Tend → Living Corridors**, or **World → Living Corridors**.
-2. Choose Clover's wetland or Juniper's woodland, then select an existing Water plot as the source.
-3. Tap or drag across edge-sharing natural plots to an Oak or Forest at least two edges away. Preview and save the route. Allocate flow with **+ / −**.
+2. Choose Clover's wetland or Juniper's woodland. Spring selection opens automatically: tap a blue Water plot and confirm it. The selected spring stays marked on the island.
+3. Tap a highlighted distant Oak or Forest to preview a connected channel, or draw it across edge-sharing natural plots. The grove must be at least two edges from the spring. If none is reachable, the setup screen explains the missing land and can select a Forest from your actual saved cards. Preview and save the route; confirmation states the starting flow. New channels request available flow up to the grove's demand (two, or one with woodland shelter), or one for flowers. Adjust it with **+ / −**. Editing an existing route preserves its requested allocation, including zero.
 4. Observe two qualifying seasons to mature the grove. The forecast dry spell reduces spring supply by one. Under Living climate it also warms routed land; woodland shelter buffers that warmth.
 5. Trace a flower route through the mature grove to Fiber or soil. The wetland garden needs neighboring Water; the woodland garden needs two healthy tree neighbors. Keep it watered and fertile.
 6. Choose bare Meadow or Ploughed Soil within three natural-land steps of the garden. Sola carries moisture and fertility there. Two qualifying seedbed observations earn the flowering corner and Living Heart. The actual tile evolves through the ordinary discovery rules.
@@ -22,6 +22,7 @@ The live sheet shows delivered versus needed flow, requested allocation, growth 
 - A healthy garden adds moisture/fertility to its seedbed. Seedbed growth needs 50 moisture, 80 fertility and at most 65 heat. A repurposed or fused seedbed cannot earn restoration as bare soil.
 - Observing a season does not advance harvest, crafting or machine timers. Normal active time still runs normally. Classic climate retains its original heat behavior and receives periodic routed moisture.
 - Planning costs no Coins or materials. Drafting is temporary until confirmation. Cancel discards only the preview. Undo restores the last saved configuration before another season; it does not rewind chemistry, clocks, earned stages or discoveries.
+- Saved land cards, destination and price coexist with river planning and observations. Buying or crafting missing terrain still uses its ordinary price; the river does not grant free land. Setup errors appear in the visible panel or planning caption.
 - Source/route replacement resets affected current growth. Changing approach clears the routes and current growth. Earned field-note moments and chapter rewards remain permanent, and cannot be farmed repeatedly.
 - Terrain editing can interrupt a route. It remains a valid save and can be repaired. Placement previews warn when delivery would stop. Failed route/season saves roll back their entire transaction.
 - Old saves need no new fields. Previously completed chapter rewards/endings stay completed. An unfinished third chapter receives the new restoration objective.

@@ -23,7 +23,7 @@ static func base_budget(m) -> int: return 4 if record(m).get("branch","") == "we
 static func dry(m) -> bool: return not earned(m) and int(record(m).get("stage",0)) in [1,2]
 static func budget(m) -> int: return base_budget(m)-(1 if dry(m) else 0)
 static func choose_branch(m, branch: String) -> bool:
- if not unlocked(m) or branch not in BRANCHES or not m.state.pending.is_empty(): return false
+ if not unlocked(m) or branch not in BRANCHES: return false
  ensure(m)
  var s: Dictionary = record(m)
  if s.branch == branch: return false
@@ -32,7 +32,7 @@ static func choose_branch(m, branch: String) -> bool:
  m.message = NAMES[branch]+" chosen. Earned chapter moments stay in your field notes."
  return true
 static func set_source(m, at: String) -> bool:
- if not unlocked(m) or record(m).get("branch","") not in BRANCHES or not m.state.pending.is_empty() or tile(m,at).get("type","") != "water": return false
+ if not unlocked(m) or record(m).get("branch","") not in BRANCHES or tile(m,at).get("type","") != "water": return false
  var s: Dictionary = record(m)
  s.source = at; s.routes = {}; s.stage = 0; s.growth = {"grove":0,"garden":0,"bloom":0}
  return true
@@ -52,7 +52,7 @@ static func role_valid(m, role: String, path: Array) -> bool:
   return target.get("type","") in ["oak","forest"] and absi(delta.x)+absi(delta.y) >= 2
  return target.get("type","") in ["fiber","grass","dirt"]
 static func set_route(m, role: String, path: Array) -> bool:
- if not unlocked(m) or not m.state.pending.is_empty() or not role_valid(m,role,path): return false
+ if not unlocked(m) or not role_valid(m,role,path): return false
  var s: Dictionary = record(m)
  var old_water: int = int(s.routes.get(role,{}).get("water",0))
  s.routes[role] = {"path":path.duplicate(),"water":old_water}
@@ -61,7 +61,7 @@ static func set_route(m, role: String, path: Array) -> bool:
  return true
 static func allocate(m, role: String, amount: int) -> bool:
  var s: Dictionary = record(m)
- if not s.get("routes",{}).has(role) or amount < 0 or amount > 3 or not m.state.pending.is_empty(): return false
+ if not s.get("routes",{}).has(role) or amount < 0 or amount > 3: return false
  var total := amount
  for other in s.routes:
   if other != role: total += int(s.routes[other].water)
@@ -104,6 +104,18 @@ static func link(m, from: String, to: String, limit: int = 3) -> Array:
      var branch: Array = path.duplicate(); branch.append(other); next.append(branch); seen.append(other)
   frontier = next
  return []
+static func grove_options(m) -> Array:
+ var result:=[]
+ var source: String=record(m).get("source","")
+ if tile(m,source).get("type","")!="water":return result
+ var keys: Array=m.state.tiles.keys();keys.sort()
+ for key in keys:
+  if m.state.tiles[key].has("owner") or tile(m,key).get("type","") not in ["oak","forest"]:continue
+  var path:=link(m,source,key,11)
+  if role_valid(m,"grove",path):result.append({"target":key,"path":path})
+ result.sort_custom(func(a,b):return a.path.size()<b.path.size() if a.path.size()!=b.path.size() else a.target<b.target)
+ return result
+
 static func garden_ready(m) -> bool:
  var at := end_of(m,"garden"); var grove := end_of(m,"grove")
  if at == "" or grove == "" or int(record(m).growth.grove) < 2: return false
@@ -119,7 +131,7 @@ static func garden_ready(m) -> bool:
   if tile(m,other).get("type","") == "water": return true
  return false
 static func set_seedbed(m, at: String) -> bool:
- if not unlocked(m) or not m.state.pending.is_empty() or tile(m,at).get("type","") not in ["grass","dirt"] or tile(m,at).get("evolution","") != "" or tile(m,at).get("size",0) != 1: return false
+ if not unlocked(m) or tile(m,at).get("type","") not in ["grass","dirt"] or tile(m,at).get("evolution","") != "" or tile(m,at).get("size",0) != 1: return false
  var garden := end_of(m,"garden")
  if garden == "" or link(m,garden,at).is_empty(): return false
  var s: Dictionary = record(m)
@@ -149,7 +161,7 @@ static func remember(m, id: String) -> void:
  s.ledger.append(id); m.record_event("corridor_stage_completed",{"id":id,"type":s.branch})
 static func advance(m) -> bool:
  var s: Dictionary = record(m)
- if not unlocked(m) or s.is_empty() or s.branch not in BRANCHES or s.source == "" or tile(m,s.source).get("type","") != "water" or not s.routes.has("grove") or not m.state.pending.is_empty(): return false
+ if not unlocked(m) or s.is_empty() or s.branch not in BRANCHES or s.source == "" or tile(m,s.source).get("type","") != "water" or not s.routes.has("grove"): return false
  s.season = mini(10000,int(s.season)+1)
  var water := delivered(m)
  var flow := effects(m)
