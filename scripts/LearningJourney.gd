@@ -6,13 +6,16 @@ static func current(m) -> Dictionary:
  if m.state.harvests == 0: return step("Gather your first Wood","Tap the highlighted Oak. Ready resources also earn Coins.","collect","Show the Oak","0,0")
  if m.state.expansions == 0:
   if not m.state.pending.is_empty():
-   return step("Compare Water before placing it","Select Water, then tap Info. Its moisture reaches edge-sharing neighbors; place it beside the Oak.","draft","Compare the Water card")
-  return step("Give the Oak a Water neighbor","Open a cloud touching the Oak. Inspect Water before confirming your land choice.","expand","Explore the cloud plots","0,0")
+   return step("Compare Water before placing it","Select Water, then tap Info. Its moisture reaches edge-sharing neighbors; place it on a highlighted cloud sharing an edge with the Oak.","draft","Compare the Water card")
+  return step("Give the Oak a Water neighbor","Open a highlighted cloud sharing an edge with the Oak. Inspect Water before confirming your land choice.","expand","Explore the cloud plots","0,0")
  var watered := false
  for at in m.neighbors("0,0"):
   if m.state.tiles[at].type == "water": watered = true
  if m.state.discoveries.is_empty():
-  if not watered: return step("Bring Water beside the Oak","Inspect the Oak to see its neighbors. Add Water on an edge-sharing cloud; Rain can also help.","expand","Choose a Water neighbor","0,0")
+  if not watered:
+   if preload("res://scripts/OpeningWater.gd").targets(m).is_empty():
+    return step("Water the Oak with Rain","The Oak has no empty edge-sharing cloud. Choose Rain, then tap the Oak to preview and confirm. Rain costs 100 Pulse energy.","pulse","Choose Rain for the Oak","0,0")
+   return step("Bring Water beside the Oak","Water only reaches tiles sharing an edge. Use a highlighted cloud next to the outlined Oak; Water is guaranteed in your cards. Your existing pond can stay.","expand","Choose a Water neighbor","0,0")
   return step("Watch the Oak recover","Inspect its live moisture. Water adds moisture over active time; a changed biome is your first discovery.","inspect","Inspect the Oak","0,0")
  if not learned.get("inspected",false): return step("See what changed","Inspect your Oak's live conditions and neighbor influences. The same rules help with your next habitat.","inspect","Inspect the Oak","0,0")
  if not m.campaign.has_structure(m,"workbench"):

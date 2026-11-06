@@ -378,6 +378,7 @@ func modal_content(title: String) -> VBoxContainer:
 func draft() -> void:
  if model.state.pending.is_empty():
   model.message = "Tap a cloud plot to open its three-card draft."; refresh(); return
+ if model.ensure_opening_water_offer(): persist()
  var signature: String = JSON.stringify(model.state.pending.cards)
  if signature != draft_signature:
   draft_selection = 1; draft_signature = signature
@@ -503,8 +504,9 @@ func choose_idea(idea: Dictionary) -> void:
    model.message = "Tap the highlighted Oak to gather Wood."
    refresh()
   "expand":
+   if preload("res://scripts/OpeningWater.gd").needed(model): selected = "0,0"
    modal.hide(); frame_world()
-   model.message = "Choose a cloud. Water beside Oak can grow a rainforest."
+   model.message = "Choose a highlighted cloud sharing an edge with the Oak. Water will be offered." if preload("res://scripts/OpeningWater.gd").needed(model) else "Choose a cloud. Water beside Oak can grow a rainforest."
    refresh()
   "draft": draft()
   "fusion": fusion_dialog()
@@ -992,6 +994,12 @@ func _draw() -> void:
  for key in visible_frontier:
   var point := screen(model.coord(key))
   preload("res://scripts/TileArtwork.gd").draw_tile(self,"cloud",point,132.0/418.0*zoom_level*0.72,Color(0.82,0.92,1,0.5))
+ var opening_targets: Array[String] = preload("res://scripts/OpeningWater.gd").targets(model)
+ for key in visible_frontier:
+  if not opening_targets.has(key): continue
+  var point := screen(model.coord(key))
+  draw_plot_outline(point,zoom_level*0.72,Color("ffe1a0"),2.5*zoom_level)
+  preload("res://scripts/UIIcons.gd").draw(self,"moisture",point+Vector2(0,24)*zoom_level,18*zoom_level,Color.WHITE)
  var keys := render_keys()
  var ghost := build_preview()
  var meadows: Array = available_meadows() if placement_blueprint != "" else []

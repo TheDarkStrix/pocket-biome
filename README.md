@@ -6,7 +6,7 @@ Godot **4.6.3**, portrait Android-first, offline environmental discovery game. T
 
 [Download the current ARM64 test APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk). Android 7.0+; about 98 MiB, development preview with Google test ad IDs. [Download details and checksum](https://github.com/TheDarkStrix/pocket-biome/tree/android-test-build).
 
-Current update: **0.21.2-preview** fixes resource tiles dropping when harvested. It uses the same signing key as the immediately preceding gameplay/animation download and increments the version code to 16. [Fix and rendered comparison](docs/LAND_ALIGNMENT_AUDIT.md).
+Current update: **0.21.3-preview** keeps Water available while the opening needs it, repairs old missing-Water hands without a charge/ad, highlights Oak-adjacent plots and explains remote placement. The earlier harvested-land alignment fix remains included. The current signing key is retained and version code increases to 17. [Opening recovery and touch proof](docs/OPENING_WATER_AUDIT.md).
 
 **Much older installation:** the original restored-paint test APK used a different signing key. If Android rejects an update, keep that old app installed if its saved island matters; uninstalling removes local progress. See [download and update compatibility](docs/APK_DOWNLOAD.md).
 

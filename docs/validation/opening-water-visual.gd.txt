@@ -1,0 +1,73 @@
+extends SceneTree
+const Model=preload("res://scripts/WorldModel.gd")
+const Learn=preload("res://scripts/LearningJourney.gd")
+var h
+var actions:=0
+var screenshots:=[]
+func _init() -> void:call_deferred("run")
+func blocked():
+ var m=Model.new();m.state.seed=7;m.state.settings.tutorial_seen=true
+ m.harvest("0,0");m.begin_draft("2,1");m.place(m.state.pending.cards.find("water"))
+ m.begin_draft("2,0")
+ # A valid pre-fix saved hand. Ordinary game actions earned the island/Coins above.
+ m.state.pending.cards=["grass","stone","crystal"]
+ return m
+func settle() -> void:
+ for frame in range(8):await process_frame
+ h.apply_layout();h.queue_redraw();await process_frame
+func snap(name: String) -> void:
+ await settle();await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/water-review/"+name+".png");screenshots.append(name)
+func button(title: String) -> Button:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.text==title:return action
+ return null
+func click_at(at: Vector2) -> void:
+ for pressed in [true,false]:
+  var event:=InputEventScreenTouch.new();event.index=0;event.position=root.get_screen_transform()*at;event.pressed=pressed;Input.parse_input_event(event);Input.flush_buffered_events();await process_frame
+ actions+=1;await settle()
+func click(action: Control) -> void:
+ if h.modal.visible and h.modal_scroll.is_ancestor_of(action):h.modal_scroll.ensure_control_visible(action)
+ await settle()
+ # Input.parse_input_event takes physical window coordinates under canvas stretch.
+ await click_at(action.get_global_rect().get_center())
+func run() -> void:
+ var source: String=JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://water-recovery-visual-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame;h.set_process(false)
+ h.model=blocked();h.services.model=h.model;h.store.save_state(h.model.state);h.start_play();h.modal.hide();h.refresh();h.frame_world();await snap("highlighted-plots")
+ var quote: int=h.model.state.pending.cost;var coins: int=h.model.state.coins
+ await click(h.draft_button);await snap("remote-saved-hand")
+ var repaired: bool=h.model.state.pending.cards.has("water") and h.model.state.coins==coins and h.model.state.pending.cost==quote and h.store.load_state().pending.cards.has("water")
+ var no_ad: bool=not is_instance_valid(h.draft_hand.reroll)
+ var warning: bool=h.draft_hand.hint.text.contains("too far")
+ await click(button("Show Water plots beside the Oak"));await snap("choose-neighbor")
+ await click_at(h.screen(Vector2(-1,0)));await snap("correct-water-hand")
+ var water_selected: bool=h.draft_cards[h.draft_selection].text=="Water" and h.confirm_card.text=="Place Water" and h.draft_hand.hint.text.contains("nourish the Oak")
+ await click(h.confirm_card)
+ var charged_once: bool=h.model.state.coins==coins-quote
+ var both_ponds: bool=h.model.state.tiles["2,1"].type=="water" and h.model.state.tiles.get("-1,0",{}).get("type","")=="water"
+ var step_advanced: bool=Learn.current(h.model).title=="Watch the Oak recover"
+ await snap("water-placed")
+ h.set_process(true)
+ for step in range(16):
+  if not h.model.state.discoveries.is_empty():break
+  await create_timer(0.5).timeout
+ h.set_process(false);await snap("first-discovery")
+ var discovery: bool=not h.model.state.discoveries.is_empty()
+ var save_valid: bool=h.store.valid(h.model.state)
+ h.queue_free();h=null;await process_frame
+ root.size=Vector2i(320,640)
+ h=preload("res://tests/fixtures/MobileMain.gd").new();h.display_dp=1.6875;h.show_menu_on_launch=false;h.store.path="user://water-mobile-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame;h.set_process(false)
+ h.model=blocked();h.model.state.text_scale=1.2;h.services.model=h.model;h.apply_settings();h.start_play();h.modal.hide();h.refresh();h.draft();await snap("small-screen-hand")
+ var mobile_bounds:=true
+ for action in h.modal_box.find_children("*","Button",true,false):mobile_bounds=mobile_bounds and action.get_global_rect().end.x<=h.modal_scroll.get_global_rect().end.x+1 and action.size.y>=h.touch_height()-1
+ await click(button("Show Water plots beside the Oak"));await click_at(h.screen(Vector2(-1,0)))
+ h.modal_scroll.ensure_control_visible(h.confirm_card);await snap("small-screen-confirm")
+ await click(h.confirm_card)
+ var mobile_placed: bool=h.model.state.tiles.get("-1,0",{}).get("type","")=="water" and Learn.current(h.model).action=="inspect"
+ var passed: bool=repaired and no_ad and warning and water_selected and charged_once and both_ponds and step_advanced and discovery and save_valid and mobile_bounds and mobile_placed
+ var report={"passed":passed,"source_sha256":source,"source_unchanged_during_run":source==JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256,"real_touch_actions":actions,"legacy_hand_repaired_without_charge":repaired,"opening_has_no_ad_redraw":no_ad,"remote_plot_warning":warning,"correct_water_card_selected":water_selected,"only_saved_quote_charged":charged_once,"original_pond_retained":both_ponds,"objective_advanced_after_placement":step_advanced,"first_discovery_with_ordinary_clock":discovery,"save_valid":save_valid,"mobile_touch_bounds":mobile_bounds,"small_screen_recovery_completed":mobile_placed,"screenshots":screenshots,"scope":"Actual rendered touch recovery on a valid constructed pre-fix saved-hand fixture; ordinary clock reaches discovery. Not a physical phone or unfamiliar-player test."}
+ report.passed=report.passed and report.source_unchanged_during_run
+ var file:=FileAccess.open("/workspace/runtime/water-review/visual.json",FileAccess.WRITE);file.store_string(JSON.stringify(report,"  "));file.close();print("WATER RECOVERY VISUAL RESULT: "+JSON.stringify(report))
+ h.queue_free();h=null;await process_frame;await create_timer(0.2).timeout;quit(0 if report.passed else 1)

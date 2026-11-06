@@ -16,6 +16,9 @@ var selection_hint := ""
 
 func configure(h) -> void:
  host = h; selection = h.draft_selection
+ var opening: bool = preload("res://scripts/OpeningWater.gd").needed(h.model)
+ if opening and h.model.state.pending.cards.has("water"):
+  selection = h.model.state.pending.cards.find("water"); h.draft_selection = selection
  add_theme_constant_override("separation",8)
  var badge := PanelContainer.new(); badge.size_flags_horizontal = Control.SIZE_SHRINK_CENTER; badge.custom_minimum_size.x = 104
  badge.add_theme_stylebox_override("panel",preload("res://scripts/MaterialUI.gd").frame(Color.WHITE,8)); add_child(badge)
@@ -52,9 +55,13 @@ func configure(h) -> void:
  place.add_theme_font_override("font",preload("res://assets/fonts/Title.tres"))
  for state in ["font_color","font_hover_color","font_pressed_color"]: place.add_theme_color_override(state,Color("fff0cc"))
  place.add_theme_color_override("font_disabled_color",Color("a7ad9d"))
+ if opening:
+  h.sheets.caption(h,"Water is guaranteed for this first discovery. The normal plot price applies; no ad or redraw is needed.",self)
+  if not preload("res://scripts/OpeningWater.gd").valid_target(h.model,h.model.state.pending.at):
+   h.button("Show Water plots beside the Oak",func(): h.choose_idea({"action":"expand"}),self)
  var secondary := HBoxContainer.new(); secondary.add_theme_constant_override("separation",12); add_child(secondary)
  var later: Button = h.button("Later",func(): h.modal.hide(); h.persist(),secondary); style_quiet(later)
- if not h.model.state.pending.get("ad_rerolled",false):
+ if not opening and not h.model.state.pending.get("ad_rerolled",false):
   reroll = h.button("Test ad · redraw",func(): h.services.request_reward("reroll"),secondary)
   reroll.tooltip_text = "Optional test advertisement: replace these three offers once."
   style_quiet(reroll)
@@ -77,6 +84,8 @@ func update_selection() -> void:
  var type: String = host.model.state.pending.cards[selection]
  place.text = tr("Place ")+tr(type.capitalize())
  selection_hint = preload("res://scripts/GameplayAdvisor.gd").placement_summary(host.model,type,host.model.state.pending.at)
+ if type == "water" and preload("res://scripts/OpeningWater.gd").needed(host.model):
+  selection_hint = "This Water will nourish the Oak. Confirm to watch its moisture rise." if preload("res://scripts/OpeningWater.gd").valid_target(host.model,host.model.state.pending.at) else "This plot is too far from the Oak. Choose a highlighted cloud beside it."
  host.queue_redraw()
  update_quote()
 

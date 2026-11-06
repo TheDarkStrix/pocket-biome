@@ -85,6 +85,7 @@ func begin_draft(k: String) -> bool:
    return false
   state.pending.at = k
   message = "Draft moved to this plot. Your cards and price are unchanged."
+  ensure_opening_water_offer()
   return true
  if not frontier().has(k) or state.coins < cost():
   message = "Expansion costs %d coins · you have %d. Harvest resources to earn more." % [cost(),state.coins] if state.coins < cost() else "Choose a cloud directly beside your island."
@@ -92,6 +93,17 @@ func begin_draft(k: String) -> bool:
  if state.expansions == 0: record_event("first_draft")
  var cards: Array = preload("res://scripts/DraftDealer.gd").deal(config,int(state.seed),int(state.expansions),int(state.chapter))
  state.pending = {"at":k,"cost":cost(),"cards":cards,"pricing_revision":preload("res://scripts/ExpansionPricing.gd").CURRENT_REVISION}
+ ensure_opening_water_offer()
+ return true
+
+# A single required opening card is guaranteed, including already-saved old hands.
+# Keep the quote, destination, foundation card and other choice; never deal again.
+func ensure_opening_water_offer() -> bool:
+ if state.pending.is_empty() or not preload("res://scripts/OpeningWater.gd").needed(self) or state.pending.cards.has("water"): return false
+ var cards: Array = state.pending.cards.duplicate()
+ cards[1] = "water"
+ state.pending.cards = cards
+ message = "Water is available for your Oak. Your quoted price is unchanged; no redraw is needed."
  return true
 
 func place(index: int) -> bool:
@@ -368,6 +380,7 @@ func reroll_draft() -> bool:
    if not cards.has(type): cards[2] = type; break
  state.pending.cards = cards
  state.pending.ad_rerolled = true
+ ensure_opening_water_offer()
  return true
 
 func production(tile: Dictionary) -> Dictionary:
