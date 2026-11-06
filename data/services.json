@@ -4,5 +4,22 @@
   "interstitials_enabled": true,
   "test_ad_app_id": "ca-app-pub-3940256099942544~3347511713",
   "test_rewarded_id": "ca-app-pub-3940256099942544/5224354917",
-  "test_interstitial_id": "ca-app-pub-3940256099942544/1033173712"
+  "test_interstitial_id": "ca-app-pub-3940256099942544/1033173712",
+  "ad_policy": {
+    "id": "balanced_breaks_v1",
+    "first_interstitial_seconds": 180,
+    "min_fullscreen_gap_seconds": 180,
+    "rolling_window_seconds": 1800,
+    "max_interstitials_per_window": 6,
+    "opportunity_lifetime_seconds": 90,
+    "failure_backoff_seconds": 30,
+    "returning_interstitial_seconds": 60
+  },
+  "admob": {
+    "app_id": "",
+    "interstitial_unit_id": "",
+    "rewarded_unit_id": "",
+    "audience": "unconfigured"
+  },
+  "billing_enabled": true
 }

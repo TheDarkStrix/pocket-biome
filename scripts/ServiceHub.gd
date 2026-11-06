@@ -10,6 +10,24 @@ var interstitial_count := 0
 var interstitial_ready := false
 var last_ad_chapter := 0
 var restoration_break := false
+const BREAKS = ["chapter","habitat","river","expedition","expedition_replay","mastery"]
+var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/services.json"))
+var cadence = preload("res://scripts/AdCadence.gd").new()
+var active_seconds := 0.0
+var clock_override := -1.0
+var opportunities := {}
+var offered := {}
+var break_sequence := 0
+var known_chapters: Array = []
+var chapter_result := 0
+var observed_seed := -1
+var failure_until := 0.0
+var dispatch_pending := false
+var dispatch_started := 0
+var pending_context := ""
+var opportunity_counts := {}
+var blocked_counts := {}
+var dispatch_counts := {}
 var online_requested := false
 var next_ad_retry := 0.0
 var fullscreen_ad := false
@@ -42,6 +60,9 @@ func event(name: String, data: Dictionary = {}) -> void:
 func begin_session() -> void:
  session_start = model.state.time
  last_ad_chapter = model.state.chapter_rewards.size()
+ observed_seed = int(model.state.seed)
+ known_chapters = model.state.chapter_rewards.duplicate()
+ cadence.load_history(wall_time())
  telemetry.model = model
  if bridge != null:
   var crash: String = bridge.pendingCrash()
@@ -59,47 +80,96 @@ func flush_telemetry() -> void:
  telemetry.model = model
  telemetry.flush()
 
+func wall_time() -> float:
+ return Time.get_unix_time_from_system() if clock_override < 0 else clock_override
+func advance_play_time(delta: float) -> void:
+ if dispatch_pending and Time.get_ticks_msec()-dispatch_started > 2500:
+  dispatch_pending = false; failure_until = active_seconds+config.ad_policy.failure_backoff_seconds
+  event("interstitial_dispatch_timeout")
+ if not fullscreen_ad: active_seconds += clampf(delta,0,1)
+func observe_saved_progress() -> void:
+ if observed_seed != int(model.state.seed):
+  observed_seed = int(model.state.seed); known_chapters = model.state.chapter_rewards.duplicate(); chapter_result = 0; opportunities.clear(); return
+ for chapter in model.state.chapter_rewards:
+  if known_chapters.has(chapter): continue
+  known_chapters.append(chapter)
+  chapter_result = maxi(chapter_result,int(chapter))
+func offer_break(kind: String, token: String) -> bool:
+ if kind not in BREAKS or token == "" or model == null: return false
+ var identity: String = str(model.state.seed)+":"+kind+":"+token
+ if offered.has(identity): return false
+ offered[identity] = true
+ while offered.size() > 128: offered.erase(offered.keys()[0])
+ opportunities[kind] = {"at":active_seconds,"token":identity}
+ opportunity_counts[kind] = int(opportunity_counts.get(kind,0))+1
+ return true
 func register_expedition_completion(id: String) -> void:
  if id not in preload("res://scripts/Expedition.gd").ISLANDS or expedition_breaks.has(id) or model == null: return
  if not model.state.get("expeditions",{}).get(id,{}).get("completed",false): return
- expedition_breaks.append(id)
- restoration_break = true
-
-func maybe_interstitial() -> bool:
- if bridge == null or not interstitial_ready or model == null or fullscreen_ad: return false
- if not preload("res://scripts/LearningJourney.gd").current(model).is_empty() or preload("res://scripts/JourneyLessons.gd").record(model).active != "": return false
- if not JSON.parse_string(FileAccess.get_file_as_string("res://data/services.json")).interstitials_enabled: return false
- if model.state.entitlements.has("remove_ads") or model.state.event.until > 0 or not model.state.pending.is_empty() or not model.state.reward_requests.is_empty(): return false
- if model.state.time-session_start < 480 or model.state.time-last_interstitial < 600 or interstitial_count >= 2: return false
- if model.state.chapter_rewards.size() <= last_ad_chapter and not restoration_break: return false
- interstitial_count += 1
- last_interstitial = model.state.time
- last_ad_chapter = model.state.chapter_rewards.size()
- restoration_break = false
- interstitial_ready = false
- bridge.showInterstitial()
- event("interstitial_dispatch")
+ expedition_breaks.append(id); restoration_break = true
+ offer_break("expedition",id)
+func register_attempt_completion(kind: String, id: String) -> void:
+ if kind not in ["expedition_replay","mastery"] or id not in preload("res://scripts/Expedition.gd").ISLANDS: return
+ break_sequence += 1; offer_break(kind,id+":"+str(break_sequence))
+func denial(kind: String) -> String:
+ if not opportunities.has(kind): return "no_fresh_result"
+ if active_seconds-float(opportunities[kind].at) > config.ad_policy.opportunity_lifetime_seconds: return "expired_result"
+ if not config.interstitials_enabled: return "disabled"
+ if model.state.entitlements.has("remove_ads"): return "remove_ads"
+ if lesson_blocks(kind): return "lesson"
+ if not model.state.pending.is_empty() or model.state.event.until > 0: return "active_task"
+ if not model.state.reward_requests.is_empty() or fullscreen_ad or dispatch_pending: return "fullscreen_busy"
+ var first_guard: int = config.ad_policy.first_interstitial_seconds if cadence.impressions.is_empty() else config.ad_policy.returning_interstitial_seconds
+ if active_seconds < first_guard: return "first_play_guard"
+ if active_seconds < failure_until: return "failure_backoff"
+ var cap: String = cadence.blocked(wall_time(),config.ad_policy)
+ if cap != "": return cap
+ if bridge == null or not interstitial_ready: return "no_ad_ready"
+ return ""
+func maybe_interstitial(kind: String = "") -> bool:
+ # Only the explicit Continue action on a newly saved result can call this.
+ if kind not in BREAKS or model == null: return false
+ var reason := denial(kind)
+ if reason != "":
+  blocked_counts[kind+":"+reason] = int(blocked_counts.get(kind+":"+reason,0))+1
+  opportunities.erase(kind) # Never surprise the player later when an ad loads.
+  if kind == "expedition": restoration_break = false
+  return false
+ opportunities.erase(kind)
+ # Simultaneous chapter/habitat results form one break, not back-to-back ads.
+ opportunities.clear(); restoration_break = false
+ dispatch_pending = true; dispatch_started = Time.get_ticks_msec(); pending_context = kind
+ interstitial_count += 1; interstitial_ready = false
+ dispatch_counts[kind] = int(dispatch_counts.get(kind,0))+1
+ if bridge.has_method("showInterstitialAt"): bridge.showInterstitialAt(kind)
+ else: bridge.showInterstitial()
+ event("interstitial_dispatch",{"placement":kind,"policy":config.ad_policy.id})
  return true
+func ad_report() -> String:
+ return JSON.stringify({"policy":config.ad_policy,"active_seconds":active_seconds,"opportunities":opportunity_counts,"blocked":blocked_counts,"dispatches":dispatch_counts,"sdk":JSON.parse_string(ad_metrics.report()),"scope":"Local app-session measurements. Dispatches are not impressions; SDK-reported value is not publisher payout. No retention or revenue lift has been established."},"  ")
 
-func prepare_ad_services() -> void:
+func lesson_blocks(kind: String = "") -> bool:
+ if not preload("res://scripts/LearningJourney.gd").current(model).is_empty(): return true
+ return preload("res://scripts/JourneyLessons.gd").record(model).active != "" and kind not in ["expedition","expedition_replay","mastery"]
+func prepare_ad_services(kind: String = "") -> void:
  # Called only at a quiet gameplay moment after the first discovery.
  # Native release builds still require UMP permission before requesting ads.
  if bridge == null or model == null or model.state.discoveries.is_empty() or fullscreen_ad: return
- if preload("res://scripts/JourneyLessons.gd").record(model).active != "": return
+ if lesson_blocks(kind): return
  if not online_requested: initialize_online()
- elif model.state.time >= next_ad_retry and bridge.has_method("retryAds"):
-  next_ad_retry = model.state.time+60
+ elif active_seconds >= next_ad_retry and bridge.has_method("retryAds"):
+  next_ad_retry = active_seconds+60
   bridge.retryAds()
 
 func initialize_online() -> void:
  if bridge == null: return
  online_requested = true
- next_ad_retry = model.state.time+60
+ next_ad_retry = active_seconds+60
  bridge.initializeServices()
- status = "Connecting to sandbox ad and store services…"
+ status = "Connecting to "+("test" if test_services() else "ad")+" services…"
  changed.emit()
 func request_reward(kind: String, details: Dictionary = {}) -> bool:
- if bridge == null or not ad_ready or fullscreen_ad or kind not in ["coins","pulse","reroll","hint"]: return false
+ if bridge == null or not ad_ready or fullscreen_ad or dispatch_pending or kind not in ["coins","pulse","reroll","hint"]: return false
  if kind == "coins" and model.state.objectives.is_empty(): return false
  if kind == "reroll" and (model.state.pending.is_empty() or model.state.pending.get("ad_rerolled",false)): return false
  if kind == "hint":
@@ -132,7 +202,7 @@ func reward_available() -> bool:
 func _ad_ready(available: bool) -> void:
  ad_ready = available
  if available: event("ad_opportunity")
- status = "Test rewarded ad ready. Maximum three optional rewards per day." if available else "No rewarded ad available. You can continue playing."
+ status = (("Test rewarded ad ready." if test_services() else "Rewarded ad ready.")+" Maximum three optional rewards per day.") if available else "No rewarded ad available. You can continue playing."
  changed.emit()
 func _ad_rewarded(request_id: String) -> void:
  if model == null: return
@@ -173,12 +243,14 @@ func _ad_failed(request_id: String, reason: String) -> void:
  if model != null: model.state.reward_requests.erase(request_id)
  status = "Ad unavailable: "+reason+". No progress was lost."
  changed.emit()
+func test_services() -> bool: return config.mode != "production" or OS.has_feature("debug")
 func purchase(id: String) -> void:
+ if not config.get("billing_enabled",true): return
  if bridge == null or not PRODUCTS.has(id): return
  bridge.purchase(id)
  event("purchase_started",{"product":id})
 func restore() -> void:
- if bridge != null: bridge.restorePurchases()
+ if bridge != null and config.get("billing_enabled",true): bridge.restorePurchases()
 func _purchase_completed(id: String, token: String) -> void:
  if not PRODUCTS.has(id) or token.is_empty() or model == null: return
  var transaction := "purchase:"+token.sha256_text()
@@ -224,6 +296,13 @@ func delete_diagnostics() -> bool:
 func _ad_lifecycle(payload: String) -> void:
  var safe: Dictionary = ad_metrics.ingest(payload)
  if safe.is_empty(): return
- if safe.event == "show_requested": fullscreen_ad = true
- elif safe.event in ["dismissed","show_failed"]: fullscreen_ad = false
+ if safe.event == "show_requested":
+  fullscreen_ad = true; dispatch_pending = false
+ elif safe.event == "impression" and safe.kind == "interstitial":
+  cadence.note_impression(wall_time())
+ elif safe.event == "dismissed":
+  fullscreen_ad = false; dispatch_pending = false; cadence.note_dismissal(wall_time())
+ elif safe.event == "show_failed":
+  fullscreen_ad = false; dispatch_pending = false
+  failure_until = active_seconds+config.ad_policy.failure_backoff_seconds
  event("ad_"+safe.event,safe)

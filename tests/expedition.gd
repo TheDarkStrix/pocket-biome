@@ -95,14 +95,18 @@ func run() -> void:
  h.model.state.discoveries.clear(); h.services.prepare_ad_services()
  check(bridge.initialized == 0,"ads do not initialize before the first discovery")
  h.model.state.discoveries = discoveries
+ h.model.state.learning = {"completed":true}
  h.services.prepare_ad_services(); h.services.prepare_ad_services()
  check(bridge.initialized == 1,"ad preparation is automatic after discovery and occurs once per session")
  h.model.state.chapter_rewards = []
- h.services.last_ad_chapter = 0; h.services.session_start = 0; h.model.state.time = 100
- check(not h.services.maybe_interstitial() and bridge.shown == 0,"expedition completion cannot bypass the first eight-minute ad guard")
- h.model.state.time = 500
- h.model.state.learning = {"completed":true} # Eligible break is outside opening guidance.
- check(h.services.maybe_interstitial() and bridge.shown == 1,"eligible restoration break can show one interstitial without a chapter reward")
+ h.services.cadence.path = "user://expedition-test-ad-cadence-%d.json" % Time.get_ticks_usec()
+ h.services.active_seconds = 179
+ check(not h.services.maybe_interstitial("expedition") and bridge.shown == 0,"expedition completion cannot bypass the three-minute first-play guard")
+ h.services.active_seconds = 180
+ # The early skipped opportunity is consumed; the original result cannot resurface.
+ check(not h.services.maybe_interstitial("expedition"),"late readiness never resurrects a skipped expedition result")
+ h.services.register_attempt_completion("expedition_replay",Quest.ID)
+ check(h.services.maybe_interstitial("expedition_replay") and bridge.shown == 1,"a fresh completed replay can monetize at an explicit result break")
  h.services.register_expedition_completion(Quest.ID)
  check(not h.services.restoration_break,"same restored island cannot register another break")
  h.services.bridge = null; bridge.free()

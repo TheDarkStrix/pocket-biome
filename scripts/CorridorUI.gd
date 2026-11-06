@@ -44,9 +44,11 @@ func layout(h) -> void:
   back.text = "Review"; back.disabled = false; preview.text = "Observe season"; preview.disabled = false
 func cancel_pointer() -> void: pointers.clear(); mouse_down = false
 func cancel(h, tell: bool = true) -> void:
+ var finished: bool = moment and River.earned(h.model)
  mode = ""; draft.clear(); moment = false; cancel_pointer()
  if is_instance_valid(bar): bar.hide()
  if tell: h.model.message = "River planning closed. Your saved routes and supplies are kept."; h.refresh()
+ if tell and finished: h.check_transition_ad("river")
 func begin(h, role: String) -> void:
  if not River.unlocked(h.model) or not h.model.state.pending.is_empty():
   h.model.message = "Restore your first spring and finish any saved land draft before routing Water."; h.refresh(); return
@@ -122,7 +124,7 @@ func show(h) -> void:
  h.button("Try the other approach…",func(): branch_prompt(h),box)
  h.button("River story & portraits",func(): h.river_story.show(h),box)
  h.button("How this river works",func(): help(h),box)
- h.button("Return to my island",func(): h.modal.hide(); h.frame_world(); h.refresh(),box)
+ h.button("Return to my island",func(): h.close_sheet(); h.frame_world(); h.refresh(),box)
  signature = current_signature(h)
  h.call_deferred("apply_layout")
 func branch_prompt(h) -> void:
@@ -176,11 +178,15 @@ func observe(h) -> void:
  if not River.advance(h.model): h.model.message = "Choose an approach, spring and route first; finish any saved land draft."; h.refresh(); return
  if not h.store.save_state(h.model.state):
   h.model.state = before; h.model.message = "Save failed. The season and its discoveries were not committed."; h.refresh(); show(h); return
+ h.services.observe_saved_progress()
+ if not old.has("bloom") and River.earned(h.model):
+  h.services.offer_break("river","bloom"); h.services.chapter_result = 0
  undo_layout.clear(); undo_season = -1
  h.modal.hide(); mode = ""; moment = true; cancel_pointer(); h.frame_world()
  var target: String = River.end_of(h.model,"garden") if River.record(h.model).stage >= 2 else River.end_of(h.model,"grove")
  if target != "": h.selected = h.model.origin(target)
  h.refresh(); layout(h)
+ if not old.has("bloom") and River.earned(h.model): h.services.prepare_ad_services()
  if River.record(h.model).ledger != old:
   h.audio_feedback.play("restoration"); h.haptic(22)
   h.river_story.capture_if_enabled(h)

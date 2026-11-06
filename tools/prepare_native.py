@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil, zipfile, json, re
+from ad_config import native_resources
 root=Path(__file__).resolve().parents[1]
 build=root/'android/build'
 if not build.exists():
@@ -19,6 +20,8 @@ for source in (root/'native/android/src').rglob('*.kt'):
  target=build/'src/main/java'/source.relative_to(root/'native/android/src');target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
 for source in (root/'native/android/res').rglob('*.xml'):
  target=build/'res'/source.relative_to(root/'native/android/res');target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
+ads_xml=native_resources(json.loads((root/'data/services.json').read_text()))
+p=build/'res/values/pocket_ads.xml';p.parent.mkdir(parents=True,exist_ok=True);p.write_text(ads_xml)
 p=build/'build.gradle';s=p.read_text()
 dependencies=json.loads((root/'native/android/dependencies.json').read_text())
 for artifact in dependencies:
@@ -38,6 +41,7 @@ metadata='''
         </provider>
 '''
 if 'plugin.v2.PocketServices' not in s:s=s.replace('</application>',metadata+'\n</application>')
+s=re.sub(r'(<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value=")[^"]+(")',r'\1@string/pocket_ads_app_id\2',s)
 if 'com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT' not in s:
  s=s.replace('</application>','<meta-data android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT" android:value="true" />\n</application>')
 p.write_text(s)

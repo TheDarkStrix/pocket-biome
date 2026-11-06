@@ -1,0 +1,15 @@
+{
+  "checks": 47,
+  "passed": true,
+  "policy": {
+    "failure_backoff_seconds": 30.0,
+    "first_interstitial_seconds": 180.0,
+    "id": "balanced_breaks_v1",
+    "max_interstitials_per_window": 6.0,
+    "min_fullscreen_gap_seconds": 180.0,
+    "opportunity_lifetime_seconds": 90.0,
+    "returning_interstitial_seconds": 60.0,
+    "rolling_window_seconds": 1800.0
+  },
+  "scope": "Fake-provider policy/cadence/reward qualification. Not real SDK fill, revenue, consent or retention evidence."
+}

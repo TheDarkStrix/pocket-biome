@@ -13,6 +13,7 @@ import com.android.billingclient.api.*
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.ump.*
@@ -38,12 +39,34 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         SignalInfo("products_updated", String::class.java),
         SignalInfo("service_error", String::class.java)
     )
+    private val adContexts = mutableMapOf<String,String>()
+    private val breakContexts = setOf("chapter","habitat","river","expedition","expedition_replay","mastery")
+    private fun adSetting(name: String): String {
+        val host = activity ?: return ""
+        val id = host.resources.getIdentifier("pocket_ads_$name","string",host.packageName)
+        return if (id == 0) "" else host.getString(id)
+    }
+    private fun testAds(): Boolean {
+        val host = activity ?: return true
+        return (host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0 || adSetting("mode") != "production"
+    }
+    private fun adUnit(kind: String): String = if (testAds()) {
+        if (kind == "rewarded") "ca-app-pub-3940256099942544/5224354917" else "ca-app-pub-3940256099942544/1033173712"
+    } else adSetting(kind+"_unit_id")
+    private fun configureAdAudience() {
+        val children = adSetting("audience") == "children_families"
+        MobileAds.setRequestConfiguration(RequestConfiguration.Builder()
+            .setMaxAdContentRating(if (children) RequestConfiguration.MAX_AD_CONTENT_RATING_G else RequestConfiguration.MAX_AD_CONTENT_RATING_PG)
+            .setTagForChildDirectedTreatment(if (children) RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE else RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED)
+            .setTagForUnderAgeOfConsent(if (children) RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE else RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_UNSPECIFIED).build())
+    }
     private var adSequence = 0L
     private var rewardedPlacement = ""
     private var interstitialPlacement = ""
     private fun nextPlacement(kind: String): String { adSequence += 1; return "$kind:$adSequence" }
     private fun adLifecycle(event: String, kind: String, placement: String, value: AdValue? = null) {
-        val data = JSONObject().put("event",event).put("kind",kind).put("placement",placement)
+        while (adContexts.size > 128) adContexts.remove(adContexts.keys.first())
+        val data = JSONObject().put("event",event).put("kind",kind).put("placement",placement).put("context",adContexts[placement] ?: "")
         if (value != null) data.put("value_micros",value.valueMicros).put("currency",value.currencyCode).put("precision",value.precisionType)
         emitSignal("ad_lifecycle",data.toString())
     }
@@ -120,14 +143,15 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
     @UsedByGodot fun initializeServices() {
         val host = activity ?: return
         host.runOnUiThread {
-            if (!initialized) { initialized = true; initializeBilling(host) }
-            else restorePurchases()
+            configureAdAudience()
+            if (!initialized) { initialized = true; if (adSetting("billing_enabled") != "false") initializeBilling(host) }
+            else if (adSetting("billing_enabled") != "false") restorePurchases()
             if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                 MobileAds.initialize(host) { adsInitialized = true; loadRewarded(); loadInterstitial() }
                 return@runOnUiThread
             }
             val consent = UserMessagingPlatform.getConsentInformation(host)
-            consent.requestConsentInfoUpdate(host, ConsentRequestParameters.Builder().build(), {
+            consent.requestConsentInfoUpdate(host, ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(adSetting("audience") == "children_families").build(), {
                 UserMessagingPlatform.loadAndShowConsentFormIfRequired(host) { error ->
                     if (error != null) emitSignal("service_error", "Consent unavailable: ${error.message}")
                     if (consent.canRequestAds()) MobileAds.initialize(host) { adsInitialized = true; loadRewarded(); loadInterstitial() }
@@ -183,7 +207,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             rewardedLoading = true; rewardedAttemptAt = android.os.SystemClock.elapsedRealtime()
             val placement = nextPlacement("rewarded")
             adLifecycle("request","rewarded",placement)
-            RewardedAd.load(host, "ca-app-pub-3940256099942544/5224354917", AdRequest.Builder().build(), object: RewardedAdLoadCallback() {
+            RewardedAd.load(host, adUnit("rewarded"), AdRequest.Builder().build(), object: RewardedAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedAd) {
                     rewardedLoading = false; rewarded = ad; rewardedPlacement = placement
                     ad.setOnPaidEventListener { value -> adLifecycle("paid","rewarded",placement,value) }
@@ -237,7 +261,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
             interstitialLoading = true; interstitialAttemptAt = android.os.SystemClock.elapsedRealtime()
             val placement = nextPlacement("interstitial")
             adLifecycle("request","interstitial",placement)
-            InterstitialAd.load(host,"ca-app-pub-3940256099942544/1033173712",AdRequest.Builder().build(),object: InterstitialAdLoadCallback() {
+            InterstitialAd.load(host,adUnit("interstitial"),AdRequest.Builder().build(),object: InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {
                     interstitialLoading = false; interstitial = ad; interstitialPlacement = placement
                     ad.setOnPaidEventListener { value -> adLifecycle("paid","interstitial",placement,value) }
@@ -258,16 +282,29 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         pending.remove(id)
         prefs.edit().putStringSet("reward_ids",pending).commit()
     }
-    @UsedByGodot fun showInterstitial() {
+    @UsedByGodot fun showInterstitial() { showInterstitialAt("chapter") }
+    @UsedByGodot fun showInterstitialAt(context: String) {
         val host = activity ?: return
+        if (context !in breakContexts) return
+        val requestedAt = android.os.SystemClock.elapsedRealtime()
         host.runOnUiThread {
-            if ((host.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0 && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) {
-                interstitial = null; emitSignal("interstitial_ready",false); return@runOnUiThread
+            fun fail() {
+                val token = nextPlacement("interstitial-unavailable")
+                adContexts[token] = context
+                adLifecycle("show_failed","interstitial",token)
             }
-            val ad = interstitial ?: return@runOnUiThread
+            // Never wait for an ad to load or present a delayed surprise.
+            if (android.os.SystemClock.elapsedRealtime()-requestedAt > 1500L) { fail(); return@runOnUiThread }
+            if (!testAds() && !UserMessagingPlatform.getConsentInformation(host).canRequestAds()) {
+                interstitial = null; emitSignal("interstitial_ready",false); fail(); return@runOnUiThread
+            }
+            val ad = interstitial
+            if (ad == null) { emitSignal("interstitial_ready",false); fail(); return@runOnUiThread }
             interstitial = null
             emitSignal("interstitial_ready",false)
             val placement = interstitialPlacement
+            adContexts[placement] = context
+            while (adContexts.size > 128) adContexts.remove(adContexts.keys.first())
             adLifecycle("show_requested","interstitial",placement)
             ad.fullScreenContentCallback = object: FullScreenContentCallback() {
                 override fun onAdImpression() { adLifecycle("impression","interstitial",placement) }
@@ -302,6 +339,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         }
     }
     @UsedByGodot fun purchase(id: String) {
+        if (adSetting("billing_enabled") == "false") return
         val host = activity ?: return
         host.runOnUiThread {
             val product = catalog[id]
@@ -330,6 +368,7 @@ class PocketServices(godot: Godot) : GodotPlugin(godot), PurchasesUpdatedListene
         }
     }
     @UsedByGodot fun restorePurchases() {
+        if (adSetting("billing_enabled") == "false") return
         val client = billing ?: return
         client.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build()) { result, purchases ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK) purchases.forEach { processPurchase(it) }

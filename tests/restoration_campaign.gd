@@ -187,11 +187,12 @@ func run() -> void:
  h.modal.hide(); h.reveal_queue.clear(); h.presentation.animations.clear(); h.targeting = ""; h.placement_blueprint = ""
  h.model = Model.new(); h.model.state.time = 500; h.model.state.discoveries = ["rainforest"]; h.model.state.chapter_rewards = [1]; h.services.model = h.model
  var ads := Ads.new(); h.services.bridge = ads; h.services.interstitial_ready = true; h.services.session_start = 0; h.services.last_interstitial = -1000; h.services.last_ad_chapter = 0
- h.check_transition_ad()
+ h.services.active_seconds = 500; h.services.cadence.path = "user://restoration-ad-cadence-%d.json" % Time.get_ticks_usec(); h.services.offer_break("chapter","1")
+ h.check_transition_ad("chapter")
  check(ads.shown == 0,"even an otherwise eligible interstitial waits for playable teaching to finish")
  h._process(0)
  check(ads.initialized == 0,"automatic consent/provider preparation also waits during teaching")
- Learn.mark(h.model,"dismissed"); h.check_transition_ad()
+ Learn.mark(h.model,"dismissed"); h.services.offer_break("chapter","fresh-after-guidance"); h.check_transition_ad("chapter")
  check(ads.shown == 1,"finishing guidance restores ordinary capped chapter-break ads")
  h.services.bridge = null
  h.queue_free(); h = null; await process_frame

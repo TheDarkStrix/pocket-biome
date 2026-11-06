@@ -1,0 +1,69 @@
+extends SceneTree
+const Model=preload("res://scripts/WorldModel.gd")
+class Bridge extends RefCounted:
+ var shown:=0
+ var context:=""
+ func setDiagnosticsEnabled(_enabled: bool) -> void:pass
+ func initializeServices() -> void:pass
+ func pendingCrash() -> String:return ""
+ func pendingRewards() -> String:return "[]"
+ func showInterstitialAt(kind: String) -> void:shown+=1;context=kind
+var h
+var actions:=0
+var images:=[]
+func _init() -> void:call_deferred("run")
+func settle() -> void:
+ for frame in range(8):await process_frame
+ h.presentation.advance(2);h.apply_layout();h.queue_redraw();await process_frame
+func snap(name: String) -> void:
+ await settle();await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/monetization-review/"+name+".png");images.append(name)
+func button(text: String) -> Button:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.text==text:return action
+ return null
+func click(action: Control) -> void:
+ h.modal_scroll.ensure_control_visible(action);await settle()
+ for pressed in [true,false]:
+  var e:=InputEventScreenTouch.new();e.index=0;e.position=action.get_global_rect().get_center();e.pressed=pressed;Input.parse_input_event(e);Input.flush_buffered_events();await process_frame
+ actions+=1;await settle()
+func callback(name: String, token: String) -> void:
+ h.services._ad_lifecycle(JSON.stringify({"event":name,"kind":"interstitial","placement":token,"context":h.services.bridge.context}))
+func run() -> void:
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.show_menu_on_launch=false;h.store.path="user://monetization-visual-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame;h.set_process(false)
+ h.model=Model.new();h.model.state.settings.tutorial_seen=true;h.model.state.learning={"completed":true};h.model.state.discoveries=["rainforest"]
+ for entry in [[Vector2i(-1,0),"water"],[Vector2i(-1,1),"water"],[Vector2i(1,1),"workbench"],[Vector2i(2,1),"windmill"],[Vector2i(1,2),"forest"],[Vector2i(0,2),"water"],[Vector2i(2,2),"glacier"]]:h.model.add_tile(entry[0],entry[1])
+ h.model.state.tiles["0,0"].dna.moisture=75;h.model.state.tiles["1,2"].dna.moisture=75;h.model.state.expansions=h.model.state.tiles.size()-4
+ h.services.model=h.model;h.services.bridge=Bridge.new();h.services.cadence.path="user://monetization-visual-cadence-%d.json" % Time.get_ticks_usec();h.services.clock_override=10000;h.services.begin_session();h.services.active_seconds=400;h.services.interstitial_ready=true
+ h.start_play();h.modal.hide();h.refresh();h.model.harvest("0,0");h.model.campaign.evaluate(h.model);h.persist();h.refresh();h.reveal_queue.clear();h.presentation.advance(10);h.ad_break_ui.chapter(h);await snap("chapter-result")
+ var before:Dictionary=h.model.state.duplicate(true);await click(button("Continue my island"))
+ var chapter_ad:bool=h.services.bridge.shown==1 and h.services.bridge.context=="chapter"
+ callback("show_requested","chapter-v1");var time:float=h.model.state.time;h._process(0.5);var frozen:bool=h.model.state.time==time;callback("impression","chapter-v1");callback("dismissed","chapter-v1")
+ var progress_kept:bool=h.model.state==before
+ h.services.active_seconds+=181;h.services.clock_override+=181;h.services.interstitial_ready=true;h.habitat_ui.claim(h,"shaded_pond");await snap("habitat-result");await click(button("Enjoy my island"))
+ var habitat_ad:bool=h.services.bridge.shown==2 and h.services.bridge.context=="habitat"
+ callback("show_requested","habitat-v1");callback("impression","habitat-v1");callback("dismissed","habitat-v1")
+ preload("res://scripts/JourneyLessons.gd").start(h.model,"automation")
+ h.services.active_seconds+=181;h.services.clock_override+=181;h.services.interstitial_ready=true
+ h.expedition_ui.begin(h,"dry_springs");var quest=preload("res://scripts/Expedition.gd");var board:Dictionary=h.expedition_ui.record(h)
+ for index in [3,4,5]:quest.place(board,index,"water")
+ for index in [1,7]:quest.place(board,index,"flowers")
+ for season in range(3):quest.advance(board)
+ h.expedition_ui.show_board(h);await click(button("Complete restoration"));await snap("expedition-result");await click(button("Return to your home island"))
+ var side_ad:bool=h.services.bridge.shown==3 and h.services.bridge.context=="expedition" and h.model.state.lessons.active=="automation"
+ callback("show_requested","side-v1");callback("impression","side-v1");callback("dismissed","side-v1")
+ h.campaign_ui.pack(h);await click(button("Back to island"));var menus_free:bool=h.services.bridge.shown==3
+ var state:Dictionary=h.model.state.duplicate(true);var save_ok:bool=h.store.valid(state)
+ h.queue_free();h=null;await process_frame
+ root.size=Vector2i(320,640)
+ h=preload("res://tests/fixtures/MobileMain.gd").new();h.display_dp=1.6875;h.show_menu_on_launch=false;h.store.path="user://monetization-mobile-visual.json";root.add_child(h);await process_frame;h.set_process(false)
+ h.model.state=state;h.model.state.text_scale=1.2;h.services.model=h.model;h.services.bridge=Bridge.new();h.services.cadence.path="user://monetization-mobile-cadence-%d.json" % Time.get_ticks_usec();h.services.begin_session();h.apply_settings();h.start_play();h.modal.hide();h.refresh();h.restoration_moment.show(h,"shaded_pond");await snap("mobile-result")
+ var bounds:=true
+ for action in h.modal_box.find_children("*","Button",true,false):bounds=bounds and action.size.y>=h.touch_height()-1 and action.get_global_rect().end.x<=h.modal_scroll.get_global_rect().end.x+1
+ await click(button("×"));var no_replay:bool=h.services.bridge.shown==0
+ h.services_ui();await snap("ad-disclosure")
+ var result={"passed":chapter_ad and habitat_ad and side_ad and frozen and progress_kept and menus_free and bounds and no_replay and save_ok,"touch_actions":actions,"side_result_monetized_without_abandoning_home_lesson":side_ad,"chapter_continue_dispatched":chapter_ad,"habitat_continue_dispatched":habitat_ad,"simulation_frozen_during_fullscreen":frozen,"earned_progress_kept":progress_kept,"ordinary_menus_ad_free":menus_free,"mobile_bounds":bounds,"historical_result_did_not_monetize_again":no_replay,"save_valid":save_ok,"screenshots":images,"scope":"Rendered game result screens and real screen-touch controls on a constructed island with controlled eligibility clocks and a fake native provider. No real ad video, SDK delivery, paid revenue, physical device or human retention test."}
+ result["source_sha256"]=JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ var file=FileAccess.open("/workspace/runtime/monetization-review/visual.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("MONETIZATION VISUAL RESULT: "+JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.3).timeout;quit(0 if result.passed else 1)

@@ -1,3 +1,5 @@
+Later advertising expansion: [Monetization audit](MONETIZATION_AUDIT.md). The following records the earlier player-journey delivery and its original ad settings.
+
 # Player journey and release-candidate audit — 2026-11-06
 
 This pass addresses advanced teaching, actionable objectives, pacing guidance, feedback and native ad recovery on top of [Living Corridors](LIVING_CORRIDORS.md). The implementation and limits are described in [Player journey](PLAYER_JOURNEY.md). Exact source/package/campaign results are retained in [JOURNEY_VALIDATION.json](JOURNEY_VALIDATION.json).

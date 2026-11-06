@@ -1,0 +1,66 @@
+extends SceneTree
+var h
+var input_actions := 0
+func _init() -> void: call_deferred("run")
+func fail(text: String) -> void:
+ printerr("OPENING TOUCH FAIL: "+text); quit(1)
+func button(text: String) -> Button:
+ var parent: Node = h.launch_screen if h.launch_menu else h.modal_box
+ for action in parent.find_children("*","Button",true,false):
+  if action.text == text: return action
+ return null
+func touch(at: Vector2, down: bool) -> void:
+ var event := InputEventScreenTouch.new(); event.index=0; event.position=at; event.pressed=down
+ Input.parse_input_event(event);Input.flush_buffered_events()
+func click_at(at: Vector2) -> void:
+ touch(at,true);await process_frame;touch(at,false);await process_frame
+ input_actions+=1
+func click(action: Control) -> void:
+ if action == null: fail("missing requested control");return
+ if h.modal.visible and h.modal_scroll.is_ancestor_of(action):h.modal_scroll.ensure_control_visible(action)
+ for frame in range(4):await process_frame
+ await click_at(action.get_global_rect().get_center())
+func craft_action() -> Button:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.get_meta("build_confirm","")=="workbench":return action
+ return null
+func run() -> void:
+ root.size=Vector2i(540,960)
+ h=preload("res://scenes/Main.tscn").instantiate();h.store.path="user://director-live-touch-%d.json" % Time.get_ticks_usec()
+ root.add_child(h)
+ for frame in range(8):await process_frame
+ await click(button("Start exploring"));await click(button("Let’s grow"))
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Show the Oak"))
+ await click_at(h.screen(Vector2.ZERO)-Vector2(0,50))
+ if h.model.state.harvests!=1:fail("first real Oak touch did not harvest exactly once");return
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Explore the cloud plots"))
+ await click_at(h.screen(Vector2(-1,0)))
+ if h.modal_screen!="draft":fail("cloud touch did not open the draft");return
+ await click(h.draft_cards[1]);await click(button("Info"));await click(h.confirm_card)
+ for tick in range(16):
+  if not h.model.state.discoveries.is_empty():break
+  await create_timer(0.5).timeout
+ if h.model.state.discoveries.is_empty():fail("no first discovery through the live game clock");return
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Inspect the Oak"));await click(button("Back to island"))
+ for tick in range(32):
+  if h.model.state.inventory.wood>=4 and h.model.state.inventory.stone>=2:break
+  if h.gather_button.visible and not h.gather_button.disabled:await click(h.gather_button)
+  await create_timer(0.7).timeout
+ if h.model.state.inventory.wood<4 or h.model.state.inventory.stone<2:fail("gathering did not earn the Workbench cost");return
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Plan a Workbench"))
+ await click(craft_action())
+ for tick in range(16):
+  if h.model.state.blueprints.get("workbench",0)>0:break
+  await create_timer(0.5).timeout
+ if h.model.state.blueprints.get("workbench",0)<1:fail("Workbench did not finish through the live clock");return
+ await click(craft_action());await click_at(h.screen(Vector2.ONE));await click(button("Confirm blueprint placement"))
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Review habitat projects"));await click(button("Complete project · 40 Coins"))
+ if h.modal_screen!="restoration_moment" or not h.model.state.get("learning",{}).get("completed",false):fail("first restoration or completed teaching was not reached");return
+ for frame in range(8):await process_frame
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/runtime/monetization-review/opening-touch-complete.png")
+ var result={"passed":true,"input_actions":input_actions,"active_seconds":h.model.state.time,"harvests":h.model.state.harvests,"inventory":h.model.state.inventory,"projects":h.model.state.habitat_projects,"climate":h.model.state.ecology_rules,"save_valid":h.store.valid(h.model.state),"scope":"Scripted screen-touch opening in the actual rendered game with ordinary clock/resources; not an unfamiliar-person study or physical-device run."}
+ result["source_sha256"]=JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ var file=FileAccess.open("/workspace/runtime/monetization-review/opening-touch.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
+ print("OPENING TOUCH RESULT: "+JSON.stringify(result))
+ h.queue_free();h=null;await process_frame;await create_timer(0.2).timeout;quit()

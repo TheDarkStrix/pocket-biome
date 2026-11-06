@@ -57,7 +57,7 @@ func show_report(h) -> void:
   if file != null: file.store_string(report()); file.close(); h.model.message = "Report saved locally: "+ProjectSettings.globalize_path(path+".txt")
   h.refresh(),box)
  h.label("Native ad delivery · session diagnostics",17,box)
- h.sheets.caption(h,h.services.ad_metrics.report(),box)
+ h.sheets.caption(h,h.services.ad_report(),box)
  h.button("Delete report",func(): erase(); show_report(h),box)
  h.campaign_ui.close_button(h,box)
 

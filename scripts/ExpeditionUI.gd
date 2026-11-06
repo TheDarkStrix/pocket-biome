@@ -8,6 +8,7 @@ var selected := 4
 var active_id := Quest.ID
 var replaying := false
 var status := ""
+var result_break := ""
 var board: Control
 var detail: Label
 var actions: Array[Button] = []
@@ -46,13 +47,13 @@ func record(h) -> Dictionary:
  return h.model.state["expedition_attempts" if replaying else "expeditions"][active_id]
 func replay_prompt(h, id: String) -> void:
  var box: VBoxContainer = h.modal_content("Start a fresh replay?")
- h.sheets.caption(h,"Your original restoration record stays safe. This replaces any previous replay attempt for this island. Replays give no additional completion rewards or ad milestones.",box)
+ h.sheets.caption(h,"Your original restoration record stays safe. This replaces any previous replay attempt for this island. Replays give no additional completion rewards. A completed attempt may be followed by a short ad.",box)
  h.sheets.primary(h,"Start replay",func(): begin(h,id,true,true),box)
  h.button("Keep current progress",func(): overview(h),box)
 func trial_prompt(h, id: String, challenge: String) -> void:
  var box: VBoxContainer = h.modal_content(Mastery.NAMES[challenge])
  h.label(Mastery.RULES[challenge],17,box)
- h.sheets.caption(h,"Starting replaces this challenge's current attempt. Original restoration, other trials and personal bests stay safe. No extra home reward or ad milestone is granted.",box)
+ h.sheets.caption(h,"Starting replaces this challenge's current attempt. Original restoration, other trials and personal bests stay safe. No extra home reward is granted. Short ads may appear between completed attempts.",box)
  h.sheets.primary(h,"Start fresh challenge",func(): begin(h,id,true,true,challenge),box)
  h.button("Keep current attempt",func(): overview(h),box)
 
@@ -60,6 +61,7 @@ func begin(h, id: String = Quest.ID, replay: bool = false, reset: bool = false, 
  if not Quest.unlocked(h.model,id): return
  if replay and not h.model.state.get("expeditions",{}).get(id,{}).get("completed",false): return
  if challenge != "relaxed" and (challenge not in Mastery.VARIANTS or not replay): return
+ result_break = ""
  active_id = id; selected = 4; replaying = replay; variant = challenge
  if variant != "relaxed":
   if not h.model.state.has("expedition_trials"): h.model.state.expedition_trials = {}
@@ -96,6 +98,7 @@ func show_board(h) -> void:
   if p.ready: h.sheets.primary(h,"Complete restoration",func(): complete(h),box)
  else:
   h.sheets.caption(h,"RESTORATION COMPLETE · Your layout supports two healthy groves and flowering wildlife habitats. Revisit this island from the Expeditions map.",box)
+  h.ad_break_ui.caption(h,box,result_break if result_break != "" else "expedition")
   h.sheets.primary(h,"Return to your home island",func(): leave(h),box)
  if status != "": h.sheets.caption(h,status,box)
  if not s.completed: h.button("Save & return home",func(): leave(h),box)
@@ -126,12 +129,16 @@ func complete(h) -> void:
   var qualified: bool = Mastery.qualified(trial)
   if not Mastery.finish(h.model,active_id,variant): return
   if not h.store.save_state(h.model.state): h.model.state = before; status = "Save failed. Your attempt and best were kept."; show_board(h); return
+  h.services.register_attempt_completion("mastery",active_id); result_break = "mastery"
   status = "Personal best recorded when improved." if qualified else "Restored as practice. Try again within four seasons for the challenge."
   show_board(h); return
  s.completed = true
  if not h.store.save_state(h.model.state):
   s.completed = false; status = "Could not save restoration. Your layout is kept; try completing again."; show_board(h); return
- if not replaying: h.services.register_expedition_completion(active_id)
+ if not replaying:
+  h.services.register_expedition_completion(active_id); result_break = "expedition"
+ else:
+  h.services.register_attempt_completion("expedition_replay",active_id); result_break = "expedition_replay"
  h.services.event("expedition_replay_completed" if replaying else "expedition_completed",{"id":active_id,"seasons":s.seasons})
  status = Quest.NAMES[active_id]+" is alive again!"+(" Home reward earned: "+Rewards.DESCRIPTIONS[active_id] if not replaying else "")
  show_board(h)
@@ -145,4 +152,5 @@ func leave(h) -> void:
  if not save_progress(h):
   show_board(h)
   return
- h.modal.hide(); h.refresh(); h.check_transition_ad()
+ h.modal.hide(); h.refresh(); h.check_transition_ad(result_break)
+ result_break = ""

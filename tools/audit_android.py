@@ -9,6 +9,7 @@ import subprocess
 import sys
 import zipfile
 from run_checks import source_digest
+from ad_config import resolve
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD_TOOLS = Path('/workspace/runtime/android-sdk/build-tools/36.1.0')
@@ -38,6 +39,7 @@ def production_blockers(facts):
         ('preview_version','Application version is marked preview/test'),('sandbox_services','Services still use sandbox mode'),
         ('test_provider_ids','Native providers still contain test advertising/product IDs')]:
         if facts[key]: blockers.append(description)
+    if facts.get('billing_test_products',False):blockers.append('Billing is enabled with sandbox product IDs; configure real products or disable billing for an ads-only release')
     for field in ('privacy_policy_url','support_url'):
         value=facts['release'].get(field,'')
         if not re.fullmatch(r'https://[^\s/]+(?:/[^\s]*)?',value): blockers.append(field+' is not configured with an HTTPS URL')
@@ -83,12 +85,20 @@ def inspect(apk):
             try: evidence[field]=json.loads((ROOT/location).read_text())
             except (OSError,ValueError): evidence[field]={}
     native=(ROOT/'native/android/src/com/pocketbiome/PocketServices.kt').read_text()
+    service_config=json.loads((ROOT/'data/services.json').read_text())
+    ad_setup=resolve(service_config)
+    with zipfile.ZipFile(apk) as archive:
+        embedded=json.loads(archive.read('assets/data/services.json'))
+        resource_data=archive.read('resources.arsc')
+    checks['embedded_ad_configuration_matches']=embedded==service_config
+    checks['native_ad_resource_binding']=all(value.encode() in resource_data or value.encode('utf-16le') in resource_data for value in ad_setup['effective_ids'].values())
     version=re.search(r"versionName='([^']*)'",badging)
     facts={'source_sha256':digest,'debuggable':'application-debuggable' in badging,
         'debug_certificate':'CN=Android Debug' in cert,
         'preview_version':not version or bool(re.search('preview|test|debug',version[1],re.I)),
-        'sandbox_services':json.loads((ROOT/'data/services.json').read_text()).get('mode')!='production',
-        'test_provider_ids':'ca-app-pub-3940256099942544' in native or '_test"' in native,
+        'sandbox_services':service_config.get('mode')!='production',
+        'test_provider_ids':any(v.startswith('ca-app-pub-3940256099942544') for v in ad_setup['effective_ids'].values()),
+        'billing_test_products':service_config.get('billing_enabled',True) and '_test"' in native,
         'release':release,'evidence':evidence}
     blockers=production_blockers(facts)
     return {'apk':str(apk.relative_to(ROOT) if apk.is_relative_to(ROOT) else apk),

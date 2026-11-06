@@ -27,7 +27,7 @@ Record APK checksum, embedded source SHA, device/OS/display, observed behavior a
 | Performance/audio | Sustained max-size island, visitors and routes; observe frame pacing, heat, battery use, audio mix, interruption and volume behavior on the actual hardware |
 | Sharing | Record real milestones, export PNG/GIF, open/cancel the chooser and delete local images; no upload without explicit action |
 | Offline/failures | Airplane mode and reconnect; no-fill/load/show failure; gameplay remains available and retries do not flood requests or open ads unexpectedly |
-| Ad breaks | Test IDs only during QA. Verify eight-minute first guard, ten-minute interval, two/session cap, lesson/draft/weather/reward/fullscreen exclusions and remove-ads; old chapter history must not create a fresh break |
+| Ad breaks | Test IDs only during QA. Verify three-minute first exposure, one-minute returning-session guard, three-minute spacing after any fullscreen dismissal, six impressions per rolling half-hour, lesson/draft/weather/reward/fullscreen exclusions and remove-ads; verify Continue/Close/Android Back and completed side activities; old result history must not create a fresh break |
 | Earned rewards | Dismiss early, fail a show, duplicate a callback, interrupt a save and restore after process death; accepted earned rewards commit exactly once, including when weather starts during presentation |
 | Production consent | With the intended audience and production consent configuration, test eligible/ineligible regions, unavailable forms, withdrawal and privacy options. Debug's test path is not evidence of release consent behavior |
 | Billing | Play sandbox: query real configured products, cancel/pending/purchase/acknowledge/restore/remove-ads, process death and local save failure. Simulated callbacks do not certify these flows |
@@ -37,3 +37,5 @@ Record APK checksum, embedded source SHA, device/OS/display, observed behavior a
 Use the owner's actual publisher/ad and Play Console accounts, product/ad unit IDs, audience decisions, HTTPS privacy/support pages and release signing. Do not fabricate URLs, identifiers or passing reports. Keep test IDs for QA until those are supplied and qualified. `data/release.json` and `data/services.json` intentionally still describe incomplete release configuration.
 
 `tools/audit_android.py --apk builds/PocketBiome-debug.apk --production` must continue to reject the preview. Device, Play sandbox and creative evidence must name the exact current source, include genuine observed results and receive human review before filling the release-evidence locations. Do not point a full physical-device declaration at a startup-only smoke report.
+
+The monetization-specific configuration, debug-unit rules, ads-only billing switch and exact missing live inputs are in [AD_MONETIZATION.md](AD_MONETIZATION.md). No simulated exposure count qualifies real SDK delivery or revenue.

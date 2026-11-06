@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "scenarios": [
+    {
+      "active_seconds": 300,
+      "blocked": {
+        "habitat:first_play_guard": 1
+      },
+      "new_simulated_impressions": [
+        220
+      ],
+      "old_timing_cap_comparison": [],
+      "opportunities": {
+        "expedition": 1,
+        "habitat": 1
+      },
+      "scenario": "short_first_session"
+    },
+    {
+      "active_seconds": 1800,
+      "blocked": {
+        "chapter:fullscreen_spacing": 1,
+        "habitat:first_play_guard": 1,
+        "mastery:rolling_cap": 1
+      },
+      "new_simulated_impressions": [
+        400,
+        700,
+        900,
+        1100,
+        1300,
+        1500
+      ],
+      "old_timing_cap_comparison": [
+        500,
+        1100
+      ],
+      "opportunities": {
+        "chapter": 3,
+        "expedition": 1,
+        "habitat": 3,
+        "mastery": 1,
+        "river": 1
+      },
+      "scenario": "story_session"
+    },
+    {
+      "active_seconds": 1800,
+      "blocked": {
+        "mastery:fullscreen_spacing": 6,
+        "mastery:rolling_cap": 3
+      },
+      "new_simulated_impressions": [
+        120,
+        360,
+        600,
+        840,
+        1080,
+        1320
+      ],
+      "old_timing_cap_comparison": [],
+      "opportunities": {
+        "mastery": 15
+      },
+      "scenario": "returning_mastery"
+    }
+  ],
+  "scope": "Synthetic completed-result schedules with 100% simulated SDK fill. Policy exposure coverage only; not real impressions, retention, eCPM, income or proof of an optimal cadence."
+}

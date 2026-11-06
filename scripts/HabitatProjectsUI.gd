@@ -63,6 +63,7 @@ func claim(h, id: String) -> void:
   h.model.state = before
   status = "Save failed. No reward was committed; your project can be completed again when saving works."
   show_projects(h); return
+ h.services.observe_saved_progress(); h.services.offer_break("habitat",id)
  status = Projects.NAMES[id]+" restored! "+Projects.UNLOCKS[id]
  h.fusion_preview.clear()
  for key in Projects.inspect(h.model,id).cells:

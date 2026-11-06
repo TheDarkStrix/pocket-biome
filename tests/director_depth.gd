@@ -86,7 +86,7 @@ func run() -> void:
  h.expedition_ui.complete(h)
  check(h.model.state == before,"failed mastery save restores trial completion and personal best atomically")
  h.store.path = "user://director-mastery-ui.json"; h.expedition_ui.complete(h)
- check(h.model.state.expedition_bests.has("dry_springs:careful") and not h.services.restoration_break,"saved mastery result grants no duplicate completion ad break")
+ check(h.model.state.expedition_bests.has("dry_springs:careful") and not h.services.restoration_break,"saved mastery keeps the original restoration milestone untouched")
  check(JSON.stringify(h.model.state.expeditions.dry_springs) == original,"original restoration is unchanged by challenge attempts")
  h.queue_free(); h = null; await process_frame
  print("DIRECTOR DEPTH RESULT: %d checks, %d failures" % [checks,failures])

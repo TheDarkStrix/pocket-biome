@@ -34,6 +34,11 @@ class AndroidAuditTests(unittest.TestCase):
     def test_missing_privacy_and_sandbox_results_rejected(self):
         facts=self.facts();facts['release']['privacy_policy_url']='';facts['evidence'].pop('play_sandbox_report')
         self.assertEqual(len(production_blockers(facts)),2)
+    def test_billing_can_be_disabled_for_an_ads_only_release(self):
+        f=self.facts();f['billing_test_products']=True
+        self.assertIn('Billing is enabled',production_blockers(f)[0])
+        f['billing_test_products']=False
+        self.assertEqual(production_blockers(f),[])
     def test_complete_fixture_only_clears_configuration_gate(self):self.assertEqual(production_blockers(self.facts()),[])
 
 if __name__=='__main__':unittest.main()

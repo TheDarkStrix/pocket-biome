@@ -24,6 +24,7 @@ var habitat_ui = preload("res://scripts/HabitatProjectsUI.gd").new()
 var habitat_visitors: Array = []
 var care_ui = preload("res://scripts/RestorationCareUI.gd").new()
 var wildlife_initialized := false
+var ad_break_ui = preload("res://scripts/AdBreakUI.gd").new()
 var journey_ui = preload("res://scripts/JourneyUI.gd").new()
 var corridor_ui = preload("res://scripts/CorridorUI.gd").new()
 var river_story = preload("res://scripts/RiverStory.gd").new()
@@ -362,7 +363,7 @@ func modal_content(title: String) -> VBoxContainer:
  modal_title = label(title,23,heading)
  modal_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  MaterialUI.lettering(modal_title,true)
- var close := button("×",func(): modal.hide(),heading)
+ var close := button("×",close_sheet,heading)
  close.size_flags_horizontal = Control.SIZE_SHRINK_END
  close.custom_minimum_size.x = touch_height()
  close.tooltip_text = "Close"
@@ -583,6 +584,7 @@ func persist() -> void:
  playtest.attach(model)
  dirty_elapsed = 0.0
  save_dirty = not store.save_state(model.state)
+ if not save_dirty: services.model = model; services.observe_saved_progress()
  if save_dirty:
   model.message = "Save failed: " + store.error
   services.event("save_failed",{"reason":store.error})
@@ -877,7 +879,7 @@ func _process(delta: float) -> void:
  game_hud.update_selection(self,delta)
  corridor_ui.layout(self)
  island_actions.update(self)
- if not suspended and not photo_mode and not model.state.settings.reduced_motion:
+ if not suspended and not photo_mode and not services.fullscreen_ad and not model.state.settings.reduced_motion:
   presentation.advance_motors(model.state.tiles,minf(delta,0.1))
   ambient_time += minf(delta,0.1)
   cosmetic_clock += delta
@@ -895,6 +897,9 @@ func _process(delta: float) -> void:
  if discard_resume_delta:
   discard_resume_delta = false
   return
+ if not photo_mode: services.advance_play_time(delta)
+ if services.fullscreen_ad: return
+ if services.chapter_result > 0 and not modal.visible and not corridor_ui.showing() and not photo_mode and layout_ui.source == "" and targeting == "" and placement_blueprint == "" and reveal_queue.is_empty() and presentation.animations.is_empty() and input_controller.pointers.is_empty() and all_touches.is_empty() and preload("res://scripts/LearningJourney.gd").current(model).is_empty() and preload("res://scripts/JourneyLessons.gd").record(model).active == "": ad_break_ui.chapter(self)
  model.advance_time(delta)
  if save_dirty:
   dirty_elapsed += delta
@@ -923,7 +928,8 @@ func _notification(what: int) -> void:
   input_controller.reset();mouse_orbit_drag=false
   all_touches.clear(); mixed_touch_sequence = false
  if what == NOTIFICATION_WM_GO_BACK_REQUEST:
-  if modal.visible: modal.hide()
+  if services.fullscreen_ad or services.dispatch_pending: return
+  if modal.visible: close_sheet()
   elif photo_mode: end_photo()
   elif corridor_ui.showing(): corridor_ui.cancel(self)
   elif layout_ui.source != "": layout_ui.cancel(self)
@@ -1260,11 +1266,11 @@ func haptic(duration: int) -> void:
 
 func services_ui() -> void:
  if not modal.visible or modal_screen != "services": services.event("store_opened")
- var box := modal_content("Optional Store · Sandbox")
+ var box := modal_content("Ads & optional extras"+(" · Test" if services.test_services() else ""))
  modal_screen = "services"
  sheets.art(self,box,"shrine","",144)
  label("Your world plays offline",21,box)
- sheets.caption(self,"Optional extras. Core progression needs no purchase. Development test services only.",box)
+ sheets.caption(self,"Automatic ads help fund Pocket Biome between completed activities. Core progression needs no purchase."+(" This build uses test services." if services.test_services() else ""),box)
  sheets.caption(self,services.status,box)
  sheets.primary(self,"Retry ad & store connection" if services.online_requested else "Connect ad & store services",func(): services.initialize_online(),box).disabled = services.bridge == null
  var rewards := GridContainer.new(); rewards.columns = 2; rewards.add_theme_constant_override("h_separation",10); box.add_child(rewards)
@@ -1272,14 +1278,15 @@ func services_ui() -> void:
   var content: VBoxContainer = sheets.card(rewards)
   sheets.icon(content,offer.icon,72)
   label(offer.title,18,content)
-  var ad: Button = sheets.primary(self,"Watch test ad",func(): services.request_reward(offer.kind); modal.hide(),content)
+  var ad: Button = sheets.primary(self,"Watch test ad" if services.test_services() else "Watch ad",func(): services.request_reward(offer.kind); modal.hide(),content)
   ad.disabled = not services.ad_ready or not services.reward_available()
- for product in services.products:
+ if not services.config.get("billing_enabled",true): sheets.caption(self,"Purchases are not offered in this edition.",box)
+ for product in services.products if services.config.get("billing_enabled",true) else []:
   var content: VBoxContainer = sheets.card(box)
   sheets.art(self,content,"lantern" if "founder" in str(product.id) else "shrine","",112)
   label(str(product.name),20,content)
   sheets.primary(self,str(product.price),func(): services.purchase(product.id),content)
- button("Restore purchases",func(): services.restore(),box).disabled = services.bridge == null
+ button("Restore purchases",func(): services.restore(),box).disabled = services.bridge == null or not services.config.get("billing_enabled",true)
  if model.state.entitlements.has("moon") or model.state.entitlements.has("founders"):
   button("Select Moonlit theme",func(): model.state.cosmetic = "moon"; persist(); refresh(),box)
  if model.state.entitlements.has("founders"):
@@ -1447,10 +1454,20 @@ func start_play() -> void:
  elif resume_seed == int(model.state.seed): return_summary.show(self)
  refresh()
 
-func check_transition_ad() -> void:
+func close_sheet() -> void:
+ match modal_screen:
+  "chapter_result","finale": ad_break_ui.leave(self,"chapter")
+  "restoration_moment": ad_break_ui.leave(self,"habitat")
+  "expedition": expedition_ui.leave(self)
+  "corridors","river_story":
+   if services.opportunities.has("river"): ad_break_ui.leave(self,"river")
+   else: modal.hide()
+  _: modal.hide()
+
+func check_transition_ad(kind: String = "") -> void:
  if not preload("res://scripts/LearningJourney.gd").current(model).is_empty(): return
- if corridor_ui.showing() or layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
- services.maybe_interstitial()
+ if modal.visible or suspended or corridor_ui.showing() or layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or not reveal_queue.is_empty() or not presentation.animations.is_empty(): return
+ services.maybe_interstitial(kind)
 
 func logical_per_dp() -> float:
  if OS.get_name() not in ["Android","iOS"]: return 1.0

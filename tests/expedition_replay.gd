@@ -44,7 +44,7 @@ func run() -> void:
  solve_dry(h.expedition_ui.record(h)); h.expedition_ui.complete(h)
  check(h.store.load_state().expedition_attempts[Q.ID].completed,"replay completion is saved independently")
  check(JSON.stringify(m.state.expeditions[Q.ID]) == original_text and m.state.coins == coins,"replay cannot overwrite original restoration or award additional Coins")
- check(not h.services.restoration_break and h.services.expedition_breaks.is_empty(),"replay does not register another restoration ad milestone")
+ check(not h.services.restoration_break and h.services.expedition_breaks.is_empty(),"replay leaves the original restoration milestone untouched; its new attempt uses a separate result placement")
  h.expedition_ui.begin(h,Q.ID,true,true)
  check(not h.expedition_ui.record(h).completed and h.expedition_ui.record(h).seasons == 0,"explicit fresh replay replaces only the old attempt")
  check(JSON.stringify(m.state.expeditions[Q.ID]) == original_text,"fresh-attempt reset preserves the original island")

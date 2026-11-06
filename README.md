@@ -19,7 +19,9 @@ The launcher sets writable cloud XDG locations. Android dependencies and setup a
 
 ## Play
 
-Latest gameplay delivery: [Advanced lessons and chapter guidance](docs/PLAYER_JOURNEY.md), [audit/evidence](docs/JOURNEY_AUDIT.md), and [Android acceptance](docs/ANDROID_ACCEPTANCE.md). Tap the goal for a live checklist, learn four advanced systems on your island, and use material help to find the next real action. Lessons can be skipped and revisited from Pack.
+Latest monetization delivery: [Automatic ads and live setup](docs/AD_MONETIZATION.md) and [audit/evidence](docs/MONETIZATION_AUDIT.md). Six saved-result placements include completed replay/mastery attempts, with configurable timing, persistent frequency controls and placement-level SDK measurements. The current preview still uses test units and earns no live revenue.
+
+Gameplay delivery: [Advanced lessons and chapter guidance](docs/PLAYER_JOURNEY.md), [audit/evidence](docs/JOURNEY_AUDIT.md), and [Android acceptance](docs/ANDROID_ACCEPTANCE.md). Tap the goal for a live checklist, learn four advanced systems on your island, and use material help to find the next real action. Lessons can be skipped and revisited from Pack.
 
 Earlier signature chapter: [The Living River](docs/LIVING_CORRIDORS.md) and [its repeated audit](docs/CORRIDOR_AUDIT.md). After the first spring, route limited Water to a remote grove, guide pollinators to a garden and restore a dormant corner. Choose wetland or woodland, preview/confirm routes on the island, respond to a dry spell and earn the Living Heart. Optional local portraits export as a PNG strip or animated GIF.
 
