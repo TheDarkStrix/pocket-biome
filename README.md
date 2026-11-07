@@ -6,7 +6,7 @@ Godot **4.6.3**, portrait Android-first, offline environmental discovery game. T
 
 [Download the current ARM64 test APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk). Android 7.0+; about 98 MiB, development preview with Google test ad IDs. [Download details and checksum](https://github.com/TheDarkStrix/pocket-biome/tree/android-test-build).
 
-Current update: **0.21.6-preview** makes the six-step tutorial explicit, adds persistent instructions and real target cues, introduces tools gradually, simplifies optional lessons and explains the river in ordinary words. Spring and Water labels now sit in a consistent strip with numbered plot markers. Saved-card river entry and painted-land fixes remain included. Version code increases to 20 with the current signing key. [Changes and testing limits](docs/PLAYER_CLARITY_AUDIT.md).
+Current update: **0.21.7-preview** centers “Choose your next biome” across the entire card hand, separates its Close target and keeps the island preview clear of the heading. Version code increases to 21 with the current signing key. [Rendered layout and input proof](docs/DRAFT_TITLE_AUDIT.md). The [0.21.6 tutorial, simpler river guidance and numbered labels](docs/PLAYER_CLARITY_AUDIT.md), saved-card recovery and painted-land fixes remain included.
 
 [Full conversation request review](docs/USER_REQUEST_REVIEW.md) maps gameplay, teaching, visual, testing, monetization and release requests to implemented work and unfinished acceptance. The complete screen-clarity pass, continuous UI playthrough to the ending and physical/newcomer/live-provider qualification remain open.
 

@@ -1,0 +1,514 @@
+{
+  "utc": "2026-11-07T11:22:43.356585+00:00",
+  "source_sha256": "0628e63b0afc1d6b0ed0a3c792b5e4a7f03ae55e17bfbea321b2548ae0186139",
+  "automated_tests": {
+    "utc": "2026-11-07T11:22:03.358625+00:00",
+    "source_sha256": "0628e63b0afc1d6b0ed0a3c792b5e4a7f03ae55e17bfbea321b2548ae0186139",
+    "source_unchanged_during_run": true,
+    "passed": true,
+    "assertions": 2174,
+    "results": [
+      {
+        "suite": "run",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 65
+      },
+      {
+        "suite": "save_validation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 319
+      },
+      {
+        "suite": "save_io_failures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "fusion_edges",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 10
+      },
+      {
+        "suite": "input_gestures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "presentation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "game_juice",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 40
+      },
+      {
+        "suite": "gameplay_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "services",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "screens",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 87
+      },
+      {
+        "suite": "scene_smoke",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "touch_ui",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 48
+      },
+      {
+        "suite": "mobile_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 156
+      },
+      {
+        "suite": "sheet_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "draft_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 22
+      },
+      {
+        "suite": "opening_water",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 23
+      },
+      {
+        "suite": "island_environment",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "build_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 78
+      },
+      {
+        "suite": "expansion_pricing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "orbit_world",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 140
+      },
+      {
+        "suite": "painted_art",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 24
+      },
+      {
+        "suite": "painted_seams",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "expedition",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 50
+      },
+      {
+        "suite": "finale",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "thermal_expeditions",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "gather",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "habitat_projects",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 27
+      },
+      {
+        "suite": "habitat_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 18
+      },
+      {
+        "suite": "layout_recovery",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "expedition_replay",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 16
+      },
+      {
+        "suite": "restoration_chapter",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "restoration_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 86
+      },
+      {
+        "suite": "director_clarity",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 37
+      },
+      {
+        "suite": "director_depth",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "director_ownership",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "director_explorers",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "living_corridors",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 53
+      },
+      {
+        "suite": "corridor_controls",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 24
+      },
+      {
+        "suite": "river_entry",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "player_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 64
+      },
+      {
+        "suite": "journey_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 70
+      },
+      {
+        "suite": "ad_breaks",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 47
+      },
+      {
+        "suite": "ads_integration",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 21
+      },
+      {
+        "suite": "ad_exposure",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "automation_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "progression_simulation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "balanced_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "primary_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "startup",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      }
+    ]
+  },
+  "python_tests": 22,
+  "rendered_draft_review": {
+    "actual_touch_actions": 12,
+    "cases": [
+      {
+        "actual_touch_close_and_resume_keeps_cards_quote_and_balance": true,
+        "capture": "320-text-100.png",
+        "close_target_fits_without_overlap": true,
+        "heading_center_error_logical_pixels": 0.0,
+        "height": 640,
+        "island_preview_clear_of_heading": true,
+        "modal_rect": "[P: (20.0, 334.0), S: (500.0, 730.0)]",
+        "painted_bounds": "[P: (-148.0, -123.7895), S: (296.0, 247.4737)]",
+        "passed": true,
+        "text_scale": 1.0,
+        "title_rect": "[P: (105.0, 340.0), S: (330.0, 69.0)]",
+        "top_rect": "[P: (20.0, 20.0), S: (500.0, 165.0)]",
+        "width": 320,
+        "zoom": 0.521267589706873
+      },
+      {
+        "actual_touch_close_and_resume_keeps_cards_quote_and_balance": true,
+        "capture": "320-text-120.png",
+        "close_target_fits_without_overlap": true,
+        "heading_center_error_logical_pixels": 0.0,
+        "height": 640,
+        "island_preview_clear_of_heading": true,
+        "modal_rect": "[P: (20.0, 292.0), S: (500.0, 772.0)]",
+        "painted_bounds": "[P: (-148.0, -123.7895), S: (296.0, 247.4737)]",
+        "passed": true,
+        "text_scale": 1.2,
+        "title_rect": "[P: (105.0, 292.0), S: (330.0, 81.0)]",
+        "top_rect": "[P: (20.0, 20.0), S: (500.0, 169.0)]",
+        "width": 320,
+        "zoom": 0.335389224385042
+      },
+      {
+        "actual_touch_close_and_resume_keeps_cards_quote_and_balance": true,
+        "capture": "360-text-100.png",
+        "close_target_fits_without_overlap": true,
+        "heading_center_error_logical_pixels": 0.0,
+        "height": 780,
+        "island_preview_clear_of_heading": true,
+        "modal_rect": "[P: (20.0, 473.0), S: (500.0, 681.0)]",
+        "painted_bounds": "[P: (-148.0, -123.7895), S: (296.0, 247.4737)]",
+        "passed": true,
+        "text_scale": 1.0,
+        "title_rect": "[P: (96.0, 494.0), S: (348.0, 29.0)]",
+        "top_rect": "[P: (20.0, 20.0), S: (500.0, 156.0)]",
+        "width": 360,
+        "zoom": 1.11931102595972
+      },
+      {
+        "actual_touch_close_and_resume_keeps_cards_quote_and_balance": true,
+        "capture": "360-text-120.png",
+        "close_target_fits_without_overlap": true,
+        "heading_center_error_logical_pixels": 0.0,
+        "height": 780,
+        "island_preview_clear_of_heading": true,
+        "modal_rect": "[P: (20.0, 439.0), S: (500.0, 715.0)]",
+        "painted_bounds": "[P: (-148.0, -123.7895), S: (296.0, 247.4737)]",
+        "passed": true,
+        "text_scale": 1.2,
+        "title_rect": "[P: (96.0, 439.0), S: (348.0, 73.0)]",
+        "top_rect": "[P: (20.0, 20.0), S: (500.0, 156.0)]",
+        "width": 360,
+        "zoom": 0.981922668982714
+      },
+      {
+        "actual_touch_close_and_resume_keeps_cards_quote_and_balance": true,
+        "capture": "540-text-100.png",
+        "close_target_fits_without_overlap": true,
+        "heading_center_error_logical_pixels": 0.0,
+        "height": 960,
+        "island_preview_clear_of_heading": true,
+        "modal_rect": "[P: (20.0, 367.0), S: (500.0, 577.0)]",
+        "painted_bounds": "[P: (-148.0, -123.7895), S: (296.0, 247.4737)]",
+        "passed": true,
+        "text_scale": 1.0,
+        "title_rect": "[P: (72.0, 379.0), S: (396.0, 24.0)]",
+        "top_rect": "[P: (20.0, 20.0), S: (500.0, 132.0)]",
+        "width": 540,
+        "zoom": 0.787962635603413
+      },
+      {
+        "actual_touch_close_and_resume_keeps_cards_quote_and_balance": true,
+        "capture": "540-text-120.png",
+        "close_target_fits_without_overlap": true,
+        "heading_center_error_logical_pixels": 0.0,
+        "height": 960,
+        "island_preview_clear_of_heading": true,
+        "modal_rect": "[P: (20.0, 327.0), S: (500.0, 617.0)]",
+        "painted_bounds": "[P: (-148.0, -123.7895), S: (296.0, 247.4737)]",
+        "passed": true,
+        "text_scale": 1.2,
+        "title_rect": "[P: (72.0, 337.0), S: (396.0, 28.0)]",
+        "top_rect": "[P: (20.0, 20.0), S: (500.0, 132.0)]",
+        "width": 540,
+        "zoom": 0.626329274453995
+      }
+    ],
+    "fixture_setup": true,
+    "passed": true,
+    "physical_device_tested": false,
+    "source_sha256": "0628e63b0afc1d6b0ed0a3c792b5e4a7f03ae55e17bfbea321b2548ae0186139"
+  },
+  "android_phone_package": {
+    "source_sha256": "0628e63b0afc1d6b0ed0a3c792b5e4a7f03ae55e17bfbea321b2548ae0186139",
+    "assertions": 2174,
+    "apk_sha256": "283c8c2ff171428545c9a23606cbd1cf8d16bda6d8610ae9303d9ca0585fb0d4",
+    "bytes": 102498659,
+    "abi": "arm64-v8a",
+    "retained_files_verified": 669,
+    "signature_and_alignment_verified": true,
+    "physical_device_tested": false,
+    "note": "Debug test build; identical retained game/native files to universal APK. Not store certification."
+  },
+  "android_package_audit": {
+    "apk": "builds/PocketBiome-debug.new.apk",
+    "apk_sha256": "3ccfa8ac3008730f815ab85a39415b415f1bc21a67caadb961460e8cd17851c1",
+    "source_sha256": "0628e63b0afc1d6b0ed0a3c792b5e4a7f03ae55e17bfbea321b2548ae0186139",
+    "checks": {
+      "matching_passing_tests": true,
+      "package_identity": true,
+      "min_sdk_24": true,
+      "target_sdk_36": true,
+      "portrait": true,
+      "no_sensitive_capture_permissions": true,
+      "signature_verified": true,
+      "zip_16k_alignment": true,
+      "embedded_source_matches_tests": true,
+      "arm64_present": true,
+      "qa_files_excluded": true,
+      "elf_16k_load_alignment": true,
+      "embedded_ad_configuration_matches": true,
+      "native_ad_resource_binding": true
+    },
+    "elf_load_alignments": {
+      "lib/arm64-v8a/libc++_shared.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/arm64-v8a/libgodot_android.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/x86_64/libc++_shared.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/x86_64/libgodot_android.so": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "preview_checks_passed": true,
+    "production_blockers": [
+      "APK is debuggable",
+      "APK uses a development signing certificate",
+      "Application version is marked preview/test",
+      "Services still use sandbox mode",
+      "Native providers still contain test advertising/product IDs",
+      "Billing is enabled with sandbox product IDs; configure real products or disable billing for an ads-only release",
+      "privacy_policy_url is not configured with an HTTPS URL",
+      "support_url is not configured with an HTTPS URL",
+      "physical_device_report has no passing evidence for the current source",
+      "play_sandbox_report has no passing evidence for the current source",
+      "creative_review_report has no passing evidence for the current source"
+    ],
+    "store_release_ready": false,
+    "note": "Static artifact/configuration audit. Evidence declarations require human review; this is not store approval or a device benchmark."
+  },
+  "update_identity": {
+    "compatible": true,
+    "previous": {
+      "package": "com.thedarkstrix.pocketbiome",
+      "version_code": 20,
+      "version_name": "0.21.6-preview",
+      "cert_sha256": "c624f680df74e7edd9e7a2e83495d5405e1b4cde328f55967bc43c39848029a9"
+    },
+    "new": {
+      "package": "com.thedarkstrix.pocketbiome",
+      "version_code": 21,
+      "version_name": "0.21.7-preview",
+      "cert_sha256": "c624f680df74e7edd9e7a2e83495d5405e1b4cde328f55967bc43c39848029a9"
+    },
+    "new_version_code": 21,
+    "physical_install_tested": false
+  },
+  "physical_device_tested": false,
+  "scope": "Focused draft heading/preview geometry and twelve Close/Resume touches in prepared fixtures. Not a fresh full-game UI playthrough, physical install or newcomer study."
+}

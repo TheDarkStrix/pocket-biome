@@ -24,6 +24,9 @@ func run() -> void:
    await settle(h)
    var context := "%s text=%s" % [display.size,scale]
    var hand: Control = h.draft_hand.stage
+   var close: Button = h.modal_title.get_parent().find_children("*","Button",true,false)[0]
+   var preview_bottom: float=(h.world_anchor()+h.pan+h.world_art_bounds(false,true).end*h.zoom_level).y
+   check(absf(h.modal_title.get_global_rect().get_center().x-hand.get_global_rect().get_center().x)<1 and not h.modal_title.get_global_rect().intersects(close.get_global_rect()) and h.modal_scroll.get_global_rect().grow(1).encloses(close.get_global_rect()) and preview_bottom<=h.modal.position.y,"draft title centers on all three cards with a separate close target and the island preview above the heading at "+context)
    var cards_fit := true
    var text_fits := true
    for action in h.draft_cards:

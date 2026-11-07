@@ -399,6 +399,12 @@ func draft() -> void:
  modal_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  var close: Button = modal_title.get_parent().get_child(1)
  for state in ["font_color","font_hover_color","font_pressed_color"]: close.add_theme_color_override(state,Color("fff0cc"))
+ # Balance the close target so the heading is centered above the entire hand.
+ var balance := Control.new()
+ balance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ balance.custom_minimum_size.x = close.get_combined_minimum_size().x
+ var heading: HBoxContainer = modal_title.get_parent()
+ heading.add_child(balance); heading.move_child(balance,0)
  box.add_theme_constant_override("separation",8)
  draft_hand = preload("res://scripts/DraftHand.gd").new()
  box.add_child(draft_hand); draft_hand.configure(self)
@@ -830,9 +836,12 @@ func apply_layout() -> void:
  elif modal.visible and modal_screen in ["draft","build","corridors","corridor_confirm","corridor_setup","river_story"]:
   if orbit_enabled:
    orbit_world.fit(world_rect().grow(-8));queue_redraw();return
-  var bounds := world_art_bounds(false)
+  var bounds := world_art_bounds(false,modal_screen=="draft")
   var area := world_rect().grow(-8)
-  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y)*(1.0 if modal_screen == "build" else 1.18),0.04,2.0)
+  if modal_screen=="draft":
+   area.position.y=layout.top.end.y+12
+   area.size.y=maxf(16,modal.position.y-area.position.y-8)
+  zoom_level = clampf(minf(area.size.x/bounds.size.x,area.size.y/bounds.size.y)*(1.0 if modal_screen in ["build","draft"] else 1.18),0.04,2.0)
   pan = area.get_center()-world_anchor()-bounds.get_center()*zoom_level
  elif frame_on_layout:
   frame_world()
@@ -1320,7 +1329,7 @@ func services_ui() -> void:
  button("Use daylight palette",func(): model.state.cosmetic = "day"; persist(); refresh(),box)
  campaign_ui.close_button(self,box)
 
-func world_art_bounds(include_frontier: bool) -> Rect2:
+func world_art_bounds(include_frontier: bool, current_pose: bool = false) -> Rect2:
  var bounds := Rect2()
  var first := true
  for key in model.state.tiles:
@@ -1328,7 +1337,8 @@ func world_art_bounds(include_frontier: bool) -> Rect2:
   if tile.has("owner"): continue
   var footprint: float = 2.0 if tile.size == 4 else 1.0
   var at := Vector2(model.coord(key))+(Vector2(0.5,0.5) if footprint == 2 else Vector2.ZERO)
-  var spec: Dictionary = preload("res://scripts/TileArtwork.gd").appearance(tile.type,tile.evolution)
+  var depleted: bool=current_pose and tile.get("ready",0)>model.state.time and model.production(tile).resource!=""
+  var spec: Dictionary = preload("res://scripts/TileArtwork.gd").appearance(tile.type,tile.evolution,depleted)
   var local_bounds: Rect2 = preload("res://scripts/TileArtwork.gd").visual_bounds(spec,132.0/418.0*footprint)
   var visual := Rect2(project(at)+local_bounds.position,local_bounds.size)
   if first: bounds = visual; first = false

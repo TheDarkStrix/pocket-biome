@@ -1,0 +1,35 @@
+extends SceneTree
+var rows:=[]
+var failed:=false
+func _init() -> void:call_deferred("run")
+func tap(at: Vector2) -> void:
+ for pressed in [true,false]:
+  var event:=InputEventScreenTouch.new();event.index=0;event.position=root.get_screen_transform()*at;event.pressed=pressed;Input.parse_input_event(event);Input.flush_buffered_events();await process_frame
+func settle(h) -> void:
+ for frame in range(8):await process_frame
+ h.apply_layout();await process_frame
+func run() -> void:
+ for display in [{"width":320,"height":640,"dp":1.6875},{"width":360,"height":780,"dp":1.5},{"width":540,"height":960,"dp":1.0}]:
+  for scale in [1.0,1.2]:
+   root.size=Vector2i(display.width,display.height)
+   var h=preload("res://tests/fixtures/MobileMain.gd").new();h.display_dp=display.dp;h.show_menu_on_launch=false;h.store.path="user://draft-title-capture-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame
+   h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model;h.model.state.text_scale=scale;h.apply_settings();h.start_play();h.model.harvest("0,0");h.model.begin_draft("-1,0");h.refresh();h.draft();await settle(h)
+   var pending: Dictionary=h.model.state.pending.duplicate(true)
+   var coins: int=h.model.state.coins
+   var close: Button=h.modal_title.get_parent().find_children("*","Button",true,false)[0]
+   var delta: float=h.modal_title.get_global_rect().get_center().x-h.draft_hand.stage.get_global_rect().get_center().x
+   var preview_fits: bool=(h.world_anchor()+h.pan+h.world_art_bounds(false,true).end*h.zoom_level).y<=h.modal.position.y
+   var close_fits: bool=h.modal_scroll.get_global_rect().grow(1).encloses(close.get_global_rect()) and not h.modal_title.get_global_rect().intersects(close.get_global_rect())
+   await tap(close.get_global_rect().get_center());await settle(h)
+   var closed: bool=not h.modal.visible and h.model.state.pending==pending and h.model.state.coins==coins
+   await tap(h.draft_button.get_global_rect().get_center());await settle(h)
+   var resumed: bool=h.modal.visible and h.modal_screen=="draft" and h.model.state.pending==pending and h.model.state.coins==coins
+   var path: String="/workspace/runtime/draft-title-review/%d-text-%d.png" % [display.width,roundi(scale*100)]
+   await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(path)
+   var passed: bool=absf(delta)<1 and close_fits and preview_fits and closed and resumed
+   failed=failed or not passed
+   rows.append({"width":display.width,"height":display.height,"text_scale":scale,"heading_center_error_logical_pixels":delta,"modal_rect":h.modal.get_global_rect(),"title_rect":h.modal_title.get_global_rect(),"top_rect":h.layout.top,"painted_bounds":h.world_art_bounds(false,true),"island_preview_clear_of_heading":preview_fits,"zoom":h.zoom_level,"close_target_fits_without_overlap":close_fits,"actual_touch_close_and_resume_keeps_cards_quote_and_balance":closed and resumed,"passed":passed,"capture":path.get_file()})
+   h.queue_free();h=null;await process_frame
+ var source: String=JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ var report={"passed":not failed,"source_sha256":source,"cases":rows,"actual_touch_actions":12,"fixture_setup":true,"physical_device_tested":false}
+ var f=FileAccess.open("/workspace/runtime/draft-title-review/visual.json",FileAccess.WRITE);f.store_string(JSON.stringify(report,"  "));f.close();print(JSON.stringify(report));quit(1 if failed else 0)
