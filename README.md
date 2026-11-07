@@ -8,6 +8,8 @@ Godot **4.6.3**, portrait Android-first, offline environmental discovery game. T
 
 Current update: **0.21.6-preview** makes the six-step tutorial explicit, adds persistent instructions and real target cues, introduces tools gradually, simplifies optional lessons and explains the river in ordinary words. Spring and Water labels now sit in a consistent strip with numbered plot markers. Saved-card river entry and painted-land fixes remain included. Version code increases to 20 with the current signing key. [Changes and testing limits](docs/PLAYER_CLARITY_AUDIT.md).
 
+[Full conversation request review](docs/USER_REQUEST_REVIEW.md) maps gameplay, teaching, visual, testing, monetization and release requests to implemented work and unfinished acceptance. The complete screen-clarity pass, continuous UI playthrough to the ending and physical/newcomer/live-provider qualification remain open.
+
 **Much older installation:** the original restored-paint test APK used a different signing key. If Android rejects an update, keep that old app installed if its saved island matters; uninstalling removes local progress. See [download and update compatibility](docs/APK_DOWNLOAD.md).
 
 The verified cloud package is at `builds/PocketBiome-Android-test.apk`. Generate it with `python3 tools/package_phone_apk.py` after a successful universal debug build.
@@ -41,7 +43,7 @@ The five chapters now connect discovery and building to distinct restoration acc
 
 Select a structure, then open **World → Move selected structure** to preview an empty Meadow and confirm a free move that keeps upgrades and production timing. Restoring the Sheltered Workshop also unlocks movement of unprotected single-cell natural tiles. Select a sanctuary for **World → Dismantle sanctuary** to recover its four plots while keeping discoveries. See [Layout recovery](docs/LAYOUT_RECOVERY.md).
 
-After your first harvest, use **Gather ready** to collect available resources together. Cooldowns, storage limits and per-node rewards still apply; individual tile harvesting remains available.
+During the tutorial, follow the pointed resource tiles or **Collect ready materials**. After finishing or leaving guidance, **Gather ready** collects available resources together. Cooldowns, storage limits and per-node rewards still apply; individual tile harvesting remains available.
 
 Completing all five chapters now celebrates your living sanctuary with an island recap and routes to continued building, photo mode and expeditions. Replay it from the Journal after completion.
 

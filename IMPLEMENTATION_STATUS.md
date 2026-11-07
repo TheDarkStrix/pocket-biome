@@ -1,5 +1,6 @@
 # Implementation status
 
+Current feedback coverage (0.21.6/code 20): [conversation request review](docs/USER_REQUEST_REVIEW.md). Explicit opening guidance, simpler river lessons, label placement, saved-draft river entry and painted seams are delivered. The exact current build passes 2,168 assertions, four campaign probes and three fresh rendered touch routes through grove maturity. These do not establish a complete rendered campaign, all-screen comprehension, physical-phone acceptance or live income. The earlier checkpoint counts and observations below are historical.
 
 Current visual-feedback pass: painted Golem head/arms, Workbench tools/blueprint and Totem feathers now use ground-fixed UV rigs. Growth unfolds the canopy, visitors hop/perch/flap and react locally, and saved milestones have finite celebrations and audio ducking. The updated test-ID Android preview passes 2,000 assertions, four campaign probes, rendered touch walkthroughs and package audits. [Current audit](docs/GAME_JUICE_AUDIT.md) supersedes the older individual-animation gaps below. Physical-phone and human acceptance remain open.
 
