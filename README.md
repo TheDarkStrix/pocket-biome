@@ -1,21 +1,19 @@
-# Pocket Biome — 0.21.5 Living River entry
+# Pocket Biome — 0.21.6 clearer tutorial and river labels
 
 [Download the current APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
 Android 7.0+ / ARM64. About 98 MiB. Development preview with Google test ad IDs.
 
-## Fixed: approach and spring controls appearing inactive
+The opening now explicitly says **Tutorial**, shows six milestones with a persistent instruction card, and points to real island targets or outlines the relevant card controls. Advanced dock choices appear gradually. You still perform the real harvesting, gathering, purchases and crafting. Help lets you leave guidance without faking completion or losing progress. First-habitat celebration marks the tutorial's ending and offers ordinary play or an optional river lesson.
 
-Saved land cards no longer silently block Living River actions. Choosing an approach opens highlighted Water selection; confirming the spring opens grove planning. When no distant grove can receive Water, the setup screen explains the missing land and can select a Forest from the actual saved hand at its ordinary price. No free terrain or completion is granted.
+Optional lessons identify themselves and place extra options behind a secondary help menu. **Choose a tree for the river** replaces unexplained tracing jargon, and normal river review presents one next action. Extra allocation, editing and reference controls remain under **River tools & help**. Spring and delivered-water names sit in a consistent strip below the objective, with matching numbered plot markers instead of text floating over trees. Instructional labels are omitted from photos. Earlier saved-card river entry and painted-land fixes remain included.
 
-Tap a highlighted reachable tree to preview its natural-land channel, or draw it. Preview states the starting flow before Save. A new channel starts with the confirmed available allocation; existing allocations, including zero, remain unchanged when rerouting. The saved river stays visible with a source marker and flowing droplets. Setup/invalid/save errors appear in the visible panel, and planning controls have reserved room without overlapping toast messages. Cards, quote and progress stay saved. Earlier painted-seam, opening Water and harvest-height fixes remain included.
+Existing islands keep their progress. The tutorial appears on new or unfinished starts, rather than restarting completed teaching. Install over the recent signed build; do not uninstall first. Version code increases 19 → 20 with the previous package and certificate. Static compatibility is verified; physical installation/save acceptance remains pending. A much older restored-paint APK used a different key: keep it installed if Android rejects an update and its island matters, because uninstalling deletes local progress.
 
-Version code increases 18 → 19 with the previous download's package and signing key. Install over that recent build; do not uninstall first. Static update compatibility is verified; physical installation/save acceptance remains pending. The much older restored-paint APK used a different key: keep it installed if its saved island matters and Android rejects the update, because uninstalling removes local progress.
+Runtime commit: `5b7202fa380276447ef7d92e7c83478baea4d561`.
+Tested source SHA-256: `9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2`.
+APK SHA-256: `62867e30e95006655b7840bbb13bd8df0573271683aef457cb71ee96477077eb`.
 
-Runtime commit: `c727db52d9ec9c2eea599698ce884842efac885c`.
-Tested source SHA-256: `d68efd10827253d220f34c6192cf0f1beffdcccc4331afa23631bafab6bcca81`.
-APK SHA-256: `a4676b6c4e987ef114c5ffbdba1c3a1cdd0aeecb2e52cc810694443b13795e99`.
+The unchanged source passes 2,168 assertions in 46 Godot suites, 22 Python tests, startup and four campaign probes. Three fresh-save rendered touch runs (540×960, 320×640 and 320×640 with 120% text; 57 touches each) reach tutorial completion, then buy an actual offered Forest, save a flowing river and mature its grove while retaining saved land cards. These walkthroughs stop at grove maturity; separate suites cover later stages. Source binding, signatures, 16 KB alignment and all 669 retained ARM64-package files pass.
 
-The unchanged source passes 2,102 assertions in 45 Godot suites, 22 Python tests, startup and four campaign probes. Two fresh-save rendered touch runs (540×960 and 320×640, 53 touches each) earn the first restoration normally, buy the real offered Forest, save a flowing channel and mature its grove while retaining a pending hand. These fresh walkthroughs stop at grove maturity; separate model/control suites cover later stages and both approaches. Source binding, signatures, 16 KB alignment and all 663 retained ARM64-package files pass.
-
-Screenshots and exact scoped evidence: source branch `docs/RIVER_ENTRY_AUDIT.md` and `docs/RIVER_ENTRY_VALIDATION.json`. No physical Android phone or unfamiliar player was tested. Provider/store acceptance remains open. Test ads do not earn live revenue.
+Actual screenshots, walkthrough and exact reports: [source audit](https://github.com/TheDarkStrix/pocket-biome/blob/5b7202fa380276447ef7d92e7c83478baea4d561/docs/PLAYER_CLARITY_AUDIT.md). Automation does not establish newcomer comprehension/enjoyment, physical-phone performance or native provider acceptance. Later feature menus have not all been rewritten. Test ads do not earn live revenue; store qualification remains open.
