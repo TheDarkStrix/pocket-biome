@@ -22,6 +22,10 @@ static func current(m) -> Dictionary:
   if int(m.state.blueprints.get("workbench",0)) > 0: return step("Place your Workbench","Choose an empty Meadow. Inspect the nearby habitats before you confirm; the finished blueprint stays yours until placement.","blueprint","Place the Workbench","workbench")
   for job in m.state.jobs:
    if job.recipe == "workbench": return step("Your Workbench is being made","Review its short crafting timer. Your island keeps growing while you build.","projects","Review the Workbench project")
+  if m.state.inventory.wood<4 or m.state.inventory.stone<2:
+   var resource: String="wood" if m.state.inventory.wood<4 else "stone"
+   var cell: String="0,0" if resource=="wood" else "1,0"
+   return step("Gather building materials","Collect 4 Wood from trees and 2 Stone from rocks. Resources become ready again after a short wait.","resource","Collect ready materials",cell)
   return step("Build something useful","A Workbench costs 4 Wood and 2 Stone. Gather those materials, then craft it in Build. It unlocks terrain and machine recipes.","workbench","Plan a Workbench","workbench")
  if not m.state.get("habitat_projects",[]).has("shaded_pond"):
   return step("Welcome your first visitor","Review the Shaded Pond. A healthy tree beside Water can welcome frogs and unlock a reusable Water channel.","habitat","Review habitat projects")

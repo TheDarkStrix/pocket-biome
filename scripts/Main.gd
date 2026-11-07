@@ -25,8 +25,10 @@ var habitat_visitors: Array = []
 var care_ui = preload("res://scripts/RestorationCareUI.gd").new()
 var wildlife_initialized := false
 var ad_break_ui = preload("res://scripts/AdBreakUI.gd").new()
+var guidance_ui = preload("res://scripts/GuidanceUI.gd").new()
 var journey_ui = preload("res://scripts/JourneyUI.gd").new()
 var corridor_ui = preload("res://scripts/CorridorUI.gd").new()
+var river_labels = preload("res://scripts/RiverLabels.gd").new()
 var river_story = preload("res://scripts/RiverStory.gd").new()
 var identity_ui = preload("res://scripts/PersonalizeUI.gd").new()
 var visitor_requests = preload("res://scripts/VisitorRequests.gd").new()
@@ -134,6 +136,8 @@ func _ready() -> void:
  services.save_path = store.path
  seen_discoveries = model.state.discoveries.duplicate()
  build_ui()
+ guidance_ui.build(self)
+ river_labels.build(self)
  apply_settings()
  services.begin_session()
  model.occurred.connect(services.event)
@@ -451,7 +455,13 @@ func open_ideas(all_choices: bool = false) -> void:
   if preload("res://scripts/JourneyLessons.gd").record(model).active != "": journey_ui.lesson(self)
   else: journey_ui.goal(self)
   return
- if learning: suggestions = [lesson]
+ if learning:
+  var box:=modal_content("Tutorial · %d of 6" % guidance_ui.number(self));modal_screen="ideas"
+  label(lesson.title,20,box);label(guidance_ui.message(self),17,box)
+  sheets.primary(self,lesson.button,func():choose_idea(lesson),box)
+  button("Tutorial help",func():guidance_ui.show_help(self),box)
+  button("Explore other ideas",func():open_ideas(true),box)
+  return
  var box := modal_content("Your next step" if learning else "What would you like to try?")
  modal_screen = "ideas"
  label("Try this on your island. You can explore other ideas whenever you like." if learning else "Choose a direction. Your chapter goal can wait while you experiment.",16,box)
@@ -628,7 +638,7 @@ func refresh() -> void:
   draft_button.text = "Find a sanctuary fusion"
   draft_button.disabled = false
  draft_button.visible = not draft_button.disabled
- gather_button.visible = model.state.harvests > 0 and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
+ gather_button.visible = model.state.harvests > 0 and not guidance_ui.opening(self) and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
  var gather_count := model.ready_harvests().size()
  var next_resource: int = preload("res://scripts/PacingGuide.gd").next_ready(model)
  gather_button.text = "Gather ready · %d" % gather_count if gather_count > 0 else "Next resource · %ds" % next_resource if next_resource >= 0 else "Gather unavailable"
@@ -643,7 +653,7 @@ func refresh() -> void:
  game_hud.display(self)
  var lesson := preload("res://scripts/LearningJourney.gd").current(model)
  if lesson.is_empty(): lesson = preload("res://scripts/JourneyLessons.gd").current(model)
- game_hud.display_goal(self,lesson.title+"\nTap for your next step" if not lesson.is_empty() else model.objective_text())
+ game_hud.display_goal(self,lesson.title+("\nTutorial · %d of 6" % guidance_ui.number(self) if guidance_ui.opening(self) else "\nOptional lesson · tap for help") if not lesson.is_empty() else model.objective_text())
  if model.message != last_notice:
   last_notice = model.message
   notice.text = model.message
@@ -781,7 +791,7 @@ func apply_layout() -> void:
  bottom.position = layout.bottom.position
  bottom.size = layout.bottom.size
  if is_instance_valid(gather_button):
-  gather_button.visible = model.state.harvests > 0 and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
+  gather_button.visible = model.state.harvests > 0 and not guidance_ui.opening(self) and not draft_button.visible and not launch_menu and not photo_mode and not modal.visible
   gather_button.size = Vector2(minf(208,safe.size.x-40),maxf(touch_height(),gather_button.get_combined_minimum_size().y))
   gather_button.position = Vector2(safe.end.x-gather_button.size.x-20,layout.world.end.y-gather_button.size.y-8)
  modal.position = layout.modal.position
@@ -857,6 +867,10 @@ func world_rect() -> Rect2:
   return Rect2(20,start,get_viewport_rect().size.x-40,maxf(100,modal.position.y-start+(0 if modal_screen == "build" else 100)))
  if photo_mode: return Rect2(20,40,get_viewport_rect().size.x-40,get_viewport_rect().size.y-150)
  var area: Rect2=layout.get("world",Rect2(0,205,540,475))
+ if is_instance_valid(river_labels.bar) and river_labels.bar.visible:
+  var reserve: float=river_labels.bar.get_combined_minimum_size().y+12
+  area.position.y+=reserve;area.size.y=maxf(100,area.size.y-reserve)
+ if is_instance_valid(guidance_ui.panel) and guidance_ui.panel.visible:area.size.y=maxf(100,area.size.y-guidance_ui.panel.get_combined_minimum_size().y-16)
  if corridor_ui.showing() and is_instance_valid(corridor_ui.bar):area.size.y=maxf(100,area.size.y-corridor_ui.bar.get_combined_minimum_size().y-16)
  return area
 
@@ -881,6 +895,8 @@ func constrain_camera() -> void:
 
 func _process(delta: float) -> void:
  game_hud.update_selection(self,delta)
+ guidance_ui.layout(self)
+ river_labels.layout(self)
  corridor_ui.layout(self)
  island_actions.update(self)
  audio_feedback.set_suspended(suspended or services.fullscreen_ad)
@@ -892,7 +908,7 @@ func _process(delta: float) -> void:
    cosmetic_clock = 0.0
    queue_redraw()
  notice_time = maxf(0,notice_time-delta)
- notice_toast.visible = notice_time > 0 and not launch_menu and not photo_mode and not modal.visible and not corridor_ui.showing()
+ notice_toast.visible = not guidance_ui.opening(self) and notice_time > 0 and not launch_menu and not photo_mode and not modal.visible and not corridor_ui.showing()
  if not corridor_ui.showing() and not launch_menu and not photo_mode and not modal.visible and not reveal_queue.is_empty(): show_discovery(reveal_queue.pop_front())
  if orbit_enabled and is_instance_valid(orbit_pad): orbit_pad.visible=not launch_menu and not photo_mode and not modal.visible and targeting=="" and placement_blueprint==""
  if suspended or launch_menu: return

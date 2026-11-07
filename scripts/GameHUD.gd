@@ -214,6 +214,9 @@ func hub_action(h, title: String, detail: String, symbol: String, action: Callab
  return button
 
 func display(h) -> void:
+ for dock in h.stacked_buttons:
+  if not dock.has_meta("primary_dock"):continue
+  dock.visible=not h.guidance_ui.opening(h) or (dock.get_meta("primary_dock") and h.guidance_ui.number(h)>=5)
  var ink: Color = SurfaceKit.CREAM
  h.inventory.add_theme_color_override("default_color",ink)
  h.objective.add_theme_color_override("font_color",ink)

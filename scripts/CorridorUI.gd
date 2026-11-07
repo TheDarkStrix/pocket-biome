@@ -14,6 +14,7 @@ var back: Button
 var preview: Button
 var moment := false
 var signature := ""
+var advanced_view := false
 var feedback := ""
 var invalid_cell := ""
 var options: Array = []
@@ -108,15 +109,20 @@ func commit(h, action: Callable) -> bool:
  undo_layout = old_layout; undo_season = int(River.record(h.model).get("season",0))
  h.playtest.record("river_layout_saved",{"type":River.record(h.model).get("branch","")})
  h.refresh(); return true
-func show(h) -> void:
+func show(h, advanced: bool = false) -> void:
+ advanced_view=advanced
  cancel(h,false)
  var box: VBoxContainer = h.modal_content("The Living River")
  h.modal_screen = "corridors"
  var status: Dictionary = River.status(h.model)
  if feedback!="":h.label(feedback,17,box)
  if not h.model.state.pending.is_empty():h.sheets.caption(h,"Your land cards and quoted price stay saved while you plan this river.",box)
- h.label(status.title if River.unlocked(h.model) else "Restore the Returning Spring first",20,box)
- h.sheets.caption(h,status.body if River.unlocked(h.model) else "Complete your first spring habitat to unlock river planning.",box)
+ if not advanced and River.record(h.model).get("branch","")!="":
+  h.label("Your next river step",20,box)
+  h.sheets.caption(h,"Carry water from a pond to trees and flowers. Choose one step below; extra tools are available when you need them.",box)
+ else:
+  h.label(status.title if River.unlocked(h.model) else "Restore the Returning Spring first",20,box)
+  h.sheets.caption(h,status.body if River.unlocked(h.model) else "Complete your first spring habitat to unlock river planning.",box)
  if not River.unlocked(h.model):
   h.sheets.primary(h,"Restore the first spring",func(): h.habitat_ui.show_projects(h),box)
   h.campaign_ui.close_button(h,box); return
@@ -132,17 +138,18 @@ func show(h) -> void:
   h.campaign_ui.close_button(h,box); signature = current_signature(h); return
  var flow: Dictionary = River.delivered(h.model)
  h.label("Spring supply · %d flow%s" % [River.budget(h.model)," · dry spell" if River.dry(h.model) else ""],17,box)
- h.sheets.caption(h,"Forecast · A dry spell begins when the grove matures: one less flow"+(" and warmer routed land" if h.model.state.get("ecology_rules","classic") == "balanced" else " (Classic climate keeps ordinary heat)")+". It passes when the flowering corner is restored. Seasons advance only when you choose; harvest and machine timers stay ordinary.",box)
+ if advanced:h.sheets.caption(h,"Forecast · A dry spell begins when the grove matures: one less flow"+(" and warmer routed land" if h.model.state.get("ecology_rules","classic") == "balanced" else " (Classic climate keeps ordinary heat)")+". It passes when the flowering corner is restored. Seasons advance only when you choose; harvest and machine timers stay ordinary.",box)
  for role in River.ROLES:
   var route: Dictionary = s.routes.get(role,{})
   if route.is_empty(): continue
   var row := HBoxContainer.new(); box.add_child(row)
   var demand: int = River.grove_demand(h.model) if role == "grove" else 1
   var label: Label = h.label("%s · %d delivered / %d needed" % [role.capitalize(),flow[role],demand],14,row); label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  if not advanced:continue
   var minus: Button = h.button("−",func():
-   if commit(h,func(): return River.allocate(h.model,role,maxi(0,int(route.water)-1))): show(h),row)
+   if commit(h,func(): return River.allocate(h.model,role,maxi(0,int(route.water)-1))): show(h,true),row)
   var plus: Button = h.button("+",func():
-   if commit(h,func(): return River.allocate(h.model,role,int(route.water)+1)): show(h),row)
+   if commit(h,func(): return River.allocate(h.model,role,int(route.water)+1)): show(h,true),row)
   for button in [minus,plus]: button.custom_minimum_size.x = h.touch_height(); button.size_flags_horizontal = Control.SIZE_SHRINK_END
   minus.disabled = route.water <= 0
   var requested := 0
@@ -153,19 +160,24 @@ func show(h) -> void:
  if s.seedbed != "":
   var soil: Dictionary = River.tile(h.model,s.seedbed)
   h.sheets.caption(h,"Seedbed · %s · growth %d / 2\nMoisture %d / 50 · fertility %d / 80 · heat %d / at most 65" % [s.seedbed,s.growth.bloom,soil.dna.moisture,soil.dna.fertility,soil.dna.heat],box)
- var observe: Button = h.sheets.primary(h,"Observe next season",func(): observe(h),box)
- observe.disabled = not s.routes.has("grove")
- var tools := GridContainer.new(); tools.columns = 2; box.add_child(tools)
- h.button("Choose spring",func(): begin(h,"source"),tools)
- h.button("Trace grove route",func(): begin(h,"grove"),tools)
- h.button("Trace flower route",func(): begin(h,"garden"),tools)
- h.button("Choose seedbed",func(): begin(h,"seedbed"),tools).disabled = not s.routes.has("garden")
- h.sheets.caption(h,"Stone and machines block routes. Shared sections carry both allocations. Grove flow gets priority when a dry spell reduces the supply; lower its request to redirect Water.",box)
- if not undo_layout.is_empty() and undo_season == s.season: h.button("Undo last river edit",func(): undo(h),box)
- h.button("Try the other approach…",func(): branch_prompt(h),box)
- h.button("River story & portraits",func(): h.river_story.show(h),box)
- h.button("How this river works",func(): help(h),box)
- h.button("Return to my island",func(): h.close_sheet(); h.frame_world(); h.refresh(),box)
+ var lesson: Dictionary=preload("res://scripts/JourneyLessons.gd").current(h.model,"river")
+ if not advanced:
+  h.label(lesson.title,18,box)
+  h.sheets.caption(h,lesson.body,box)
+  if lesson.action=="river_plan":h.sheets.primary(h,lesson.button,func():begin(h,lesson.target),box)
+  elif lesson.step in ["grove_flow","flower_flow"]:h.sheets.primary(h,"Adjust water supply",func():show(h,true),box)
+  elif lesson.step!="done":h.sheets.primary(h,"Observe next season",func():observe(h),box)
+  h.button("River tools & help",func():show(h,true),box)
+ else:
+  var observe: Button=h.sheets.primary(h,"Observe next season",func():observe(h),box);observe.disabled=not s.routes.has("grove")
+  for tool in [{"name":"Choose spring","role":"source"},{"name":"Choose a tree for the river","role":"grove"},{"name":"Choose flowers for the river","role":"garden"},{"name":"Choose seedbed","role":"seedbed"}]:
+   h.button(tool.name,func():begin(h,tool.role),box).disabled=tool.role=="seedbed" and not s.routes.has("garden")
+  if not undo_layout.is_empty() and undo_season==s.season:h.button("Undo last river edit",func():undo(h),box)
+  h.button("Try the other approach…",func():branch_prompt(h),box)
+  h.button("River story & portraits",func():h.river_story.show(h),box)
+  h.button("How this river works",func():help(h),box)
+  h.button("Back to next river step",func():show(h),box)
+ h.button("Return to my island",func():h.close_sheet();h.frame_world();h.refresh(),box)
  signature = current_signature(h)
  h.call_deferred("apply_layout")
 func branch_prompt(h) -> void:
@@ -294,7 +306,7 @@ func current_signature(h) -> String:
 func update_live(h) -> void:
  if h.modal.visible and h.modal_screen == "corridors" and signature != current_signature(h):
   var offset: int = h.modal_scroll.scroll_vertical
-  show(h); h.modal_scroll.set_deferred("scroll_vertical",offset)
+  show(h,advanced_view); h.modal_scroll.set_deferred("scroll_vertical",offset)
 func help(h) -> void:
  var box: VBoxContainer = h.modal_content("A river you can understand")
  for text in ["1 · Choose a Water source and an approach. No supplies are spent on planning.","2 · Tap a highlighted remote tree or draw a path, then preview and save the visible channel. Its first flow is shown before saving; adjust with + / −.","3 · Observe seasons to mature the grove. A dry spell then lowers the available supply.","4 · Route a second branch through that grove to flowers. Meet the wetland or woodland requirements.","5 · Pick a bare nearby seedbed. Sola carries moisture and fertility there when both habitats work.","Routes can be edited, undone before another season, or rebuilt. Paused/broken routes grant no growth. Earned discoveries and chapter moments remain."]:

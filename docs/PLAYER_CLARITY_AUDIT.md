@@ -1,0 +1,25 @@
+# Player guidance and river labels — 0.21.6
+
+The opening previously used ordinary objective panels for teaching, without a clear tutorial state. It exposed the full dock immediately and put several equally prominent choices in lesson panels. Terms such as “trace grove route” expected knowledge the game had not taught. River names and Water amounts used independent world-text offsets, which let them float across trees and scenery. Passing route rules and touch tests did not establish that a newcomer understood these screens.
+
+## Changed experience
+
+The welcome now explicitly introduces a six-milestone tutorial. During it, the objective identifies the tutorial stage and a persistent card gives one short instruction. A drawn pointing hand directs the first world interactions; relevant card controls receive a visible outline. UI outlines avoid covering button labels or instruction text. The player still performs the real actions: guidance does not collect materials, place land or finish objectives. Gathering help names the actual 4 Wood / 2 Stone requirement and uses ordinary ready-resource collection.
+
+The advanced dock stays out of the initial teaching steps. Build appears for the building milestone; all three dock tools return when guidance finishes or the player leaves it. Help offers an explicit exit without awarding tutorial completion or campaign progress. A failed preference save restores the prior tutorial choice and shows an explanation. Chapter toasts stay out of the guided start so “chapter complete” cannot obscure its instructions. First-habitat celebration explicitly says the tutorial is complete and offers ordinary play or an optional river lesson.
+
+Optional lessons identify themselves separately from the tutorial and keep their extra references/skip controls behind **More help & lesson options**. The river action reads **Choose a tree for the river**, with an explanation of the pond, connected land, preview and save. The help screen explains spring, grove, flow and season in ordinary words. Normal river review offers the next relevant action and **River tools & help**; route editing, allocation, undo, switching approaches and story exports remain accessible there.
+
+River text now occupies a consistent, wrapping strip below the objective. Numbered markers identify the corresponding real spring/tree/flower plots. The camera reserves room below this strip and above the current planner/tutorial controls, instead of drawing names over canopies. Water amounts come from actual delivered flow, not just requested allocation. Markers follow the real route endpoints when the camera rotates, and photos omit these instructional labels. The original painted tile models remain in use.
+
+## Evidence and limits
+
+The new regression suite checks real target positions, progression only after actual actions, read-only guidance, leaving guidance, restored tool access, menu choice counts, label bounds at two screen sizes and two text scales, camera rotation, photo suppression and save-failure rollback. The native-touch regression now leaves the explicitly marked tutorial through its actual Help controls before exercising the full dock.
+
+Fresh rendered touch walkthroughs cover the opening, real harvesting/gathering/crafting, first habitat and tutorial completion, then the actual optional river lesson, missing-grove recovery, saved Forest purchase, channel preview/save and grove maturity. They retain pending land cards and validate the resulting save. Rendered screenshots and the exact package/test results are retained in [PLAYER_CLARITY_VALIDATION.json](PLAYER_CLARITY_VALIDATION.json).
+
+[Tutorial and pointing cue](validation/clarity-mobile-tutorial-point-to-tree.png) · [Water-card cue](validation/clarity-mobile-tutorial-water-card.png) · [Building step](validation/clarity-mobile-tutorial-workbench-step.png) · [Explicit tutorial ending](validation/clarity-mobile-first-restoration.png) · [Simpler river lesson](validation/clarity-mobile-lesson-reachable-before.png) · [New river labels](validation/clarity-mobile-flowing-river.png) · [120% text](validation/clarity-mobile-large-flowing-river.png) · [Touch walkthrough](validation/clarity-fresh-touch.gd.txt).
+
+These are engine renders and automated interactions. They do not prove unfamiliar-player comprehension or enjoyment, nor physical Android installation, touch hardware, audio or performance. Later feature menus have not all been rewritten. Physical-phone and newcomer acceptance remain necessary before calling the game release-ready. The preview retains Google test ad IDs.
+
+The packaged unchanged source passes **2,168 assertions in 46 Godot suites**, 22 Python tests, startup and four campaign probes. The three fresh walkthroughs each use **57 real touch actions** at 540×960, 320×640 and 320×640 with 120% text. Package verification confirms all 669 retained ARM64-export files, source binding, signature and 16 KB alignment. Version code increases 19 → 20 with the recent download's package and signing certificate. Physical installation/save-preservation acceptance is still pending.

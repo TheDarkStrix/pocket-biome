@@ -27,7 +27,7 @@ func run() -> void:
    h.display_dp = display.dp; h.show_menu_on_launch = false; h.store.path = "user://build-tray-tests.json"
    root.add_child(h); h.set_process(false)
    h.model = preload("res://scripts/WorldModel.gd").new(); h.model.state.text_scale = scale
-   h.model.state.settings.tutorial_seen = true
+   h.model.state.learning={"dismissed":true}; h.model.state.settings.tutorial_seen = true
    h.apply_settings(); h.refresh(); h.start_play(); h.modal.hide(); await settle(h); h.frame_world()
    var context := "%s text=%s" % [display.size,scale]
    check(h.stacked_buttons.size() == 3 and h.stacked_buttons[0].get_meta("icon_caption").text == "Pack","three physical tools replace the five-route dock at "+context)
@@ -60,7 +60,7 @@ func run() -> void:
  h.display_dp = 1.0; h.show_menu_on_launch = false; h.store.path = "user://build-flow-transactions.json"
  root.add_child(h); h.set_process(false)
  h.model = preload("res://scripts/WorldModel.gd").new()
- h.model.state.settings.tutorial_seen = true; h.model.state.inventory.wood = 20; h.model.state.inventory.stone = 10
+ h.model.state.learning={"dismissed":true}; h.model.state.settings.tutorial_seen = true; h.model.state.inventory.wood = 20; h.model.state.inventory.stone = 10
  h.refresh(); h.start_play(); h.modal.hide(); await settle(h)
  await click(h.game_hud.build_action); await settle(h)
  var tray: Control = h.campaign_ui.build_tray

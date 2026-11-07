@@ -354,8 +354,8 @@ func welcome(h) -> void:
  var box: VBoxContainer = h.modal_content("Your first tiny world")
  h.sheets.art(h,box,"oak","",192)
  h.label("Every world begins with a seed",22,box)
- h.sheets.caption(h,h.model.campaign.PURPOSE,box)
- h.sheets.caption(h,"Your Oak is thirsty. Gather Wood, compare Water beside its roots, then watch the island respond. Your goal shows one useful action at a time through your first building and wildlife habitat.",box)
+ h.sheets.caption(h,"TUTORIAL · Six steps to your first wildlife habitat. Your island and everything you earn are yours to keep.",box)
+ h.sheets.caption(h,"Follow the tutorial card and pointing hand. First, tap the tree for Wood. We will show you one action at a time; Help lets you leave the tutorial whenever you like.",box)
  var examples := HBoxContainer.new(); box.add_child(examples)
  for type in ["oak","water","forest"]:
   var group := VBoxContainer.new(); group.size_flags_horizontal = Control.SIZE_EXPAND_FILL; examples.add_child(group)

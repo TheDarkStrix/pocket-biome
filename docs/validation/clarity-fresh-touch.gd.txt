@@ -1,0 +1,140 @@
+extends SceneTree
+var h
+var input_actions := 0
+var failed := false
+func _init() -> void: call_deferred("run")
+func fail(text: String) -> void:
+ failed=true
+ printerr("FRESH RIVER FAIL: "+text+" · modal="+h.modal_screen+" · message="+h.model.message); quit(1)
+func button(text: String) -> Button:
+ var parent: Node = h.launch_screen if h.launch_menu else h.modal_box
+ for action in parent.find_children("*","Button",true,false):
+  if action.text == text: return action
+ return null
+func touch(at: Vector2, down: bool) -> void:
+ var event := InputEventScreenTouch.new(); event.index=0; event.position=root.get_screen_transform()*at; event.pressed=down
+ Input.parse_input_event(event);Input.flush_buffered_events()
+func click_at(at: Vector2) -> void:
+ touch(at,true);await process_frame;touch(at,false);await process_frame
+ input_actions+=1
+func click(action: Control) -> void:
+ if not is_instance_valid(action):fail("missing requested control");return
+ var text: String=action.text if action is Button else ""
+ var build: String=action.get_meta("build_confirm","")
+ if h.modal.visible and h.modal_scroll.is_ancestor_of(action):h.modal_scroll.ensure_control_visible(action)
+ for frame in range(4):await process_frame
+ # Live timer/status sheets can replace their controls while settling.
+ if not is_instance_valid(action):action=craft_action(build) if build!="" else button(text)
+ if not is_instance_valid(action):fail("control disappeared while settling: "+text);return
+ await click_at(action.get_global_rect().get_center())
+func craft_action(id: String = "workbench") -> Button:
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.get_meta("build_confirm","")==id:return action
+ return null
+var captures:=[]
+func settle() -> void:
+ for frame in range(8):await process_frame
+ h.apply_layout();await process_frame
+func snap(name: String) -> void:
+ await settle();await RenderingServer.frame_post_draw
+ var prefix: String="mobile-large" if OS.get_environment("RIVER_LARGE_TEXT")=="1" else "mobile" if root.size.x==320 else "desktop"
+ root.get_texture().get_image().save_png("/workspace/runtime/player-clarity-review/"+prefix+"-"+name+".png");captures.append(name)
+func dock(title: String) -> Button:
+ for action in h.stacked_buttons:
+  if action.get_meta("icon_caption").text==title:return action
+ return null
+func open_river() -> void:
+ if h.modal.visible:await click(button("×"))
+ await click(dock("Pack"))
+ var world: Button
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.tooltip_text=="World":world=action
+ await click(world);await click(button("Living Corridors · the river chapter"));await settle()
+func open_lesson() -> void:
+ if h.modal.visible:await click(button("×"))
+ await click_at(h.objective.get_global_rect().get_center())
+ if h.modal_screen!="journey_lesson":
+  await click(button("Learn & revisit"));await click(button("Learn · Carry a living river"))
+ await settle()
+ if not check(h.modal_screen=="journey_lesson","objective did not open the actual river lesson"):return
+func check(ok: bool, title: String) -> bool:
+ if not ok:fail(title)
+ return ok
+func run() -> void:
+ root.size=Vector2i(320,640) if OS.get_environment("RIVER_MOBILE")=="1" else Vector2i(540,960)
+ h=preload("res://tests/fixtures/MobileMain.gd").new() if root.size.x==320 else preload("res://scenes/Main.tscn").instantiate()
+ if root.size.x==320:h.display_dp=1.6875
+ h.store.path="user://fresh-river-entry-%d.json" % Time.get_ticks_usec()
+ root.add_child(h)
+ for frame in range(8):await process_frame
+ if OS.get_environment("RIVER_LARGE_TEXT")=="1":h.model.state.text_scale=1.2;h.apply_settings()
+ await click(button("Start exploring"));await snap("tutorial-welcome");await click(button("Let’s grow"));await snap("tutorial-point-to-tree")
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Show the Oak"))
+ await click_at(h.screen(Vector2.ZERO)-Vector2(0,50))
+ if h.model.state.harvests!=1:fail("first real Oak touch did not harvest exactly once");return
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Explore the cloud plots"))
+ await click_at(h.screen(Vector2(-1,0)))
+ if h.modal_screen!="draft":fail("cloud touch did not open the draft");return
+ await snap("tutorial-water-card");await click(h.draft_cards[1]);await click(button("Info"));await click(h.confirm_card);await snap("tutorial-water-placed")
+ for tick in range(16):
+  if not h.model.state.discoveries.is_empty():break
+  await create_timer(0.5).timeout
+ if h.model.state.discoveries.is_empty():fail("no first discovery through the live game clock");return
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Inspect the Oak"));await click(button("Back to island"))
+ for tick in range(32):
+  if h.model.state.inventory.wood>=4 and h.model.state.inventory.stone>=2:break
+  if h.guidance_ui.panel.visible and not h.guidance_ui.action.disabled:await click(h.guidance_ui.action)
+  elif h.gather_button.visible and not h.gather_button.disabled:await click(h.gather_button)
+  await create_timer(0.7).timeout
+ if h.model.state.inventory.wood<4 or h.model.state.inventory.stone<2:fail("gathering did not earn the Workbench cost");return
+ await snap("tutorial-workbench-step");await click_at(h.objective.get_global_rect().get_center());await click(button("Plan a Workbench"))
+ await click(craft_action())
+ for tick in range(16):
+  if h.model.state.blueprints.get("workbench",0)>0:break
+  await create_timer(0.5).timeout
+ if h.model.state.blueprints.get("workbench",0)<1:fail("Workbench did not finish through the live clock");return
+ await click(craft_action());await click_at(h.screen(Vector2.ONE));await click(button("Confirm blueprint placement"))
+ await click_at(h.objective.get_global_rect().get_center());await click(button("Review habitat projects"));await click(button("Complete project · 40 Coins"))
+ if h.modal_screen!="restoration_moment" or not h.model.state.get("learning",{}).get("completed",false):fail("first restoration or completed teaching was not reached");return
+ await snap("first-restoration")
+ await click(button("Enjoy my island"));await settle()
+ await click_at(h.screen(Vector2(0,2)));await click(button("Later"))
+ var first_hand: Dictionary=h.model.state.pending.duplicate(true)
+ await open_river();await snap("choose-approach")
+ await click(button("Choose Clover's wetland"));await settle()
+ if not check(h.corridor_ui.mode=="source" and not h.modal.visible,"approach did not open spring picking"):return
+ await snap("choose-spring")
+ await click_at(h.screen(Vector2(-1,0)));await click(button("Confirm selection"));await settle()
+ if not check(h.modal_screen=="corridor_setup" and h.model.state.pending==first_hand,"first island did not explain the missing distant grove while retaining the hand"):return
+ await open_lesson();await snap("lesson-missing-grove-before")
+ await click(button("Choose a tree for the river"));await settle()
+ if not check(h.modal_screen=="corridor_setup" and h.model.state.pending==first_hand,"lesson button did not explain missing grove with saved cards intact"):return
+ await snap("lesson-missing-grove-after")
+ await snap("needs-grove")
+ await click(button("Use the Forest in my saved cards"));await click(h.confirm_card);await settle()
+ if not check(h.model.state.tiles["0,2"].type=="forest","saved Forest card did not create the distant grove"):return
+ await create_timer(0.7).timeout
+ await click_at(h.screen(Vector2(2,1)));await click(button("Later"));var pending: Dictionary=h.model.state.pending.duplicate(true)
+ await open_lesson();await snap("lesson-reachable-before")
+ await click(button("Choose a tree for the river"));await settle()
+ if not check(h.corridor_ui.mode=="grove" and not h.modal.visible and not h.corridor_ui.options.is_empty(),"actual lesson button did not enter reachable grove planning"):return
+ await snap("lesson-reachable-after");await snap("reachable-grove")
+ await click_at(h.screen(Vector2(0,2)));await snap("visible-channel-preview")
+ if not check(not h.corridor_ui.preview.disabled and h.corridor_ui.draft.size()>=3,"tree tap did not create a visible valid channel preview"):return
+ await click(h.corridor_ui.preview);await snap("confirm-flow");await click(button("Save this route"));await settle()
+ var river=preload("res://scripts/LivingCorridors.gd")
+ if not check(river.delivered(h.model).grove==2 and h.model.state.pending==pending,"channel did not start with the confirmed flow or cards changed"):return
+ await click(button("Return to my island"));await snap("flowing-river")
+ await open_river()
+ for season in range(6):
+  await click(button("Observe next season") if h.modal.visible else h.corridor_ui.preview)
+  await create_timer(0.3).timeout
+  if river.record(h.model).growth.grove>=2:break
+ if not check(river.record(h.model).growth.grove==2 and h.model.state.pending==pending,"grove did not mature normally or saved cards changed"):return
+ await snap("grove-restored")
+ var prefix: String="mobile-large" if OS.get_environment("RIVER_LARGE_TEXT")=="1" else "mobile" if root.size.x==320 else "desktop"
+ var source: String=JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256
+ var report={"passed":true,"source_sha256":source,"screen_size":root.size,"text_scale":h.model.state.text_scale,"real_touch_actions":input_actions,"active_seconds":h.model.state.time,"fresh_island":true,"exact_lesson_button_tested":true,"visible_tutorial_and_real_targets":true,"lesson_button_handles_both_missing_and_reachable_grove":true,"first_habitat_earned_normally":h.model.state.habitat_projects.has("shaded_pond"),"missing_grove_setup_exercised":true,"forest_placed_from_saved_offer_for_normal_quote":true,"saved_hand_unchanged_during_planning_and_observation":h.model.state.pending==pending,"delivered_flow":river.delivered(h.model).grove,"grove_matured":river.record(h.model).growth.grove==2,"save_valid":h.store.valid(h.model.state),"captures":captures,"scope":"Actual rendered screen-touch run from a fresh island through ordinary tutorial, gathering/crafting, first restoration, blocked-setup recovery, spring/path/flow and grove maturity. No injected supplies or completed habitats; not a physical phone or unfamiliar-player study."}
+ report.passed=report.passed and report.save_valid and not failed
+ var f:=FileAccess.open("/workspace/runtime/player-clarity-review/"+prefix+".json",FileAccess.WRITE);f.store_string(JSON.stringify(report,"  "));f.close();print("FRESH RIVER RESULT: "+JSON.stringify(report))
+ h.queue_free();h=null;await process_frame;await create_timer(0.3).timeout;quit(0 if report.passed else 1)

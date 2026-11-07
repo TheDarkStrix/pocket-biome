@@ -54,10 +54,8 @@ func run() -> void:
  await click(h.objective.get_global_rect().get_center())
  check(h.modal.visible and h.modal_screen == "ideas","touching the objective opens useful player choices")
  var show_oak: Button
- for panel in h.modal_box.get_children():
-  if panel is PanelContainer:
-   for child in panel.get_child(0).get_children():
-    if child is Button and child.text == "Show the Oak": show_oak = child
+ for child in h.modal_box.find_children("*","Button",true,false):
+  if child.text=="Show the Oak":show_oak=child
  if show_oak != null:
   await process_frame
   await click(show_oak.get_global_rect().get_center())
@@ -72,7 +70,7 @@ func run() -> void:
  var energy: int = h.model.state.energy
  touch(h.screen(Vector2.ZERO),true)
  var second := InputEventScreenTouch.new()
- second.index = 1; second.position = h.pulse_button.get_global_rect().get_center(); second.pressed = true
+ second.index = 1; second.position = h.guidance_ui.action.get_global_rect().get_center(); second.pressed = true
  Input.parse_input_event(second); Input.flush_buffered_events()
  await process_frame
  touch(h.screen(Vector2.ZERO),false)
@@ -81,6 +79,12 @@ func run() -> void:
  await process_frame
  check(h.model.state.harvests == before and h.model.state.energy == energy,"mixed UI/world two-finger sequence cannot harvest or spend energy")
  check(h.input_controller.pointers.is_empty() and h.all_touches.is_empty(),"mixed sequence clears every pointer after release")
+ # Exit the explicitly marked tutorial through its real Help controls before testing the full dock.
+ for action in h.guidance_ui.panel.find_children("*","Button",true,false):
+  if action.text=="Help":await click(action.get_global_rect().get_center())
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.text=="Finish guidance and explore":await click(action.get_global_rect().get_center());break
+ check(h.model.state.get("learning",{}).get("dismissed",false),"tutorial can be left through actual touch controls before opening advanced tools")
  var pack: Button
  for action in h.stacked_buttons:
   if action.get_meta("icon_caption").text == "Pack": pack = action

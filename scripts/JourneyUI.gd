@@ -37,7 +37,8 @@ func lesson(h, id: String = "") -> void:
  h.modal_screen = "journey_lesson"
  box.set_meta("lesson_id",id)
  h.label(step.title,20,box)
- h.sheets.caption(h,"WHY · "+step.why,box)
+ h.sheets.caption(h,"OPTIONAL LESSON · This helps with your chapter. You can leave at any time.",box)
+ h.sheets.caption(h,step.why,box)
  h.label(step.body,16,box)
  if step.step == "done":
   h.sheets.primary(h,"Continue my chapter",func():
@@ -45,11 +46,7 @@ func lesson(h, id: String = "") -> void:
    goal(h),box)
  else:
   h.sheets.primary(h,step.button,func(): h.choose_idea(step),box)
-  h.button("Show my island",func(): h.modal.hide(); h.frame_world(); h.refresh(),box)
-  h.button("Skip this lesson for now",func():
-   if change(h,func(): return Lessons.skip(h.model)): goal(h),box)
- h.button("Review all steps",func(): show_reference(h,id),box)
- h.button("All lessons & review",func(): library(h),box)
+  h.button("More help & lesson options",func(): lesson_options(h,id),box)
  h.campaign_ui.close_button(h,box)
  signature = state_signature(h)
 func goal(h) -> void:
@@ -118,3 +115,12 @@ func show_reference(h, id: String) -> void:
  h.button("Back to this lesson",func(): lesson(h,id),box)
  h.button("Learn & revisit",func(): library(h),box)
  h.campaign_ui.close_button(h,box)
+
+func lesson_options(h, id: String) -> void:
+ var box: VBoxContainer=h.modal_content("Lesson help & options")
+ h.label("A grove means a group of trees. A spring is the pond your river starts from. Flow is the water sent along a channel each season. A season advances only when you tap Observe.",16,box)
+ h.button("Review all steps",func():show_reference(h,id),box)
+ h.button("All lessons & review",func():library(h),box)
+ h.button("Skip this lesson for now",func():
+  if change(h,func():return Lessons.skip(h.model)):goal(h),box)
+ h.sheets.primary(h,"Back to this lesson",func():lesson(h,id),box)

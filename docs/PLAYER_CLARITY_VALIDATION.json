@@ -1,0 +1,533 @@
+{
+  "utc": "2026-11-07T10:59:06.929963+00:00",
+  "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+  "implementation_checks_passed": true,
+  "automated_tests": {
+    "utc": "2026-11-07T10:58:20.933525+00:00",
+    "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+    "source_unchanged_during_run": true,
+    "passed": true,
+    "assertions": 2168,
+    "results": [
+      {
+        "suite": "run",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 65
+      },
+      {
+        "suite": "save_validation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 319
+      },
+      {
+        "suite": "save_io_failures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "fusion_edges",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 10
+      },
+      {
+        "suite": "input_gestures",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 11
+      },
+      {
+        "suite": "layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "presentation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "game_juice",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 40
+      },
+      {
+        "suite": "gameplay_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "services",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "screens",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 87
+      },
+      {
+        "suite": "scene_smoke",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "touch_ui",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 48
+      },
+      {
+        "suite": "mobile_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 156
+      },
+      {
+        "suite": "sheet_layout",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "draft_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 22
+      },
+      {
+        "suite": "opening_water",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 23
+      },
+      {
+        "suite": "island_environment",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 42
+      },
+      {
+        "suite": "build_flow",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 78
+      },
+      {
+        "suite": "expansion_pricing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "orbit_world",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 140
+      },
+      {
+        "suite": "painted_art",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 24
+      },
+      {
+        "suite": "painted_seams",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "expedition",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 50
+      },
+      {
+        "suite": "finale",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 17
+      },
+      {
+        "suite": "thermal_expeditions",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 25
+      },
+      {
+        "suite": "gather",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 26
+      },
+      {
+        "suite": "habitat_projects",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 27
+      },
+      {
+        "suite": "habitat_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 18
+      },
+      {
+        "suite": "layout_recovery",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 29
+      },
+      {
+        "suite": "expedition_replay",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 16
+      },
+      {
+        "suite": "restoration_chapter",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "restoration_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 86
+      },
+      {
+        "suite": "director_clarity",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 37
+      },
+      {
+        "suite": "director_depth",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 44
+      },
+      {
+        "suite": "director_ownership",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 39
+      },
+      {
+        "suite": "director_explorers",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 36
+      },
+      {
+        "suite": "living_corridors",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 53
+      },
+      {
+        "suite": "corridor_controls",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 24
+      },
+      {
+        "suite": "river_entry",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 28
+      },
+      {
+        "suite": "player_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 64
+      },
+      {
+        "suite": "journey_guidance",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 70
+      },
+      {
+        "suite": "ad_breaks",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 47
+      },
+      {
+        "suite": "ads_integration",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 21
+      },
+      {
+        "suite": "ad_exposure",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": 15
+      },
+      {
+        "suite": "automation_pacing",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "progression_simulation",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "balanced_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "primary_campaign",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      },
+      {
+        "suite": "startup",
+        "passed": true,
+        "exit_code": 0,
+        "assertions": null
+      }
+    ]
+  },
+  "python_tests": 22,
+  "fresh_touch_playthroughs": {
+    "mobile": {
+      "active_seconds": 31.0203866666664,
+      "captures": [
+        "tutorial-welcome",
+        "tutorial-point-to-tree",
+        "tutorial-water-card",
+        "tutorial-water-placed",
+        "tutorial-workbench-step",
+        "first-restoration",
+        "choose-approach",
+        "choose-spring",
+        "lesson-missing-grove-before",
+        "lesson-missing-grove-after",
+        "needs-grove",
+        "lesson-reachable-before",
+        "lesson-reachable-after",
+        "reachable-grove",
+        "visible-channel-preview",
+        "confirm-flow",
+        "flowing-river",
+        "grove-restored"
+      ],
+      "delivered_flow": 2,
+      "exact_lesson_button_tested": true,
+      "first_habitat_earned_normally": true,
+      "forest_placed_from_saved_offer_for_normal_quote": true,
+      "fresh_island": true,
+      "grove_matured": true,
+      "lesson_button_handles_both_missing_and_reachable_grove": true,
+      "missing_grove_setup_exercised": true,
+      "passed": true,
+      "real_touch_actions": 57,
+      "save_valid": true,
+      "saved_hand_unchanged_during_planning_and_observation": true,
+      "scope": "Actual rendered screen-touch run from a fresh island through ordinary tutorial, gathering/crafting, first restoration, blocked-setup recovery, spring/path/flow and grove maturity. No injected supplies or completed habitats; not a physical phone or unfamiliar-player study.",
+      "screen_size": "(320, 640)",
+      "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+      "text_scale": 1.0,
+      "visible_tutorial_and_real_targets": true
+    },
+    "desktop": {
+      "active_seconds": 33.0111599999998,
+      "captures": [
+        "tutorial-welcome",
+        "tutorial-point-to-tree",
+        "tutorial-water-card",
+        "tutorial-water-placed",
+        "tutorial-workbench-step",
+        "first-restoration",
+        "choose-approach",
+        "choose-spring",
+        "lesson-missing-grove-before",
+        "lesson-missing-grove-after",
+        "needs-grove",
+        "lesson-reachable-before",
+        "lesson-reachable-after",
+        "reachable-grove",
+        "visible-channel-preview",
+        "confirm-flow",
+        "flowing-river",
+        "grove-restored"
+      ],
+      "delivered_flow": 2,
+      "exact_lesson_button_tested": true,
+      "first_habitat_earned_normally": true,
+      "forest_placed_from_saved_offer_for_normal_quote": true,
+      "fresh_island": true,
+      "grove_matured": true,
+      "lesson_button_handles_both_missing_and_reachable_grove": true,
+      "missing_grove_setup_exercised": true,
+      "passed": true,
+      "real_touch_actions": 57,
+      "save_valid": true,
+      "saved_hand_unchanged_during_planning_and_observation": true,
+      "scope": "Actual rendered screen-touch run from a fresh island through ordinary tutorial, gathering/crafting, first restoration, blocked-setup recovery, spring/path/flow and grove maturity. No injected supplies or completed habitats; not a physical phone or unfamiliar-player study.",
+      "screen_size": "(540, 960)",
+      "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+      "text_scale": 1.0,
+      "visible_tutorial_and_real_targets": true
+    },
+    "mobile-large": {
+      "active_seconds": 36.0182726666667,
+      "captures": [
+        "tutorial-welcome",
+        "tutorial-point-to-tree",
+        "tutorial-water-card",
+        "tutorial-water-placed",
+        "tutorial-workbench-step",
+        "first-restoration",
+        "choose-approach",
+        "choose-spring",
+        "lesson-missing-grove-before",
+        "lesson-missing-grove-after",
+        "needs-grove",
+        "lesson-reachable-before",
+        "lesson-reachable-after",
+        "reachable-grove",
+        "visible-channel-preview",
+        "confirm-flow",
+        "flowing-river",
+        "grove-restored"
+      ],
+      "delivered_flow": 2,
+      "exact_lesson_button_tested": true,
+      "first_habitat_earned_normally": true,
+      "forest_placed_from_saved_offer_for_normal_quote": true,
+      "fresh_island": true,
+      "grove_matured": true,
+      "lesson_button_handles_both_missing_and_reachable_grove": true,
+      "missing_grove_setup_exercised": true,
+      "passed": true,
+      "real_touch_actions": 57,
+      "save_valid": true,
+      "saved_hand_unchanged_during_planning_and_observation": true,
+      "scope": "Actual rendered screen-touch run from a fresh island through ordinary tutorial, gathering/crafting, first restoration, blocked-setup recovery, spring/path/flow and grove maturity. No injected supplies or completed habitats; not a physical phone or unfamiliar-player study.",
+      "screen_size": "(320, 640)",
+      "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+      "text_scale": 1.2,
+      "visible_tutorial_and_real_targets": true
+    }
+  },
+  "android_phone_package": {
+    "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+    "assertions": 2168,
+    "apk_sha256": "62867e30e95006655b7840bbb13bd8df0573271683aef457cb71ee96477077eb",
+    "bytes": 102498659,
+    "abi": "arm64-v8a",
+    "retained_files_verified": 669,
+    "signature_and_alignment_verified": true,
+    "physical_device_tested": false,
+    "note": "Debug test build; identical retained game/native files to universal APK. Not store certification."
+  },
+  "android_package_audit": {
+    "apk": "builds/PocketBiome-debug.new.apk",
+    "apk_sha256": "16c4dff03b118f7ee7799a0af705207388afe42aaf8d070219c48c159ab40beb",
+    "source_sha256": "9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2",
+    "checks": {
+      "matching_passing_tests": true,
+      "package_identity": true,
+      "min_sdk_24": true,
+      "target_sdk_36": true,
+      "portrait": true,
+      "no_sensitive_capture_permissions": true,
+      "signature_verified": true,
+      "zip_16k_alignment": true,
+      "embedded_source_matches_tests": true,
+      "arm64_present": true,
+      "qa_files_excluded": true,
+      "elf_16k_load_alignment": true,
+      "embedded_ad_configuration_matches": true,
+      "native_ad_resource_binding": true
+    },
+    "elf_load_alignments": {
+      "lib/arm64-v8a/libc++_shared.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/arm64-v8a/libgodot_android.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/x86_64/libc++_shared.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "lib/x86_64/libgodot_android.so": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "preview_checks_passed": true,
+    "production_blockers": [
+      "APK is debuggable",
+      "APK uses a development signing certificate",
+      "Application version is marked preview/test",
+      "Services still use sandbox mode",
+      "Native providers still contain test advertising/product IDs",
+      "Billing is enabled with sandbox product IDs; configure real products or disable billing for an ads-only release",
+      "privacy_policy_url is not configured with an HTTPS URL",
+      "support_url is not configured with an HTTPS URL",
+      "physical_device_report has no passing evidence for the current source",
+      "play_sandbox_report has no passing evidence for the current source",
+      "creative_review_report has no passing evidence for the current source"
+    ],
+    "store_release_ready": false,
+    "note": "Static artifact/configuration audit. Evidence declarations require human review; this is not store approval or a device benchmark."
+  },
+  "update_identity": {
+    "compatible": true,
+    "previous": {
+      "package": "com.thedarkstrix.pocketbiome",
+      "version_code": 19,
+      "version_name": "0.21.5-preview",
+      "cert_sha256": "c624f680df74e7edd9e7a2e83495d5405e1b4cde328f55967bc43c39848029a9"
+    },
+    "new": {
+      "package": "com.thedarkstrix.pocketbiome",
+      "version_code": 20,
+      "version_name": "0.21.6-preview",
+      "cert_sha256": "c624f680df74e7edd9e7a2e83495d5405e1b4cde328f55967bc43c39848029a9"
+    },
+    "new_version_code": 20,
+    "physical_install_tested": false
+  },
+  "physical_device_tested": false,
+  "unfamiliar_player_tested": false,
+  "scope": "Explicit opening tutorial to first restoration, optional river lesson to visible flowing channel and grove maturity. Later campaign and river stages have separate model/control/campaign suites; comprehension/enjoyment is not established by automation."
+}

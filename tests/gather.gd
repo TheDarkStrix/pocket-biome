@@ -37,7 +37,7 @@ func run() -> void:
  h.model.state.settings.tutorial_seen = true
  h.refresh(); h.start_play(); h.modal.hide()
  check(not h.gather_button.visible,"the first individual harvest remains the introductory action")
- h.model.harvest("0,0"); h.refresh()
+ h.model.harvest("0,0"); h.model.state.learning={"dismissed":true}; h.refresh()
  check(h.gather_button.visible and h.gather_button.text.ends_with("2") and h.draft_button.disabled,"gather has its own labelled control without changing draft semantics")
  var coins: int = h.model.state.coins
  for frame in range(4): await process_frame

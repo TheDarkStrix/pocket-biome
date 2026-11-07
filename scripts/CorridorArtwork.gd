@@ -33,8 +33,6 @@ static func draw(h) -> void:
      var progress := fposmod(clock*0.55+drop*0.45,points.size()-1)
      var index := mini(int(progress),points.size()-2)
      h.draw_circle(points[index].lerp(points[index+1],fmod(progress,1.0)),3*h.zoom_level,Color("e1f4df"))
-   var tip: Vector2 = points[-1]+Vector2(0,-18)*h.zoom_level
-   if not h.photo_mode:h.draw_string(ThemeDB.fallback_font,tip-Vector2(9,0),"%d flow" % int(flow[role]),HORIZONTAL_ALIGNMENT_LEFT,-1,h.scaled_font(12),colour)
   var garden: String = River.end_of(h.model,"garden")
   var grove: String = River.end_of(h.model,"grove")
   if int(s.growth.grove) >= 2 and grove != "":
@@ -73,8 +71,6 @@ static func draw(h) -> void:
  if not h.photo_mode and River.tile(h.model,source).get("type","")=="water":
   var at:=ground(h,source)
   h.draw_arc(at,maxf(10,12*h.zoom_level),0,TAU,32,Color("a5e5f0"),2*h.zoom_level,true)
-  h.draw_string_outline(ThemeDB.fallback_font,at+Vector2(-19,-18)*h.zoom_level,"Spring",HORIZONTAL_ALIGNMENT_LEFT,-1,h.scaled_font(12),3,Color("173f45"))
-  h.draw_string(ThemeDB.fallback_font,at+Vector2(-19,-18)*h.zoom_level,"Spring",HORIZONTAL_ALIGNMENT_LEFT,-1,h.scaled_font(12),Color("e4fbff"))
  if h.corridor_ui.active():
   for cell in h.model.state.tiles:
    if h.model.state.tiles[cell].has("owner"):continue
@@ -92,3 +88,5 @@ static func draw(h) -> void:
   channel(h,points,true,true)
   for at in points:h.draw_circle(at,4*h.zoom_level,Color("f3dda1"))
   if h.corridor_ui.invalid_cell!="" and h.model.state.tiles.has(h.corridor_ui.invalid_cell):h.draw_plot_outline(h.screen(h.model.coord(h.corridor_ui.invalid_cell)),h.zoom_level,Color("f29f86"),3*h.zoom_level)
+
+ h.river_labels.draw(h)

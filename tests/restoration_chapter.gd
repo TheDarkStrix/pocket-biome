@@ -35,7 +35,7 @@ func run() -> void:
  h.refresh(); h.modal.hide()
  var before := JSON.stringify(h.model.state)
  h.open_ideas()
- check(h.modal_title.text == "Your next step" and find_button(h.modal_box,"Show the Oak") != null,"first teaching step offers one concrete harvest action")
+ check(h.modal_title.text == "Tutorial · 1 of 6" and find_button(h.modal_box,"Show the Oak") != null,"first teaching step offers one concrete harvest action")
  check(find_button(h.modal_box,"Explore other ideas") != null,"teaching remains optional rather than locking exploration")
  check(JSON.stringify(h.model.state) == before,"opening the teaching step cannot harvest or grant progress")
  h.modal.hide(); h.model.harvest("0,0"); h.refresh(); h.open_ideas()

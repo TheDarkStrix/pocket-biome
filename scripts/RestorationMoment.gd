@@ -15,7 +15,11 @@ func show(h, id: String) -> void:
   h.sheets.caption(h,"Chapter complete · "+h.model.config.chapters[h.services.chapter_result-1].name,box)
   h.services.chapter_result = 0
  h.ad_break_ui.caption(h,box)
- if id == "shaded_pond": h.sheets.primary(h,"Plan your Living River",func(): h.ad_break_ui.leave(h,"habitat",func(): h.corridor_ui.show(h)),box)
+ if id == "shaded_pond" and h.model.state.get("learning",{}).get("completed",false):h.label("Tutorial complete! You can now follow chapter goals or build your own island. River lessons are optional help.",17,box)
+ if id == "shaded_pond":
+  h.sheets.primary(h,"Enjoy my island",func():h.ad_break_ui.leave(h,"habitat"),box)
+  h.button("Learn to make a river",func():h.ad_break_ui.leave(h,"habitat",func():h.journey_ui.start(h,"river")),box)
+  return
  if id == "living_workshop":
   h.sheets.primary(h,"Try landscape movement",func(): h.ad_break_ui.leave(h,"habitat",func(): h.layout_ui.begin(h,h.selected)),box)
  else: h.sheets.primary(h,"Try your earned care tools",func(): h.ad_break_ui.leave(h,"habitat",func(): h.care_ui.show_tools(h)),box)

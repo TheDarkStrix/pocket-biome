@@ -149,8 +149,10 @@ func run() -> void:
  check(Learn.current(learner).action == "inspect","placement leads to observing live conditions")
  for second in range(4): learner.tick(1)
  Learn.mark(learner,"inspected")
- check(Learn.current(learner).action == "workbench","discovery and observation lead to a useful building")
- learner.state.inventory.wood = 4; learner.state.inventory.stone = 2; learner.craft("workbench")
+ check(Learn.current(learner).action == "resource","discovery and observation explain the missing building materials first")
+ learner.state.inventory.wood = 4; learner.state.inventory.stone = 2
+ check(Learn.current(learner).action == "workbench","enough real materials expose the building action")
+ learner.craft("workbench")
  check(Learn.current(learner).action == "projects","an unfinished craft leads to its real queue")
  learner.tick(4)
  check(Learn.current(learner).action == "blueprint","a finished craft leads to placement")
