@@ -1,19 +1,17 @@
-# Pocket Biome — 0.21.6 clearer tutorial and river labels
+# Pocket Biome — 0.21.7 centered biome chooser
 
 [Download the current APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk)
 
 Android 7.0+ / ARM64. About 98 MiB. Development preview with Google test ad IDs.
 
-The opening now explicitly says **Tutorial**, shows six milestones with a persistent instruction card, and points to real island targets or outlines the relevant card controls. Advanced dock choices appear gradually. You still perform the real harvesting, gathering, purchases and crafting. Help lets you leave guidance without faking completion or losing progress. First-habitat celebration marks the tutorial's ending and offers ordinary play or an optional river lesson.
+**Choose your next biome** now centers over the entire three-card hand. The right-side Close target has balanced space on the left, so it no longer pulls the heading left. Long headings wrap centrally at enlarged text. The island preview fits above the text using its actual ready/harvested painted appearance. Earlier tutorial, river, saved-card recovery and painted-land fixes remain included.
 
-Optional lessons identify themselves and place extra options behind a secondary help menu. **Choose a tree for the river** replaces unexplained tracing jargon, and normal river review presents one next action. Extra allocation, editing and reference controls remain under **River tools & help**. Spring and delivered-water names sit in a consistent strip below the objective, with matching numbered plot markers instead of text floating over trees. Instructional labels are omitted from photos. Earlier saved-card river entry and painted-land fixes remain included.
+Install over the recent signed build; do not uninstall first. Version code increases 20 → 21 with the previous package/certificate. Static update compatibility is verified; actual phone installation/save acceptance remains pending. A much older restored-paint APK used a different key: keep it installed if Android rejects the update and its island matters, because uninstalling deletes local progress.
 
-Existing islands keep their progress. The tutorial appears on new or unfinished starts, rather than restarting completed teaching. Install over the recent signed build; do not uninstall first. Version code increases 19 → 20 with the previous package and certificate. Static compatibility is verified; physical installation/save acceptance remains pending. A much older restored-paint APK used a different key: keep it installed if Android rejects an update and its island matters, because uninstalling deletes local progress.
+Runtime commit: `dcc7c9c20fa30be5eabf25b62e3c4424d35131a0`.
+Tested source SHA-256: `0628e63b0afc1d6b0ed0a3c792b5e4a7f03ae55e17bfbea321b2548ae0186139`.
+APK SHA-256: `283c8c2ff171428545c9a23606cbd1cf8d16bda6d8610ae9303d9ca0585fb0d4`.
 
-Runtime commit: `5b7202fa380276447ef7d92e7c83478baea4d561`.
-Tested source SHA-256: `9a2aea32936892ad7fb8998c82bc2fa83b39bc73cafd4b00a9e58aac8c8255a2`.
-APK SHA-256: `62867e30e95006655b7840bbb13bd8df0573271683aef457cb71ee96477077eb`.
+The unchanged source passes 2,174 assertions in 46 Godot suites, 22 Python tests, startup and four campaign probes. Six actual rendered layout cases cover 320×640, 360×780 and 540×960 at 100%/120% text. Heading-center error is zero logical pixels; the Close target does not overlap. Twelve real screen touches close and resume the prepared draft while keeping the exact cards, destination, quote and wallet. This focused fixture review is not a fresh full-game UI playthrough or physical-phone test. Signature, 16 KB alignment, source binding and all 669 retained ARM64-package files pass.
 
-The unchanged source passes 2,168 assertions in 46 Godot suites, 22 Python tests, startup and four campaign probes. Three fresh-save rendered touch runs (540×960, 320×640 and 320×640 with 120% text; 57 touches each) reach tutorial completion, then buy an actual offered Forest, save a flowing river and mature its grove while retaining saved land cards. These walkthroughs stop at grove maturity; separate suites cover later stages. Source binding, signatures, 16 KB alignment and all 669 retained ARM64-package files pass.
-
-Actual screenshots, walkthrough and exact reports: [source audit](https://github.com/TheDarkStrix/pocket-biome/blob/5b7202fa380276447ef7d92e7c83478baea4d561/docs/PLAYER_CLARITY_AUDIT.md). Automation does not establish newcomer comprehension/enjoyment, physical-phone performance or native provider acceptance. Later feature menus have not all been rewritten. Test ads do not earn live revenue; store qualification remains open.
+[Screenshots, exact reports and limits](https://github.com/TheDarkStrix/pocket-biome/blob/dcc7c9c20fa30be5eabf25b62e3c4424d35131a0/docs/DRAFT_TITLE_AUDIT.md). Other screen-clarity, newcomer, physical-device and commercial release requirements remain open. Test ads do not earn live revenue.
