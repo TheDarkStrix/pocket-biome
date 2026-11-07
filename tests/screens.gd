@@ -45,10 +45,11 @@ func run() -> void:
  var world_actions: GridContainer
  for child in h.modal_box.get_children():
   if child is GridContainer: world_actions = child
- check(world_actions != null and world_actions.get_child_count() == 4,"world hub provides inspect, center, fusion and photo actions")
+ check(world_actions != null and world_actions.get_child_count() == 4,"world hub groups care, arranging, camera and adventures")
  if world_actions != null:
   for action in world_actions.get_children():
-   if action.text == "Fuse sanctuary": action.pressed.emit(); break
+   if action.get_meta("menu_route","")=="edit":action.pressed.emit();break
+ named_button(h.modal_box,"Combine four matching plots").pressed.emit()
  check(h.modal_title.text.contains("sanctuary"),"fusion remains reachable from the redesigned world hub")
  h.services_ui()
  check(h.modal.visible,"offline services fallback usable")

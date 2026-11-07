@@ -15,7 +15,7 @@ func configure(h) -> void:
  add_theme_constant_override("separation",8)
  var tabs := HBoxContainer.new(); tabs.add_theme_constant_override("separation",4); add_child(tabs)
  for family in ["Land","Structures","Craft"]:
-  var tab: Button = h.sheets.tab(h,family,h.campaign_ui.build_family == family,func():
+  var tab: Button = h.sheets.tab(h,"Materials" if family=="Craft" else family,h.campaign_ui.build_family == family,func():
    h.campaign_ui.build_family = family; h.campaign_ui.build_choice = ""; h.campaign_ui.workshop(h),tabs)
   tab.custom_minimum_size.x = 0; tab.set_meta("build_family",family)
   tab.add_theme_font_size_override("font_size",h.scaled_font(13))
@@ -59,7 +59,7 @@ func configure(h) -> void:
   buttons[recipe.id] = action
  selection = VBoxContainer.new(); selection.add_theme_constant_override("separation",6); add_child(selection)
  jobs = h.label("",12,self); jobs.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; jobs.hide()
- projects = h.button("Projects & blueprints",func(): h.campaign_ui.workshop_details(h),self)
+ projects = h.button("Crafting queue & ready items",func(): h.campaign_ui.project_queue(h),self)
  projects.custom_minimum_size.y = h.touch_height()
  for state in ["normal","hover","pressed"]: projects.add_theme_stylebox_override(state,Palette.quiet())
  projects.add_theme_font_size_override("font_size",h.scaled_font(12))
@@ -116,8 +116,10 @@ func update_selection() -> void:
  var place_block := ""
  if ready > 0:
   if not host.model.state.pending.is_empty(): place_block = "Finish your saved land draft before placing"
-  elif host.available_meadows().is_empty(): place_block = "Restore a plot to Meadow in Pack → World"
- var action: Button = host.sheets.primary(host,"PLACE" if ready > 0 else "CRAFT",func():
+  elif host.available_meadows().is_empty(): place_block = "Make room in Pack → Island tools → Arrange island"
+ var action_name: String=("Place " if ready>0 else "Make ")+str(recipe.get("tile",recipe.id)).capitalize()
+ if ready<1 and quantity>1:action_name+=" × %d" % quantity
+ var action: Button = host.sheets.primary(host,action_name,func():
   if ready > 0:
    host.placement_blueprint = recipe.tile
    host.model.message = "Tap an empty Grass tile to place "+recipe.tile.capitalize()+"."
@@ -154,5 +156,5 @@ func update_live() -> void:
  var ready := 0
  for amount in host.model.state.blueprints.values(): ready += amount
  projects.visible = not host.model.state.jobs.is_empty() or ready > 0
- projects.text = "Projects · %d/3 working" % host.model.state.jobs.size()+(" · %d ready" % ready if ready > 0 else "")
+ projects.text = "Queue · %d/3 working" % host.model.state.jobs.size()+(" · %d ready" % ready if ready > 0 else "")
  projects.tooltip_text = jobs.text+" · Tap for queues, batches and blueprints"

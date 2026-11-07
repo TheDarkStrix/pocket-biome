@@ -1,0 +1,19 @@
+extends SceneTree
+func _init() -> void:call_deferred("run")
+func run() -> void:
+ var captures:=[]
+ for display in [{"size":Vector2i(320,640),"dp":1.6875,"scale":1.2},{"size":Vector2i(540,960),"dp":1.0,"scale":1.0}]:
+  root.size=display.size
+  var h=preload("res://tests/fixtures/MobileMain.gd").new();h.display_dp=display.dp;h.show_menu_on_launch=false;h.store.path="user://menu-fixture-%d.json" % Time.get_ticks_usec();root.add_child(h);await process_frame;h.set_process(false)
+  h.model=preload("res://scripts/WorldModel.gd").new();h.services.model=h.model;h.model.state.learning={"dismissed":true};h.model.state.text_scale=display.scale;h.model.add_tile(Vector2i(1,1),"workbench");h.model.add_tile(Vector2i(2,1),"water");h.model.state.expansions=1;h.model.state.habitat_projects=["shaded_pond"];h.selected="1,1";h.apply_settings();h.start_play();h.refresh()
+  for section in ["care","edit","queue-blocked"]:
+   if section=="queue-blocked":h.model.state.blueprints.windmill=1;h.model.begin_draft("2,0");h.campaign_ui.project_queue(h)
+   else:h.campaign_ui.world(h,section)
+   h.guidance_ui.layout(h);h.river_labels.layout(h)
+   for frame in range(8):await process_frame
+   h.apply_layout();await process_frame;await RenderingServer.frame_post_draw
+   var name: String="fixture-%d-%s.png" % [display.size.x,section]
+   root.get_texture().get_image().save_png("/workspace/runtime/menu-clarity-review/"+name);captures.append(name)
+  h.queue_free();h=null;await process_frame
+ var report={"source_sha256":JSON.parse_string(FileAccess.get_file_as_string("res://data/build_info.json")).source_sha256,"fixture_based":true,"captures":captures,"physical_device_tested":false}
+ var f=FileAccess.open("/workspace/runtime/menu-clarity-review/fixtures.json",FileAccess.WRITE);f.store_string(JSON.stringify(report,"  "));f.close();print(JSON.stringify(report));quit(0)

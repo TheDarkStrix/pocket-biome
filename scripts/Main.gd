@@ -315,7 +315,8 @@ func conditions_help() -> void:
  button("Back to island",func(): modal.hide(),box)
 
 func pulse_selector() -> void:
- var box := modal_content("World Pulse")
+ var box := modal_content("Weather tools · Pulse")
+ sheets.caption(self,"Pulse means changing the weather around a plot. Choose Rain, Heat or Frost, then tap the island to preview the area. Confirm before energy is spent; Cancel keeps it.",box)
  sheets.energy(self,box)
  var descriptions := {"rain":"Refresh the center tile and its four neighbors.","heat":"Warm the same cross and clear Dusk frost.","frost":"Cool the cross and invite frozen discoveries."}
  for power in ["rain","heat","frost"]:
@@ -532,12 +533,12 @@ func choose_idea(idea: Dictionary) -> void:
   "workshop": campaign_ui.workshop(self)
   "workbench":
    campaign_ui.build_choice = "workbench"; campaign_ui.build_family = "Structures"; campaign_ui.workshop(self)
-  "projects": campaign_ui.workshop_details(self)
+  "projects": campaign_ui.project_queue(self)
   "care": care_ui.show_tools(self)
   "corridors": corridor_ui.show(self)
   "world":
    if idea.has("target") and model.origin(idea.target) != "": selected = model.origin(idea.target)
-   refresh(); campaign_ui.world(self)
+   refresh(); campaign_ui.world(self,"edit")
   "pulse": pulse_selector()
   "journal": campaign_ui.journal(self)
   "blueprint":
@@ -569,7 +570,7 @@ func fusion_dialog() -> void:
   var footprint: Array[String] = option.cells
   button("Show this group",func():
    fusion_preview = footprint.duplicate(); selected = origin if model.origin(origin) != "" else selected
-   modal.hide(); model.message = "Highlighted diamond: four matching tiles. Pack → World → Fuse sanctuary to combine."
+   modal.hide(); model.message = "Highlighted diamond: four matching tiles. Pack → Island tools → Arrange island to combine."
    refresh(),content)
   var confirm := button("Fuse into "+option.recipe.name,func():
    if model.fuse(origin):
@@ -584,7 +585,7 @@ func fusion_dialog() -> void:
  button("Back to island",func(): modal.hide(),box)
 
 func gather_ready() -> void:
- if corridor_ui.active() or layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen != "pack"): return
+ if corridor_ui.active() or layout_ui.source != "" or launch_menu or photo_mode or targeting != "" or placement_blueprint != "" or (modal.visible and modal_screen not in ["pack","inventory"]): return
  var result: Dictionary = model.harvest_ready()
  for key in result.nodes:
   var output: Dictionary = model.production(model.state.tiles[key])

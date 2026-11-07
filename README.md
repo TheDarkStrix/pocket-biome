@@ -6,7 +6,7 @@ Godot **4.6.3**, portrait Android-first, offline environmental discovery game. T
 
 [Download the current ARM64 test APK](https://github.com/TheDarkStrix/pocket-biome/raw/refs/heads/android-test-build/PocketBiome-Android-test.apk). Android 7.0+; about 98 MiB, development preview with Google test ad IDs. [Download details and checksum](https://github.com/TheDarkStrix/pocket-biome/tree/android-test-build).
 
-Current update: **0.21.7-preview** centers “Choose your next biome” across the entire card hand, separates its Close target and keeps the island preview clear of the heading. Version code increases to 21 with the current signing key. [Rendered layout and input proof](docs/DRAFT_TITLE_AUDIT.md). The [0.21.6 tutorial, simpler river guidance and numbered labels](docs/PLAYER_CLARITY_AUDIT.md), saved-card recovery and painted-land fixes remain included.
+Current update: **0.21.8-preview** groups Pack and island tools by purpose, gives working/finished crafting its own queue, names Make/Place actions and explains weather tools. Version code increases to 22 with the current signing key. [Actual input walkthrough, screenshots and limits](docs/MENU_CLARITY_AUDIT.md). The [centered biome heading](docs/DRAFT_TITLE_AUDIT.md), [tutorial and river guidance](docs/PLAYER_CLARITY_AUDIT.md), saved-card recovery and painted-land fixes remain included.
 
 [Full conversation request review](docs/USER_REQUEST_REVIEW.md) maps gameplay, teaching, visual, testing, monetization and release requests to implemented work and unfinished acceptance. The complete screen-clarity pass, continuous UI playthrough to the ending and physical/newcomer/live-provider qualification remain open.
 
@@ -31,7 +31,7 @@ Latest visual feedback pass: [animation inventory](docs/ANIMATION_STATUS.md) and
 
 Latest monetization delivery: [Automatic ads and live setup](docs/AD_MONETIZATION.md) and [audit/evidence](docs/MONETIZATION_AUDIT.md). Six saved-result placements include completed replay/mastery attempts, with configurable timing, persistent frequency controls and placement-level SDK measurements. The current preview still uses test units and earns no live revenue.
 
-Gameplay delivery: [Advanced lessons and chapter guidance](docs/PLAYER_JOURNEY.md), [audit/evidence](docs/JOURNEY_AUDIT.md), and [Android acceptance](docs/ANDROID_ACCEPTANCE.md). Tap the goal for a live checklist, learn four advanced systems on your island, and use material help to find the next real action. Lessons can be skipped and revisited from Pack.
+Gameplay delivery: [Advanced lessons and chapter guidance](docs/PLAYER_JOURNEY.md), [audit/evidence](docs/JOURNEY_AUDIT.md), and [Android acceptance](docs/ANDROID_ACCEPTANCE.md). Tap the goal for a live checklist, learn four advanced systems on your island, and use material help to find the next real action. Lessons can be skipped and revisited through the goal’s **Learn & revisit** menu; Pack’s **Continue my current goal** leads there too.
 
 Earlier signature chapter: [The Living River](docs/LIVING_CORRIDORS.md) and [its repeated audit](docs/CORRIDOR_AUDIT.md). After the first spring, route limited Water to a remote grove, guide pollinators to a garden and restore a dormant corner. Choose wetland or woodland, preview/confirm routes on the island, respond to a dry spell and earn the Living Heart. Optional local portraits export as a PNG strip or animated GIF.
 
@@ -41,7 +41,7 @@ Earlier foundation: [Three director passes](docs/DIRECTOR_DELIVERY.md) and [audi
 
 The five chapters now connect discovery and building to distinct restoration accomplishments. During the opening, tap the objective for one relevant action: harvest, compare Water, observe growth, craft and place a Workbench, then welcome wildlife. Guidance can be dismissed; automatic ad/consent preparation and interstitials wait while it is active.
 
-Select a structure, then open **World → Move selected structure** to preview an empty Meadow and confirm a free move that keeps upgrades and production timing. Restoring the Sheltered Workshop also unlocks movement of unprotected single-cell natural tiles. Select a sanctuary for **World → Dismantle sanctuary** to recover its four plots while keeping discoveries. See [Layout recovery](docs/LAYOUT_RECOVERY.md).
+Select a structure, then open **Pack → Island tools → Arrange island → Move selected structure** to preview an empty Meadow and confirm a free move that keeps upgrades and production timing. Restoring the Sheltered Workshop also unlocks movement of unprotected single-cell natural tiles. Select a sanctuary for **Pack → Island tools → Arrange island → Dismantle sanctuary** to recover its four plots while keeping discoveries. See [Layout recovery](docs/LAYOUT_RECOVERY.md).
 
 During the tutorial, follow the pointed resource tiles or **Collect ready materials**. After finishing or leaving guidance, **Gather ready** collects available resources together. Cooldowns, storage limits and per-node rewards still apply; individual tile harvesting remains available.
 

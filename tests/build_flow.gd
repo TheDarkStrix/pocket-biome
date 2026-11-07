@@ -81,7 +81,7 @@ func run() -> void:
  check(h.store.load_state().jobs.size() == 1 and h.model.state.coins == old.coins,"Build persists the real queue without inventing a coin fee")
  h.model.tick(5); h.refresh(); await settle(h)
  tray = h.campaign_ui.build_tray
- check(h.model.state.jobs.is_empty() and h.model.state.blueprints.get("workbench",0) == 1 and confirm(tray).text == "PLACE","normal crafting completion changes the selected object into a placement action without reopening")
+ check(h.model.state.jobs.is_empty() and h.model.state.blueprints.get("workbench",0) == 1 and confirm(tray).text == "Place Workbench","normal crafting completion changes the selected object into a placement action without reopening")
  var unchanged: String = JSON.stringify(h.model.state)
  var ghost: Dictionary = h.build_preview()
  check(ghost.get("type","") == "workbench" and ghost.get("key","") in h.available_meadows() and JSON.stringify(h.model.state) == unchanged,"selected object previews only on an eligible Meadow without placing or reserving it")
@@ -119,14 +119,14 @@ func run() -> void:
  h.model.state.blueprints.windmill = 1
  for key in h.available_meadows(): h.model.state.tiles[key].evolution = "meadow"
  h.refresh(); await settle(h)
- check(confirm(tray).disabled and confirm(tray).tooltip_text.contains("Restore a plot") and h.build_preview().is_empty(),"a full island explains placement restoration and suppresses a misleading ghost")
+ check(confirm(tray).disabled and confirm(tray).tooltip_text.contains("Arrange island") and h.build_preview().is_empty(),"a full island explains placement restoration and suppresses a misleading ghost")
  h.modal.hide(); h.campaign_ui.pack(h); await settle(h)
  var destinations := []
  for child in h.modal_box.get_children():
   if child is GridContainer:
    for item in child.get_children():
-    if item is Button: destinations.append(item.tooltip_text)
- check(destinations == ["Journal","World","Projects","Trade"],"Pack retains discovery, fusion/rotation/photo, all project queues and trading routes")
+    if item is Button: destinations.append(item.get_meta("menu_route",""))
+ check(destinations.size()==4 and destinations.has("discoveries") and destinations.has("world") and destinations.has("queue") and destinations.has("inventory"),"Pack retains discovery, fusion/rotation/photo, all project queues and trading routes")
  h.queue_free(); await process_frame
  # Every sprite family clips safely at the common terrain plane, including fusions/depletion.
  var art = preload("res://scripts/TileArtwork.gd")

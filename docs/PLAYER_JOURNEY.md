@@ -1,10 +1,12 @@
 # A clear journey from first harvest to thriving sanctuary
 
+Current navigation (0.21.8): **Crafting queue** shows jobs and finished items, with the full recipe/batch catalogue as a secondary option. Habitat, river and care tools are grouped under **Pack → Island tools → Plants & wildlife**. Weather is explained in **Weather tools · Pulse**. Current input and layout evidence: [menu audit](MENU_CLARITY_AUDIT.md).
+
 The first-session walkthrough still teaches harvest → Water neighbor → discovery/inspection → Workbench → returning spring. After that, tapping the goal opens a live chapter checklist. Every requirement explains its purpose, shows current/required progress, and provides a relevant next action. A saved land hand retains its offers and priority; guidance never spends materials or advances clocks on the player's behalf.
 
 ## Advanced lessons
 
-**Goal → Learn** offers a relevant unlocked lesson. **Pack → Learn & revisit** keeps all four lessons available. Skipping is saved and removes the automatic recommendation; the lesson can be started again. Completed lessons retain their full instructions without adding another reward, changing the active lesson or replaying completion progress.
+**Goal → Learn** offers a relevant unlocked lesson. **Goal → Learn & revisit** keeps all four lessons available; Pack’s **Continue my current goal** leads to this guidance. Skipping is saved and removes the automatic recommendation; the lesson can be started again. Completed lessons retain their full instructions without adding another reward, changing the active lesson or replaying completion progress.
 
 | Lesson | Unlock | Progress follows |
 |---|---|---|

@@ -94,16 +94,16 @@ func run() -> void:
  for panel in h.modal_box.get_children():
   if panel is GridContainer:
    for action in panel.get_children():
-    if action is Button and action.tooltip_text == "Journal": journal = action
+    if action is Button and action.get_meta("menu_route","") == "discoveries": journal = action
  await process_frame
  await click(journal.get_global_rect().get_center())
- check(h.modal.visible and h.modal_title.text.begins_with("Field Journal"),"Pack retains Journal through its actual illustrated action")
+ check(h.modal.visible and h.modal_title.text.begins_with("Discoveries"),"Pack retains Journal through its actual illustrated action")
  var close: Button = h.modal_title.get_parent().get_child(1)
  await process_frame
  await click(close.get_global_rect().get_center())
  check(not h.modal.visible and not h.modal_scrim.visible,"modal close touch removes both sheet and scrim")
  await click(h.pulse_button.get_global_rect().get_center())
- check(h.modal.visible and h.modal_title.text == "World Pulse","single HUD Pulse control opens all powers through touch")
+ check(h.modal.visible and h.modal_title.text == "Weather tools · Pulse","single HUD Pulse control opens all powers through touch")
  check(is_instance_valid(h.rain_button) and is_instance_valid(h.heat_button),"power selector exposes actual playable Rain and Heat controls")
  h.modal.hide()
  await click(h.ecology_monitor.get_global_rect().get_center())
@@ -163,12 +163,16 @@ func run() -> void:
  h.campaign_ui.world(h)
  await process_frame
  await process_frame
+ for action in h.modal_box.find_children("*","Button",true,false):
+  if action.get_meta("menu_route","")=="view":
+   h.modal_scroll.ensure_control_visible(action);await process_frame;await click(action.get_global_rect().get_center());break
+ await process_frame
  var rotate_right: Button
  for row in h.modal_box.get_children():
   if row is HBoxContainer:
    for child in row.get_children():
     if child is Button and child.text == "Rotate right": rotate_right = child
- check(rotate_right != null,"World exposes an explicit rotate action")
+ check(rotate_right != null,"Camera & photos exposes an explicit rotate action")
  if rotate_right != null:
   await click(rotate_right.get_global_rect().get_center())
   check(h.view_turn == 1 and not h.modal.visible,"native-style touch rotates and returns to the island")

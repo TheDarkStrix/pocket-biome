@@ -4,6 +4,10 @@ var build_family := "Structures"
 var build_choice := "workbench"
 var build_tray: Control
 var pack_signature := ""
+var queue_signature := ""
+var queue_labels := {}
+var edit_feedback := ""
+var edit_signature := ""
 var workshop_filter := "All"
 var craft_catalog: GridContainer
 var codex_filter := "All"
@@ -16,7 +20,7 @@ const Thumbnail = preload("res://scripts/TileThumbnail.gd")
 func close_button(h, box: VBoxContainer) -> void:
  h.button("Back" if h.launch_menu else "Back to island",func(): h.modal.hide(); h.refresh(); h.check_transition_ad(),box)
 func journal(h) -> void:
- var box: VBoxContainer = h.modal_content("Field Journal · %d / 20" % h.model.state.discoveries.size())
+ var box: VBoxContainer = h.modal_content("Discoveries · %d / 20" % h.model.state.discoveries.size())
  var chapter: Dictionary = h.model.campaign.chapter_definition(h.model)
  h.label("CHAPTER %d · %s" % [h.model.state.chapter,chapter.name],17,box)
  h.label(h.model.campaign.chapter_progress(h.model).split("\n")[-1],15,box)
@@ -48,6 +52,7 @@ func journal(h) -> void:
   icon.silhouette = not h.model.state.discoveries.has(recipe.id)
   h.label(recipe.rarity.capitalize(),13,content)
   h.button(("✓ " if not icon.silhouette else "? ")+recipe.name,func(): detail(h,recipe.id),content)
+ h.button("Back to Pack",func():pack(h),box)
  close_button(h,box)
 
 func detail(h, id: String) -> void:
@@ -78,7 +83,7 @@ func detail(h, id: String) -> void:
  h.sheets.caption(h,"FIRST DISCOVERY REWARDS",box)
  h.sheets.chips(h,box,{"coins":recipe.reward,"star_dew":1})
  h.sheets.caption(h,"Plus up to 100 Pulse energy.",box)
- h.button("Back to Codex",func(): journal(h),box)
+ h.button("Back to discoveries",func(): journal(h),box)
  close_button(h,box)
 
 func workshop(h) -> void:
@@ -96,9 +101,18 @@ func workshop(h) -> void:
  h.call_deferred("apply_layout")
 
 func pack(h) -> void:
- var box: VBoxContainer = h.modal_content("Your Pack")
- h.modal_screen = "pack"
- var gather: Button = h.sheets.primary(h,"Gather ready resources · %d" % h.model.ready_harvests().size(),func(): h.gather_ready(); pack(h),box)
+ var box: VBoxContainer=h.modal_content("Your Pack");h.modal_screen="pack"
+ h.sheets.caption(h,"Choose what you want to do. Materials are what you collect; finished items are ready to place on your island.",box)
+ h.sheets.primary(h,"Continue my current goal",func():h.open_ideas(),box)
+ var tools:=GridContainer.new();tools.columns=2;tools.add_theme_constant_override("h_separation",8);tools.add_theme_constant_override("v_separation",8);box.add_child(tools)
+ for entry in [{"title":"Materials & trade","detail":"Your stock and ways to earn Coins","icon":"pack","route":"inventory","run":func():inventory(h)},{"title":"Discoveries","detail":"What you found and free clues","icon":"codex","route":"discoveries","run":func():journal(h)},{"title":"Crafting queue","detail":"Work in progress and ready items","icon":"craft","route":"queue","run":func():project_queue(h)},{"title":"Island tools","detail":"Care, arrange, explore and take photos","icon":"world","route":"world","run":func():world(h)}]:
+  var action: Button=h.sheets.tool_card(h,entry.title,entry.detail,entry.icon,entry.run,tools);action.tooltip_text=entry.detail;action.set_meta("menu_route",entry.route)
+ close_button(h,box)
+
+func inventory(h) -> void:
+ var box: VBoxContainer=h.modal_content("Materials & trade");h.modal_screen="inventory"
+ h.sheets.caption(h,"Collect materials from ready trees and rocks. Use them to make things, or sell spare stock for Coins. Nothing is sold until you choose a trade.",box)
+ var gather: Button = h.sheets.primary(h,"Gather ready resources · %d" % h.model.ready_harvests().size(),func(): h.gather_ready(),box)
  gather.disabled = h.model.state.harvests == 0 or h.model.ready_harvests().is_empty()
  gather.tooltip_text = "Collect ready nodes once; cooldowns and storage limits still apply."
  pack_signature = JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints,h.model.ready_harvests().size(),h.model.state.harvests])
@@ -109,13 +123,36 @@ func pack(h) -> void:
   var amount: int = h.model.state.coins if id == "coins" else h.model.state.inventory[id]
   var count: Label = h.label(str(amount),16,item); count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
   var name: Label = h.sheets.caption(h,"Dew" if id == "star_dew" else id.capitalize(),item); name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var tools := GridContainer.new(); tools.columns = 2; tools.add_theme_constant_override("h_separation",8); tools.add_theme_constant_override("v_separation",8); box.add_child(tools)
- for entry in [{"title":"Journal","icon":"codex","detail":"Discoveries & free clues","run":func(): journal(h)}, {"title":"World","icon":"world","detail":"Fusion, rotate & photo","run":func(): world(h)}, {"title":"Projects","icon":"craft","detail":"Queues & blueprints","run":func(): workshop_details(h)}, {"title":"Trade","icon":"coins","detail":"Materials into Coins","run":func(): trade(h)}]:
-  h.sheets.tool_card(h,entry.title,entry.detail,entry.icon,entry.run,tools)
- h.button("My chapter objectives",func(): h.journey_ui.goal(h),box)
- h.button("Learn & revisit",func(): h.journey_ui.library(h),box)
- h.sheets.primary(h,"Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
- h.sheets.primary(h,"Expeditions · restore another island",func(): h.expedition_ui.overview(h),box)
+ h.button("Trade spare materials for Coins",func():trade(h),box)
+ h.button("Back to Pack",func():pack(h),box)
+ close_button(h,box)
+
+func project_queue(h) -> void:
+ var box: VBoxContainer=h.modal_content("Crafting queue");h.modal_screen="project_queue";queue_labels.clear()
+ h.sheets.caption(h,"Making a building creates a finished item. When it is ready, place it on an empty grassy plot. Materials are paid once when making starts.",box)
+ queue_signature=JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.pending,h.available_meadows()])
+ if h.model.state.jobs.is_empty():h.label("Nothing is being made right now.",17,box)
+ for job in h.model.state.jobs:
+  var row:=HBoxContainer.new();box.add_child(row)
+  var name: Label=h.label(str(job.recipe).capitalize(),17,row);name.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+  queue_labels[job.id]=h.label("%ds left" % ceili(maxf(0,job.until-h.model.state.time)),15,row)
+ var ready:=0
+ for type in h.model.state.blueprints:
+  var amount: int=h.model.state.blueprints[type]
+  if amount<=0:continue
+  ready+=amount
+  var place: Button=h.sheets.primary(h,"Place "+str(type).capitalize()+" · %d ready" % amount,func():h.choose_idea({"action":"blueprint","target":type}),box)
+  place.disabled=not h.model.state.pending.is_empty() or h.available_meadows().is_empty()
+ if ready==0:h.sheets.caption(h,"Finished buildings and land will appear here when they are ready to place.",box)
+ elif not h.model.state.pending.is_empty():
+  h.sheets.caption(h,"Finish your saved land choice first. Your ready items are kept.",box)
+  h.button("Review saved cards",func():h.draft(),box)
+ elif h.available_meadows().is_empty():
+  h.sheets.caption(h,"You need empty grass to place an item. Expand with Grass, or select an unprotected plot on the island and replace it with grass under Arrange island.",box)
+  h.button("Find room on my island",func():world(h,"edit"),box)
+ h.button("Make something in Build",func():workshop(h),box)
+ h.button("Batch crafting & all recipes",func():workshop_details(h),box)
+ h.button("Back to Pack",func():pack(h),box)
  close_button(h,box)
 
 func workshop_details(h) -> void:
@@ -198,16 +235,32 @@ func workshop_details(h) -> void:
   var held := PackedStringArray()
   for resource in reserves: held.append("%d %s" % [reserves[resource],resource.capitalize()])
   h.sheets.caption(h,"Automatic Furnace keeps "+", ".join(held)+" for construction. Manual crafting can use that stock.",box)
+ h.button("Back to crafting queue",func():project_queue(h),box)
  close_button(h,box)
 
 func update_live(h) -> void:
  if not h.modal.visible: return
  if h.modal_screen == "build" and is_instance_valid(build_tray):
   build_tray.update_live(); return
- if h.modal_screen == "pack":
+ if h.modal_screen=="project_queue":
+  var current:=JSON.stringify([h.model.state.jobs,h.model.state.blueprints,h.model.state.pending,h.available_meadows()])
+  if current!=queue_signature:
+   var offset: int=h.modal_scroll.scroll_vertical
+   project_queue(h);h.modal_scroll.set_deferred("scroll_vertical",offset)
+  else:
+   for job in h.model.state.jobs:
+    if queue_labels.has(job.id):queue_labels[job.id].text="%ds left" % ceili(maxf(0,job.until-h.model.state.time))
+  return
+ if h.modal_screen=="world_edit":
+  if edit_signature!=edit_stamp(h) and h.all_touches.is_empty():
+   var offset: int=h.modal_scroll.scroll_vertical
+   world(h,"edit");h.modal_scroll.set_deferred("scroll_vertical",offset)
+  return
+ if h.modal_screen == "pack":return
+ if h.modal_screen == "inventory":
   if pack_signature != JSON.stringify([h.model.state.inventory,h.model.state.coins,h.model.state.blueprints,h.model.ready_harvests().size(),h.model.state.harvests]):
    var offset: int = h.modal_scroll.scroll_vertical
-   pack(h); h.modal_scroll.set_deferred("scroll_vertical",offset)
+   inventory(h); h.modal_scroll.set_deferred("scroll_vertical",offset)
   return
  if h.modal_screen == "trade":
   var current := JSON.stringify([h.model.state.inventory,h.model.state.coins])
@@ -229,67 +282,112 @@ func update_live(h) -> void:
  for job in h.model.state.jobs:
   if workshop_jobs.has(job.id): workshop_jobs[job.id].text = "× %d · %ds" % [job.get("quantity",1),ceili(maxf(0,job.until-h.model.state.time))]
 
-func world(h) -> void:
- var box: VBoxContainer = h.modal_content("Your Living World")
- h.label("%d land tiles · Next plot %d coins" % [h.model.state.tiles.size(),h.model.cost()],17,box)
- h.button("Find something to try",func(): h.open_ideas(),box)
- h.button("Expeditions · beyond your island",func(): h.expedition_ui.overview(h),box)
- var actions := GridContainer.new(); actions.columns = 2
- box.add_child(actions)
- var selected: Dictionary = h.model.state.tiles[h.model.origin(h.selected)]
- h.sheets.action_card(h,"Inspect biome","Conditions & possibilities",selected.type,selected.evolution,func(): h.modal.hide(); h.open_inspector(h.model.origin(h.selected)),actions)
- h.sheets.action_card(h,"Center island","Return to your landscape","grass","",func(): h.modal.hide(); h.frame_world(),actions,true)
- h.sheets.action_card(h,"Fuse sanctuary","Four matching tiles","forest","grove",func(): h.fusion_dialog(),actions)
- h.sheets.action_card(h,"Photo mode","Frame, save & share","grass","",func(): h.modal.hide(); h.begin_photo(),actions,true)
- var turns := HBoxContainer.new(); box.add_child(turns)
- h.button("Rotate left",func(): h.modal.hide(); h.rotate_camera(-1),turns)
- h.button("Rotate right",func(): h.modal.hide(); h.rotate_camera(1),turns)
- h.label("Drag to pan and pinch to zoom. Use Rotate left/right for quarter-turn views.",14,box)
- var at: String = h.model.origin(h.selected)
- if at != "":
-  var tile: Dictionary = h.model.state.tiles[at]
-  if tile.size == 4:
-   h.button("Dismantle sanctuary…",func(): h.layout_ui.dismantle_prompt(h,at),box)
-  if h.model.config.tiles[tile.type].category != "structure" and h.model.state.get("habitat_projects",[]).has("living_workshop") and tile.size == 1 and at not in ["0,0","1,0","0,1"]:
-   h.button("Move selected landscape…",func(): h.layout_ui.begin(h,at),box)
-  if h.model.config.tiles[tile.type].category == "structure":
-   h.button("Move selected structure…",func(): h.layout_ui.begin(h,at),box)
-   var level: int = tile.get("level",1)
-   if level < 3 and h.model.config.tiles[tile.type].get("upgradeable",true):
-    h.button("Upgrade to level %d · %s" % [level+1,cost_text(h.model.config.upgrades[str(level)])],func():
-     h.model.campaign.upgrade_structure(h.model,at)
-     h.persist(); h.refresh(); world(h),box)
-   if h.model.config.tiles[tile.type].get("interval",0) > 0 or h.model.config.effects.has(tile.type):
-    h.button("Pause / resume selected automation",func():
-     h.model.campaign.toggle_automation(h.model,at)
-     h.persist(); h.refresh(); world(h),box)
-  if at not in ["0,0","1,0","0,1"] and tile.size == 1 and (tile.type != "grass" or tile.evolution != ""):
-   h.button("Restore selected tile to Meadow…",func():
-    var confirm: VBoxContainer = h.modal_content("Restore this plot?")
-    h.label("This removes the current biome. Structures return as level-one blueprints; their upgrades are lost. Discoveries stay in your journal. Starting harvest nodes are protected.",17,confirm)
-    h.button("Confirm restoration",func():
-     h.model.campaign.retire(h.model,at)
-     h.modal.hide(); h.persist(); h.refresh(),confirm)
-    close_button(h,confirm),box)
- h.button("Habitat projects · welcome wildlife",func(): h.habitat_ui.show_projects(h),box)
- h.button("Living Corridors · the river chapter",func(): h.corridor_ui.show(h),box)
- h.button("Visitors & field notes",func(): h.sanctuary_life.show_notes(h),box)
- h.button("Personalize my island",func(): h.identity_ui.show(h),box)
- h.button("Optional visitor requests",func(): h.visitor_requests.show_requests(h),box)
- h.button("Earned care tools · water, shade & warmth",func(): h.care_ui.show_tools(h),box)
- h.button("World Pulse abilities",func(): h.pulse_selector(),box)
- var event: Dictionary = h.model.state.event
- if event.until > 0:
-  h.label("Dusk Tide · %ds · %d/2 restored" % [ceili(event.until-h.model.state.time),event.cleared.size()],18,box)
- else:
-  var event_button: Button = h.button("Begin optional Dusk Tide",func():
-   h.model.campaign.start_event(h.model)
-   h.persist(); h.refresh(); world(h),box)
-  event_button.disabled = h.model.state.chapter < 3 or h.model.state.time < event.next_at or not h.model.state.settings.challenge_events
-  h.label("Available after Chapter 3 and five active minutes. Ignoring it never destroys progress.",14,box)
- if h.model.state.chapter >= 2:
-  h.button("Day / Dusk preview",func(): h.model.state.cosmetic = "dusk" if h.model.state.cosmetic == "day" else "day"; h.persist(); h.refresh(),box)
+func world(h, section: String = "home") -> void:
+ var titles: Dictionary={"home":"Island tools","care":"Plants & wildlife","edit":"Arrange your island","view":"Camera & photos","adventures":"Other islands & challenges","visitors":"Visitors & requests"}
+ if not titles.has(section):section="home"
+ if section!="edit":edit_feedback=""
+ var box: VBoxContainer=h.modal_content(titles[section]);h.modal_screen="world_"+section
+ if section=="home":
+  h.sheets.caption(h,"Choose one kind of activity. Caring helps your island grow; arranging changes where things go.",box)
+  h.sheets.primary(h,"Continue my current goal",func():h.open_ideas(),box)
+  var tools:=GridContainer.new();tools.columns=2;tools.add_theme_constant_override("h_separation",8);tools.add_theme_constant_override("v_separation",8);box.add_child(tools)
+  for entry in [{"title":"Plants & wildlife","detail":"Restore habitats and make a river","icon":"ecology","route":"care"},{"title":"Arrange island","detail":"Move, combine and decorate plots","icon":"craft","route":"edit"},{"title":"Camera & photos","detail":"Look around, save and share","icon":"world","route":"view"},{"title":"Other islands","detail":"Separate puzzles and challenges","icon":"codex","route":"adventures"}]:
+   h.sheets.tool_card(h,entry.title,entry.detail,entry.icon,func():world(h,entry.route),tools).set_meta("menu_route",entry.route)
+ elif section=="care":
+  h.sheets.caption(h,"A habitat is a place where wildlife can live. Arrange suitable plants and Water, then review its restoration goal.",box)
+  h.sheets.primary(h,"Restore a wildlife habitat",func():h.habitat_ui.show_projects(h),box)
+  h.button("Make a river",func():h.corridor_ui.show(h),box)
+  h.button("Care tools · water, shade & warmth",func():h.care_ui.show_tools(h),box)
+  h.button("Visitors & requests",func():world(h,"visitors"),box)
+ elif section=="visitors":
+  h.sheets.caption(h,"Visitors respond to suitable habitats. Their requests are optional ideas for your island, with no timer or penalty for leaving them.",box)
+  h.button("See visitors & field notes",func():h.sanctuary_life.show_notes(h),box)
+  h.button("Review optional requests",func():h.visitor_requests.show_requests(h),box)
+ elif section=="edit":
+  var selected: String=h.model.origin(h.selected)
+  if selected=="":h.selected="0,0";selected="0,0"
+  h.label("Selected · "+h.tile_title(h.model.state.tiles[selected]),18,box)
+  if edit_feedback!="":h.label(edit_feedback,16,box)
+  edit_signature=edit_stamp(h)
+  h.sheets.caption(h,"First tap the plot you want to change on the island. Move it when movement is unlocked, or combine four matching plots in a square into one larger sanctuary. Replacing a plot removes what is on it; always review the confirmation.",box)
+  h.sheets.primary(h,"Inspect this plot",func():h.open_inspector(h.model.origin(h.selected)),box)
+  var at: String = h.model.origin(h.selected)
+  if at != "":
+   var tile: Dictionary = h.model.state.tiles[at]
+   if tile.size == 4:
+    h.button("Dismantle sanctuary…",func(): h.layout_ui.dismantle_prompt(h,at),box)
+   if h.model.config.tiles[tile.type].category != "structure" and h.model.state.get("habitat_projects",[]).has("living_workshop") and tile.size == 1 and at not in ["0,0","1,0","0,1"]:
+    move_entry(h,at,"Move selected landscape…",box)
+   if h.model.config.tiles[tile.type].category == "structure":
+    move_entry(h,at,"Move selected structure…",box)
+    var level: int = tile.get("level",1)
+    if level < 3 and h.model.config.tiles[tile.type].get("upgradeable",true):
+     var costs: Dictionary=h.model.config.upgrades[str(level)]
+     var reasons:=PackedStringArray()
+     for resource in costs:
+      var owned: int=h.model.state.coins if resource=="coins" else h.model.state.inventory.get(resource,0)
+      if owned<int(costs[resource]):reasons.append("Need %d more %s" % [int(costs[resource])-owned,str(resource).capitalize()])
+     if not h.model.state.pending.is_empty() and h.model.state.coins-int(costs.get("coins",0))<h.model.state.pending.cost:reasons.append("Finish your saved land choice before using its Coins")
+     var upgrade: Button=h.button("Upgrade to level %d · %s" % [level+1,cost_text(costs)],func():
+      edit_action(h,func():return h.model.state.tiles.get(at,{}).get("level",1)==level and h.model.campaign.upgrade_structure(h.model,at)),box)
+     upgrade.set_meta("world_action","upgrade");upgrade.disabled=not reasons.is_empty()
+     if not reasons.is_empty():h.sheets.caption(h," · ".join(reasons),box)
+    if h.model.config.tiles[tile.type].get("interval",0) > 0 or h.model.config.effects.has(tile.type):
+     var enabled: bool=tile.get("enabled",true)
+     h.button("Pause selected building" if enabled else "Resume selected building",func():
+      edit_action(h,func():return h.model.state.tiles.get(at,{}).get("enabled",true)==enabled and h.model.campaign.toggle_automation(h.model,at)),box)
+   if at not in ["0,0","1,0","0,1"] and tile.size == 1 and (tile.type != "grass" or tile.evolution != ""):
+    var restore: Button=h.button("Restore selected tile to Meadow…",func():
+     var confirm: VBoxContainer = h.modal_content("Restore this plot?")
+     h.label("This removes the current biome. Structures return as level-one blueprints; their upgrades are lost. Discoveries stay in your journal. Starting harvest nodes are protected.",17,confirm)
+     h.button("Confirm restoration",func():edit_action(h,func():return h.model.campaign.retire(h.model,at)),confirm)
+     close_button(h,confirm),box)
+    restore.disabled=not h.model.state.pending.is_empty() or h.model.state.event.targets.has(at)
+    if restore.disabled:h.sheets.caption(h,"Finish the saved land choice or active weather challenge before replacing this plot.",box)
+  h.button("Combine four matching plots",func():h.fusion_dialog(),box)
+  h.button("Name & decorate my island",func():h.identity_ui.show(h),box)
+ elif section=="view":
+  h.sheets.caption(h,"Drag the island to look around, pinch to zoom, or rotate it a quarter-turn. Photo mode hides the menus before you save an image.",box)
+  h.button("Center the island",func():h.modal.hide();h.frame_world(),box)
+  h.button("Photo mode · save or share",func():h.modal.hide();h.begin_photo(),box)
+  var turns:=HBoxContainer.new();box.add_child(turns)
+  h.button("Rotate left",func():h.modal.hide();h.rotate_camera(-1),turns)
+  h.button("Rotate right",func():h.modal.hide();h.rotate_camera(1),turns)
+  if h.model.state.chapter>=2:h.button("Preview Day / Dusk",func():h.model.state.cosmetic="dusk" if h.model.state.cosmetic=="day" else "day";h.persist();h.refresh();world(h,"view"),box)
+ elif section=="adventures":
+  h.sheets.caption(h,"Expeditions are small puzzles on separate islands. Your home and its supplies stay safe. The optional Dusk Tide is a timed weather challenge at home.",box)
+  h.sheets.primary(h,"Explore expedition islands",func():h.expedition_ui.overview(h),box)
+  var event: Dictionary = h.model.state.event
+  if event.until > 0:
+   h.label("Dusk Tide · %ds · %d/2 restored" % [ceili(event.until-h.model.state.time),event.cleared.size()],18,box)
+  else:
+   var event_button: Button = h.button("Begin optional Dusk Tide",func():
+    h.model.campaign.start_event(h.model)
+    h.persist(); h.refresh(); world(h,"adventures"),box)
+   event_button.disabled = h.model.state.chapter < 3 or h.model.state.time < event.next_at or not h.model.state.settings.challenge_events
+   h.label("Available after Chapter 3 and five active minutes. Ignoring it never destroys progress.",14,box)
+ if section!="home":h.button("Back to island tools",func():world(h),box)
+ else:h.button("Back to Pack",func():pack(h),box)
  close_button(h,box)
+
+func edit_stamp(h) -> String:
+ var at: String=h.model.origin(h.selected)
+ var tile: Dictionary=h.model.state.tiles.get(at,{})
+ return JSON.stringify([at,tile.get("id",0),tile.get("type",""),tile.get("evolution",""),tile.get("level",1),tile.get("enabled",true),h.model.state.inventory,h.model.state.coins,h.model.state.pending,h.available_meadows(),preload("res://scripts/LayoutTools.gd").movable(h.model,at),h.model.state.event.targets])
+func move_entry(h, at: String, title: String, box: VBoxContainer) -> void:
+ var move: Button=h.button(title,func():h.layout_ui.begin(h,at),box)
+ move.set_meta("world_action","move")
+ var reason: String="Finish your saved land choice before moving." if not h.model.state.pending.is_empty() else "Moving needs an empty grassy plot." if h.available_meadows().is_empty() else "Wait for active effects to finish before moving this plot." if not preload("res://scripts/LayoutTools.gd").movable(h.model,at) else ""
+ move.disabled=reason!=""
+ if move.disabled:h.sheets.caption(h,reason,box)
+func edit_action(h, action: Callable) -> bool:
+ var before: Dictionary=h.model.state.duplicate(true)
+ if not action.call():
+  h.model.state=before;edit_feedback="This plot or its available materials changed. Review the requirements and try again.";h.refresh();world(h,"edit");return false
+ if not h.store.save_state(h.model.state):
+  h.model.state=before;edit_feedback="Could not save. Your plot, materials and Coins were kept.";h.refresh();world(h,"edit");return false
+ edit_feedback="Change saved.";h.services.observe_saved_progress();h.refresh();world(h,"edit");return true
+
 func settings(h) -> void:
  var box: VBoxContainer = h.modal_content("Settings & Accessibility")
  for id in ["sfx","music","vibration","reduced_motion","challenge_events","analytics"]:
@@ -342,7 +440,7 @@ func styled_slider(h, low: float, high: float, step: float, value: float, parent
 
 func tutorial(h) -> void:
  var box: VBoxContainer = h.modal_content("A tiny world, yours to grow")
- for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"The Journal has free discovery clues. Tap your goal for ideas. Workshop trades spare materials and crafts automation."},{"tile":"grass","title":"Make it yours","body":"Drag to pan, pinch to zoom, use World → Rotate for quarter-turn views. Pack → World offers rotation and photo controls. Core play is offline and saves automatically."}]:
+ for step in [{"tile":"oak","title":"Collect & expand","body":"Tap ready nodes for materials and Coins. Tap a cloud to compare three cards."},{"tile":"water","title":"Find living combinations","body":"Try Water beside Oak. Hold land or tap its callout to inspect conditions; Settings → Tile conditions explains them."},{"tile":"crystal","title":"Change your world","body":"Pulse previews a cross-shaped area. Tap its center again to confirm; canceling spends nothing."},{"tile":"forest","title":"Create a sanctuary","body":"Four matching cells form a 2×2 square. The fusion screen shows compatible groups. Crafted structures go on empty Grass."},{"tile":"windmill","title":"Choose your direction","body":"Discoveries has free clues. Follow your goal, or use Build to make buildings and materials. Trade spare stock under Pack → Materials & trade."},{"tile":"grass","title":"Make it yours","body":"Drag to look around and pinch to zoom. Pack → Island tools → Camera & photos offers rotation and pictures. Core play is offline and saves automatically."}]:
   var content: VBoxContainer = h.sheets.card(box)
   var row := HBoxContainer.new(); content.add_child(row)
   var image = h.sheets.art(h,row,step.tile,"",84); image.custom_minimum_size.x = 90
@@ -401,6 +499,7 @@ func trade(h) -> void:
    action.tooltip_text = "%d %s → %d Coins" % [quantity,resource,quantity]
    action.disabled = h.model.state.inventory[resource] < quantity
  h.button("Back to Workshop",func(): workshop(h),box)
+ h.button("Back to materials",func():inventory(h),box)
  close_button(h,box)
 
 func about(h) -> void:

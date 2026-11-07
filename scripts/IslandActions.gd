@@ -29,7 +29,7 @@ func inspect_tools(h, at: String, box: VBoxContainer) -> void:
  h.label("Live climate",19,box)
  var reading: Label = h.label(Eco.outlook(h.model,at),14,box)
  h.inspection_view["outlook"] = reading
- if h.model.state.tiles[at].evolution != "": h.sheets.caption(h,"Recorded form · "+h.tile_title(h.model.state.tiles[at])+". Discoveries stay in your Journal when conditions change. You can deliberately cultivate another qualifying form below.",box)
+ if h.model.state.tiles[at].evolution != "": h.sheets.caption(h,"Recorded form · "+h.tile_title(h.model.state.tiles[at])+". Discoveries stay in Discoveries when conditions change. You can deliberately cultivate another qualifying form below.",box)
  h.button("Moisture overlay",func(): overlay = "moisture"; h.modal.hide(); h.refresh(),box)
  h.button("Heat overlay",func(): overlay = "heat"; h.modal.hide(); h.refresh(),box)
  h.button("Habitat links",func(): overlay = "habitats"; h.modal.hide(); h.refresh(),box)

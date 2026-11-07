@@ -13,7 +13,7 @@ static func source(m, resource: String, amount: int) -> Dictionary:
   return step("Need %d more %s. This %s produces it%s. Gather other ready nodes while it recovers; opening help does not advance timers." % [amount,resource.capitalize(),m.state.tiles[best].type.capitalize()," now" if wait <= 0 else " in %ds of active play" % ceili(wait)],"resource","Show "+resource.capitalize()+" source",best)
  if resource == "brick": return step("Brick is crafted in a Furnace. Its recipe shows the required Wood and Stone.","recipe","Plan Brick","brick")
  if resource == "coins": return step("Need %d more Coins. Harvest ready resources, or trade spare materials while keeping construction stock." % amount,"trade","Review spare-material trades")
- return step("No current plot produces %s. Compare land offers or craft suitable terrain in Build; the Journal explains transformed resources." % resource.capitalize(),"workshop","Find a resource source")
+ return step("No current plot produces %s. Compare land offers or craft suitable terrain in Build; Discoveries explains transformed resources." % resource.capitalize(),"workshop","Find a resource source")
 static func recipe(m, id: String, quantity: int = 1) -> Dictionary:
  for recipe in m.config.crafting:
   if recipe.id != id: continue

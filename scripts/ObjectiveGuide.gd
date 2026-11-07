@@ -53,6 +53,6 @@ static func advice(m, id: String) -> Dictionary:
  elif id == "harvests":
   why = "Gather materials and Coins for your first expansion."
   info = Pacing.source(m,"wood",1)
- else: info = Pacing.step("Review the Journal and your island's tools.","journal","Open Journal")
+ else: info = Pacing.step("Review Discoveries and your island's tools.","journal","Open Journal")
  info["why"] = why
  return info
